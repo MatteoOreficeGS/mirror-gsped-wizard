@@ -10,7 +10,49 @@
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      var index = 0;
+      const forms = [
+        `<div class="row"><div class="h-80 w-full"><div class="col-md-6"><div class="form-group"><label class="label" for="name">ID Spedizione</label ><input type="text" class="form-control" name="name" id="name" placeholder="ID" /> </div> </div><div class="col-md-6"><div class="form-group"><label class="label" for="email">Riferimento Alfanumerico</label ><input type="text" class="form-control" name="email" id="email" placeholder="Riferimento alfanumerico" /> </div> </div><div class="col-md-12"><div class="form-group"><label class="label" for="subject">Email Destinatario</label ><input type="email" class="form-control" name="subject" id="subject" placeholder="email" /> </div> </div><div class="col-md-12"><div class="form-group"><label class="label" for="subject">Numero di telefono del destinatatio</label ><input type="email" class="form-control" name="subject" id="subject" placeholder="numero di telefono" /> </div> </div><div class="col-md-12">
+           </div> </div>
+           <div class="form-group"><input type="button" onclick=(setForm(1)) value="Next" class="btn bg-button-3 ml-4" /><div class="submitting"></div> 
+           </div></div> `,
+        `<div class="row"><div class="h-80 w-full"><div class="col-md-6"><div class="form-group"><label class="label" for="name">Dati Mittente</label ><input type="text" class="form-control" name="name" id="name" placeholder="Dati Mittente" /> </div> </div><div class="col-md-12"><div class="form-group"><label class="label" for="subject">Data e ora Pickup</label ><input type="text" class="form-control" name="subject" id="subject" placeholder="email" /> </div> </div><div class="col-md-12"><div class="form-group"><label class="label" for="subject">Client_ID</label ><input type="text" class="form-control" name="subject" id="subject" placeholder="client id" /> </div> </div><div class="col-md-12">
+        </div> </div>
+           <div class="form-group"><input type="button" onclick=(setForm(2)) value="Next" class="btn bg-button-3 ml-4" /><div class="submitting"></div> 
+           </div></div> `,
+        `<div class="row"><div class="h-80 w-full"><div class="col-md-6"><div class="form-group"><label class="label" for="name">v/documentazione</label ><input type="text" class="form-control" name="name" id="name" placeholder="v/documentazione" /> </div> </div><div class="col-md-12">
+        </div> </div>
+           <div class="form-group"><input type="button" onclick=(setForm(3)) value="Next" class="btn bg-button-3 ml-4" /><div class="submitting"></div> 
+           </div></div> `,
+        `<div class="row"><div class="h-80 w-full"><div class="col-md-6"><div class="form-group"><label class="label" for="name">Provider di pagamento</label ><input type="text" class="form-control" name="name" id="name" placeholder="Provider di pagamento" /> </div> </div><div class="col-md-6"><div class="form-group"><label class="label" for="email">Client_id</label ><input type="text" class="form-control" name="email" id="email" placeholder="Client id" /> </div> </div><div class="col-md-12">
+        </div> </div>
+           <div class="form-group"><input type="button" onclick=(setForm(4)) value="Next" class="btn bg-button-3 ml-4" /><div class="submitting"></div> 
+           </div></div> `,
+        `<div class="row"><div class="h-80 w-full"><div class="col-md-6"><div class="form-group"><label class="label" for="name">ID transizione</label ><input type="text" class="form-control" name="name" id="name" placeholder="ID transizione" /> </div> </div><div class="col-md-6"><div class="form-group"><label class="label" for="email">ID spedizione</label ><input type="text" class="form-control" name="email" id="email" placeholder="ID spedizione" /> </div> </div><div class="col-md-12"><div class="form-group"><label class="label" for="subject">Provider pagamento</label ><input type="email" class="form-control" name="subject" id="subject" placeholder="Provider pagamento" /> </div> </div><div class="col-md-12">
+        </div> </div>
+           <div class="form-group"><input type="button" onclick=(alert("confirm")) value="Confirm" class="btn bg-button-2 ml-4" /><div class="submitting"></div> 
+           </div></div> `,
+      ];
+
       var oldPalette = 1;
+
+      function setForm() {
+        const form = document.getElementById("contactForm");
+        const buttons = document.getElementsByName("stepbutton");
+        const textButtons = document.getElementsByName("textstepbutton");
+
+        if (index + 1 == buttons[index].innerText) {
+          buttons[index].classList.replace("bg-slate-100", "bg-button-3");
+          textButtons[index].classList.add("font-bold");
+          if (index >= 1) {
+            buttons[index - 1].classList.replace("bg-button-3", "bg-button-2");
+            textButtons[index - 1].classList.remove("font-bold");
+          }
+        }
+        form.innerHTML = forms[index];
+        index += 1;
+      }
+
       const changePalette = (palette) => {
         // const component = document.getElementById("componentToChange").value;
         // console.log(component);
@@ -58,7 +100,7 @@
             },
             colors: {
               sidebar: {
-                1: "#252A34",
+                1: "#f652a0",
                 2: "#F6D6AD",
                 3: "#36eee0",
                 4: "#EEEEEE",
@@ -80,7 +122,7 @@
               },
               button: {
                 1: "#252A34",
-                2: "#96E6B3",
+                2: "#36eee0",
                 3: "#f652a0",
                 4: "#ff8080",
                 5: "#7C365E",
@@ -110,7 +152,7 @@
       };
     </script>
   </head>
-  <body>
+  <body onload="setForm(0)">
     <div class="h-screen">
       <div class="">
         <nav class="navbar navbar-expand-lg bg-topbar-3 max-h-16">
@@ -575,11 +617,13 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
+                          name="stepbutton"
                           class="w-12 h-12 rounded-full btn bg-button-3 text-slate-500 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           1
                         </button>
                         <div
+                          name="textstepbutton"
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400 font-bold"
                         >
                           Modulo Ricerca Spedizione
@@ -589,11 +633,13 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
+                          name="stepbutton"
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           2
                         </button>
                         <div
+                          name="textstepbutton"
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
                         >
                           Modulo RITIRO (ritiro o DropOff)
@@ -603,11 +649,13 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
+                          name="stepbutton"
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           3
                         </button>
                         <div
+                          name="textstepbutton"
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
                         >
                           Modulo rating spedizione
@@ -617,11 +665,13 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
+                          name="stepbutton"
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           4
                         </button>
                         <div
+                          name="textstepbutton"
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
                         >
                           Modulo pagamento
@@ -631,11 +681,13 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
+                          name="stepbutton"
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           5
                         </button>
                         <div
+                          name="textstepbutton"
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
                         >
                           Modulo Stampa AWB
@@ -853,76 +905,7 @@
                         id="contactForm"
                         name="contactForm"
                         class="contactForm"
-                      >
-                        <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label class="label" for="name"
-                                >ID Spedizione</label
-                              >
-                              <input
-                                type="text"
-                                class="form-control"
-                                name="name"
-                                id="name"
-                                placeholder="ID"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              <label class="label" for="email"
-                                >Riferimento Alfanumerico</label
-                              >
-                              <input
-                                type="text"
-                                class="form-control"
-                                name="email"
-                                id="email"
-                                placeholder="Riferimento alfanumerico"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-12">
-                            <div class="form-group">
-                              <label class="label" for="subject"
-                                >Email Destinatario</label
-                              >
-                              <input
-                                type="email"
-                                class="form-control"
-                                name="subject"
-                                id="subject"
-                                placeholder="email"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-12">
-                            <div class="form-group">
-                              <label class="label" for="subject"
-                                >Numero di telefono del destinatatio</label
-                              >
-                              <input
-                                type="email"
-                                class="form-control"
-                                name="subject"
-                                id="subject"
-                                placeholder="numero di telefono"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-12">
-                            <div class="form-group">
-                              <input
-                                type="submit"
-                                value="Next"
-                                class="btn bg-button-3"
-                              />
-                              <div class="submitting"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
+                      ></form>
                     </div>
                   </div>
                 </div>

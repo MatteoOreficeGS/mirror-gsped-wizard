@@ -12,21 +12,32 @@
     <script>
       var oldPalette = 1;
       const changePalette = (palette) => {
+        // const component = document.getElementById("componentToChange").value;
+        // console.log(component);
         const oldClassList = [
           `bg-sidebar-${oldPalette}`,
-          `hover:bg-sidebarhover-${oldPalette}`,
           `bg-topbar-${oldPalette}`,
+          `bg-sidetext-${oldPalette}`,
           `bg-button-${oldPalette}`,
+          `text-sidebar-${oldPalette}`,
+          `text-topbar-${oldPalette}`,
+          `text-sidetext-${oldPalette}`,
+          `text-button-${oldPalette}`,
         ];
         const newClassList = [
           `bg-sidebar-${palette}`,
-          `hover:bg-sidebarhover-${palette}`,
           `bg-topbar-${palette}`,
+          `bg-sidetext-${palette}`,
           `bg-button-${palette}`,
+          `text-sidebar-${palette}`,
+          `text-topbar-${palette}`,
+          `text-sidetext-${palette}`,
+          `text-button-${palette}`,
         ];
 
         for (let i = 0; i < oldClassList.length; i++) {
           const oldClass = oldClassList[i];
+          // console.log(oldClass);
           const newClass = newClassList[i];
 
           var elements = document.getElementsByClassName(oldClass);
@@ -49,30 +60,30 @@
               sidebar: {
                 1: "#252A34",
                 2: "#F6D6AD",
-                3: "#96E6B3",
-                4: "#568259",
-                5: "#464E47",
+                3: "#36eee0",
+                4: "#EEEEEE",
+                5: "#7C365E",
               },
-              sidebarhover: {
-                1: "#252A34",
-                2: "#F6D6AD",
-                3: "#96E6B3",
-                4: "#568259",
-                5: "#464E47",
+              sidetext: {
+                1: "#96E6B3",
+                2: "#07D23F",
+                3: "#4c5270",
+                4: "#ff3333",
+                5: "#252A34",
               },
               topbar: {
                 1: "#252A34",
                 2: "#F6D6AD",
-                3: "#96E6B3",
-                4: "#568259",
-                5: "#464E47",
+                3: "#36eee0",
+                4: "#EEEEEE",
+                5: "#7C365E",
               },
               button: {
                 1: "#252A34",
-                2: "#F6D6AD",
-                3: "#96E6B3",
-                4: "#568259",
-                5: "#464E47",
+                2: "#96E6B3",
+                3: "#f652a0",
+                4: "#ff8080",
+                5: "#7C365E",
               },
               /* #EDE6DB
                  #417D7A
@@ -98,678 +109,82 @@
         },
       };
     </script>
-    <style>
-      /* ! tailwindcss v3.0.24 | MIT License | https://tailwindcss.com */
-      *,
-      ::after,
-      ::before {
-        box-sizing: border-box;
-        border-width: 0;
-        border-style: solid;
-        border-color: #e5e7eb;
-      }
-      ::after,
-      ::before {
-        --tw-content: "";
-      }
-      html {
-        line-height: 1.5;
-        -webkit-text-size-adjust: 100%;
-        -moz-tab-size: 4;
-        tab-size: 4;
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-          "Noto Color Emoji";
-      }
-      body {
-        margin: 0;
-        line-height: inherit;
-      }
-      hr {
-        height: 0;
-        color: inherit;
-        border-top-width: 1px;
-      }
-      abbr:where([title]) {
-        -webkit-text-decoration: underline dotted;
-        text-decoration: underline dotted;
-      }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-size: inherit;
-        font-weight: inherit;
-      }
-      a {
-        color: inherit;
-        text-decoration: inherit;
-      }
-      b,
-      strong {
-        font-weight: bolder;
-      }
-      code,
-      kbd,
-      pre,
-      samp {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          "Liberation Mono", "Courier New", monospace;
-        font-size: 1em;
-      }
-      small {
-        font-size: 80%;
-      }
-      sub,
-      sup {
-        font-size: 75%;
-        line-height: 0;
-        position: relative;
-        vertical-align: baseline;
-      }
-      sub {
-        bottom: -0.25em;
-      }
-      sup {
-        top: -0.5em;
-      }
-      table {
-        text-indent: 0;
-        border-color: inherit;
-        border-collapse: collapse;
-      }
-      button,
-      input,
-      optgroup,
-      select,
-      textarea {
-        font-family: inherit;
-        font-size: 100%;
-        line-height: inherit;
-        color: inherit;
-        margin: 0;
-        padding: 0;
-      }
-      button,
-      select {
-        text-transform: none;
-      }
-      [type="button"],
-      [type="reset"],
-      [type="submit"],
-      button {
-        -webkit-appearance: button;
-        background-color: transparent;
-        background-image: none;
-      }
-      :-moz-focusring {
-        outline: auto;
-      }
-      :-moz-ui-invalid {
-        box-shadow: none;
-      }
-      progress {
-        vertical-align: baseline;
-      }
-      ::-webkit-inner-spin-button,
-      ::-webkit-outer-spin-button {
-        height: auto;
-      }
-      [type="search"] {
-        -webkit-appearance: textfield;
-        outline-offset: -2px;
-      }
-      ::-webkit-search-decoration {
-        -webkit-appearance: none;
-      }
-      ::-webkit-file-upload-button {
-        -webkit-appearance: button;
-        font: inherit;
-      }
-      summary {
-        display: list-item;
-      }
-      blockquote,
-      dd,
-      dl,
-      figure,
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6,
-      hr,
-      p,
-      pre {
-        margin: 0;
-      }
-      fieldset {
-        margin: 0;
-        padding: 0;
-      }
-      legend {
-        padding: 0;
-      }
-      menu,
-      ol,
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      textarea {
-        resize: vertical;
-      }
-      input::placeholder,
-      textarea::placeholder {
-        opacity: 1;
-        color: #9ca3af;
-      }
-      [role="button"],
-      button {
-        cursor: pointer;
-      }
-      :disabled {
-        cursor: default;
-      }
-      audio,
-      canvas,
-      embed,
-      iframe,
-      img,
-      object,
-      svg,
-      video {
-        display: block;
-        vertical-align: middle;
-      }
-      img,
-      video {
-        max-width: 100%;
-        height: auto;
-      }
-      [hidden] {
-        display: none;
-      }
-      *,
-      ::before,
-      ::after {
-        --tw-translate-x: 0;
-        --tw-translate-y: 0;
-        --tw-rotate: 0;
-        --tw-skew-x: 0;
-        --tw-skew-y: 0;
-        --tw-scale-x: 1;
-        --tw-scale-y: 1;
-        --tw-pan-x: ;
-        --tw-pan-y: ;
-        --tw-pinch-zoom: ;
-        --tw-scroll-snap-strictness: proximity;
-        --tw-ordinal: ;
-        --tw-slashed-zero: ;
-        --tw-numeric-figure: ;
-        --tw-numeric-spacing: ;
-        --tw-numeric-fraction: ;
-        --tw-ring-inset: ;
-        --tw-ring-offset-width: 0px;
-        --tw-ring-offset-color: #fff;
-        --tw-ring-color: rgb(59 130 246 / 0.5);
-        --tw-ring-offset-shadow: 0 0 #0000;
-        --tw-ring-shadow: 0 0 #0000;
-        --tw-shadow: 0 0 #0000;
-        --tw-shadow-colored: 0 0 #0000;
-        --tw-blur: ;
-        --tw-brightness: ;
-        --tw-contrast: ;
-        --tw-grayscale: ;
-        --tw-hue-rotate: ;
-        --tw-invert: ;
-        --tw-saturate: ;
-        --tw-sepia: ;
-        --tw-drop-shadow: ;
-        --tw-backdrop-blur: ;
-        --tw-backdrop-brightness: ;
-        --tw-backdrop-contrast: ;
-        --tw-backdrop-grayscale: ;
-        --tw-backdrop-hue-rotate: ;
-        --tw-backdrop-invert: ;
-        --tw-backdrop-opacity: ;
-        --tw-backdrop-saturate: ;
-        --tw-backdrop-sepia: ;
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border-width: 0;
-      }
-      .fixed {
-        position: fixed;
-      }
-      .relative {
-        position: relative;
-      }
-      .bottom-0 {
-        bottom: 0px;
-      }
-      .right-0 {
-        right: 0px;
-      }
-      .z-10 {
-        z-index: 10;
-      }
-      .z-50 {
-        z-index: 50;
-      }
-      .col-span-2 {
-        grid-column: span 2 / span 2;
-      }
-      .col-span-10 {
-        grid-column: span 10 / span 10;
-      }
-      .my-2 {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      .mx-2 {
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-      }
-      .mr-auto {
-        margin-right: auto;
-      }
-      .mt-2 {
-        margin-top: 0.5rem;
-      }
-      .mt-3 {
-        margin-top: 0.75rem;
-      }
-      .ml-2 {
-        margin-left: 0.5rem;
-      }
-      .mt-auto {
-        margin-top: auto;
-      }
-      .-mt-3 {
-        margin-top: -0.75rem;
-      }
-      .ml-3 {
-        margin-left: 0.75rem;
-      }
-      .mb-4 {
-        margin-bottom: 1rem;
-      }
-      .mb-10 {
-        margin-bottom: 2.5rem;
-      }
-      .mr-4 {
-        margin-right: 1rem;
-      }
-      .mr-1 {
-        margin-right: 0.25rem;
-      }
-      .block {
-        display: block;
-      }
-      .flex {
-        display: flex;
-      }
-      .grid {
-        display: grid;
-      }
-      .hidden {
-        display: none;
-      }
-      .h-screen {
-        height: 100vh;
-      }
-      .h-full {
-        height: 100%;
-      }
-      .h-12 {
-        height: 3rem;
-      }
-      .h-6 {
-        height: 1.5rem;
-      }
-      .h-16 {
-        height: 4rem;
-      }
-      .h-8 {
-        height: 2rem;
-      }
-      .w-full {
-        width: 100%;
-      }
-      .w-6 {
-        width: 1.5rem;
-      }
-      .w-12 {
-        width: 3rem;
-      }
-      .w-8 {
-        width: 2rem;
-      }
-      .flex-1 {
-        flex: 1 1 0%;
-      }
-      .cursor-pointer {
-        cursor: pointer;
-      }
-      .grid-cols-12 {
-        grid-template-columns: repeat(12, minmax(0, 1fr));
-      }
-      .flex-col {
-        flex-direction: column;
-      }
-      .items-center {
-        align-items: center;
-      }
-      .justify-center {
-        justify-content: center;
-      }
-      .overflow-hidden {
-        overflow: hidden;
-      }
-      .rounded {
-        border-radius: 0.25rem;
-      }
-      .rounded-full {
-        border-radius: 9999px;
-      }
-      .border {
-        border-width: 1px;
-      }
-      .border-4 {
-        border-width: 4px;
-      }
-      .border-t {
-        border-top-width: 1px;
-      }
-      .border-gray-700 {
-        --tw-border-opacity: 1;
-        border-color: rgb(55 65 81 / var(--tw-border-opacity));
-      }
-      .border-white {
-        --tw-border-opacity: 1;
-        border-color: rgb(255 255 255 / var(--tw-border-opacity));
-      }
-      .border-slate-300 {
-        --tw-border-opacity: 1;
-        border-color: rgb(203 213 225 / var(--tw-border-opacity));
-      }
-      .bg-topbar-1 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(37 42 52 / var(--tw-bg-opacity));
-      }
-      .bg-sidebar-1 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(37 42 52 / var(--tw-bg-opacity));
-      }
-      .bg-button-1 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(37 42 52 / var(--tw-bg-opacity));
-      }
-      .bg-slate-100 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(241 245 249 / var(--tw-bg-opacity));
-      }
-      .bg-white {
-        --tw-bg-opacity: 1;
-        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-      }
-      .bg-blue-800 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(30 64 175 / var(--tw-bg-opacity));
-      }
-      .bg-emerald-900 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(6 78 59 / var(--tw-bg-opacity));
-      }
-      .bg-blue-900 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(30 58 138 / var(--tw-bg-opacity));
-      }
-      .bg-cyan-900 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(22 78 99 / var(--tw-bg-opacity));
-      }
-      .bg-indigo-900 {
-        --tw-bg-opacity: 1;
-        background-color: rgb(49 46 129 / var(--tw-bg-opacity));
-      }
-      .stroke-current {
-        stroke: currentColor;
-      }
-      .p-4 {
-        padding: 1rem;
-      }
-      .px-2 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-      }
-      .px-3 {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-      }
-      .py-8 {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-      }
-      .px-5 {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-      }
-      .text-center {
-        text-align: center;
-      }
-      .align-top {
-        vertical-align: top;
-      }
-      .text-sm {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-      }
-      .text-base {
-        font-size: 1rem;
-        line-height: 1.5rem;
-      }
-      .font-medium {
-        font-weight: 500;
-      }
-      .font-bold {
-        font-weight: 700;
-      }
-      .text-mintcream {
-        --tw-text-opacity: 1;
-        color: rgb(241 255 250 / var(--tw-text-opacity));
-      }
-      .text-slate-500 {
-        --tw-text-opacity: 1;
-        color: rgb(100 116 139 / var(--tw-text-opacity));
-      }
-      .text-slate-600 {
-        --tw-text-opacity: 1;
-        color: rgb(71 85 105 / var(--tw-text-opacity));
-      }
-      .shadow-md {
-        --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
-        --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color),
-          0 2px 4px -2px var(--tw-shadow-color);
-        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-          var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-      }
-      .before\:absolute::before {
-        content: var(--tw-content);
-        position: absolute;
-      }
-      .before\:top-0::before {
-        content: var(--tw-content);
-        top: 0px;
-      }
-      .before\:bottom-0::before {
-        content: var(--tw-content);
-        bottom: 0px;
-      }
-      .before\:mt-6::before {
-        content: var(--tw-content);
-        margin-top: 1.5rem;
-      }
-      .before\:hidden::before {
-        content: var(--tw-content);
-        display: none;
-      }
-      .before\:h-\[3px\]::before {
-        content: var(--tw-content);
-        height: 3px;
-      }
-      .before\:w-\[75\%\]::before {
-        content: var(--tw-content);
-        width: 75%;
-      }
-      .before\:bg-slate-100::before {
-        content: var(--tw-content);
-        --tw-bg-opacity: 1;
-        background-color: rgb(241 245 249 / var(--tw-bg-opacity));
-      }
-      .hover\:border-slate-200:hover {
-        --tw-border-opacity: 1;
-        border-color: rgb(226 232 240 / var(--tw-border-opacity));
-      }
-      .hover\:bg-sidebarhover-1:hover {
-        --tw-bg-opacity: 1;
-        background-color: rgb(37 42 52 / var(--tw-bg-opacity));
-      }
-      .hover\:text-gray-100:hover {
-        --tw-text-opacity: 1;
-        color: rgb(243 244 246 / var(--tw-text-opacity));
-      }
-      @media (prefers-color-scheme: dark) {
-        .dark\:text-slate-400 {
-          --tw-text-opacity: 1;
-          color: rgb(148 163 184 / var(--tw-text-opacity));
-        }
-        .dark\:text-slate-200 {
-          --tw-text-opacity: 1;
-          color: rgb(226 232 240 / var(--tw-text-opacity));
-        }
-      }
-      @media (min-width: 640px) {
-        .sm\:block {
-          display: block;
-        }
-        .sm\:px-20 {
-          padding-left: 5rem;
-          padding-right: 5rem;
-        }
-      }
-      @media (min-width: 768px) {
-        .md\:mt-3 {
-          margin-top: 0.75rem;
-        }
-      }
-      @media (min-width: 1024px) {
-        .lg\:mt-0 {
-          margin-top: 0px;
-        }
-        .lg\:block {
-          display: block;
-        }
-        .lg\:flex-row {
-          flex-direction: row;
-        }
-        .lg\:text-center {
-          text-align: center;
-        }
-        .before\:lg\:block::before {
-          content: var(--tw-content);
-          display: block;
-        }
-      }
-    </style>
   </head>
   <body>
-    <div class="h-screen bg-teagreen">
-      <nav class="navbar navbar-expand-lg bg-topbar-1">
-        <a class="navbar-brand" href="#">
-          <img
-            src="https://gsped.com/wp-content/uploads/2020/10/Gsped_logo.png"
-            class="d-inline-block align-top"
-            alt=""
-            width="100"
-            height="100"
-          />
-        </a>
-        <form class="form-inline">
-          <input
-            class="form-control mr-sm-2 mt-1"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-        </form>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="h-screen">
+      <div class="">
+        <nav class="navbar navbar-expand-lg bg-topbar-3 max-h-16">
+          <a class="navbar-brand" href="#">
+            <img
+              src="https://gsped.com/wp-content/uploads/2020/10/Gsped_logo.png"
+              class="d-inline-block align-top"
+              alt=""
+              width="100"
+              height="100"
+            />
+          </a>
+          <form class="form-inline">
+            <input
+              class="form-control mr-sm-2 mt-1"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+          </form>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <div class="mr-auto"></div>
-          <ul class="navbar-nav my-2 my-lg-0">
-            <li class="nav-item active">
-              <a class="nav-link text-slate-100" href="#"
-                >Home <span class="sr-only">(current)</span></a
-              >
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle text-slate-100"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-display="static"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                Profile
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-lg-right"
-                aria-labelledby="navbarDropdown"
-              >
-                <h6 class="dropdown-header">Dropdown header</h6>
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </nav>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="mr-auto"></div>
+            <ul class="navbar-nav my-2 my-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link text-sidetext-1" href="#"
+                  >Home <span class="sr-only">(current)</span></a
+                >
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle text-sidetext-1"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-display="static"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  Profile
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-lg-right"
+                  aria-labelledby="navbarDropdown"
+                >
+                  <h6 class="dropdown-header">Dropdown header</h6>
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+
       <section class="mt-2">
         <div class="mx-2 h-90v">
           <div class="grid grid-cols-12">
             <!-- Component Start da tenere-->
             <!-- Component Start -->
             <div
-              class="flex flex-col items-center w-full h-full overflow-hidden text-slate-300 bg-sidebar-1 rounded col-span-2 md:hidden"
+              class="flex flex-col items-center w-full h-full overflow-hidden text-slate-600 bg-sidebar-2 text-sitetext-1 rounded col-span-2 md:hidden"
             >
               <a class="flex items-center justify-center mt-3" href="#">
                 <svg
@@ -787,7 +202,7 @@
                 class="flex flex-col items-center mt-3 border-t border-gray-700"
               >
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="flex items-center justify-center w-12 h-12 mt-2 rounded"
                   href="#"
                 >
                   <svg
@@ -804,12 +219,9 @@
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                     />
                   </svg>
-                  <span class="ml-2 text-sm font-medium hidden md:block"
-                    >Docs</span
-                  >
                 </a>
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="flex items-center justify-center w-12 h-12 mt-2 rounded"
                   href="#"
                 >
                   <svg
@@ -828,7 +240,7 @@
                   </svg>
                 </a>
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 text-indigo-100 bg-indigo-700 rounded"
+                  class="flex items-center justify-center w-12 h-12 mt-2 text-indigo-100 rounded"
                   href="#"
                 >
                   <svg
@@ -847,7 +259,7 @@
                   </svg>
                 </a>
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:"
                   href="#"
                 >
                   <svg
@@ -870,7 +282,7 @@
                 class="flex flex-col items-center mt-2 border-t border-gray-700"
               >
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:"
                   href="#"
                 >
                   <svg
@@ -889,7 +301,7 @@
                   </svg>
                 </a>
                 <a
-                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:"
                   href="#"
                 >
                   <svg
@@ -908,7 +320,7 @@
                   </svg>
                 </a>
                 <a
-                  class="relative flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-indigo-700"
+                  class="relative flex items-center justify-center w-12 h-12 mt-2 rounded hover:"
                   href="#"
                 >
                   <svg
@@ -926,12 +338,12 @@
                     />
                   </svg>
                   <span
-                    class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-indigo-500 rounded-full"
+                    class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-sidetext-1 rounded-full"
                   ></span>
                 </a>
               </div>
               <a
-                class="flex items-center justify-center w-16 h-16 mt-auto bg-indigo-800 hover:bg-indigo-700"
+                class="flex items-center justify-center w-16 h-16 mt-auto bg-sidetext-1 hover:"
                 href="#"
               >
                 <svg
@@ -952,14 +364,30 @@
             </div>
             <!-- Component End  -->
             <div
-              class="bg-sidebar-1 flex flex-col items-center w-full h-full text-mintcream rounded col-span-2 h-[90vh] hidden md:block"
+              class="flex flex-col items-center w-full h-full overflow-hidden rounded col-span-2 bg-sidebar-2 hidden md:block text-slate-600"
             >
+              <!-- <div
+              class="flex flex-col items-center w-40 h-full overflow-hidden text-indigo-300 bg-sidetext-1-900 rounded"
+            > -->
+              <a class="flex items-center w-full px-3 mt-3" href="#">
+                <svg
+                  class="w-8 h-8 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z"
+                  />
+                </svg>
+                <span class="ml-2 text-sm font-bold">The App</span>
+              </a>
               <div class="w-full px-2">
                 <div
-                  class="flex flex-col items-center w-full mt-3 border-gray-700"
+                  class="flex flex-col items-center w-full mt-3 border-t border-gray-700"
                 >
                   <a
-                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-sidebarhover-1 hover:text-teagreen"
+                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
                     href="#"
                   >
                     <svg
@@ -974,12 +402,12 @@
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      ></path>
+                      />
                     </svg>
-                    <span class="ml-2 text-sm font-medium">Home</span>
+                    <span class="ml-2 text-sm font-medium">Dasboard</span>
                   </a>
                   <a
-                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-sidebarhover-1 hover:text-teagreen"
+                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
                     href="#"
                   >
                     <svg
@@ -994,12 +422,32 @@
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      ></path>
+                      />
                     </svg>
                     <span class="ml-2 text-sm font-medium">Search</span>
                   </a>
                   <a
-                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-sidebarhover-1 hover:text-teagreen"
+                    class="flex items-center w-full h-12 px-3 mt-2 text-gray-400 text-indigo-100 rounded"
+                    href="#"
+                  >
+                    <svg
+                      class="w-6 h-6 stroke-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span class="ml-2 text-sm font-medium">Insights</span>
+                  </a>
+                  <a
+                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
                     href="#"
                   >
                     <svg
@@ -1014,7 +462,7 @@
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                      ></path>
+                      />
                     </svg>
                     <span class="ml-2 text-sm font-medium">Docs</span>
                   </a>
@@ -1023,7 +471,7 @@
                   class="flex flex-col items-center w-full mt-2 border-t border-gray-700"
                 >
                   <a
-                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-sidebarhover-1 hover:text-teagreen"
+                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
                     href="#"
                   >
                     <svg
@@ -1038,12 +486,12 @@
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      ></path>
+                      />
                     </svg>
                     <span class="ml-2 text-sm font-medium">Products</span>
                   </a>
                   <a
-                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-sidebarhover-1 hover:text-teagreen"
+                    class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
                     href="#"
                   >
                     <svg
@@ -1058,14 +506,37 @@
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                      ></path>
+                      />
                     </svg>
                     <span class="ml-2 text-sm font-medium">Settings</span>
+                  </a>
+                  <a
+                    class="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                    href="#"
+                  >
+                    <svg
+                      class="w-6 h-6 stroke-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                      />
+                    </svg>
+                    <span class="ml-2 text-sm font-medium">Messages</span>
+                    <span
+                      class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-sidetext-1 rounded-full"
+                    ></span>
                   </a>
                 </div>
               </div>
               <a
-                class="flex items-center justify-center w-full h-16 mt-auto hover:bg-sidebarhover-1 hover:text-teagreen"
+                class="flex items-center justify-center w-full h-16 mt-80"
                 href="#"
               >
                 <svg
@@ -1089,7 +560,9 @@
             <div class="col-span-10">
               <div class="row justify-content-center">
                 <div class="col-md-12">
-                  <div class="wrapper contact-wrap py-2 md:py-8 h-[90vh]">
+                  <div
+                    class="content contact-wrap py-2 md:py-8 h-[90vh] overflow-y-auto overflow-x-hidden"
+                  >
                     <div class="row justify-content-center">
                       <div class="col-md-6 text-center">
                         <h2 class="heading-section">Reso Facile</h2>
@@ -1102,7 +575,7 @@
                         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
                       >
                         <button
-                          class="w-12 h-12 rounded-full btn bg-teagreen text-slate-500 dark:bg-darkmode-400 dark:border-darkmode-400"
+                          class="w-12 h-12 rounded-full btn bg-button-3 text-slate-500 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
                           1
                         </button>
@@ -1132,7 +605,7 @@
                         <button
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
-                          5
+                          3
                         </button>
                         <div
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
@@ -1146,7 +619,7 @@
                         <button
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
-                          3
+                          4
                         </button>
                         <div
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
@@ -1160,7 +633,7 @@
                         <button
                           class="w-12 h-12 rounded-full btn text-slate-500 bg-slate-100 dark:bg-darkmode-400 dark:border-darkmode-400"
                         >
-                          4
+                          5
                         </button>
                         <div
                           class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
@@ -1169,68 +642,206 @@
                         </div>
                       </div>
                     </div>
-                    <!-- <div class="grid grid-cols-4">
-                    <div class="">
-                      <div
-                        class="bg-blue-500 w-20 h-20 rounded-full text-center align-center justify-center p-4"
-                      >
-                        <div class="align-center justify-center">
-                          <span class="text-slate-100">1</span>
-                        </div>
-                      </div>
-                      <div class="text">
-                        <p>
-                          <span>Modulo Ricerca Spedizione</span>
-                        </p>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="dbox w-100 text-center">
-                        <div
-                          class="icon d-flex align-items-center justify-content-center"
+                    <!-- <div
+                      class="flex flex-col items-center w-40 h-full overflow-hidden text-indigo-300 bg-sidetext-1-900 rounded"
+                    >
+                      <a class="flex items-center w-full px-3 mt-3" href="#">
+                        <svg
+                          class="w-8 h-8 fill-current"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
                         >
-                          <span class="fa fa-phone"></span>
-                        </div>
-                        <div class="text">
-                          <p>
-                            <span>Phone:</span>
-                            <a href="tel://1234567920">+ 1235 2355 98</a>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="dbox w-100 text-center">
+                          <path
+                            d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z"
+                          />
+                        </svg>
+                        <span class="ml-2 text-sm font-bold">The App</span>
+                      </a>
+                      <div class="w-full px-2">
                         <div
-                          class="icon d-flex align-items-center justify-content-center"
+                          class="flex flex-col items-center w-full mt-3 border-t border-gray-700"
                         >
-                          <span class="fa fa-paper-plane"></span>
-                        </div>
-                        <div class="text">
-                          <p>
-                            <span>Email:</span>
-                            <a href="mailto:info@yoursite.com"
-                              >info@yoursite.com</a
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
                             >
-                          </p>
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium"
+                              >Dasboard</span
+                            >
+                          </a>
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium">Search</span>
+                          </a>
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 text-gray-400  text-indigo-100 rounded"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium"
+                              >Insights</span
+                            >
+                          </a>
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium">Docs</span>
+                          </a>
                         </div>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="dbox w-100 text-center">
                         <div
-                          class="icon d-flex align-items-center justify-content-center"
+                          class="flex flex-col items-center w-full mt-2 border-t border-gray-700"
                         >
-                          <span class="fa fa-globe"></span>
-                        </div>
-                        <div class="text">
-                          <p>
-                            <span>Website</span> <a href="#">yoursite.com</a>
-                          </p>
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium"
+                              >Products</span
+                            >
+                          </a>
+                          <a
+                            class="flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium"
+                              >Settings</span
+                            >
+                          </a>
+                          <a
+                            class="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:"
+                            href="#"
+                          >
+                            <svg
+                              class="w-6 h-6 stroke-current"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                              />
+                            </svg>
+                            <span class="ml-2 text-sm font-medium"
+                              >Messages</span
+                            >
+                            <span
+                              class="absolute top-0 left-0 w-2 h-2 mt-2 ml-2 bg-sidetext-1-500 rounded-full"
+                            ></span>
+                          </a>
                         </div>
                       </div>
-                    </div>
-                  </div> -->
+                      <a
+                        class="flex items-center justify-center w-full h-16 mt-auto bg-sidetext-1-800 hover:"
+                        href="#"
+                      >
+                        <svg
+                          class="w-6 h-6 stroke-current"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span class="ml-2 text-sm font-medium">Account</span>
+                      </a>
+                    </div> -->
 
                     <div class="p-md-5 p-4">
                       <div id="form-message-warning" class="mb-4"></div>
@@ -1305,7 +916,7 @@
                               <input
                                 type="submit"
                                 value="Next"
-                                class="btn bg-teagreen"
+                                class="btn bg-button-3"
                               />
                               <div class="submitting"></div>
                             </div>
@@ -1325,7 +936,12 @@
           class="shadow-md fixed bottom-0 bg-white right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-10 mr-4"
         >
           <div class="mr-4 hidden sm:block text-slate-600 dark:text-slate-200">
-            Color Scheme
+            <select id="componentToChange">
+              <option>topbar</option>
+              <option>sidebar</option>
+              <option>sidetext</option>
+              <option>button</option>
+            </select>
           </div>
           <a
             onclick="changePalette(1)"
@@ -1345,7 +961,7 @@
           ></a
           ><a
             onclick="changePalette(5)"
-            class="block w-8 h-8 cursor-pointer bg-indigo-900 rounded-full border-4 hover:border-slate-200 border-slate-300 dark:border-darkmode-800/80"
+            class="block w-8 h-8 cursor-pointer bg-sidetext-1 rounded-full border-4 hover:border-slate-200 border-slate-300 dark:border-darkmode-800/80"
           ></a>
         </div>
       </div>

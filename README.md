@@ -41,8 +41,8 @@ npm install
 Far partire il servizio
 
 ```
-ng serve
+ng serve --open
 ```
 
-Puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
+Se non dovesse partire automaticamente puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
 

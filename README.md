@@ -17,7 +17,7 @@ Per ubuntu
 ```
 curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt install nodejs
-npm install -g @angular/cli
+sudo npm install -g @angular/cli
 ```
 
 Per altre distro
@@ -43,3 +43,6 @@ Far partire il servizio
 ```
 ng serve
 ```
+
+Puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
+

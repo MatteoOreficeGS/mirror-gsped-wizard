@@ -10,7 +10,7 @@ export class WidzardComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  @Input() theme = "";
+  @Input() theme: any;
 
   activeStep: number = 0;
 

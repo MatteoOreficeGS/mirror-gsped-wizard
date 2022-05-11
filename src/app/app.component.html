@@ -11,34 +11,32 @@
     </div>
   </div>
   <div
-    class="shadow-md fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-5 mr-5 w-8 overflow-hidden hover:w-96 transition-all duration-500"
+    class="flex flex-row shadow-md hidden sm:block fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-5 mr-5 w-8 h-12 py-2 overflow-hidden hover:w-80 bg-slate-400 hover:bg-white dark:hover:bg-slate-400 transition-all duration-500"
   >
-    <div class="mr-4 hidden sm:block text-slate-600 dark:text-slate-200">
-      Color Scheme
-    </div>
     <div class="flex flex-row">
+      <div class="mr-4 text-slate-600 dark:text-slate-200">Themes</div>
       <a
-        class="block w-8 h-8 cursor-pointer bg-blue-800 rounded-full border-4 mr-1 hover:border-slate-200 border-white dark:border-darkmode-600"
+        class="block w-8 h-8 cursor-pointer bg-blue-800 rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
         (click)="setTheme(0)"
       ></a>
       <a
-        class="block w-8 h-8 cursor-pointer bg-cyan-400 rounded-full border-4 mr-1 hover:border-slate-200 border-white dark:border-darkmode-600"
+        class="block w-8 h-8 cursor-pointer bg-[#823297] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
         (click)="setTheme(1)"
       ></a>
       <a
-        class="block w-8 h-8 cursor-pointer bg-emerald-900 rounded-full border-4 mr-1 hover:border-slate-200 border-white dark:border-darkmode-600"
+        class="block w-8 h-8 cursor-pointer bg-[#F62DA2] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
         (click)="setTheme(2)"
       ></a
       ><a
-        class="block w-8 h-8 cursor-pointer bg-blue-900 rounded-full border-4 mr-1 hover:border-slate-200 border-white dark:border-darkmode-600"
+        class="block w-8 h-8 cursor-pointer bg-[#22D3EE] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
         (click)="setTheme(3)"
       ></a
       ><a
-        class="block w-8 h-8 cursor-pointer bg-cyan-900 rounded-full border-4 mr-1 hover:border-slate-200 border-white dark:border-darkmode-600"
+        class="block w-8 h-8 cursor-pointer bg-[#DDCEF7] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
         (click)="setTheme(4)"
       ></a
       ><a
-        class="block w-8 h-8 cursor-pointer bg-indigo-900 rounded-full border-4 hover:border-slate-200 border-slate-300 dark:border-darkmode-800/80"
+        class="block w-8 h-8 cursor-pointer bg-[#22CCA8] rounded-full hover:border-slate-200 border-slate-300 dark:border-darkmode-800/80"
         (click)="setTheme(5)"
       ></a>
     </div>

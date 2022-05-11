@@ -24,7 +24,6 @@
         >
           <li>
             <a
-              (click)="setTheme()"
               class="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent transition-all hover:scale-125 md:p-0 dark:text-white"
               aria-current="page"
               >Home</a
@@ -93,10 +92,13 @@
             <mat-icon>shopping_cart</mat-icon>
             Products
           </a>
-          <a href="#" class="group flex sm:hidden items-center py-1.5">
+          <div
+            class="group cursor-pointer flex sm:hidden items-center py-1.5"
+            (click)="changeTheme()"
+          >
             <mat-icon>color_lens</mat-icon>
             Theme
-          </a>
+          </div>
         </div>
       </div>
     </div>

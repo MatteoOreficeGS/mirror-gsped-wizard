@@ -1,72 +1,75 @@
-<div class="md:py-6 mx-0 md:mx-10">
-  <h1
-    class="order-1 text-gray-900 text-3xl font-extrabold tracking-tight mt-2 ml-4 md:text-center mb-2 md:mb-0"
-  >
-    {{ widzard[0].type }}
-  </h1>
-  <div
-    class="lg:my-16 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-2 sm:px-20"
-  >
-    <div
-      *ngFor="let step of widzard[0].content; let i = index"
-      class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
+<div class="mx-0 lg:mx-10">
+  <div class="h-[91vh] overflow-y-scroll">
+    <h1
+      class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
     >
-      <button
-        [ngClass]="
-          activeStep === i
-            ? 'bg-gradient-to-br from-purple-600 to-blue-500 text-white'
-            : activeStep > i
-            ? 'bg-gradient-to-br from-cyan-600 to-teal-300 text-white'
-            : 'bg-slate-100'
-        "
-        class="pointer-events-none min-w-12 w-12 h-12 rounded-full dark:bg-darkmode-400 dark:border-darkmode-400 transition-all delay-100 ease-in-out mt-2 lg:mt-0"
-      >
-        {{ i + 1 }}
-      </button>
+      {{ widzard[0].type }}
+    </h1>
+    <div
+      class="lg:my-16 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-col lg:flex-row justify-center px-2 sm:px-20"
+    >
       <div
-        [ngClass]="activeStep === i ? 'font-bold' : ''"
-        class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
+        *ngFor="let step of widzard[0].content; let i = index"
+        class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
       >
-        {{ step.step }}
+        <button
+          [ngClass]="
+            activeStep === i
+              ? theme.active
+              : activeStep > i
+              ? theme.completed
+              : 'bg-slate-100 dark:bg-slate-500'
+          "
+          class="pointer-events-none min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-100 ease-in-out mt-2 lg:mt-0"
+        >
+          {{ i + 1 }}
+        </button>
+        <div
+          [ngClass]="activeStep === i ? 'font-bold' : ''"
+          class="text-base -mt-3 md:mt-3 ml-3 text-slate-600 dark:text-slate-400"
+        >
+          {{ step.step }}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="h-72">
-    <div
-      class="mx-2 md:mx-10 my-4"
-      *ngFor="let field of widzard[0].content[activeStep].fields"
-    >
-      <div class="relative z-0 w-full mb-6 group">
-        <input
-          type="{{ field.type }}"
-          name="floating_first_name"
-          id="floating_first_name"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" "
-          required
-        />
-        <!-- <div
-        class="absolute inset-y-0 right-0 pr-3 mr-4 flex items-center cursor-help hidden md:block"
+    <div class="h-72">
+      <div
+        class="mx-2 md:mx-10 my-4"
+        *ngFor="let field of widzard[0].content[activeStep].fields"
       >
-        <mat-icon class="text-slate-300" aria-label="Example home icon"
+        <div class="relative z-0 w-full mb-6 group">
+          <input
+            type="{{ field.type }}"
+            name="floating_first_name"
+            id="floating_first_name"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            placeholder=" "
+            required
+          />
+          <!-- <div
+          class="absolute inset-y-0 right-0 pr-3 mr-4 flex items-center cursor-help hidden md:block"
+          >
+          <mat-icon class="text-slate-300" aria-label="Example home icon"
           >help</mat-icon
-        >
-      </div> -->
-        <label
-          for="floating_first_name"
-          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >{{ field.title }}</label
-        >
+          >
+        </div> -->
+          <label
+            for="floating_first_name"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >{{ field.title }}</label
+          >
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="text-center sm:text-left md:ml-12">
-    <button
-      (click)="incrementStep()"
-      class="text-white bg-gradient-to-br from-purple-600 to-blue-500 focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
-    >
-      {{ activeStep === widzard[0].content.length - 1 ? "Confirm" : "Next" }}
-    </button>
+    <div class="text-center sm:text-left md:ml-12">
+      <button
+        (click)="incrementStep()"
+        [ngClass]="theme.active"
+        class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ activeStep === widzard[0].content.length - 1 ? "Confirm" : "Next" }}
+      </button>
+    </div>
   </div>
 </div>

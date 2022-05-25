@@ -37,7 +37,7 @@ export class AppComponent {
         completed: `bg-gradient-to-br from-[#63B32E] to-[#19AE82]`,
       },
       {
-        active: `bg-gradient-to-r from-indigo-500 via-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700`,
+        active: `bg-gradient-to-r from-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700`,
         completed: `bg-gradient-to-br from-[#2B99C9] to-[#BD1002]`,
       },
     ],

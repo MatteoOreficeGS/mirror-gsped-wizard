@@ -11,7 +11,7 @@ export class AppComponent {
       "bg-gradient-to-br from-purple-600 to-blue-500",
       "bg-gradient-to-r from-[#125B50] to-[#FA05E4]",
       "bg-gradient-to-br from-[#f25f50] to-[#FA05E4]",
-      "bg-cyan-400",
+      "bg-yellow-400",
       "bg-gradient-to-br from-purple-300 to-slate-200",
       "bg-gradient-to-r from-indigo-500 via-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700",
     ],
@@ -29,26 +29,42 @@ export class AppComponent {
         completed: `bg-gradient-to-br from-[#FFDD83] to-[#E3F8FF] dark:to-[#28CC9E]`,
       },
       {
-        active: `bg-cyan-400`,
+        active: `bg-yellow-400`,
         completed: `bg-gradient-to-br from-[#5FB295] to-[#180CA4]`,
       },
       {
         active: `bg-gradient-to-br from-purple-300 to-slate-200`,
-        completed: `bg-gradient-to-br from-[#63B32E] to-[#19AE82]`,
+        completed: `bg-gradient-to-br from-[#957FEF] to-[#ffff80]`,
       },
       {
         active: `bg-gradient-to-r from-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700`,
         completed: `bg-gradient-to-br from-[#2B99C9] to-[#BD1002]`,
       },
     ],
+    primary: [
+      "bg-gradient-to-br from-purple-600 to-blue-500",
+      "bg-gradient-to-r from-[#125B50] to-[#FA05E4]",
+      "bg-gradient-to-br from-[#f25f50] to-[#FA05E4]",
+      "bg-yellow-400",
+      "bg-gradient-to-br from-purple-300 to-slate-200",
+      "bg-gradient-to-r from-indigo-500 via-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700",
+    ],
+    secondary: [
+      "bg-gradient-to-br from-blue-500 to-green-200",
+      "bg-gradient-to-br from-blue-500 to-red-200",
+      `bg-gradient-to-br from-[#FFDD83] to-[#E3F8FF] dark:to-[#28CC9E]`,
+      `bg-gradient-to-br from-[#5FB295] to-[#180CA4]`,
+      `bg-gradient-to-br from-[#957FEF] to-[#ffff80]`,
+      `bg-gradient-to-br from-[#2B99C9] to-[#BD1002]`,
+    ],
   };
 
-  navbarTheme = this.themes.navbar[0];
-  buttonsTheme = this.themes.buttons[0];
+  primaryTheme = this.themes.primary[3];
+  secondaryTheme = this.themes.secondary[3];
 
   setTheme(type: number) {
-    this.navbarTheme = this.themes.navbar[type];
-    this.buttonsTheme = this.themes.buttons[type];
+    this.primaryTheme = this.themes.primary[type];
+    this.secondaryTheme = this.themes.secondary[type];
   }
 
   /* getRandomColor() {

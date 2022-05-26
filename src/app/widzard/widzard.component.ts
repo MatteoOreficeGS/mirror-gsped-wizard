@@ -24,7 +24,7 @@ export class WidzardComponent implements OnInit {
       i18n: ["IT-it", "EN-en", "ZH-zh"],
       client_id: 123,
       modules: [
-        {
+        /* {
           moduleName: "customModuleVodafone",
           moduleLabel: "modulo custom",
           type: "select",
@@ -47,7 +47,7 @@ export class WidzardComponent implements OnInit {
           ],
           output: "concat_string",
           destination: "shipment_description",
-        },
+        }, */
         {
           type: "text",
           moduleName: "sender",
@@ -130,7 +130,7 @@ export class WidzardComponent implements OnInit {
     {
       type: "Reso Facile",
       steps: [
-        [
+        /* [
           {
             value: "Router",
             img: "https://m.media-amazon.com/images/I/51KywviQsrL._AC_SX679_.jpg",
@@ -146,7 +146,7 @@ export class WidzardComponent implements OnInit {
             img: "https://media.ldlc.com/r1600/ld/products/00/05/93/86/LD0005938686_1.jpg",
             type: "label",
           },
-        ],
+        ], */
         [{ value: "nome mittente", type: "text", img: "" }],
         [
           { value: "Rossi Gino", type: "readonly", img: "name", label: "name" },

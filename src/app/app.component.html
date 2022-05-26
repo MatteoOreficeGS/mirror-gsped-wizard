@@ -1,16 +1,16 @@
 <div class="dark:bg-[#1A1A40]">
-  <app-navbar [theme]="navbarTheme"></app-navbar>
+  <app-navbar [theme]="primaryTheme"></app-navbar>
   <div class="dark:bg-slate-800 mt-2 mx-2 rounded-[30px] pb-2">
     <div class="grid grid-cols-12">
-      <div class="md:col-span-1 lg:col-span-2 hidden md:block">
+      <!-- <div class="md:col-span-1 lg:col-span-2 hidden md:block">
         <app-sidebar></app-sidebar>
-      </div>
-      <div class="col-span-full md:col-span-11 lg:col-span-10 md:px-4">
-        <app-widzard [theme]="buttonsTheme"></app-widzard>
+      </div> -->
+      <div class="col-span-full md:col-span-10 md:col-start-2 md:px-4">
+        <app-widzard [theme]="primaryTheme"></app-widzard>
       </div>
     </div>
   </div>
-  <div
+  <!-- <div
     class="flex flex-row shadow-md hidden sm:block fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-5 mr-5 h-12 py-2 w-80 bg-slate-400 bg-white dark:bg-slate-400"
   >
     <div class="flex flex-row">
@@ -40,5 +40,6 @@
         (click)="setTheme(5)"
       ></a>
     </div>
-  </div>
+  </div> -->
+  <app-footer></app-footer>
 </div>

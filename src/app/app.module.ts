@@ -9,6 +9,11 @@ import { AppComponent } from "./app.component";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { WidzardComponent } from "./widzard/widzard.component";
 import { NavbarComponent } from "./navbar/navbar.component";
+import { TextInputComponent } from "./widzard/text-input/text-input.component";
+import { LabelInputComponent } from "./widzard/label-input/label-input.component";
+import { ButtonWidzardComponent } from "./widzard/button-widzard/button-widzard.component";
+import { ReadonlyComponent } from "./widzard/readonly/readonly.component";
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +21,11 @@ import { NavbarComponent } from "./navbar/navbar.component";
     SidebarComponent,
     WidzardComponent,
     NavbarComponent,
+    TextInputComponent,
+    LabelInputComponent,
+    ButtonWidzardComponent,
+    ReadonlyComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 <div class="lg:mx-10">
   <div class="h-[80vh] overflow-y-scroll">
     <img
-      class="items-center mx-auto justift-center text-center w-auto"
+      class="items-center justift-center text-center w-full"
       alt="banner"
       src="https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png"
     />
@@ -44,7 +44,7 @@
       {{ response.configuration.modules[activeStep].moduleLabel }}
     </div>
     <div
-      class="h-[60vh] lg:h-72 overflow-y-scroll p-8 mx-auto"
+      class="h-[60vh] lg:h-72 overflow-y-scroll p-8 mx-auto bg-slate-100 border border-1 rounded-lg"
       [ngClass]="
         activeStep === 0
           ? 'md:flex space-x-4'

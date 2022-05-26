@@ -46,11 +46,7 @@
     <div
       class="h-[60vh] lg:h-72 overflow-y-scroll p-8 mx-auto bg-slate-100 border border-1 rounded-lg"
       [ngClass]="
-        activeStep === 0
-          ? 'md:flex space-x-4'
-          : activeStep === 2
-          ? 'grid grid-cols-1 gap-4 sm:grid-cols-2'
-          : ''
+        activeStep === 1 ? 'grid grid-cols-1 gap-4 sm:grid-cols-2' : ''
       "
     >
       <div class="w-full" *ngFor="let value of widzard[0].steps[activeStep]">

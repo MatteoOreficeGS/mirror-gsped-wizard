@@ -9,10 +9,6 @@ import { AppComponent } from "./app.component";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { WidzardComponent } from "./widzard/widzard.component";
 import { NavbarComponent } from "./navbar/navbar.component";
-import { TextInputComponent } from "./widzard/text-input/text-input.component";
-import { LabelInputComponent } from "./widzard/label-input/label-input.component";
-import { ButtonWidzardComponent } from "./widzard/button-widzard/button-widzard.component";
-import { ReadonlyComponent } from "./widzard/readonly/readonly.component";
 import { FooterComponent } from "./footer/footer.component";
 import { RicercaSpedizioneComponent } from "./moduli/ricerca-spedizione/ricerca-spedizione.component";
 import { DatiMittenteComponent } from "./moduli/dati-mittente/dati-mittente.component";
@@ -32,10 +28,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     SidebarComponent,
     WidzardComponent,
     NavbarComponent,
-    TextInputComponent,
-    LabelInputComponent,
-    ButtonWidzardComponent,
-    ReadonlyComponent,
     FooterComponent,
     RicercaSpedizioneComponent,
     DatiMittenteComponent,

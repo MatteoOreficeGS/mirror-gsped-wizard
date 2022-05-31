@@ -1,16 +1,12 @@
 <div class="relative">
   <nav
-    ngClass="{{ theme }}"
-    class="border-gray-200 px-2 md:mx-2 sm:px-4 py-2.5 rounded dark:bg-gray-800 rounded-b-[30px]"
+    class="border-gray-200 px-2 md:mx-2 sm:px-4 py-2.5 rounded dark:bg-gray-800 rounded-b-[30px] 
+    {{ theme }}"
   >
     <div
       class="container flex flex-wrap justify-between items-center mx-auto px-6"
     >
-      <img
-        src="https://it.return.alphatest.boxdrop.com/images/logo/nav-logo-dhl.png"
-        class="mr-3 h-8 sm:h-9"
-        alt="Gsped Logo"
-      />
+      <img src="{{ banner }}" class="mr-3 h-8 sm:h-9" alt="banner" />
       <button
         (click)="setShowMobileMenu()"
         type="button"

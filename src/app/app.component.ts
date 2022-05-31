@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { Router } from "@angular/router";
+import { StatusService } from "./status.service";
 
 @Component({
   selector: "app-root",
@@ -6,6 +8,14 @@ import { Component } from "@angular/core";
   styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
+  constructor(public saveStatus: StatusService, private router: Router) {
+    this.saveStatus.initResponse();
+    console.log(this.saveStatus.response);
+    this.router.navigate([
+      this.saveStatus.response.configuration.modules[0].moduleName,
+    ]);
+  }
+
   themes = {
     navbar: [
       "bg-gradient-to-br from-purple-600 to-blue-500",

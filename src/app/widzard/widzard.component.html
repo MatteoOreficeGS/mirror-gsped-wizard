@@ -3,15 +3,15 @@
     <img
       class="items-center justift-center text-center w-full"
       alt="banner"
-      src="https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png"
+      src="{{ bannerExtra }}"
     />
     <h1
       class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
     >
-      {{ widzard[0].type }}
+      {{ configuration.title }}
     </h1>
     <div
-      class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[72%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
+      class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
     >
       <div
         *ngFor="let modules of configuration.modules; let i = index"
@@ -34,17 +34,17 @@
           [ngClass]="activeStep === i ? 'font-bold' : ''"
           class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
         >
-          {{ modules.moduleLabel }}
+          {{ modules.moduleName }}
         </div>
       </div>
     </div>
     <div
       class="lg:hidden mx-auto font-medium mt-4 text-lg text-center text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
     >
-      {{ configuration.modules[activeStep].moduleLabel }}
+      {{ configuration.modules[activeStep].moduleName }}
     </div>
     <div
-      class="h-full overflow-y-scroll p-8 mx-auto border border-1 rounded-lg"
+      class="h-full min-h-fit overflow-y-scroll p-8 mx-auto border border-1 rounded-lg"
     >
       <router-outlet></router-outlet>
     </div>

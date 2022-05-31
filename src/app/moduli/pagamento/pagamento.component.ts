@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { SaveStatusService } from "src/app/save-status.service";
+import { StatusService } from "src/app/status.service";
 
 @Component({
   selector: "app-pagamento",
@@ -9,7 +9,7 @@ export class PagamentoComponent implements OnInit {
   status = {};
   payload: string = "";
 
-  constructor(public statusService: SaveStatusService) {}
+  constructor(public statusService: StatusService) {}
 
   ngOnInit(): void {}
 

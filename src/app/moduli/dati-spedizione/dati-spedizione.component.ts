@@ -6,6 +6,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
 
 @Component({
@@ -19,6 +20,11 @@ export class DatiSpedizioneComponent implements OnInit {
     public router: Router
   ) {
     this.formShipment = fb.group({
+      altezza: ["", Validators.required],
+      larghezza: ["", Validators.required],
+      lunghezza: ["", Validators.required],
+      peso: ["", Validators.required],
+      volume: ["", Validators.required],
       couriers: [this.status.status.shipment.name, Validators.required],
       Express: [""],
     });
@@ -37,13 +43,17 @@ export class DatiSpedizioneComponent implements OnInit {
   }
   courierSelected = null;
 
-  couriers: Array<any> = this.status.response.configuration.modules.filter(
-    (module: any) => module.moduleName === "shipment"
-  )[0].couriers;
+  /*   services = this.status.response.configuration.modules
+  .filter((module: any) => module.moduleName === "shipment")[0]
+  .couriers[0].services.map((s: { name: any }) => s.name); */
 
-  services = this.status.response.configuration.modules
-    .filter((module: any) => module.moduleName === "shipment")[0]
-    .couriers[0].services.map((s: { name: any }) => s.name);
+  currentModule = this.status.response.configuration.modules.filter(
+    (module: any) => module.moduleName === "shipment"
+  )[0].moduleConfig;
+
+  couriers: Array<any> = this.currentModule.selectCourier.couriers.list;
+  label: string = this.currentModule.packagesDetails.label;
+  fieldsLabel: Array<string> = this.currentModule.packagesDetails.fieldsLabel;
 
   incrementStep() {
     this.status.incrementStep();
@@ -51,10 +61,16 @@ export class DatiSpedizioneComponent implements OnInit {
   }
 
   next() {
+    console.log(this.formShipment.valid);
+
     if (this.formShipment.valid) {
       this.status.setStatus(this.formShipment.value, "shipment");
       this.status.incrementStep();
       this.router.navigate(["payment"]);
+      this.status.changestep(this.step++);
     }
   }
+
+  stepSrc?: Subject<number>;
+  step: number = 2;
 }

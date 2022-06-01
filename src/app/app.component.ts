@@ -12,7 +12,7 @@ export class AppComponent {
     this.saveStatus.initResponse();
     console.log(this.saveStatus.response);
     this.router.navigate([
-      this.saveStatus.response.configuration.modules[0].moduleName,
+      this.saveStatus.response.configuration.modules[2].moduleName,
     ]);
   }
 

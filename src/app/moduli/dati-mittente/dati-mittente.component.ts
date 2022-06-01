@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
 
 @Component({
@@ -16,6 +17,8 @@ export class DatiMittenteComponent implements OnInit {
     private router: Router
   ) {
     this.status = saveService.getStatus();
+
+    this.stepSrc = this.saveService.stepSource;
 
     // form init and validation
     this.formSender = fb.group({
@@ -60,6 +63,10 @@ export class DatiMittenteComponent implements OnInit {
       this.saveService.setStatus(this.formSender.value, "sender");
       this.saveService.incrementStep();
       this.router.navigate(["recipient"]);
+      this.saveService.changestep(this.step++);
     }
   }
+
+  stepSrc?: Subject<number>;
+  step: number = 1;
 }

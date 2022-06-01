@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -87,39 +88,17 @@ export class StatusService {
       },
     };
 
-    /*  this.response = {
+    this.response = {
       configuration: {
-        banner: "url",
-        bannerExtra: "url",
+        banner:
+          "https://it.return.alphatest.boxdrop.com/images/logo/nav-logo-dhl.png",
+        bannerExtra:
+          "https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png",
         footer: "url",
-        mainColor: "fff",
+        mainColor: "bg-[#ff0]",
         i18n: ["IT-it", "EN-en", "ZH-zh"],
         client_id: 123,
         modules: [
-          {
-            moduleName: "customModuleVodafone",
-            moduleConfig: {
-              productList: [
-                {
-                  name: "Router bla bla",
-                  image: "url immagine",
-                  selectable: true,
-                },
-                {
-                  name: "Televisione",
-                  image: "url immagine",
-                  selectable: true,
-                },
-                {
-                  name: "Cellulare",
-                  image: "url immagine",
-                  selectable: true,
-                },
-              ],
-              output: "concat_string",
-              destination: "note_sender",
-            },
-          },
           {
             moduleName: "sender",
             moduleConfig: {
@@ -259,7 +238,10 @@ export class StatusService {
           },
         ],
       },
-    }; */
+    };
+
+    // this.response.configuration.mainColor =
+    //   "bg-[#" + this.response.configuration.mainColor + "]";
   }
 
   activeStep: number = 0;
@@ -304,5 +286,21 @@ export class StatusService {
   }
   change() {
     return this.activeStep;
+  }
+
+  _step: number = 0;
+
+  _stepSource: Subject<number> = new Subject();
+
+  get stepSource(): Subject<number> {
+    return this._stepSource;
+  }
+
+  set stepSource(src: Subject<number>) {
+    this._stepSource = src;
+  }
+
+  changestep(n: number) {
+    this.stepSource.next(n);
   }
 }

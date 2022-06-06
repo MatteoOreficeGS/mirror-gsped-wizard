@@ -7,7 +7,7 @@ import { StatusService } from "../status.service";
   selector: "app-widzard",
   templateUrl: "./widzard.component.html",
 })
-export class WidzardComponent implements OnInit {
+export class WidzardComponent  implements OnInit {
   constructor(private router: Router, public status: StatusService) {
     this.stepSrc = this.status.stepSource;
 
@@ -15,14 +15,19 @@ export class WidzardComponent implements OnInit {
       this.activeStep = value;
       console.log(this.stepSrc, this.activeStep);
     });
+    // console.log(this.configuration);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.status.getConfiguration().subscribe((res) => (this.response = res));
+  }
 
-  @Input() theme: any;
+  response: any = {};
 
-  configuration = this.status.response.configuration;
-  bannerExtra = this.configuration.bannerExtra;
+  /*   configuration = this.status
+    .getConfiguration()
+    .subscribe((res) => console.log(res)); */
+  // bannerExtra = this.response.configuration.bannerExtra;
 
   stepSrc?: Subject<number>;
   public activeStep: number = 0;

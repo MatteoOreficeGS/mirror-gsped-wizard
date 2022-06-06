@@ -11,16 +11,17 @@ import { WidzardComponent } from "./widzard/widzard.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
 import { RicercaSpedizioneComponent } from "./moduli/ricerca-spedizione/ricerca-spedizione.component";
-import { DatiMittenteComponent } from "./moduli/dati-mittente/dati-mittente.component";
-import { DatiDestinatarioComponent } from "./moduli/dati-destinatario/dati-destinatario.component";
+import { SenderComponent } from "./moduli/sender/sender.component";
+import { RecipientComponent } from "./moduli/recipient/recipient.component";
 import { RitiroComponent } from "./moduli/ritiro/ritiro.component";
-import { DatiSpedizioneComponent } from "./moduli/dati-spedizione/dati-spedizione.component";
+import { ShipmentComponent } from "./moduli/shipment/shipment.component";
 import { CustomComponent } from "./moduli/custom/custom.component";
 import { SpedizioneRitornoComponent } from "./moduli/spedizione-ritorno/spedizione-ritorno.component";
 import { RatingSpedizioneComponent } from "./moduli/rating-spedizione/rating-spedizione.component";
 import { PagamentoComponent } from "./moduli/pagamento/pagamento.component";
 import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -30,10 +31,10 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     NavbarComponent,
     FooterComponent,
     RicercaSpedizioneComponent,
-    DatiMittenteComponent,
-    DatiDestinatarioComponent,
+    SenderComponent,
+    RecipientComponent,
     RitiroComponent,
-    DatiSpedizioneComponent,
+    ShipmentComponent,
     CustomComponent,
     SpedizioneRitornoComponent,
     RatingSpedizioneComponent,
@@ -48,6 +49,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     MatSliderModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

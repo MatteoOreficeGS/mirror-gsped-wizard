@@ -1,32 +1,31 @@
 <div class="lg:mx-10">
-  {{ activeStep }}
   <div class="h-full overflow-y-scroll">
     <img
       class="items-center justift-center text-center w-full"
       alt="banner"
-      src="{{ bannerExtra }}"
+      src={{response.configuration?.bannerExtra}}
     />
     <h1
       class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
     >
-      {{ configuration.title }}
+      Reso Facile
     </h1>
     <div
       class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
     >
       <div
-        *ngFor="let modules of configuration.modules; let i = index"
+        *ngFor="let modules of response.configuration?.modules; let i = index"
         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
       >
         <button
           [ngClass]="
             activeStep === i
-              ? theme
+              ? 'bg-yellow-500'
               : activeStep > i
               ? 'bg-yellow-200'
               : 'bg-slate-100 dark:bg-slate-500'
           "
-          class="min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
+          class="pointer-events-none min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
           (click)="setStep(i)"
         >
           {{ i + 1 }}
@@ -42,7 +41,7 @@
     <div
       class="lg:hidden mx-auto font-medium mt-4 text-lg text-center text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
     >
-      {{ configuration.modules[activeStep].moduleName }}
+      {{ response.configuration?.modules[activeStep].moduleName }}
     </div>
     <div
       class="h-full min-h-fit overflow-y-scroll p-8 mx-auto border border-1 rounded-lg"

@@ -14,8 +14,9 @@ export class PagamentoComponent implements OnInit {
   ngOnInit(): void {}
 
   redirectPayment() {
-    this.status = this.statusService.getStatus();
+    this.status = this.statusService.getSession();
     this.payload = btoa(JSON.stringify(this.status));
     console.log(this.payload);
+    console.log(this.status);
   }
 }

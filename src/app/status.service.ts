@@ -1,252 +1,60 @@
-import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable, OnInit } from "@angular/core";
+import { Observable, retry, Subject } from "rxjs";
+import jwt_decode from "jwt-decode";
 
 @Injectable({
   providedIn: "root",
 })
-export class StatusService {
-  response: any = {};
-
-  initResponse() {
-    this.response = {
-      configuration: {
-        title: "Reso Facile",
-        banner:
-          "https://it.return.alphatest.boxdrop.com/images/logo/nav-logo-dhl.png",
-        bannerExtra:
-          "https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png",
-        footer: "url",
-        mainColor: "bg-[#ff0]",
-        i18n: ["IT-it", "EN-en", "ZH-zh"],
-        client_id: 123,
-        modules: [
-          {
-            moduleName: "sender",
-            editable: true,
-            hidden: false,
-            autocomplete: true,
-            data: {},
-          },
-          {
-            moduleName: "recipient",
-            editable: false,
-            hidden: false,
-            autocomplete: false,
-            data: {
-              name: "Rossi Gino",
-              address: "via dei tigli 12",
-              city: "Milano",
-              zipcode: "12345",
-              state: "MI",
-              country: "IT",
-              email: "test@test.it",
-              phone: "123445679",
-            },
-          },
-          {
-            moduleName: "shipment",
-            couriers: [
-              {
-                name: "BRT",
-                gspedCourierCode: 1,
-                logoUrl: "url",
-                services: [
-                  {
-                    gspedServiceCode: 0,
-                    name: "Express",
-                  },
-                ],
-                ancillaryServices: {
-                  insurance: true,
-                  cod: true,
-                },
-              },
-            ],
-            returnLabel: true,
-            rating: true,
-            packagesDetails: {
-              fixedPackagesNumber: 1,
-              enable: true,
-            },
-            pickup: {
-              dropoff: true,
-              showServicePoints: true,
-              pickup: false,
-              pickupSameDayCheck: false,
-            },
-          },
-          {
-            moduleName: "payment",
-            provider: "monetaweb",
-          },
-          {
-            moduleName: "awbPrinting",
-            directDownload: true,
-            summary: true,
-          },
-        ],
-      },
-    };
-
-    this.response = {
-      configuration: {
-        banner:
-          "https://it.return.alphatest.boxdrop.com/images/logo/nav-logo-dhl.png",
-        bannerExtra:
-          "https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png",
-        footer: "url",
-        mainColor: "bg-[#ff0]",
-        i18n: ["IT-it", "EN-en", "ZH-zh"],
-        client_id: 123,
-        modules: [
-          {
-            moduleName: "sender",
-            moduleConfig: {
-              editable: true,
-              hidden: false,
-              autocomplete: true,
-              data: {
-                sender_name: "",
-                sender_contact: "",
-                sender_address: "",
-                sender_city: "",
-                sender_cap: "",
-                sender_state: "",
-                sender_country_code: "",
-                sender_email: "",
-                sender_phone: "",
-              },
-            },
-          },
-          {
-            moduleName: "recipient",
-            moduleConfig: {
-              editable: false,
-              hidden: false,
-              autocomplete: false,
-              data: {
-                rcpt_name: "Rossi Gino",
-                rcpt_contact: "",
-                rcpt_address: "via dei tigli 12",
-                rcpt_city: "Milano",
-                rcpt_cap: "12345",
-                rcpt_state: "MI",
-                rcpt_country_country: "IT",
-                rcpt_email: "test@test.it",
-                rcpt_phone: "123445679",
-              },
-            },
-          },
-          {
-            moduleName: "shipment",
-            moduleConfig: {
-              packagesDetails: {
-                label: "colli",
-                fieldsLabel: [
-                  "altezza",
-                  "larghezza",
-                  "lunghezza",
-                  "peso",
-                  "volume",
-                ],
-                fixedPackagesNumber: 1,
-                enable: true,
-              },
-              insurance: {
-                enable: true,
-                label: "valore",
-              },
-              returnLabel: {
-                enable: true,
-                insurance: {
-                  enable: true,
-                  label: "valore",
-                },
-              },
-              pickup: {
-                dropoff: true,
-                showServicePoints: true,
-                pickup: false,
-                pickupSameDayCheck: false,
-              },
-              selectCourier: {
-                couriers: {
-                  selectionMode: "manual|dynamic|automatic",
-                  list: [
-                    {
-                      name: "DHL",
-                      gspedCourierCode: 104,
-                      logoUrl:
-                        "https://www.dhl.com/content/dam/dhl/global/core/images/logos/dhl-logo.svg",
-                      services: {
-                        list: [
-                          {
-                            gspedServiceCode: 0,
-                            name: "Express",
-                          },
-                        ],
-                        label: "servizio",
-                      },
-                    },
-                  ],
-                  label: "corriere",
-                },
-                returnCouriers: {
-                  enable: true,
-                  selectionMode: "manual",
-                  couriers: {
-                    list: [
-                      {
-                        name: "DHL",
-                        gspedCourierCode: 104,
-                        logoUrl:
-                          "https://www.dhl.com/content/dam/dhl/global/core/images/logos/dhl-logo.svg",
-                        services: {
-                          list: [
-                            {
-                              gspedServiceCode: 0,
-                              name: "Express",
-                            },
-                          ],
-                          label: "servizio",
-                        },
-                      },
-                    ],
-                    label: "corriere",
-                  },
-                },
-              },
-            },
-          },
-          {
-            moduleName: "payment",
-            moduleConfig: {
-              label: "lbl_payment",
-              provider: ["monetaweb"],
-            },
-          },
-          {
-            moduleName: "awbPrinting",
-            moduleConfig: {
-              label: "lbl_printing",
-              directDownload: {
-                enable: true,
-                label: "lbl_download",
-              },
-              summary: true,
-            },
-          },
-        ],
-      },
-    };
-
-    // this.response.configuration.mainColor =
-    //   "bg-[#" + this.response.configuration.mainColor + "]";
+export class StatusService implements OnInit {
+  constructor(public http: HttpClient) {
+    // this.getToken();
   }
+
+  ngOnInit(): void {
+    // this.getConfiguration();
+    console.log(this.session);
+    
+  }
+
+  response: any = {};
 
   activeStep: number = 0;
 
-  status: any = {
+  token =
+  "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NTEwODAwfQ==.jE1BCGi5GCVqLPo2mqCxKNxlXKJrm9kJCA/7DVdcxAQ=";
+decoded: any = jwt_decode(this.token);
+
+getToken(): void {
+  this.http
+    .get("https://api.gsped.it/token?origin=moldavia", {
+      headers: new HttpHeaders({
+        "content-type": "application/json",
+        Refer: "https://www.vodafone.it",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+      }),
+    })
+    .subscribe((res) => {
+      console.log(res);
+    });
+}
+
+getConfiguration(): Observable<any> {
+  return this.http
+    .get(
+      "https://api.gsped.it/" +
+        this.decoded.instance +
+        "/ResourceConfiguration?resource=" +
+        "resi",
+      { headers: { "X-API-KEY": this.token } }
+    )
+/*     .subscribe((res) => {
+      this.response = res;
+    }); */
+}
+
+  session: any = {
     sender: {
       name: "lorenzo",
       city: "udine",
@@ -260,21 +68,20 @@ export class StatusService {
     recipient: {},
     shipment: {},
     step: null,
-    flow: "reso facile",
+    flow: "resoFacile",
+    user_id: this.decoded.user_id,
   };
-
-  constructor() {}
 
   greeting() {
     console.log("hello");
   }
 
-  setStatus(status: any, field: string) {
-    this.status[field] = status;
+  setStatus(values: any, field: string) {
+    this.session[field] = values;
   }
 
-  getStatus(): any {
-    return this.status;
+  getSession(): any {
+    return this.session;
   }
 
   incrementStep() {
@@ -302,5 +109,9 @@ export class StatusService {
 
   changestep(n: number) {
     this.stepSource.next(n);
+  }
+
+  getResponse() {
+    return this.response;
   }
 }

@@ -8,7 +8,6 @@ import jwt_decode from "jwt-decode";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
   constructor(
@@ -22,7 +21,8 @@ export class AppComponent implements OnInit {
   decoded: any = jwt_decode(this.token);
 
   ngOnInit(): void {
-    this.getConfiguration();
+    // this.getToken();
+    // this.getConfiguration();
   }
 
   getToken(): void {
@@ -31,8 +31,6 @@ export class AppComponent implements OnInit {
         headers: new HttpHeaders({
           "content-type": "application/json",
           Refer: "https://www.vodafone.it",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Origin": "*",
         }),
       })
       .subscribe((res) => {
@@ -43,10 +41,10 @@ export class AppComponent implements OnInit {
       });
   }
 
-  getConfiguration() {
+  /* getConfiguration() {
     this.http
       .get(
-        "https://api.gsped.it/" +
+        "/api/" +
           this.decoded.instance +
           "/ResourceConfiguration?resource=" +
           "resi",
@@ -54,5 +52,5 @@ export class AppComponent implements OnInit {
       )
       .subscribe((res) => {
       });
-  }
+  } */
 }

@@ -46,3 +46,4 @@ Thumbs.db
 # Other
 /src/app/old.txt
 session.json
+/src/proxy.conf.json

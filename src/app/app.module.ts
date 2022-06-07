@@ -10,15 +10,12 @@ import { SidebarComponent } from "./sidebar/sidebar.component";
 import { WidzardComponent } from "./widzard/widzard.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
-import { RicercaSpedizioneComponent } from "./moduli/ricerca-spedizione/ricerca-spedizione.component";
 import { SenderComponent } from "./moduli/sender/sender.component";
 import { RecipientComponent } from "./moduli/recipient/recipient.component";
-import { RitiroComponent } from "./moduli/ritiro/ritiro.component";
 import { ShipmentComponent } from "./moduli/shipment/shipment.component";
 import { CustomComponent } from "./moduli/custom/custom.component";
-import { SpedizioneRitornoComponent } from "./moduli/spedizione-ritorno/spedizione-ritorno.component";
 import { RatingSpedizioneComponent } from "./moduli/rating-spedizione/rating-spedizione.component";
-import { PagamentoComponent } from "./moduli/pagamento/pagamento.component";
+import { PaymentComponent } from "./moduli/payment/payment.component";
 import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
@@ -30,15 +27,12 @@ import { HttpClientModule } from "@angular/common/http";
     WidzardComponent,
     NavbarComponent,
     FooterComponent,
-    RicercaSpedizioneComponent,
     SenderComponent,
     RecipientComponent,
-    RitiroComponent,
     ShipmentComponent,
     CustomComponent,
-    SpedizioneRitornoComponent,
     RatingSpedizioneComponent,
-    PagamentoComponent,
+    PaymentComponent,
     StampaAwbComponent,
   ],
   imports: [

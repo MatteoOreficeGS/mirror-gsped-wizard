@@ -2,10 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { StatusService } from "src/app/status.service";
 
 @Component({
-  selector: "app-pagamento",
-  templateUrl: "./pagamento.component.html",
+  selector: "app-payment",
+  templateUrl: "./payment.component.html",
 })
-export class PagamentoComponent implements OnInit {
+export class PaymentComponent implements OnInit {
   status = {};
   payload: string = "";
 

@@ -14,7 +14,8 @@ export class NavbarComponent implements OnInit {
     
     this.status.getConfiguration().subscribe(res => {
       this.response = res; 
-      this.theme = "#" + this.response.configuration.mainColor; 
+      this.theme = "#" + this.response.configuration.mainColor;
+      this.lenguages = this.response.configuration.i18n;
     });
   }
 
@@ -26,6 +27,7 @@ export class NavbarComponent implements OnInit {
   // theme = "bg-[" + this.status.response.configuration.mainColor + "]";
   banner = /* this.status.response.configuration.banner | */ "#fff";
   theme = "";
+  lenguages:Array<string> = [];
   showMobileMenu: boolean = false;
 
   setShowMobileMenu() {

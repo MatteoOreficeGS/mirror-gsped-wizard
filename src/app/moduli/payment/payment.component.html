@@ -1,0 +1,24 @@
+<div class="mx-auto items-center justify-center">
+
+  <select
+  class="shadow-sm sm:text-sm border-gray-300 rounded-md mb-4"
+  (change)="setProvider(selectProvider)"
+  #selectProvider
+  >
+  <option [defaultSelected]="true" disabled>Seleziona...</option>
+  <option *ngFor="let provider of providers">
+    {{ provider }}
+  </option>
+</select>
+
+<div *ngIf="selectedProvider">
+  <button
+  (click)="redirectPayment()"
+  type="button"
+  class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+  >
+  <span>Vai al Pagamento</span>
+  <mat-icon>open_in_new</mat-icon>
+</button>
+</div>
+</div>

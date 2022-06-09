@@ -4,6 +4,7 @@ import {
   FormControl,
   FormGroup,
   Validators,
+  FormArray,
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -20,29 +21,41 @@ export class ShipmentComponent implements OnInit {
     public router: Router
   ) {
     this.formShipment = fb.group({
-      altezza: ["", Validators.required],
-      larghezza: ["", Validators.required],
-      lunghezza: ["", Validators.required],
-      peso: ["", Validators.required],
-      volume: ["", Validators.required],
+      dimensions: this.fb.array([]),
       couriers: ["", Validators.required],
-      DomesticExpress: [""],
+      // courierServices: this.fb.array([{services: ""}]),
     });
     this.stepSrc = this.status.stepSource;
+    this.addPackage();
+  }
+
+  get dimensions(): FormArray {
+    return this.formShipment.get("dimensions") as FormArray;
+  }
+
+  get courierServices(): FormArray {
+    return this.formShipment.get("courierServices") as FormArray;
   }
 
   ngOnInit(): void {
-    this.status.getConfiguration().subscribe(res => {
-      this.response = res
+    this.status.getConfiguration().subscribe((res) => {
+      this.response = res;
       this.currentModule = this.response.configuration?.modules.filter(
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
-    
+
       this.couriers = this.currentModule.selectCourier.couriers.list;
       console.log(this.currentModule);
-      
+
       this.label = this.currentModule.packagesDetails.label;
-      this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
+      // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
+      this.fieldsLabel = [
+        { label: "altezza", placeholder: "cm", step: 1 },
+        { label: "lunghezza", placeholder: "cm", step: 1 },
+        { label: "larghezza", placeholder: "cm", step: 1 },
+        { label: "volume", placeholder: "m³", step: 0.01 },
+        { label: "peso", placeholder: "kg", step: 0.1 },
+      ];
     });
   }
 
@@ -55,22 +68,51 @@ export class ShipmentComponent implements OnInit {
     this.incrementStep();
   }
   selectCourier(courier: any) {
-    console.log(this.courierSelected);
     this.courierSelected = courier.value;
-    this.services = this.currentModule.selectCourier.couriers.list.filter((el: { name: string; }) => el.name === "DHL")[0].services.list
+    console.log(this.courierSelected);
+    this.services = this.currentModule.selectCourier.couriers.list.filter(
+      (el: { name: string }) => el.name === this.courierSelected
+    )[0].services.list;
   }
   courierSelected = null;
-  currentModule:any;
-  couriers?:Array<any>;
-  label:any;
-  fieldsLabel:any;
-  services:any;
+  currentModule: any;
+  couriers?: Array<any>;
+  label: any;
+  fieldsLabel: any;
+  services: any;
 
   /*   services = this.status.response.configuration.modules
   .filter((module: any) => module.moduleName === "shipment")[0]
   .couriers[0].services.map((s: { name: any }) => s.name); */
 
-  
+  setPackageNumber(n: HTMLSelectElement) {
+    this.packageNumber = parseInt(n.value);
+    this.addPackage();
+  }
+
+  newPackage(): FormGroup {
+    return this.fb.group({
+      lunghezza: "",
+      larghezza: "",
+      altezza: "",
+      peso: "",
+      volume: "",
+    });
+  }
+
+  addPackage() {
+    this.dimensions.push(this.newPackage());
+  }
+
+  removePackage(i: number) {
+    this.dimensions.removeAt(i);
+  }
+
+  checkPickUpAviability() {
+    console.log("disponibile?");
+  }
+
+  packageNumber = 1;
 
   incrementStep() {
     this.status.incrementStep();
@@ -78,7 +120,7 @@ export class ShipmentComponent implements OnInit {
   }
 
   next() {
-    console.log(this.formShipment.valid);
+    console.log(this.formShipment.value);
 
     if (this.formShipment.valid) {
       this.status.setStatus(this.formShipment.value, "shipment");

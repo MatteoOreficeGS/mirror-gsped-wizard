@@ -22,7 +22,7 @@ export class StatusService implements OnInit {
   activeStep: number = 0;
 
   token =
-  "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NTEwODAwfQ==.jE1BCGi5GCVqLPo2mqCxKNxlXKJrm9kJCA/7DVdcxAQ=";
+  "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NzAyNTAwfQ==.GqqO3lFxJLMpikuHY3DO3rC4A874yuwRQT0g3x+JgIs=";
 decoded: any = jwt_decode(this.token);
 
 getToken(): void {

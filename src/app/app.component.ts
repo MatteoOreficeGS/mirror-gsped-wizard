@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
+import { from } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     // this.getToken();
+    this.getData();
     // this.getConfiguration();
   }
 
@@ -30,6 +32,10 @@ export class AppComponent implements OnInit {
       .get("https://api.gsped.it/token?origin=moldavia", {
         headers: new HttpHeaders({
           "content-type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods":
+            "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
           Refer: "https://www.vodafone.it",
         }),
       })
@@ -39,6 +45,26 @@ export class AppComponent implements OnInit {
         //   this.saveStatus.response.configuration.modules[2].moduleName,
         // ]);
       });
+  }
+
+  getData(): Observable<any> {
+    return from(
+      fetch(
+        "https://api.gsped.it/token?origin=moldavia", // the url you are trying to access
+        {
+          headers: {
+            "content-type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods":
+            "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+          "Refer": "https://www.vodafone.it",
+          },
+          method: "GET", // GET, POST, PUT, DELETE
+          mode: "no-cors", // the most important option
+        }
+      )
+    );
   }
 
   /* getConfiguration() {

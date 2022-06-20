@@ -33,7 +33,17 @@ export class SenderComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.saveService
+      .getConfiguration()
+      .subscribe((res: { configuration: { modules: any[] } }) => {
+        this.autocomplete = res.configuration.modules.filter(
+          (module) => module.moduleName === "sender"
+        )[0].moduleConfig.autocomplete;
+      });
+  }
+
+  autocomplete: boolean = false;
 
   fields = [
     { value: "name", label: "nome", type: "text", required: true },

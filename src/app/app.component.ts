@@ -18,25 +18,20 @@ export class AppComponent implements OnInit {
   ) {}
 
   token =
-    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NTEwODAwfQ==.jE1BCGi5GCVqLPo2mqCxKNxlXKJrm9kJCA/7DVdcxAQ=";
+    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU1NzExNzYwfQ==.8gCv+vf8SuRPSoGZ5mKP3k2LdcfwGnYInhn2HjUTh7w=";
   decoded: any = jwt_decode(this.token);
 
   ngOnInit(): void {
     // this.getToken();
-    this.getData();
+    // this.getData();
     // this.getConfiguration();
   }
 
   getToken(): void {
     this.http
-      .get("https://api.gsped.it/token?origin=moldavia", {
+      .get("http://localhost/Token?origin=moldavia", {
         headers: new HttpHeaders({
-          "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods":
-            "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
-          Refer: "https://www.vodafone.it",
+          refer: "https://www.vodafone.it",
         }),
       })
       .subscribe((res) => {
@@ -54,11 +49,7 @@ export class AppComponent implements OnInit {
         {
           headers: {
             "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods":
-            "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
-          "Refer": "https://www.vodafone.it",
+            refer: "https://www.vodafone.it",
           },
           method: "GET", // GET, POST, PUT, DELETE
           mode: "no-cors", // the most important option

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { StatusService } from "../status.service";
 
@@ -7,7 +7,7 @@ import { StatusService } from "../status.service";
   selector: "app-widzard",
   templateUrl: "./widzard.component.html",
 })
-export class WidzardComponent  implements OnInit {
+export class WidzardComponent implements OnInit {
   constructor(private router: Router, public status: StatusService) {
     this.stepSrc = this.status.stepSource;
 
@@ -16,10 +16,15 @@ export class WidzardComponent  implements OnInit {
       console.log(this.stepSrc, this.activeStep);
     });
     // console.log(this.configuration);
+    router.events.subscribe(() => {
+      // console.log(this.router.url);
+      this.setStep(1);
+    });
+
   }
 
   ngOnInit(): void {
-    this.status.getConfiguration().subscribe((res) => (this.response = res));
+    this.status.getConfiguration().subscribe((res) => (this.response = res, console.log(res)));
   }
 
   response: any = {};

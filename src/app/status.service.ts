@@ -1,20 +1,20 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
-import { Observable, retry, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
+import { NavigationEnd, Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
 })
 export class StatusService implements OnInit {
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient, public router: Router) {
     // this.getToken();
   }
 
   ngOnInit(): void {
     // this.getConfiguration();
     console.log(this.session);
-    
   }
 
   response: any = {};
@@ -22,37 +22,18 @@ export class StatusService implements OnInit {
   activeStep: number = 0;
 
   token =
-  "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NzAyNTAwfQ==.GqqO3lFxJLMpikuHY3DO3rC4A874yuwRQT0g3x+JgIs=";
-decoded: any = jwt_decode(this.token);
+    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NzAyNTAwfQ==.GqqO3lFxJLMpikuHY3DO3rC4A874yuwRQT0g3x+JgIs=";
+  decoded: any = jwt_decode(this.token);
 
-getToken(): void {
-  this.http
-    .get("https://api.gsped.it/token?origin=moldavia", {
-      headers: new HttpHeaders({
-        "content-type": "application/json",
-        Refer: "https://www.vodafone.it",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Origin": "*",
-      }),
-    })
-    .subscribe((res) => {
-      console.log(res);
-    });
-}
-
-getConfiguration(): Observable<any> {
-  return this.http
-    .get(
+  getConfiguration(): Observable<any> {
+    return this.http.get(
       "https://api.gsped.it/" +
         this.decoded.instance +
         "/ResourceConfiguration?resource=" +
         "resi",
       { headers: { "X-API-KEY": this.token } }
-    )
-/*     .subscribe((res) => {
-      this.response = res;
-    }); */
-}
+    );
+  }
 
   session: any = {
     sender: {
@@ -93,6 +74,30 @@ getConfiguration(): Observable<any> {
   }
   change() {
     return this.activeStep;
+  }
+
+  pickupAvailability(): Observable<any> {
+    const date = new Date()/* .toLocaleString() */;
+    const headers = { "x-api-key": this.token };
+    const body = {
+      sender_addr: "via duomo 10",
+      sender_city: "milano",
+      sender_cap: "26100",
+      sender_prov: "MI",
+      sender_phone: "3343353363",
+      sender_email: "email@prova.com",
+      corriere: "104",
+      client_id: "555",
+      pickup_date: date.getHours() + ":" + (date.getMinutes()+1),
+      sender_name: "pippo",
+    };
+    console.log(body);
+    return this.http.post("https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability", body, { headers: headers });
+  }
+
+  handleShipment(payload:any): Observable<any> {
+    const headers = { "x-api-key": this.token };
+    return this.http.post("https://api.gsped.it/" + this.decoded.instance + "/Shipment", payload, { headers: headers });
   }
 
   _step: number = 0;

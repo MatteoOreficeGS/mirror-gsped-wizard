@@ -23,7 +23,7 @@ export class ShipmentComponent implements OnInit {
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       couriers: ["", Validators.required],
-      courierServices: this.fb.array([]),
+      service: ["", Validators.required],
     });
     this.stepSrc = this.status.stepSource;
   }
@@ -32,16 +32,16 @@ export class ShipmentComponent implements OnInit {
     return this.formShipment.get("dimensions") as FormArray;
   }
 
-  get courierServices(): FormArray {
-    return this.formShipment.get("courierServices") as FormArray;
-  }
-
   ngOnInit(): void {
     this.status.getConfiguration().subscribe((res) => {
       this.response = res;
       this.currentModule = this.response.configuration?.modules.filter(
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
+
+      // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
+
+      // this.currentModule.enable = true;
 
       if (this.currentModule.enable) {
         this.addPackage();
@@ -78,17 +78,16 @@ export class ShipmentComponent implements OnInit {
     this.services = this.currentModule.selectCourier.couriers.list.filter(
       (el: { name: string }) => el.name === this.courierSelected.name
     )[0].services.list;
-
-    this.services.forEach((service: { name: string }) => {
+    this.checkPickUpAviability();
+    /* this.services.forEach((service: { name: string }) => {
       this.addService(service.name);
-    });
+    }); */
     /* this.courierServices.push(
       this.fb.group({ service: ["", Validators.required] })
     ); */
-    console.log(this.courierServices);
   }
 
-  courierSelected = {name: "", gspedCourierCode: 104};
+  courierSelected = { name: "", gspedCourierCode: 104 };
   courierSelectedLogoUrl = null;
   currentModule: any;
   couriers?: Array<any>;
@@ -96,9 +95,11 @@ export class ShipmentComponent implements OnInit {
   fieldsLabel: any;
   services: any;
   pickupAvailability: string = "";
-  costExposure: boolean = false;
+  costExposure: any = false;
   payloadShipment: any = {};
   packageNumber = 1;
+  varie_dettaglio?: any = {};
+  rateComparativeServices?: Array<string>;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -108,14 +109,6 @@ export class ShipmentComponent implements OnInit {
       peso: ["", Validators.required],
       volume: ["", Validators.required],
     });
-  }
-
-  addService(serviceName: string) {
-    this.courierServices.push(
-      this.fb.group({
-        service: serviceName,
-      })
-    );
   }
 
   addPackage() {
@@ -133,19 +126,34 @@ export class ShipmentComponent implements OnInit {
   }
 
   checkPickUpAviability() {
-    this.status.pickupAvailability().subscribe((res) => {
-      this.pickupAvailability = res.result;
-    });
+    this.status.pickupAvailability().subscribe(
+      (res) => {
+        console.log(res);
+        if (res.hasOwnProperty("result")) {
+          this.pickupAvailability =
+            res.result === "OK"
+              ? "disponibile per il ritiro in giornata"
+              : "Non disponibile per il ritiro in giornata";
+        }
+      },
+      (error) => {
+        this.pickupAvailability = error.error.error;
+      }
+    );
     this.setShipmentPayload();
     this.checkPaymentModule();
   }
 
+  handleSetService() {
+    console.log(this.formShipment.value.service);
+  }
+
   setShipmentPayload() {
-    console.log("creo il payload");
+    console.log("creo il payload per la spedizione");
     this.payloadShipment = {
       client_id: this.response.configuration.client_id,
       colli: this.packageNumber,
-      contrassegno: 0, //boooooooo
+      contrassegno: 0, // come imposto questo campo
       corriere: this.courierSelected.gspedCourierCode,
       ddt_alpha: "TEST_GSPED",
       // ddt_num: 12346,
@@ -173,7 +181,7 @@ export class ShipmentComponent implements OnInit {
           lunghezza: 43,
           volume: 0.048633,
           peso: 1.2,
-        }
+        },
       ],
       dettagli_ordine: [
         {
@@ -198,22 +206,37 @@ export class ShipmentComponent implements OnInit {
     };
   }
 
-
   checkPaymentModule() {
     if (
       this.response.configuration.modules.filter(
         (module: { moduleName: string }) => module.moduleName === "payment"
       )[0]
     ) {
-      this.costExposure = true;
+      this.status.handleRateComparative().subscribe((res) => {
+        console.log(res);
+        this.costExposure = res.passivo[this.courierSelected.name];
+        this.rateComparativeServices = Object.keys(this.costExposure);
+        this.rateComparativeServices.forEach((element) => {
+          console.log(element);
+          this.varie_dettaglio[element] = Object.keys(
+            this.costExposure[element].varie_dettaglio
+          );
+        });
+        console.log(this.varie_dettaglio);
+      });
     } else {
       console.log("passo direttamente alla etichetta");
     }
   }
 
   incrementStep() {
-    console.log("Faccio la chiamata all'endpoint con il payload", this.payloadShipment);
-    this.status.handleShipment(this.payloadShipment).subscribe(res => console.log(res));
+    console.log(
+      "Faccio la chiamata all'endpoint con il payload",
+      this.payloadShipment
+    );
+    this.status
+      .handleShipment(this.payloadShipment)
+      .subscribe((res) => console.log(res));
     this.status.incrementStep();
     // this.next();
   }

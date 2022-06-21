@@ -57,17 +57,4 @@ export class AppComponent implements OnInit {
       )
     );
   }
-
-  /* getConfiguration() {
-    this.http
-      .get(
-        "/api/" +
-          this.decoded.instance +
-          "/ResourceConfiguration?resource=" +
-          "resi",
-        { headers: { "X-API-KEY": this.token } }
-      )
-      .subscribe((res) => {
-      });
-  } */
 }

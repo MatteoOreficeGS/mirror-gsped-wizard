@@ -13,21 +13,32 @@ export class WidzardComponent implements OnInit {
 
     this.stepSrc.subscribe((value) => {
       this.activeStep = value;
-      console.log(this.stepSrc, this.activeStep);
     });
     // console.log(this.configuration);
     router.events.subscribe(() => {
-      // console.log(this.router.url);
       this.setStep(1);
+      this.stepName = this.router.url;
     });
-
   }
 
   ngOnInit(): void {
-    this.status.getConfiguration().subscribe((res) => (this.response = res, console.log(res)));
+    // console.log(this.status.getResponse().subscribe((res: any) => console.log(res) ));
+    this.status.getConfiguration().subscribe((res) => {
+      this.response = res;
+      // this.response.configuration.modules =
+      const index = this.response.configuration.modules.findIndex(
+        (object: { moduleName: string }) => {
+          return object.moduleName === this.stepName.slice(1);
+        }
+      );
+      console.log(index + 1);
+      this.setStep(index);
+    });
   }
 
   response: any = {};
+
+  stepName = "";
 
   /*   configuration = this.status
     .getConfiguration()
@@ -48,6 +59,7 @@ export class WidzardComponent implements OnInit {
   */
 
   setStep(i: number) {
-    this.activeStep = this.status.getActiveStep();
+    // this.activeStep = this.status.getActiveStep();
+    this.activeStep = i;
   }
 }

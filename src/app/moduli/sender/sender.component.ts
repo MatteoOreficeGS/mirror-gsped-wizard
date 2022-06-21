@@ -38,7 +38,7 @@ export class SenderComponent implements OnInit {
       .getConfiguration()
       .subscribe((res: { configuration: { modules: any[] } }) => {
         this.autocomplete = res.configuration.modules.filter(
-          (module) => module.moduleName === "sender"
+          (module: { moduleName: string }) => module.moduleName === "sender"
         )[0].moduleConfig.autocomplete;
       });
   }

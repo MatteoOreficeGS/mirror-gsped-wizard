@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { map, Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
 import { NavigationEnd, Router } from "@angular/router";
 
@@ -77,7 +77,7 @@ export class StatusService implements OnInit {
   }
 
   pickupAvailability(): Observable<any> {
-    const date = new Date()/* .toLocaleString() */;
+    const date = new Date(); /* .toLocaleString() */
     const headers = { "x-api-key": this.token };
     const body = {
       sender_addr: "via duomo 10",
@@ -88,16 +88,42 @@ export class StatusService implements OnInit {
       sender_email: "email@prova.com",
       corriere: "104",
       client_id: "555",
-      pickup_date: date.getHours() + ":" + (date.getMinutes()+1),
+      pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
       sender_name: "pippo",
     };
     console.log(body);
-    return this.http.post("https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability", body, { headers: headers });
+    return this.http
+      .post(
+        "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
+        body,
+        { headers: headers }
+      )
+      /* .pipe(
+        map(response => response.json()),
+        catchError((e: any) =>{
+          //do your processing here
+          return throwError(e);
+        }),
+      ); */
   }
 
-  handleShipment(payload:any): Observable<any> {
+  handleShipment(payload: any): Observable<any> {
     const headers = { "x-api-key": this.token };
-    return this.http.post("https://api.gsped.it/" + this.decoded.instance + "/Shipment", payload, { headers: headers });
+    return this.http.post(
+      "https://api.gsped.it/" + this.decoded.instance + "/Shipment",
+      payload,
+      { headers: headers }
+    );
+  }
+
+  handleRateComparative(): Observable<any> {
+    const headers = { "x-api-key": this.token };
+    return this.http.get(
+      "https://api.gsped.it/" +
+        this.decoded.instance +
+        "/RateComparativa?departure_date_time=2022-06-20%2015%3A00%3A00&tipo_listino=passivo&gls_exchange=N&al_piano=0&al_sabato=0&client_id=555&colli=1&daticolli=%5B1,1,1,1,1%5D&peso=1&volume=0.002&sender_addr=via%20duomo%203&sender_city=milano&sender_prov=MI&sender_cap=20100&sender_country_code=it&rcpt_addr=via%20roma%204&rcpt_city=roma&rcpt_prov=RM&rcpt_cap=00121&rcpt_country_code=it&contrassegno=10&valore=10&documenti=0&preavviso_telefonico=N",
+      { headers: headers }
+    );
   }
 
   _step: number = 0;

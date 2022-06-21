@@ -9,7 +9,7 @@ import { StatusService } from "src/app/status.service";
 })
 export class RecipientComponent implements OnInit {
   constructor(public router: Router, public status: StatusService) {
-  this.stepSrc = this.status.stepSource;
+    this.stepSrc = this.status.stepSource;
   }
 
   ngOnInit(): void {
@@ -95,9 +95,8 @@ export class RecipientComponent implements OnInit {
     this.status.setStatus(this.obj, "recipient");
     this.status.changestep(this.step++);
     this.router.navigate(["shipment"]);
-
   }
 
   stepSrc?: Subject<number>;
-  step:number = 2;
+  step: number = 2;
 }

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
@@ -12,9 +12,10 @@ import { from } from "rxjs";
 })
 export class AppComponent implements OnInit {
   constructor(
-    public saveStatus: StatusService,
-    private router: Router,
-    public http: HttpClient
+    public status: StatusService,
+    private route: ActivatedRoute,
+    public http: HttpClient,
+    public router: Router
   ) {}
 
   token =
@@ -22,9 +23,20 @@ export class AppComponent implements OnInit {
   decoded: any = jwt_decode(this.token);
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.lang) {
+        this.status.setTranslations(params.lang, "resi");
+      } else {
+        // this.router.navigate(["/Sender"], {queryParams: {lang: "it_IT"}})
+      }
+    });
+    this.status.setConfiguration();
+
     // this.getToken();
     // this.getData();
     // this.getConfiguration();
+    // this.getTranslations("it_IT", "resi").subscribe(res => {this.status.translations = res});
+    // this.status.setTranslations()
   }
 
   getToken(): void {
@@ -37,7 +49,7 @@ export class AppComponent implements OnInit {
       .subscribe((res) => {
         console.log(res);
         // this.router.navigate([
-        //   this.saveStatus.response.configuration.modules[2].moduleName,
+        //   this.status.response.configuration.modules[2].moduleName,
         // ]);
       });
   }

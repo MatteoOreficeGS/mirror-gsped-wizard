@@ -1,4 +1,6 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "../../status.service";
 
 @Component({
@@ -6,28 +8,35 @@ import { StatusService } from "../../status.service";
   templateUrl: "./navbar.component.html",
 })
 export class NavbarComponent implements OnInit {
-  constructor(public status: StatusService) {
+  constructor(
+    public service: StatusService,
+    private router: Router,
+    private http: HttpClient
+  ) {
     // this.theme = "bg-[" + this.status.response.configuration.mainColor + "]";
   }
 
   ngOnInit(): void {
-    
-    this.status.getConfiguration().subscribe(res => {
-      this.response = res; 
+    this.service.getConfiguration().subscribe((res) => {
+      this.response = res;
       this.theme = "#" + this.response.configuration.mainColor;
       this.lenguages = this.response.configuration.i18n;
+    });
+    this.router.events.subscribe(() => {
+      this.currentUrl = this.router.url.slice(1).split("?")[0];
     });
   }
 
   response: any = {};
 
   // @Input() theme = "";
-  // theme = "bg-[" + this.status.response.configuration.mainColor + "]";
+  // theme = "bg-[" + this.service.response.configuration.mainColor + "]";
   // theme = "bg-[#22aaa2]";
-  // theme = "bg-[" + this.status.response.configuration.mainColor + "]";
-  banner = /* this.status.response.configuration.banner | */ "#fff";
+  // theme = "bg-[" + this.service.response.configuration.mainColor + "]";
+  banner = /* this.service.response.configuration.banner | */ "#abc";
+  currentUrl = "";
   theme = "";
-  lenguages:Array<string> = [];
+  lenguages: Array<string> = [];
   showMobileMenu: boolean = false;
 
   setShowMobileMenu() {
@@ -36,5 +45,12 @@ export class NavbarComponent implements OnInit {
 
   changeTheme() {
     document.body.classList.toggle("dark");
+  }
+
+  handleSetTranslations(lang: string) {
+    // this.router.navigate(["/sender"], { queryParams: { lang: lang } });
+      this.currentUrl = this.router.url.slice(1).split("?")[0];
+      window.location.href = "/" + this.currentUrl + "?lang=" + lang;
+      this.service.setTranslations(lang, "resi");
   }
 }

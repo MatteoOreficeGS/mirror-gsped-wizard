@@ -17,7 +17,7 @@ export class WidzardComponent implements OnInit {
     // console.log(this.configuration);
     router.events.subscribe(() => {
       this.setStep(1);
-      this.stepName = this.router.url;
+      this.stepName = this.router.url.slice(1).split("?")[0];
     });
   }
 
@@ -28,7 +28,7 @@ export class WidzardComponent implements OnInit {
       // this.response.configuration.modules =
       const index = this.response.configuration.modules.findIndex(
         (object: { moduleName: string }) => {
-          return object.moduleName === this.stepName.slice(1);
+          return object.moduleName === this.stepName;
         }
       );
       console.log(index + 1);

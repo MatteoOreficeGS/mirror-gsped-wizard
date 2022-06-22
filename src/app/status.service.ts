@@ -2,20 +2,25 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
 import { map, Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
-import { NavigationEnd, Router } from "@angular/router";
+import { NavigationEnd, ActivatedRoute } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
 })
 export class StatusService implements OnInit {
-  constructor(public http: HttpClient, public router: Router) {
+  constructor(public http: HttpClient, private route: ActivatedRoute) {
     // this.getToken();
   }
 
   ngOnInit(): void {
     // this.getConfiguration();
     console.log(this.session);
+    this.route.queryParams.subscribe((params) => {
+      console.log(params); // { orderby: "price" }
+    });
   }
+
+  foo = 1;
 
   response: any = {};
 
@@ -37,14 +42,15 @@ export class StatusService implements OnInit {
 
   session: any = {
     sender: {
-      name: "lorenzo",
-      city: "udine",
-      zipcode: "33100",
-      state: "ud",
-      country: "italia",
-      email: "lorenzo@gmailcom",
-      phone: "321321321",
-      address: "via adroiano 12",
+      sender_name: "lorenzo",
+      sender_city: "udine",
+      sender_contact: "contatto",
+      sender_cap: "33100",
+      sender_state: "ud",
+      sender_country_code: "IT",
+      sender_email: "lorenzo@gmailcom",
+      sender_phone: "321321321",
+      sender_address: "via adroiano 12",
     },
     recipient: {},
     shipment: {},
@@ -92,13 +98,12 @@ export class StatusService implements OnInit {
       sender_name: "pippo",
     };
     console.log(body);
-    return this.http
-      .post(
-        "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
-        body,
-        { headers: headers }
-      )
-      /* .pipe(
+    return this.http.post(
+      "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
+      body,
+      { headers: headers }
+    );
+    /* .pipe(
         map(response => response.json()),
         catchError((e: any) =>{
           //do your processing here
@@ -145,4 +150,57 @@ export class StatusService implements OnInit {
   getResponse() {
     return this.response;
   }
+
+  getTranslations() {
+    return this.translations;
+  }
+
+  translations: any = {};
+
+  setTranslations(lang: string, resource: string) {
+    const headers = { "x-api-key": this.token };
+    this.http
+      .get(
+        "https://api.gsped.it/" +
+          this.decoded.instance +
+          "/Translations?" +
+          "lang=" +
+          lang +
+          "&resource=" +
+          resource,
+        { headers: headers }
+      )
+      .pipe((res) => (this.translations = res))
+      .subscribe();
+  }
+
+  setConfiguration() {
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          this.decoded.instance +
+          "/ResourceConfiguration?resource=" +
+          "resi",
+        { headers: { "X-API-KEY": this.token } }
+      )
+      .pipe((res) => (this.response = res));
+  }
+
+  /* getLenguageSolved() {
+    const headers = { "x-api-key": this.token };
+    let x;
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          this.decoded.instance +
+          "/Translations?" +
+          "lang=" +
+          "en_EN" +
+          "&resource=" +
+          "resi",
+        { headers: headers }
+      )
+      .pipe(map((result: any) => result))
+      .pipe(res => this.translations = res);
+  } */
 }

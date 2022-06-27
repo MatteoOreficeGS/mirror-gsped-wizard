@@ -88,8 +88,11 @@
         </div>
       </div>
     </fieldset>
-
-    <div class="md:flex md:flex-row md:col-span-full space-x-2 py-4">
+    
+    <div
+      class="md:flex md:flex-row md:col-span-full space-x-2 py-4"
+      *ngIf="currentModule?.selectCourier.couriers.selectionMode === 'FIXED'"
+    >
       <select
         (change)="selectCourier(courier)"
         #courier
@@ -110,8 +113,19 @@
         src="{{ courierSelectedLogoUrl }}"
       />
     </div>
-    <div *ngIf="courierSelected.name !== ''">
-      <p>{{pickupAvailability}}</p>
+    {{ isLoading }}
+    <div *ngIf="true">
+      <!--   <div *ngIf="isLoading; else loading">
+        <p>Condition is true ...</p>
+      </div>
+      <ng-template #loading>
+        <p>Condition is false ...</p>
+      </ng-template>
+      <div *ngIf="isLoading === true; then thenBlock; else elseBlock"></div>
+      <ng-template #thenBlock> caricamento... </ng-template>
+      <ng-template #elseBlock>
+        <p>{{ pickupAvailability }} aa</p>
+      </ng-template> -->
       <!-- <fieldset class="mt-4">
         <legend class="text-lg font-medium text-gray-900">Servizi</legend>
         <div class="my-2 divide-y divide-gray-200">
@@ -207,7 +221,7 @@
                   class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-bl-lg text-green-400 hover:text-green-500"
                 >
                   <span class="ml-3">Conferma</span>
-              </button>
+                </button>
               </div>
             </div>
           </div>

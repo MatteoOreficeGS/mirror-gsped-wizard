@@ -33,11 +33,13 @@ export class ShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.status.getConfiguration().subscribe((res) => {
+    this.status.response.subscribe((res: any) => {
       this.response = res;
       this.currentModule = this.response.configuration?.modules.filter(
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
+
+      this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
 
       // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
@@ -47,6 +49,22 @@ export class ShipmentComponent implements OnInit {
         this.addPackage();
       }
 
+      switch (this.currentModule.selectCourier.couriers.selectionMode) {
+        case "AUTOMATIC":
+        case "automatic":
+          console.log("seleziono da solo");
+          this.showCourierLowestPrice();
+          break;
+        case "DYNAMIC":
+        case "dynamic":
+          console.log("mostro direttamente i prezzi");
+          break;
+        case "FIXED":
+        case "fixed":
+          console.log("seleziona l'utente");
+          this.showCouriersPices();
+          break;
+      }
       this.couriers = this.currentModule.selectCourier.couriers.list;
       this.label = this.currentModule.packagesDetails.label;
       // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
@@ -78,6 +96,8 @@ export class ShipmentComponent implements OnInit {
     this.services = this.currentModule.selectCourier.couriers.list.filter(
       (el: { name: string }) => el.name === this.courierSelected.name
     )[0].services.list;
+    this.isLoading = true;
+
     this.checkPickUpAviability();
     /* this.services.forEach((service: { name: string }) => {
       this.addService(service.name);
@@ -95,11 +115,12 @@ export class ShipmentComponent implements OnInit {
   fieldsLabel: any;
   services: any;
   pickupAvailability: string = "";
-  costExposure: any = false;
+  costExposure: any;
   payloadShipment: any = {};
   packageNumber = 1;
   varie_dettaglio?: any = {};
   rateComparativeServices?: Array<string>;
+  isLoading!:boolean;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -140,6 +161,7 @@ export class ShipmentComponent implements OnInit {
         this.pickupAvailability = error.error.error;
       }
     );
+    this.isLoading = false;
     this.setShipmentPayload();
     this.checkPaymentModule();
   }
@@ -228,6 +250,44 @@ export class ShipmentComponent implements OnInit {
       console.log("passo direttamente alla etichetta");
     }
   }
+
+  showCourierLowestPrice() {
+    let totale = 9999;
+    let selectedService = 0;
+    this.services = [{}];
+    this.status.handleRateComparative().subscribe((res) => {
+      Object.keys(res.passivo).forEach((courier) => {
+        Object.keys(res.passivo[courier]).forEach((service) => {
+          if (totale > res.passivo[courier][service].totale) {
+            totale = res.passivo[courier][service].totale;
+            selectedService = res.passivo[courier][service];
+            this.services[0].name = service;
+            this.services[0].code = res.passivo[courier][service].codice_servizio;
+          }
+        });
+      });
+
+      this.costExposure = {};
+      
+      
+      this.costExposure[this.services[0].name] = selectedService;
+      console.log(this.costExposure);
+      
+      this.rateComparativeServices = Object.keys(this.costExposure);
+      this.rateComparativeServices.forEach((element) => {
+        console.log(element);
+        this.varie_dettaglio[element] = Object.keys(
+          this.costExposure[element].varie_dettaglio
+        );
+      });
+      /* this.varie_dettaglio[this.services[0]] = Object.keys(
+        this.costExposure[this.services[0]].varie_dettaglio
+      ); */
+
+      console.log(this.varie_dettaglio);
+    });
+  }
+  showCouriersPices() {}
 
   incrementStep() {
     console.log(

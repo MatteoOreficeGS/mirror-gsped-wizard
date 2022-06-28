@@ -27,7 +27,7 @@ export class StatusService implements OnInit {
   activeStep: number = 0;
 
   token =
-    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoyMiwiaW5zdGFuY2UiOiJ0ZXN0YmVkIiwiZXhwIjoxNjU0NzAyNTAwfQ==.GqqO3lFxJLMpikuHY3DO3rC4A874yuwRQT0g3x+JgIs=";
+    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoiMjIiLCJpbnN0YW5jZSI6InRlc3RiZWQiLCJleHAiOjE2NTY0Mjc2MjB9.GOkYTTQ7vsgPp9F9RF4VJEj2IA6dZ7OOVRDuBwy/PmE=";
   decoded: any = jwt_decode(this.token);
 
   getConfiguration(): Observable<any> {
@@ -94,7 +94,7 @@ export class StatusService implements OnInit {
       sender_email: "email@prova.com",
       corriere: "104",
       client_id: "555",
-      pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
+      pickup_date: date.getHours() + ":" + date.getMinutes() + ":" + (date.getSeconds() + 1),
       sender_name: "pippo",
     };
     console.log(body);

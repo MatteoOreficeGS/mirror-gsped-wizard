@@ -87,8 +87,11 @@
           </div>
         </div>
       </div>
+      <button type="button" (click)="confirmInsurance()">
+        conferma scelte
+      </button>
     </fieldset>
-    
+
     <div
       class="md:flex md:flex-row md:col-span-full space-x-2 py-4"
       *ngIf="currentModule?.selectCourier.couriers.selectionMode === 'FIXED'"
@@ -113,20 +116,10 @@
         src="{{ courierSelectedLogoUrl }}"
       />
     </div>
-    {{ isLoading }}
-    <div *ngIf="true">
-      <!--   <div *ngIf="isLoading; else loading">
-        <p>Condition is true ...</p>
-      </div>
-      <ng-template #loading>
-        <p>Condition is false ...</p>
-      </ng-template>
-      <div *ngIf="isLoading === true; then thenBlock; else elseBlock"></div>
-      <ng-template #thenBlock> caricamento... </ng-template>
-      <ng-template #elseBlock>
-        <p>{{ pickupAvailability }} aa</p>
-      </ng-template> -->
-      <!-- <fieldset class="mt-4">
+    <!-- {{ isLoading }} -->
+    <div *ngIf="showCourierSelection">
+      <!-- <p>{{ pickupAvailability }}</p>
+      <fieldset class="mt-4">
         <legend class="text-lg font-medium text-gray-900">Servizi</legend>
         <div class="my-2 divide-y divide-gray-200">
           <div
@@ -152,7 +145,9 @@
           </div>
         </div>
       </fieldset> -->
-
+    </div>
+    <div>
+      <!-- {{ costExposure | json }} -->
       <div *ngIf="costExposure" class="py-4">
         <div
           class="bg-white rounded-lg shadow divide-y divide-gray-200"
@@ -217,7 +212,7 @@
             <div class="-mt-px flex divide-x divide-gray-200">
               <div class="w-0 flex-1 flex">
                 <button
-                  (click)="incrementStep()"
+                  (click)="setCourierService(service.name)"
                   class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-bl-lg text-green-400 hover:text-green-500"
                 >
                   <span class="ml-3">Conferma</span>
@@ -241,84 +236,24 @@
       >
         Verifica disponibilità
       </button>
-      <span *ngIf="pickupAvailability === 'OK'" class="text-green-400"
-        >disponibile per il ritiro in giornata
-      </span>
-      <span *ngIf="pickupAvailability === 'KO'" class="text-red-400">
-        non disponibile per il ritiro in giornata
-      </span>
-    </div> -->
-
-    <!-- <div *ngIf="costExposure" class="py-4">
-      <div class="bg-white rounded-lg shadow divide-y divide-gray-200">
-        <div class="w-full items-center justify-between p-6 space-y-4">
-          <div class="grid grid-cols-2">
-            <div>
-              <div class="flex items-center space-x-3">
-                <h3 class="text-gray-900 text-sm font-medium truncate">Nolo</h3>
-                <span
-                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
-                >
-                  {{ costExposure.nolo }}
-                </span>
-              </div>
-              <div class="flex items-center space-x-3">
-                <h3 class="text-gray-900 text-sm font-medium truncate">
-                  Varie
-                </h3>
-                <span
-                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
-                >
-                  {{ costExposure.varie }}
-                </span>
-              </div>
-              <div class="flex items-center space-x-3">
-                <h3 class="text-gray-900 text-sm font-medium truncate">
-                  Totale
-                </h3>
-                <span
-                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
-                >
-                  {{ costExposure.totale }}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div
-                class="flex items-center space-x-3"
-                *ngFor="let x of varie_dettaglio"
-              >
-                <h3 class="text-gray-900 text-sm font-medium truncate">
-                  {{ x }}
-                </h3>
-                <span
-                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
-                >
-                  {{ costExposure.varie_dettaglio[x] }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="-mt-px flex divide-x divide-gray-200">
-            <div class="w-0 flex-1 flex">
-              <a
-                class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-bl-lg text-green-400 hover:text-green-500"
-              >
-                <span class="ml-3">Conferma</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
+    -->
+    <span *ngIf="pickupAvailability === 'OK'" class="text-green-400"
+      >disponibile per il ritiro in giornata
+      <input type="radio" name="ritiro" value="oggi alle 15:00" /> ritiro oggi
+      alle 15:00
+      <input type="radio" name="ritiro" value="domani alle 10:00" />
+      ritiro domani alle 10:00
+    </span>
+    <span *ngIf="pickupAvailability === 'KO'" class="text-red-400">
+      non disponibile per il ritiro in giornata
+      <input type="radio" checked name="ritiro" value="domani alle 10:00" />
+      ritiro domani alle 10:00
+    </span>
   </div>
 
-  <!--   <button
-    
+  <button
     class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer bg-yellow-400 text-white"
   >
     Continua
-  </button> -->
+  </button>
 </form>

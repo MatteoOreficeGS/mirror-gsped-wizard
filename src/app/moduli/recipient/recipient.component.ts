@@ -110,6 +110,8 @@ export class RecipientComponent implements OnInit {
   obj: any = {};
 
   next() {
+    console.log(this.fields);
+    
     this.fields.forEach((element) => {
       this.obj[element.label] = element.value;
     });

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
-import { map, Observable, Subject } from "rxjs";
+import { from, map, Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
 import { NavigationEnd, ActivatedRoute } from "@angular/router";
 
@@ -52,7 +52,17 @@ export class StatusService implements OnInit {
       sender_phone: "321321321",
       sender_address: "via adroiano 12",
     },
-    recipient: {},
+    recipient: {
+      rcpt_name: "Consolato Generale Moldova",
+      rcpt_contact: "Consolato Generale Moldova",
+      rcpt_address: "Via Vincenzo Gioberti, 8",
+      rcpt_city: "Milan",
+      rcpt_cap: "20123",
+      rcpt_state: "MI",
+      rcpt_country_country: "IT",
+      rcpt_email: "pippo@pippo.it",
+      rcpt_phone: "0236745703",
+    },
     shipment: {},
     step: null,
     flow: "resoFacile",
@@ -94,7 +104,12 @@ export class StatusService implements OnInit {
       sender_email: "email@prova.com",
       corriere: "104",
       client_id: "555",
-      pickup_date: date.getHours() + ":" + date.getMinutes() + ":" + (date.getSeconds() + 1),
+      pickup_date:
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        (date.getSeconds() + 1),
       sender_name: "pippo",
     };
     console.log(body);
@@ -184,6 +199,29 @@ export class StatusService implements OnInit {
         { headers: { "X-API-KEY": this.token } }
       )
       .pipe((res) => (this.response = res));
+  }
+
+  /* getGooglePlace(address: string) {
+    console.log(address);
+    return this.http.get(
+      "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+        address +
+        "&key=AIzaSyAN6DWc19h79hOsa8c6rFwQlGmH7u6cy_4",
+    );
+  } */
+
+  getGooglePlace(address: string): Observable<any> {
+    return from(
+      fetch(
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+          address +
+          "&key=AIzaSyAN6DWc19h79hOsa8c6rFwQlGmH7u6cy_4",
+        {
+          method: "GET",
+          mode: "no-cors",
+        }
+      )
+    );
   }
 
   /* getLenguageSolved() {

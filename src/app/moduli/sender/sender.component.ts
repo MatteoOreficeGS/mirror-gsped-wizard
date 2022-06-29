@@ -385,6 +385,14 @@ export class SenderComponent implements OnInit {
     }); */
   }
 
+  googlePlace(address: HTMLInputElement) {
+    console.log(
+      this.service
+      .getGooglePlace(address.value)
+      // .subscribe((res) => console.log(res));
+    )// console.log(address.value);
+  }
+
   labels: any = {};
 
   autocomplete: boolean = false;
@@ -393,6 +401,18 @@ export class SenderComponent implements OnInit {
   fields: Array<any> = [];
 
   formSender: FormGroup;
+
+  //Local Variable defined
+  formattedaddress = " ";
+  options: any = {
+    types: ["address"],
+    componentRestrictions: { country: ["it"] },
+  };
+
+  public AddressChange(address: any) {
+    //setting address from API to local variable
+    this.formattedaddress = address.formatted_address;
+  }
 
   nextStep() {
     if (this.formSender.valid) {

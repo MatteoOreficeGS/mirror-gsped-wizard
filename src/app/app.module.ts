@@ -17,7 +17,8 @@ import { PaymentComponent } from "./moduli/payment/payment.component";
 import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import { ProveComponent } from './prove/prove.component';
+import { ProveComponent } from "./prove/prove.component";
+import { GooglePlaceModule } from "ngx-google-places-autocomplete";
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { ProveComponent } from './prove/prove.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    GooglePlaceModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

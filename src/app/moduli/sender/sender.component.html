@@ -29,6 +29,16 @@
     >
       Continua
     </button>
-    
   </div>
 </form>
+
+<div class="container">
+  <input
+    ngx-google-places-autocomplete
+    [options]="options"
+    (onAddressChange)="AddressChange($event)"
+  />
+  {{ formattedaddress }}
+
+  <input type="text" (input)="googlePlace(address)" #address />
+</div>

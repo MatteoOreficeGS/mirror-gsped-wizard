@@ -22,8 +22,8 @@ export class ShipmentComponent implements OnInit {
   ) {
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      couriers: ["", Validators.required],
-      service: ["", Validators.required],
+      outwardInsurance: "",
+      returnInsurance: "",
     });
     this.stepSrc = this.status.stepSource;
   }
@@ -39,15 +39,17 @@ export class ShipmentComponent implements OnInit {
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
 
-      this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
-      // this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
+      // this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
+      this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
       // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
+
+      this.currentModule.packagesDetails.fixedpackagesNumber = 2;
 
       // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
       // this.currentModule.enable = true;
 
-      if (this.currentModule.enable) {
+      if (this.currentModule.packagesDetails.fixedpackagesNumber > 1) {
         this.addPackage();
       }
 
@@ -84,6 +86,7 @@ export class ShipmentComponent implements OnInit {
     )[0].services.list;
     this.isLoading = true;
 
+    this.checkPaymentModule();
     this.checkPickUpAviability();
     /* this.services.forEach((service: { name: string }) => {
       this.addService(service.name);
@@ -107,6 +110,7 @@ export class ShipmentComponent implements OnInit {
   varie_dettaglio?: any = {};
   rateComparativeServices?: Array<string>;
   isLoading!: boolean;
+  showInput: boolean = true;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -133,26 +137,27 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
-    switch (this.currentModule.selectCourier.couriers.selectionMode) {
-      case "AUTOMATIC":
-      case "automatic":
-        console.log("seleziono da solo");
-        this.showCourierLowestPrice();
-        this.checkPickUpAviability();
-        break;
-      case "DYNAMIC":
-      case "dynamic":
-        console.log("mostro direttamente i prezzi");
-        this.showCouriersPices();
-        this.checkPickUpAviability();
-        break;
-      case "FIXED":
-      case "fixed":
-        console.log("seleziona l'utente");
-        this.showCourierSelection = true;
-        this.setShipmentPayload();
-        this.checkPaymentModule();
-        break;
+    if (this.formShipment.valid) {
+      this.showInput = false;
+      switch (this.currentModule.selectCourier.couriers.selectionMode) {
+        case "AUTOMATIC":
+        case "automatic":
+          console.log("seleziono da solo");
+          this.showCourierLowestPrice();
+          this.checkPickUpAviability();
+          break;
+        case "DYNAMIC":
+        case "dynamic":
+          console.log("mostro direttamente i prezzi");
+          this.showCouriersPices();
+          this.checkPickUpAviability();
+          break;
+        case "FIXED":
+        case "fixed":
+          console.log("seleziona l'utente");
+          this.showCourierSelection = true;
+          break;
+      }
     }
   }
 
@@ -170,6 +175,7 @@ export class ShipmentComponent implements OnInit {
       }
     );
     this.isLoading = false;
+    this.setShipmentPayload();
   }
 
   handleSetService() {
@@ -177,60 +183,29 @@ export class ShipmentComponent implements OnInit {
   }
 
   setShipmentPayload() {
+    console.log(this.status.session);
     console.log("creo il payload per la spedizione");
     this.payloadShipment = {
       client_id: this.response.configuration.client_id,
-      colli: this.packageNumber,
+      colli: this.formShipment.value.dimensions.lenght,
       contrassegno: 0, // come imposto questo campo
       corriere: this.courierSelected.gspedCourierCode,
       ddt_alpha: "TEST_GSPED",
       // ddt_num: 12346,
       origine: "IT",
-      dropshipping: 0,
       peso: 2.4,
-      rcpt_addr: "115 E Endfield Rd",
-      rcpt_cap: "19053",
-      rcpt_city: "Feasterville Trevose",
-      rcpt_contact: "Tester",
-      rcpt_country_code: "US",
-      rcpt_email: "test@test.it",
-      rcpt_name: "TEST DESTINATARIO",
-      rcpt_phone: "2159005458",
-      rcpt_prov: "PA",
+      rcpt_addr: this.status.session.recipient.rcpt_addr,
+      rcpt_cap: this.status.session.recipient.rcpt_cap,
+      rcpt_city: this.status.session.recipient.rcpt_city,
+      rcpt_contact: this.status.session.recipient.rcpt_contact,
+      rcpt_country_code: this.status.session.recipient.rcpt_country_code,
+      rcpt_email: this.status.session.recipient.rcpt_email,
+      rcpt_name: this.status.session.recipient.rcpt_name,
+      rcpt_phone: this.status.session.recipient.rcpt_phone,
+      rcpt_prov: this.status.session.recipient.rcpt_prov,
       servizio: 9,
-      valore: 0,
-      valore_doganale: 37.5,
-      valuta: "EUR",
       volume: 0.0972,
-      daticolli: [
-        {
-          altezza: 39,
-          larghezza: 29,
-          lunghezza: 43,
-          volume: 0.048633,
-          peso: 1.2,
-        },
-      ],
-      dettagli_ordine: [
-        {
-          sku: "PBK1",
-          description: "Cosa blu",
-          qty: "1",
-          barcode_riga: "12345464",
-          hs_code: "123456454",
-          prezzo_singolo: "12.50",
-          peso_riga: "1",
-        },
-        {
-          sku: "PBK12",
-          description: "Cosa blu e rossa",
-          qty: "1",
-          barcode_riga: "12345465",
-          hs_code: "123456454",
-          prezzo_singolo: "25.00",
-          peso_riga: "1",
-        },
-      ],
+      daticolli: this.formShipment.value.dimensions,
     };
   }
 
@@ -318,8 +293,14 @@ export class ShipmentComponent implements OnInit {
   }
 
   setCourierService(service: string) {
+    console.log(this.formShipment.value);
+    
     console.log(service);
-    this.checkPickUpAviability();
+    console.log("Chiamo endpoint shipment");
+    console.log(this.payloadShipment);
+    alert(JSON.stringify(this.payloadShipment, null, 4));
+    console.log(this.status.session);
+    // this.checkPickUpAviability();
   }
 
   incrementStep() {

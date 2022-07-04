@@ -17,6 +17,16 @@ export class RecipientComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!sessionStorage.getItem("sender")) {
+      this.route.queryParams.subscribe((params: any) => {
+        if (params.lang) {
+          this.router.navigate(["sender"], {
+            queryParams: { lang: params.lang },
+          });
+        }
+      });
+    }
+
     //set current module
     this.service.response.subscribe((res: any) => {
       this.currentModule = res.configuration.modules.filter(
@@ -110,11 +120,12 @@ export class RecipientComponent implements OnInit {
   obj: any = {};
 
   next() {
-    console.log(this.fields);
-    
+    console.log("fields", this.fields);
     this.fields.forEach((element) => {
       this.obj[element.label] = element.value;
     });
+    this.obj = this.currentModule.data;
+    sessionStorage.setItem("recipient", JSON.stringify(this.obj));
     this.service.setStatus(this.obj, "recipient");
     this.service.changestep(this.step++);
     this.route.queryParams.subscribe((params: any) => {

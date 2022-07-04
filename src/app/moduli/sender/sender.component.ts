@@ -386,11 +386,10 @@ export class SenderComponent implements OnInit {
   }
 
   googlePlace(address: HTMLInputElement) {
-    console.log(
-      this.service
+    this.service
       .getGooglePlace(address.value)
-      // .subscribe((res) => console.log(res));
-    )// console.log(address.value);
+      .subscribe((res) => console.log(res));
+    // console.log(address.value);
   }
 
   labels: any = {};
@@ -416,6 +415,7 @@ export class SenderComponent implements OnInit {
 
   nextStep() {
     if (this.formSender.valid) {
+      sessionStorage.setItem("sender", JSON.stringify(this.formSender.value));
       this.service.setStatus(this.formSender.value, "sender");
       this.service.incrementStep();
       this.route.queryParams.subscribe((params: any) => {

@@ -6,7 +6,7 @@ import {
   Validators,
   FormArray,
 } from "@angular/forms";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
 
@@ -18,7 +18,8 @@ export class ShipmentComponent implements OnInit {
   constructor(
     public fb: FormBuilder,
     public status: StatusService,
-    public router: Router
+    public router: Router,
+    public route: ActivatedRoute
   ) {
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
@@ -33,6 +34,18 @@ export class ShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (
+      !(sessionStorage.getItem("sender") && sessionStorage.getItem("recipient"))
+    ) {
+      this.route.queryParams.subscribe((params: any) => {
+        if (params.lang) {
+          this.router.navigate(["sender"], {
+            queryParams: { lang: params.lang },
+          });
+        }
+      });
+    }
+
     this.status.response.subscribe((res: any) => {
       this.response = res;
       this.currentModule = this.response.configuration?.modules.filter(
@@ -43,7 +56,7 @@ export class ShipmentComponent implements OnInit {
       this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
       // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
 
-      this.currentModule.packagesDetails.fixedpackagesNumber = 2;
+      // this.currentModule.packagesDetails.fixedpackagesNumber = 2;
 
       // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
@@ -63,6 +76,19 @@ export class ShipmentComponent implements OnInit {
         { label: "volume", placeholder: "m³", step: 0.01 },
         { label: "peso", placeholder: "kg", step: 0.1 },
       ];
+
+      this.bodyRateComparativa = {
+        tipo_listino: "passivo",
+        client_id: 555,
+        colli: 1,
+        daticolli: [1, 1, 1, 1, 1],
+        peso: 1,
+        volume: 0.002,
+        rcpt_addr: "via zio 10",
+        sender_addr: "via zio 11",
+        ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
+        ...JSON.parse(sessionStorage.getItem("recipient") || "{}"),
+      };
     });
   }
 
@@ -109,8 +135,9 @@ export class ShipmentComponent implements OnInit {
   packageNumber = 1;
   varie_dettaglio?: any = {};
   rateComparativeServices?: Array<string>;
-  isLoading!: boolean;
+  isLoading?: boolean;
   showInput: boolean = true;
+  bodyRateComparativa: any;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -134,6 +161,11 @@ export class ShipmentComponent implements OnInit {
       this.packageNumber--;
       this.dimensions.removeAt(-1);
     }
+  }
+
+  showLocalStorage() {
+    console.log(JSON.parse(sessionStorage.getItem("sender") || "{}"));
+    console.log(JSON.parse(sessionStorage.getItem("recipient") || "{}"));
   }
 
   confirmInsurance() {
@@ -186,27 +218,46 @@ export class ShipmentComponent implements OnInit {
     console.log(this.status.session);
     console.log("creo il payload per la spedizione");
     this.payloadShipment = {
-      client_id: this.response.configuration.client_id,
-      colli: this.formShipment.value.dimensions.lenght,
-      contrassegno: 0, // come imposto questo campo
       corriere: this.courierSelected.gspedCourierCode,
-      ddt_alpha: "TEST_GSPED",
-      // ddt_num: 12346,
-      origine: "IT",
-      peso: 2.4,
-      rcpt_addr: this.status.session.recipient.rcpt_addr,
-      rcpt_cap: this.status.session.recipient.rcpt_cap,
-      rcpt_city: this.status.session.recipient.rcpt_city,
-      rcpt_contact: this.status.session.recipient.rcpt_contact,
-      rcpt_country_code: this.status.session.recipient.rcpt_country_code,
-      rcpt_email: this.status.session.recipient.rcpt_email,
-      rcpt_name: this.status.session.recipient.rcpt_name,
-      rcpt_phone: this.status.session.recipient.rcpt_phone,
-      rcpt_prov: this.status.session.recipient.rcpt_prov,
       servizio: 9,
-      volume: 0.0972,
-      daticolli: this.formShipment.value.dimensions,
+      client_id: this.response.configuration.client_id,
+      // contrassegno: 0, // come imposto questo campo
+      ddt_alpha: "TEST_GSPED",
+      origine: "IT",
     };
+
+    const pesoTot = this.formShipment.value.dimensions
+      .map((value: { peso: any }) => value.peso)
+      .reduce((a: any, b: any) => a + b, 0);
+    const volumeTot = this.formShipment.value.dimensions
+      .map((value: { volume: any }) => value.volume)
+      .reduce((a: any, b: any) => a + b, 0);
+
+    const datacolli =
+      this.formShipment.value.dimensions.length === 0
+        ? {
+            colli: 1,
+            daticolli: [
+              { altezza: 1, larghezza: 1, lunghezza: 1, volume: 1, peso: 1 },
+            ],
+            peso: 1,
+            volume: 1,
+          }
+        : {
+            colli: this.formShipment.value.dimensions.length,
+            daticolli: this.formShipment.value.dimensions,
+            peso: pesoTot,
+            volume: volumeTot,
+          };
+
+    this.payloadShipment = {
+      ...this.payloadShipment,
+      ...datacolli,
+      ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
+      ...JSON.parse(sessionStorage.getItem("recipient") || "{}"),
+    };
+
+    console.log("payloadShipment: ", this.payloadShipment);
   }
 
   checkPaymentModule() {
@@ -215,18 +266,20 @@ export class ShipmentComponent implements OnInit {
         (module: { moduleName: string }) => module.moduleName === "payment"
       )[0]
     ) {
-      this.status.handleRateComparative().subscribe((res) => {
-        console.log(res);
-        this.costExposure = res.passivo[this.courierSelected.name];
-        this.rateComparativeServices = Object.keys(this.costExposure);
-        this.rateComparativeServices.forEach((element) => {
-          console.log(element);
-          this.varie_dettaglio[element] = Object.keys(
-            this.costExposure[element].varie_dettaglio
-          );
+      this.status
+        .handleRateComparative(this.bodyRateComparativa)
+        .subscribe((res) => {
+          console.log(res);
+          this.costExposure = res.passivo[this.courierSelected.name];
+          this.rateComparativeServices = Object.keys(this.costExposure);
+          this.rateComparativeServices.forEach((element) => {
+            console.log(element);
+            this.varie_dettaglio[element] = Object.keys(
+              this.costExposure[element].varie_dettaglio
+            );
+          });
+          console.log(this.varie_dettaglio);
         });
-        console.log(this.varie_dettaglio);
-      });
     } else {
       console.log("passo direttamente alla etichetta");
     }
@@ -236,70 +289,72 @@ export class ShipmentComponent implements OnInit {
     let totale = 9999;
     let selectedService = 0;
     this.services = [{}];
-    this.status.handleRateComparative().subscribe((res) => {
-      Object.keys(res.passivo).forEach((courier) => {
-        Object.keys(res.passivo[courier]).forEach((service) => {
-          if (totale > res.passivo[courier][service].totale) {
-            totale = res.passivo[courier][service].totale;
-            selectedService = res.passivo[courier][service];
-            this.services[0].name = service;
-            this.services[0].code =
-              res.passivo[courier][service].codice_servizio;
-          }
+    this.status
+      .handleRateComparative(this.bodyRateComparativa)
+      .subscribe((res) => {
+        Object.keys(res.passivo).forEach((courier) => {
+          Object.keys(res.passivo[courier]).forEach((service) => {
+            if (totale > res.passivo[courier][service].totale) {
+              totale = res.passivo[courier][service].totale;
+              selectedService = res.passivo[courier][service];
+              this.services[0].name = service;
+              this.services[0].code =
+                res.passivo[courier][service].codice_servizio;
+            }
+          });
         });
-      });
 
-      this.costExposure = {};
+        this.costExposure = {};
 
-      this.costExposure[this.services[0].name] = selectedService;
-      console.log(this.costExposure);
+        this.costExposure[this.services[0].name] = selectedService;
+        console.log(this.costExposure);
 
-      this.rateComparativeServices = Object.keys(this.costExposure);
-      this.rateComparativeServices.forEach((element) => {
-        console.log(element);
-        this.varie_dettaglio[element] = Object.keys(
-          this.costExposure[element].varie_dettaglio
-        );
-      });
-      /* this.varie_dettaglio[this.services[0]] = Object.keys(
+        this.rateComparativeServices = Object.keys(this.costExposure);
+        this.rateComparativeServices.forEach((element) => {
+          console.log(element);
+          this.varie_dettaglio[element] = Object.keys(
+            this.costExposure[element].varie_dettaglio
+          );
+        });
+        /* this.varie_dettaglio[this.services[0]] = Object.keys(
         this.costExposure[this.services[0]].varie_dettaglio
       ); */
 
-      console.log(this.varie_dettaglio);
-    });
+        console.log(this.varie_dettaglio);
+      });
   }
 
   showCouriersPices() {
     this.services = [];
-    this.status.handleRateComparative().subscribe((res) => {
-      this.costExposure = {};
-      let couriers = Object.keys(res.passivo);
-      couriers.forEach((courier) => {
-        Object.keys(res.passivo[courier]).forEach((element) => {
-          this.services.push({
-            name: element,
-            code: res.passivo[courier][element].codice_servizio,
-          });
-          this.costExposure[element] = res.passivo[courier][element];
-          this.rateComparativeServices = Object.keys(this.costExposure);
-          this.rateComparativeServices.forEach((el) => {
-            this.varie_dettaglio[el] = Object.keys(
-              this.costExposure[el].varie_dettaglio
-            );
+    this.status
+      .handleRateComparative(this.bodyRateComparativa)
+      .subscribe((res) => {
+        this.costExposure = {};
+        let couriers = Object.keys(res.passivo);
+        couriers.forEach((courier) => {
+          Object.keys(res.passivo[courier]).forEach((element) => {
+            this.services.push({
+              name: element,
+              code: res.passivo[courier][element].codice_servizio,
+            });
+            this.costExposure[element] = res.passivo[courier][element];
+            this.rateComparativeServices = Object.keys(this.costExposure);
+            this.rateComparativeServices.forEach((el) => {
+              this.varie_dettaglio[el] = Object.keys(
+                this.costExposure[el].varie_dettaglio
+              );
+            });
           });
         });
       });
-    });
   }
 
   setCourierService(service: string) {
-    console.log(this.formShipment.value);
-    
-    console.log(service);
+    console.log("formShipment", this.formShipment.value);
+    console.log("service", service);
     console.log("Chiamo endpoint shipment");
-    console.log(this.payloadShipment);
-    alert(JSON.stringify(this.payloadShipment, null, 4));
-    console.log(this.status.session);
+    console.log("payloadShipment", this.payloadShipment);
+    // alert(JSON.stringify(this.payloadShipment, null, 4));
     // this.checkPickUpAviability();
   }
 

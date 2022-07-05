@@ -29,6 +29,9 @@ export class RecipientComponent implements OnInit {
 
     //set current module
     this.service.response.subscribe((res: any) => {
+      if (!res.configuration) {
+        location.reload();
+      }
       this.currentModule = res.configuration.modules.filter(
         (module: { moduleName: string }) => module.moduleName === "recipient"
       )[0].moduleConfig;
@@ -50,8 +53,8 @@ export class RecipientComponent implements OnInit {
               required: true,
             },
             {
-              value: this.currentModule.data.rcpt_address,
-              label: labels.rcpt_address,
+              value: this.currentModule.data.rcpt_addr,
+              label: labels.rcpt_addr,
               type: "text",
               required: true,
             },
@@ -68,8 +71,8 @@ export class RecipientComponent implements OnInit {
               required: true,
             },
             {
-              value: this.currentModule.data.rcpt_state,
-              label: labels.rcpt_state,
+              value: this.currentModule.data.rcpt_prov,
+              label: labels.rcpt_prov,
               type: "text",
               required: true,
             },
@@ -92,15 +95,15 @@ export class RecipientComponent implements OnInit {
               required: false,
             },
             {
-              value: this.currentModule.data.rcpt_address,
-              label: labels.rcpt_address,
+              value: this.currentModule.data.rcpt_addr,
+              label: labels.rcpt_addr,
               type: "text",
               required: true,
             },
           ];
         },
         (err: any) => {
-          console.log(err);
+          //console.log(err);
           this.router.navigate(["/"]);
         }
       );
@@ -120,7 +123,7 @@ export class RecipientComponent implements OnInit {
   obj: any = {};
 
   next() {
-    console.log("fields", this.fields);
+    //console.log("fields", this.fields);
     this.fields.forEach((element) => {
       this.obj[element.label] = element.value;
     });

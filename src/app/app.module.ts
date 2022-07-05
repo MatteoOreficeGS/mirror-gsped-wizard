@@ -18,7 +18,7 @@ import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ProveComponent } from "./prove/prove.component";
-import { GooglePlaceModule } from "ngx-google-places-autocomplete";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -35,6 +35,7 @@ import { GooglePlaceModule } from "ngx-google-places-autocomplete";
     ProveComponent,
   ],
   imports: [
+    MatAutocompleteModule,
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
@@ -43,7 +44,6 @@ import { GooglePlaceModule } from "ngx-google-places-autocomplete";
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    GooglePlaceModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -14,7 +14,7 @@ export class WidzardComponent implements OnInit {
     this.stepSrc.subscribe((value) => {
       this.activeStep = value;
     });
-    // console.log(this.configuration);
+    // //console.log(this.configuration);
     router.events.subscribe(() => {
       this.setStep(1);
       this.stepName = this.router.url.slice(1).split("?")[0];
@@ -22,7 +22,7 @@ export class WidzardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // console.log(this.status.getResponse().subscribe((res: any) => console.log(res) ));
+    // //console.log(this.status.getResponse().subscribe((res: any) => //console.log(res) ));
     this.status.getConfiguration().subscribe((res) => {
       this.response = res;
       // this.response.configuration.modules =
@@ -31,7 +31,7 @@ export class WidzardComponent implements OnInit {
           return object.moduleName === this.stepName;
         }
       );
-      console.log(index + 1);
+      //console.log(index + 1);
       this.setStep(index);
     });
   }
@@ -42,7 +42,7 @@ export class WidzardComponent implements OnInit {
 
   /*   configuration = this.status
     .getConfiguration()
-    .subscribe((res) => console.log(res)); */
+    .subscribe((res) => //console.log(res)); */
   // bannerExtra = this.response.configuration.bannerExtra;
 
   stepSrc?: Subject<number>;

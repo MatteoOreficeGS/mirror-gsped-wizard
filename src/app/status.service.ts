@@ -14,9 +14,9 @@ export class StatusService implements OnInit {
 
   ngOnInit(): void {
     // this.getConfiguration();
-    console.log(this.session);
+    //console.log(this.session);
     this.route.queryParams.subscribe((params) => {
-      console.log(params); // { orderby: "price" }
+      //console.log(params); // { orderby: "price" }
     });
   }
 
@@ -42,23 +42,23 @@ export class StatusService implements OnInit {
 
   session: any = {
     sender: {
-      sender_name: "lorenzo",
-      sender_city: "udine",
-      sender_contact: "contatto",
-      sender_cap: "33100",
-      sender_state: "ud",
-      sender_country_code: "IT",
-      sender_email: "lorenzo@gmail.com",
-      sender_phone: "321321321",
-      sender_address: "via adroiano 12",
+      sender_name: "",
+      sender_city: "",
+      sender_contact: "",
+      sender_cap: "",
+      sender_prov: "",
+      sender_country_code: "",
+      sender_email: "",
+      sender_phone: "",
+      sender_addr: "",
     },
     recipient: {
       rcpt_name: "Consolato Generale Moldova",
       rcpt_contact: "Consolato Generale Moldova",
-      rcpt_address: "Via Vincenzo Gioberti, 8",
+      rcpt_addr: "Via Vincenzo Gioberti, 8",
       rcpt_city: "Milan",
       rcpt_cap: "20123",
-      rcpt_state: "MI",
+      rcpt_prov: "MI",
       rcpt_country_country: "IT",
       rcpt_email: "pippo@pippo.it",
       rcpt_phone: "0236745703",
@@ -70,7 +70,7 @@ export class StatusService implements OnInit {
   };
 
   greeting() {
-    console.log("hello");
+    //console.log("hello");
   }
 
   setStatus(values: any, field: string) {
@@ -83,7 +83,7 @@ export class StatusService implements OnInit {
 
   incrementStep() {
     this.activeStep += 1;
-    console.log(this.activeStep);
+    //console.log(this.activeStep);
   }
   getActiveStep(): number {
     return this.activeStep;
@@ -99,17 +99,10 @@ export class StatusService implements OnInit {
       ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
       corriere: "104",
       client_id: "555",
-      pickup_date:
-        date.getHours() +
-        ":" +
-        date.getMinutes() +
-        ":" +
-        (date.getSeconds() + 1),
+      pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
     };
-    body.sender_addr = body.sender_address;
-    body.sender_prov = body.sender_state;
 
-    console.log(body);
+    //console.log(body);
     return this.http.post(
       "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
       body,
@@ -137,11 +130,11 @@ export class StatusService implements OnInit {
     const headers = { "x-api-key": this.token };
     body = body;
 
-    body = Object.entries(body)
+    body = Object.entries(body);
 
-    body = body.map((element:any) => {
-      return element.join("=")
-    })
+    body = body.map((element: any) => {
+      return element.join("=");
+    });
 
     body = body.join("&");
 
@@ -209,27 +202,19 @@ export class StatusService implements OnInit {
       .pipe((res) => (this.response = res));
   }
 
-  getGooglePlace(address: string) {
-    return this.http.get(
-      "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
-        address +
-        "&key=AIzaSyAN6DWc19h79hOsa8c6rFwQlGmH7u6cy_4"
-    );
-  }
-
-  /* getGooglePlace(address: string): Observable<any> {
-    return from(
-      fetch(
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+  getGooglePlace(address: string, lang: string) {
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          this.decoded.instance +
+          "/AddressAutocomplete?input=" +
           address +
-          "&key=AIzaSyAN6DWc19h79hOsa8c6rFwQlGmH7u6cy_4",
-        {
-          method: "GET",
-          mode: "no-cors",
-        }
+          "&lang=" +
+          lang,
+        { headers: { "X-API-KEY": this.token } }
       )
-    );
-  } */
+      .pipe((res) => (this.response = res));
+  }
 
   /* getLenguageSolved() {
     const headers = { "x-api-key": this.token };

@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
         }),
       })
       .subscribe((res) => {
-        console.log(res);
+        //console.log(res);
         // this.router.navigate([
         //   this.status.response.configuration.modules[2].moduleName,
         // ]);

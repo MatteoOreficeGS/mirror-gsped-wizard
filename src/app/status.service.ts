@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
-import { map, Observable, Subject } from "rxjs";
+import { from, map, Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
 import { NavigationEnd, ActivatedRoute } from "@angular/router";
 
@@ -14,9 +14,9 @@ export class StatusService implements OnInit {
 
   ngOnInit(): void {
     // this.getConfiguration();
-    console.log(this.session);
+    //console.log(this.session);
     this.route.queryParams.subscribe((params) => {
-      console.log(params); // { orderby: "price" }
+      //console.log(params); // { orderby: "price" }
     });
   }
 
@@ -42,17 +42,27 @@ export class StatusService implements OnInit {
 
   session: any = {
     sender: {
-      sender_name: "lorenzo",
-      sender_city: "udine",
-      sender_contact: "contatto",
-      sender_cap: "33100",
-      sender_state: "ud",
-      sender_country_code: "IT",
-      sender_email: "lorenzo@gmailcom",
-      sender_phone: "321321321",
-      sender_address: "via adroiano 12",
+      sender_name: "",
+      sender_city: "",
+      sender_contact: "",
+      sender_cap: "",
+      sender_prov: "",
+      sender_country_code: "",
+      sender_email: "",
+      sender_phone: "",
+      sender_addr: "",
     },
-    recipient: {},
+    recipient: {
+      rcpt_name: "Consolato Generale Moldova",
+      rcpt_contact: "Consolato Generale Moldova",
+      rcpt_addr: "Via Vincenzo Gioberti, 8",
+      rcpt_city: "Milan",
+      rcpt_cap: "20123",
+      rcpt_prov: "MI",
+      rcpt_country_country: "IT",
+      rcpt_email: "pippo@pippo.it",
+      rcpt_phone: "0236745703",
+    },
     shipment: {},
     step: null,
     flow: "resoFacile",
@@ -60,7 +70,7 @@ export class StatusService implements OnInit {
   };
 
   greeting() {
-    console.log("hello");
+    //console.log("hello");
   }
 
   setStatus(values: any, field: string) {
@@ -73,7 +83,7 @@ export class StatusService implements OnInit {
 
   incrementStep() {
     this.activeStep += 1;
-    console.log(this.activeStep);
+    //console.log(this.activeStep);
   }
   getActiveStep(): number {
     return this.activeStep;
@@ -86,18 +96,13 @@ export class StatusService implements OnInit {
     const date = new Date(); /* .toLocaleString() */
     const headers = { "x-api-key": this.token };
     const body = {
-      sender_addr: "via duomo 10",
-      sender_city: "milano",
-      sender_cap: "26100",
-      sender_prov: "MI",
-      sender_phone: "3343353363",
-      sender_email: "email@prova.com",
+      ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
       corriere: "104",
       client_id: "555",
-      pickup_date: date.getHours() + ":" + date.getMinutes() + ":" + (date.getSeconds() + 1),
-      sender_name: "pippo",
+      pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
     };
-    console.log(body);
+
+    //console.log(body);
     return this.http.post(
       "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
       body,
@@ -121,12 +126,23 @@ export class StatusService implements OnInit {
     );
   }
 
-  handleRateComparative(): Observable<any> {
+  handleRateComparative(body: any): Observable<any> {
     const headers = { "x-api-key": this.token };
+    body = body;
+
+    body = Object.entries(body);
+
+    body = body.map((element: any) => {
+      return element.join("=");
+    });
+
+    body = body.join("&");
+
     return this.http.get(
       "https://api.gsped.it/" +
         this.decoded.instance +
-        "/RateComparativa?departure_date_time=2022-06-20%2015%3A00%3A00&tipo_listino=passivo&gls_exchange=N&al_piano=0&al_sabato=0&client_id=555&colli=1&daticolli=%5B1,1,1,1,1%5D&peso=1&volume=0.002&sender_addr=via%20duomo%203&sender_city=milano&sender_prov=MI&sender_cap=20100&sender_country_code=it&rcpt_addr=via%20roma%204&rcpt_city=roma&rcpt_prov=RM&rcpt_cap=00121&rcpt_country_code=it&contrassegno=10&valore=10&documenti=0&preavviso_telefonico=N",
+        "/RateComparativa?" +
+        body,
       { headers: headers }
     );
   }
@@ -181,6 +197,20 @@ export class StatusService implements OnInit {
           this.decoded.instance +
           "/ResourceConfiguration?resource=" +
           "resi",
+        { headers: { "X-API-KEY": this.token } }
+      )
+      .pipe((res) => (this.response = res));
+  }
+
+  getGooglePlace(address: string, lang: string) {
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          this.decoded.instance +
+          "/AddressAutocomplete?input=" +
+          address +
+          "&lang=" +
+          lang,
         { headers: { "X-API-KEY": this.token } }
       )
       .pipe((res) => (this.response = res));

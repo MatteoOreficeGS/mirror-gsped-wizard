@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { StatusService } from "../status.service";
 
@@ -7,22 +7,38 @@ import { StatusService } from "../status.service";
   selector: "app-widzard",
   templateUrl: "./widzard.component.html",
 })
-export class WidzardComponent  implements OnInit {
+export class WidzardComponent implements OnInit {
   constructor(private router: Router, public status: StatusService) {
     this.stepSrc = this.status.stepSource;
 
     this.stepSrc.subscribe((value) => {
       this.activeStep = value;
-      console.log(this.stepSrc, this.activeStep);
     });
     // console.log(this.configuration);
+    router.events.subscribe(() => {
+      this.setStep(1);
+      this.stepName = this.router.url.slice(1).split("?")[0];
+    });
   }
 
   ngOnInit(): void {
-    this.status.getConfiguration().subscribe((res) => (this.response = res));
+    // console.log(this.status.getResponse().subscribe((res: any) => console.log(res) ));
+    this.status.getConfiguration().subscribe((res) => {
+      this.response = res;
+      // this.response.configuration.modules =
+      const index = this.response.configuration.modules.findIndex(
+        (object: { moduleName: string }) => {
+          return object.moduleName === this.stepName;
+        }
+      );
+      console.log(index + 1);
+      this.setStep(index);
+    });
   }
 
   response: any = {};
+
+  stepName = "";
 
   /*   configuration = this.status
     .getConfiguration()
@@ -43,6 +59,7 @@ export class WidzardComponent  implements OnInit {
   */
 
   setStep(i: number) {
-    this.activeStep = this.status.getActiveStep();
+    // this.activeStep = this.status.getActiveStep();
+    this.activeStep = i;
   }
 }

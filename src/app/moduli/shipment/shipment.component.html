@@ -1,30 +1,23 @@
-<form class="space-y-8 divide-y divide-gray-200" [formGroup]="formShipment">
-  <div class="space-y-8 divide-y divide-gray-200">
-    <div>
-      <!-- <div class="flex flex-row space-x-6">
-        <div class="flex space-x-6 justify-items-center mx-auto">
-          <label
-            for="country"
-            class="block text-sm font-medium text-gray-700 mt-2"
-          >
-            Seleziona il numero di colli
-          </label>
-          <select
-            #number
-            (change)="setPackageNumber(number)"
-            class="w-28 lg:w-32 shadow-sm sm:text-sm border-gray-300 rounded-md"
-          >
-            <option *ngFor="let i of [1, 2, 3, 4, 5]">{{ i }}</option>
-          </select>
-        </div>
-      </div> -->
+<form [formGroup]="formShipment">
+  <div class="divide-y divide-gray-200">
+    <div *ngIf="currentModule?.enable">
+      <div class="flex">
+        <button
+          [disabled]="packageNumber > 4"
+          class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          (click)="addPackage()"
+        >
+          Aggiungi collo
+        </button>
 
-      <button
-      class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
-      (click)="addPackage()"
-      > 
-      Aggiungi collo
-    </button>
+        <button
+          *ngIf="packageNumber > 1"
+          class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          (click)="removePackage()"
+        >
+          Rimuovi collo
+        </button>
+      </div>
 
       <div formArrayName="dimensions">
         <div *ngFor="let package of dimensions.controls; let i = index">
@@ -52,111 +45,266 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <fieldset>
-        <div class="text-base font-medium text-gray-900" aria-hidden="true">
-          Assicurazione
-        </div>
-        <div class="mt-4 space-y-4">
-          <div class="relative flex items-start">
-            <div class="flex items-center h-5">
-              <input
-                id="comments"
-                name="comments"
-                type="checkbox"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-              />
-            </div>
-            <div class="ml-3 text-sm">
-              <label for="comments" class="font-medium text-gray-700"
-                >Andata</label
-              >
-            </div>
+    <fieldset *ngIf="currentModule?.insurance.enable" class="py-4">
+      <div class="text-base font-medium text-gray-900">Assicurazione</div>
+      <div class="mt-4 space-y-4">
+        <div class="relative flex items-start">
+          <div class="flex items-center h-5">
+            <input
+              id="outwardInsurance"
+              name="outwardInsurance"
+              type="checkbox"
+              class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            />
           </div>
-          <div class="relative flex items-start">
-            <div class="flex items-center h-5">
-              <input
-                id="candidates"
-                name="candidates"
-                type="checkbox"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-              />
-            </div>
-            <div class="ml-3 text-sm">
-              <label for="candidates" class="font-medium text-gray-700"
-                >Ritorno</label
-              >
-            </div>
-          </div>
-        </div>
-      </fieldset>
-
-      <div class="md:flex md:flex-row md:col-span-full space-x-2">
-        <select
-          (change)="selectCourier(courier)"
-          #courier
-          [formControlName]="'couriers'"
-          id="courier"
-          name="courier"
-          class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-        >
-          <option [defaultSelected]="true" disabled>Seleziona..</option>
-          <ng-container *ngFor="let courier of couriers">
-            <option>{{ courier.name }}</option>
-          </ng-container>
-        </select>
-        <img
-          *ngIf="courierSelected !== null"
-          alt="logo corriere"
-          class="mt-4 md:mt-0"
-          src="https://www.dhl.com/content/dam/dhl/global/core/images/logos/dhl-logo.svg"
-        />
-      </div>
-      <div *ngIf="courierSelected !== null">
-        <fieldset class="mt-4">
-          <legend class="text-lg font-medium text-gray-900">Servizi</legend>
-          <div
-            class="mt-4 border-t border-b border-gray-200 divide-y divide-gray-200"
-          >
-            <div
-              class="relative flex items-start py-4"
-              *ngFor="let service of services; let i = index"
+          <div class="ml-3 text-sm">
+            <label for="outwardInsurance" class="font-medium text-gray-700"
+              >Andata</label
             >
-              <div class="min-w-0 flex-1 text-sm">
-                <label class="font-medium text-gray-700 select-none">
-                  {{ service.name }}
-                </label>
+          </div>
+        </div>
+        <div
+          class="relative flex items-start"
+          *ngIf="
+            currentModule?.returnLabel.enable &&
+            currentModule?.returnLabel.insurance.enable
+          "
+        >
+          <div class="flex items-center h-5">
+            <input
+              id="returnInsurance"
+              name="returnInsurance"
+              type="checkbox"
+              class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            />
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="returnInsurance" class="font-medium text-gray-700">
+              Ritorno
+            </label>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="md:flex md:flex-row md:col-span-full space-x-2 py-4">
+      <select
+        (change)="selectCourier(courier)"
+        #courier
+        [formControlName]="'couriers'"
+        id="courier"
+        name="courier"
+        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+      >
+        <option [defaultSelected]="true" disabled>Seleziona corriere</option>
+        <ng-container *ngFor="let courier of couriers">
+          <option>{{ courier.name }}</option>
+        </ng-container>
+      </select>
+      <img
+        *ngIf="courierSelectedLogoUrl"
+        alt="logo corriere"
+        class="mt-4 md:mt-0"
+        src="{{ courierSelectedLogoUrl }}"
+      />
+    </div>
+    <div *ngIf="courierSelected.name !== ''">
+      <p>{{pickupAvailability}}</p>
+      <!-- <fieldset class="mt-4">
+        <legend class="text-lg font-medium text-gray-900">Servizi</legend>
+        <div class="my-2 divide-y divide-gray-200">
+          <div
+            class="relative flex items-start py-4"
+            *ngFor="let service of services; let i = index"
+          >
+            <div class="min-w-0 flex-1 text-sm">
+              <label class="font-medium text-gray-700 select-none">
+                {{ service.name }}
+              </label>
+            </div>
+            <div class="ml-3 flex items-center h-5">
+              <input
+                formControlName="service"
+                (change)="handleSetService()"
+                id="service"
+                name="service"
+                type="radio"
+                value="{{ service.name }}"
+                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+              />
+            </div>
+          </div>
+        </div>
+      </fieldset> -->
+
+      <div *ngIf="costExposure" class="py-4">
+        <div
+          class="bg-white rounded-lg shadow divide-y divide-gray-200"
+          *ngFor="let service of services"
+        >
+          {{ service.name }}
+          <div class="w-full items-center justify-between p-6 space-y-4">
+            <div class="grid grid-cols-2">
+              <div>
+                <div class="flex items-center space-x-3">
+                  <h3 class="text-gray-900 text-sm font-medium truncate">
+                    Nolo
+                  </h3>
+                  <span
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                  >
+                    {{ costExposure[service.name].nolo }}
+                  </span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <h3 class="text-gray-900 text-sm font-medium truncate">
+                    Varie
+                  </h3>
+                  <span
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                  >
+                    {{ costExposure[service.name].varie }}
+                  </span>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <h3 class="text-gray-900 text-sm font-medium truncate">
+                    Totale
+                  </h3>
+                  <span
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                  >
+                    {{ costExposure[service.name].totale }}
+                  </span>
+                </div>
               </div>
-              <div class="ml-3 flex items-center h-5">
-                <input
-                  formControlName="service"
-                  name=""
-                  id="person-1"
-                  name="person-1"
-                  type="checkbox"
-                  class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                />
+              <div>
+                <!-- {{ varie_dettaglio | json }}
+                {{ service.name }} -->
+                <span>dettagli:</span>
+                <div
+                  class="flex items-center space-x-3"
+                  *ngFor="let x of varie_dettaglio[service.name]"
+                >
+                  <h3 class="text-gray-900 text-sm font-medium truncate">
+                    {{ x }}
+                  </h3>
+                  <span
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                  >
+                    {{ costExposure[service.name].varie_dettaglio[x] }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </fieldset>
+          <div>
+            <div class="-mt-px flex divide-x divide-gray-200">
+              <div class="w-0 flex-1 flex">
+                <button
+                  (click)="incrementStep()"
+                  class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-bl-lg text-green-400 hover:text-green-500"
+                >
+                  <span class="ml-3">Conferma</span>
+              </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
 
+    <!-- <div
+      class="flex flex-row space-x-4 py-4"
+      *ngIf="courierSelected.name !== ''"
+    >
       <button
-        *ngIf="courierSelected !== null"
+        *ngIf="courierSelected !== null && currentModule?.pickup.pickup"
         (click)="checkPickUpAviability()"
         type="button"
-        class="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        class="bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         Verifica disponibilità
       </button>
-    </div>
+      <span *ngIf="pickupAvailability === 'OK'" class="text-green-400"
+        >disponibile per il ritiro in giornata
+      </span>
+      <span *ngIf="pickupAvailability === 'KO'" class="text-red-400">
+        non disponibile per il ritiro in giornata
+      </span>
+    </div> -->
+
+    <!-- <div *ngIf="costExposure" class="py-4">
+      <div class="bg-white rounded-lg shadow divide-y divide-gray-200">
+        <div class="w-full items-center justify-between p-6 space-y-4">
+          <div class="grid grid-cols-2">
+            <div>
+              <div class="flex items-center space-x-3">
+                <h3 class="text-gray-900 text-sm font-medium truncate">Nolo</h3>
+                <span
+                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                >
+                  {{ costExposure.nolo }}
+                </span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <h3 class="text-gray-900 text-sm font-medium truncate">
+                  Varie
+                </h3>
+                <span
+                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                >
+                  {{ costExposure.varie }}
+                </span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <h3 class="text-gray-900 text-sm font-medium truncate">
+                  Totale
+                </h3>
+                <span
+                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                >
+                  {{ costExposure.totale }}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div
+                class="flex items-center space-x-3"
+                *ngFor="let x of varie_dettaglio"
+              >
+                <h3 class="text-gray-900 text-sm font-medium truncate">
+                  {{ x }}
+                </h3>
+                <span
+                  class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                >
+                  {{ costExposure.varie_dettaglio[x] }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="-mt-px flex divide-x divide-gray-200">
+            <div class="w-0 flex-1 flex">
+              <a
+                class="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm font-medium border border-transparent rounded-bl-lg text-green-400 hover:text-green-500"
+              >
+                <span class="ml-3">Conferma</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 
-  <button
-    (click)="incrementStep()"
+  <!--   <button
+    
     class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer bg-yellow-400 text-white"
   >
     Continua
-  </button>
+  </button> -->
 </form>

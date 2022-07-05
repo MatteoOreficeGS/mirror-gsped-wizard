@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, SimpleChanges } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -23,18 +23,13 @@ export class ShipmentComponent implements OnInit {
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       couriers: ["", Validators.required],
-      // courierServices: this.fb.array([{services: ""}]),
+      service: ["", Validators.required],
     });
     this.stepSrc = this.status.stepSource;
-    this.addPackage();
   }
 
   get dimensions(): FormArray {
     return this.formShipment.get("dimensions") as FormArray;
-  }
-
-  get courierServices(): FormArray {
-    return this.formShipment.get("courierServices") as FormArray;
   }
 
   ngOnInit(): void {
@@ -44,9 +39,15 @@ export class ShipmentComponent implements OnInit {
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
 
-      this.couriers = this.currentModule.selectCourier.couriers.list;
-      console.log(this.currentModule);
+      // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
+      // this.currentModule.enable = true;
+
+      if (this.currentModule.enable) {
+        this.addPackage();
+      }
+
+      this.couriers = this.currentModule.selectCourier.couriers.list;
       this.label = this.currentModule.packagesDetails.label;
       // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
       this.fieldsLabel = [
@@ -68,55 +69,176 @@ export class ShipmentComponent implements OnInit {
     this.incrementStep();
   }
   selectCourier(courier: any) {
-    this.courierSelected = courier.value;
-    console.log(this.courierSelected);
+    this.courierSelected.name = courier.value;
+    this.courierSelectedLogoUrl =
+      this.currentModule.selectCourier.couriers.list.filter(
+        (element: { name: string }) => element.name === courier.value
+      )[0].logoUrl;
+
     this.services = this.currentModule.selectCourier.couriers.list.filter(
-      (el: { name: string }) => el.name === this.courierSelected
+      (el: { name: string }) => el.name === this.courierSelected.name
     )[0].services.list;
+    this.checkPickUpAviability();
+    /* this.services.forEach((service: { name: string }) => {
+      this.addService(service.name);
+    }); */
+    /* this.courierServices.push(
+      this.fb.group({ service: ["", Validators.required] })
+    ); */
   }
-  courierSelected = null;
+
+  courierSelected = { name: "", gspedCourierCode: 104 };
+  courierSelectedLogoUrl = null;
   currentModule: any;
   couriers?: Array<any>;
   label: any;
   fieldsLabel: any;
   services: any;
-
-  /*   services = this.status.response.configuration.modules
-  .filter((module: any) => module.moduleName === "shipment")[0]
-  .couriers[0].services.map((s: { name: any }) => s.name); */
-
-  setPackageNumber(n: HTMLSelectElement) {
-    this.packageNumber = parseInt(n.value);
-    this.addPackage();
-  }
+  pickupAvailability: string = "";
+  costExposure: any = false;
+  payloadShipment: any = {};
+  packageNumber = 1;
+  varie_dettaglio?: any = {};
+  rateComparativeServices?: Array<string>;
 
   newPackage(): FormGroup {
     return this.fb.group({
-      lunghezza: "",
-      larghezza: "",
-      altezza: "",
-      peso: "",
-      volume: "",
+      lunghezza: ["", Validators.required],
+      larghezza: ["", Validators.required],
+      altezza: ["", Validators.required],
+      peso: ["", Validators.required],
+      volume: ["", Validators.required],
     });
   }
 
   addPackage() {
-    this.dimensions.push(this.newPackage());
+    if (this.packageNumber < 5) {
+      this.packageNumber++;
+      this.dimensions.push(this.newPackage());
+    }
   }
 
-  removePackage(i: number) {
-    this.dimensions.removeAt(i);
+  removePackage() {
+    if (this.packageNumber > 1) {
+      this.packageNumber--;
+      this.dimensions.removeAt(-1);
+    }
   }
 
   checkPickUpAviability() {
-    console.log("disponibile?");
+    this.status.pickupAvailability().subscribe(
+      (res) => {
+        console.log(res);
+        if (res.hasOwnProperty("result")) {
+          this.pickupAvailability =
+            res.result === "OK"
+              ? "disponibile per il ritiro in giornata"
+              : "Non disponibile per il ritiro in giornata";
+        }
+      },
+      (error) => {
+        this.pickupAvailability = error.error.error;
+      }
+    );
+    this.setShipmentPayload();
+    this.checkPaymentModule();
   }
 
-  packageNumber = 1;
+  handleSetService() {
+    console.log(this.formShipment.value.service);
+  }
+
+  setShipmentPayload() {
+    console.log("creo il payload per la spedizione");
+    this.payloadShipment = {
+      client_id: this.response.configuration.client_id,
+      colli: this.packageNumber,
+      contrassegno: 0, // come imposto questo campo
+      corriere: this.courierSelected.gspedCourierCode,
+      ddt_alpha: "TEST_GSPED",
+      // ddt_num: 12346,
+      origine: "IT",
+      dropshipping: 0,
+      peso: 2.4,
+      rcpt_addr: "115 E Endfield Rd",
+      rcpt_cap: "19053",
+      rcpt_city: "Feasterville Trevose",
+      rcpt_contact: "Tester",
+      rcpt_country_code: "US",
+      rcpt_email: "test@test.it",
+      rcpt_name: "TEST DESTINATARIO",
+      rcpt_phone: "2159005458",
+      rcpt_prov: "PA",
+      servizio: 9,
+      valore: 0,
+      valore_doganale: 37.5,
+      valuta: "EUR",
+      volume: 0.0972,
+      daticolli: [
+        {
+          altezza: 39,
+          larghezza: 29,
+          lunghezza: 43,
+          volume: 0.048633,
+          peso: 1.2,
+        },
+      ],
+      dettagli_ordine: [
+        {
+          sku: "PBK1",
+          description: "Cosa blu",
+          qty: "1",
+          barcode_riga: "12345464",
+          hs_code: "123456454",
+          prezzo_singolo: "12.50",
+          peso_riga: "1",
+        },
+        {
+          sku: "PBK12",
+          description: "Cosa blu e rossa",
+          qty: "1",
+          barcode_riga: "12345465",
+          hs_code: "123456454",
+          prezzo_singolo: "25.00",
+          peso_riga: "1",
+        },
+      ],
+    };
+  }
+
+  checkPaymentModule() {
+    if (
+      this.response.configuration.modules.filter(
+        (module: { moduleName: string }) => module.moduleName === "payment"
+      )[0]
+    ) {
+      this.status.handleRateComparative().subscribe((res) => {
+        console.log(res);
+        this.costExposure = res.passivo[this.courierSelected.name];
+        this.rateComparativeServices = Object.keys(this.costExposure);
+        this.rateComparativeServices.forEach((element) => {
+          console.log(element);
+          this.varie_dettaglio[element] = Object.keys(
+            this.costExposure[element].varie_dettaglio
+          );
+        });
+        console.log(this.varie_dettaglio);
+      });
+    } else {
+      console.log("passo direttamente alla etichetta");
+    }
+  }
 
   incrementStep() {
+    console.log(
+      "Faccio la chiamata all'endpoint con il payload",
+      this.payloadShipment
+    );
+    this.status
+      .handleShipment(this.payloadShipment)
+      .subscribe((res) => console.log(res));
     this.status.incrementStep();
-    this.next();
+    // this.next();
   }
 
   next() {

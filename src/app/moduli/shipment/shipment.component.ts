@@ -49,6 +49,9 @@ export class ShipmentComponent implements OnInit {
 
     this.status.response.subscribe((res: any) => {
       this.response = res;
+      this.hasPayment = this.response.configuration.modules.filter(
+        (module: { moduleName: string }) => module.moduleName === "payment"
+      ).length === 1;
       this.currentModule = this.response.configuration?.modules.filter(
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
@@ -136,6 +139,7 @@ export class ShipmentComponent implements OnInit {
   bodyRateComparativa: any;
   datacolli: any = {};
   dataRateComparative: any = {};
+  hasPayment?: boolean;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -262,6 +266,7 @@ export class ShipmentComponent implements OnInit {
     //console.log(this.status.session);
     //console.log("creo il payload per la spedizione");
     this.payloadShipment = {
+      creazione_postume: this.hasPayment,
       corriere: this.courierSelected.gspedCourierCode,
       servizio: 9,
       client_id: this.response.configuration.client_id,
@@ -281,11 +286,7 @@ export class ShipmentComponent implements OnInit {
   }
 
   checkPaymentModule() {
-    if (
-      this.response.configuration.modules.filter(
-        (module: { moduleName: string }) => module.moduleName === "payment"
-      )[0]
-    ) {
+    if (this.hasPayment) {
       this.status
         .handleRateComparative(this.bodyRateComparativa)
         .subscribe((res) => {

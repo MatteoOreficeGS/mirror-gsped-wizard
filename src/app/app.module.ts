@@ -17,7 +17,6 @@ import { PaymentComponent } from "./moduli/payment/payment.component";
 import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import { ProveComponent } from "./prove/prove.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
@@ -32,7 +31,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     PaymentComponent,
     StampaAwbComponent,
     NavbarComponent,
-    ProveComponent,
   ],
   imports: [
     MatAutocompleteModule,

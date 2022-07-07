@@ -1,30 +1,70 @@
-<div class="grid lg:grid-cols-2 gap-4">
-  <ng-container *ngFor="let field of fields">
-    <div
-      class="relative rounded-lg bg-transparent p-1 flex items-center space-x-3"
-    >
-      <div class="flex-1 min-w-0">
+<form [formGroup]="formRecipient" (submit)="nextStep()">
+  <div class="grid lg:grid-cols-2 gap-x-4 relative">
+    <ng-container *ngFor="let field of fields">
+      <div class="relative z-0 w-full mb-6 group mx-auto">
         <input
-          [attr.disabled]="false"
-          autocomplete="{{ false }}"
-          [defaultValue]="field.value"
+          [readonly]="!editable"
+          [ngClass]="editable ? '' : 'cursor-not-allowed'"
+          *ngIf="field.label !== 'indirizzo mittente'"
+          autocomplete="{{ autocomplete }}"
+          [formControlName]="field.value"
           type="text"
-          class="cursor-not-allowed block py-2.5 px-0 w-full text-sm text-gray-700 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
           placeholder=" "
         />
+        <div *ngIf="field.label === 'indirizzo mittente'">
+          <input
+            autocomplete="{{ autocomplete }}"
+            [formControlName]="field.value"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
+            (input)="googlePlace(address)"
+            #address
+            name="address"
+            list="predictions"
+            placeholder=" "
+          />
+
+          <datalist id="predictions" *ngIf="true">
+            <ng-container *ngFor="let prediction of predictionsAddress">
+              <option
+                (change)="setAddress(prediction)"
+                value="{{ prediction.description }}"
+              ></option>
+            </ng-container>
+          </datalist>
+        </div>
         <label
           class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 capitalize"
         >
           {{ field.label }}
+          <span *ngIf="field.required" class="text-red-400"> * </span>
         </label>
       </div>
-    </div>
-  </ng-container>
-</div>
-
-<button
-  (click)="incrementStep()"
-  class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer bg-yellow-400 text-white"
->
-  Continua
-</button>
+      <!-- <ng-container *ngIf="showPredictions">
+        <div
+          *ngFor="let prediction of predictionsAddress"
+          class="absolute top-0 right-0"
+        >
+          <div>
+            <button type="button" (click)="setAddress(prediction)">
+              {{ prediction.description }}
+            </button>
+          </div>
+        </div>
+      </ng-container> -->
+    </ng-container>
+  </div>
+  <div class="text-center sm:text-left md:ml-12">
+    <button
+      [ngClass]="
+        formRecipient.valid
+          ? 'bg-yellow-400 text-white '
+          : 'bg-yellow-200 text-slate-200'
+      "
+      class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+    >
+      Continua
+    </button>
+  </div>
+</form>

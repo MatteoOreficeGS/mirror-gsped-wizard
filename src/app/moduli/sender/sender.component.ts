@@ -19,12 +19,8 @@ export class SenderComponent implements OnInit {
   ) {
     this.stepSrc = this.service.stepSource;
 
-    // form init and validation
     this.formSender = fb.group({
-      sender_name: [
-        this.service.session.sender.sender_name,
-        Validators.required,
-      ],
+      sender_name: ["", Validators.required],
       sender_city: [
         this.service.session.sender.sender_city,
         Validators.required,
@@ -36,18 +32,20 @@ export class SenderComponent implements OnInit {
       sender_cap: [this.service.session.sender.sender_cap, Validators.required],
       sender_prov: [
         this.service.session.sender.sender_prov,
-        Validators.required,
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_country_code: [
         this.service.session.sender.sender_country_code,
-        Validators.required,
-        // Validators.maxLength(2)
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_email: [
         this.service.session.sender.sender_email,
+        [Validators.required, Validators.email],
+      ],
+      sender_phone: [
+        this.service.session.sender.sender_phone,
         Validators.required,
       ],
-      sender_phone: [this.service.session.sender.sender_phone],
       sender_addr: [
         this.service.session.sender.sender_addr,
         Validators.required,
@@ -56,326 +54,97 @@ export class SenderComponent implements OnInit {
 
     //set current module
     this.service.response.subscribe((res: any) => {
+      // console.log(res);
       this.currentModule = res.configuration.modules.filter(
         (module: { moduleName: string }) => module.moduleName === "sender"
       )[0].moduleConfig;
+      console.log(this.currentModule);
+      this.editable = this.currentModule.editable;
+      Object.keys(this.currentModule.data).forEach((element: any) => {
+        this.formSender.controls[element].setValue(
+          this.currentModule.data[element]
+        );
+      });
     });
+
+    // form init and validation
 
     this.autocomplete = this.currentModule.autocomplete;
 
-    this.service.translations.subscribe(
-      (res: any) => {
-        this.labels = res;
-        this.fields = [
-          {
-            value: "sender_name",
-            label: this.labels.sender_name,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_contact",
-            label: this.labels.sender_contact,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_addr",
-            label: this.labels.sender_addr || "sender_addr",
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_city",
-            label: this.labels.sender_city,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_cap",
-            label: this.labels.sender_cap,
-            type: "number",
-            required: true,
-          },
-          {
-            value: "sender_prov",
-            label: this.labels.sender_prov,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_country_code",
-            label: this.labels.sender_country_code,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_email",
-            label: this.labels.sender_email,
-            type: "email",
-            required: true,
-          },
-          {
-            value: "sender_phone",
-            label: this.labels.sender_phone,
-            type: "number",
-            required: false,
-          }
-        ];
+    this.labels =
+      JSON.parse(sessionStorage.getItem("translations") || "{}") || {};
+
+    this.fields = [
+      {
+        value: "sender_name",
+        label: this.labels.sender_name,
+        type: "text",
+        required: true,
       },
-      (err: any) => {
-        //console.log(err);
-        this.router.navigate(["/"]);
-      }
-    );
+      {
+        value: "sender_contact",
+        label: this.labels.sender_contact,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_addr",
+        label: this.labels.sender_addr || "sender_addr",
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_city",
+        label: this.labels.sender_city,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_cap",
+        label: this.labels.sender_cap,
+        type: "number",
+        required: true,
+      },
+      {
+        value: "sender_prov",
+        label: this.labels.sender_prov,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_country_code",
+        label: this.labels.sender_country_code,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_email",
+        label: this.labels.sender_email,
+        type: "email",
+        required: true,
+      },
+      {
+        value: "sender_phone",
+        label: this.labels.sender_phone,
+        type: "number",
+        required: true,
+      },
+    ];
 
     let langParam = "";
 
     this.route.queryParams.subscribe((params: any) => {
       langParam = params.lang;
     });
-
-    /* this.service.getLenguage(langParam, "resi").subscribe(
-      (res: any) => {
-        this.labels = res;
-        this.fields = [
-          {
-            value: "sender_name",
-            label: this.labels.sender_name,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_contact",
-            label: this.labels.sender_contact,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_addr",
-            label: this.labels.sender_addr,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_city",
-            label: this.labels.sender_city,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_cap",
-            label: this.labels.sender_cap,
-            type: "number",
-            required: true,
-          },
-          {
-            value: "sender_state",
-            label: this.labels.sender_state,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_country_code",
-            label: this.labels.sender_country_code,
-            type: "text",
-            required: true,
-          },
-          {
-            value: "sender_email",
-            label: this.labels.sender_email,
-            type: "email",
-            required: true,
-          },
-          {
-            value: "sender_phone",
-            label: this.labels.sender_phone,
-            type: "number",
-            required: false,
-          },
-          {
-            value: "sender_addr",
-            label: this.labels.sender_addr,
-            type: "text",
-            required: true,
-          },
-        ];
-      },
-      (err: any) => {
-        //console.log(err);
-        this.router.navigate(["/"]);
-      }
-    ); */
   }
-
-  // ngOnInit(): void {
-  //   //set current module config
-  //   this.service.response.subscribe((res: any) => {
-  //     this.currentModule = res.configuration.modules.filter(
-  //       (module: { moduleName: string }) => module.moduleName === "sender"
-  //     )[0].moduleConfig;
-  //   });
-
-  //   this.autocomplete = this.currentModule.autocomplete;
-
-  //   this.service.translations.subscribe(
-  //     (res: any) => {
-  //       this.labels = res;
-  //       this.fields = [
-  //         {
-  //           value: "sender_name",
-  //           label: this.labels.sender_name,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_contact",
-  //           label: this.labels.sender_contact,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_addr",
-  //           label: this.labels.sender_addr,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_city",
-  //           label: this.labels.sender_city,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_cap",
-  //           label: this.labels.sender_cap,
-  //           type: "number",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_state",
-  //           label: this.labels.sender_state,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_country_code",
-  //           label: this.labels.sender_country_code,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_email",
-  //           label: this.labels.sender_email,
-  //           type: "email",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_phone",
-  //           label: this.labels.sender_phone,
-  //           type: "number",
-  //           required: false,
-  //         },
-  //         {
-  //           value: "sender_addr",
-  //           label: this.labels.sender_addr,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //       ];
-  //     },
-  //     (err: any) => {
-  //       //console.log(err);
-  //       this.router.navigate(["/"]);
-  //     }
-  //   );
-
-  //   let langParam = "";
-
-  //   this.route.queryParams.subscribe((params: any) => {
-  //     langParam = params.lang;
-  //   });
-
-  //   /* this.service.getLenguage(langParam, "resi").subscribe(
-  //     (res: any) => {
-  //       this.labels = res;
-  //       this.fields = [
-  //         {
-  //           value: "sender_name",
-  //           label: this.labels.sender_name,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_contact",
-  //           label: this.labels.sender_contact,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_addr",
-  //           label: this.labels.sender_addr,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_city",
-  //           label: this.labels.sender_city,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_cap",
-  //           label: this.labels.sender_cap,
-  //           type: "number",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_state",
-  //           label: this.labels.sender_state,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_country_code",
-  //           label: this.labels.sender_country_code,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_email",
-  //           label: this.labels.sender_email,
-  //           type: "email",
-  //           required: true,
-  //         },
-  //         {
-  //           value: "sender_phone",
-  //           label: this.labels.sender_phone,
-  //           type: "number",
-  //           required: false,
-  //         },
-  //         {
-  //           value: "sender_addr",
-  //           label: this.labels.sender_addr,
-  //           type: "text",
-  //           required: true,
-  //         },
-  //       ];
-  //     },
-  //     (err: any) => {
-  //       //console.log(err);
-  //       this.router.navigate(["/"]);
-  //     }
-  //   ); */
-  // }
 
   ngOnInit() {
     /* this.service.translations.subscribe((message: any) => {
-      //console.log(message);
+      console.log(message);
       if (message !== "this.myVar") {
-        //console.log("123");
+        console.log("123");
       } else {
-        //console.log(321);
+        console.log(321);
       }
     }); */
   }
@@ -389,13 +158,16 @@ export class SenderComponent implements OnInit {
         .subscribe((response: any) => {
           this.predictionsAddress = [];
           response.predictions.map((prediction: any) =>
-            this.predictionsAddress.push({terms: prediction.terms, description: prediction.description})
+            this.predictionsAddress.push({
+              terms: prediction.terms,
+              description: prediction.description,
+            })
           );
-          //console.log(this.predictionsAddress);
+          console.log(this.predictionsAddress);
 
-          // //console.log((JSON.parse(response[0].replaceAll("\n", ""))))
+          // console.log((JSON.parse(response[0].replaceAll("\n", ""))))
         });
-      // //console.log(address.value);
+      // console.log(address.value);
     }
   }
 
@@ -405,7 +177,7 @@ export class SenderComponent implements OnInit {
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
-
+  editable?: boolean;
   formSender: FormGroup;
 
   //Local Variable defined
@@ -416,7 +188,7 @@ export class SenderComponent implements OnInit {
   };
 
   setAddress(prediction: any) {
-    //console.log(prediction);
+    console.log(prediction);
     this.formSender.controls["sender_addr"].setValue(prediction);
     this.showPredictions = false;
   }
@@ -427,7 +199,7 @@ export class SenderComponent implements OnInit {
       this.service.setStatus(this.formSender.value, "sender");
       this.service.incrementStep();
       this.route.queryParams.subscribe((params: any) => {
-        if (params.lang) {
+        if (params.lang || true) {
           this.router.navigate(["recipient"], {
             queryParams: { lang: params.lang },
           });

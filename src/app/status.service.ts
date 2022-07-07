@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
-import { from, map, Observable, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import jwt_decode from "jwt-decode";
 import { NavigationEnd, ActivatedRoute } from "@angular/router";
 
@@ -14,9 +14,9 @@ export class StatusService implements OnInit {
 
   ngOnInit(): void {
     // this.getConfiguration();
-    //console.log(this.session);
+    console.log(this.session);
     this.route.queryParams.subscribe((params) => {
-      //console.log(params); // { orderby: "price" }
+      console.log(params); // { orderby: "price" }
     });
   }
 
@@ -26,8 +26,8 @@ export class StatusService implements OnInit {
 
   activeStep: number = 0;
 
-  token =
-    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoiMjIiLCJpbnN0YW5jZSI6InRlc3RiZWQiLCJleHAiOjE2NTY0Mjc2MjB9.GOkYTTQ7vsgPp9F9RF4VJEj2IA6dZ7OOVRDuBwy/PmE=";
+  token = sessionStorage.getItem("token") || "";
+  //  example "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoiMjIiLCJpbnN0YW5jZSI6InRlc3RiZWQiLCJleHAiOjE2NTY0Mjc2MjB9.GOkYTTQ7vsgPp9F9RF4VJEj2IA6dZ7OOVRDuBwy/PmE=";
   decoded: any = jwt_decode(this.token);
 
   getConfiguration(): Observable<any> {
@@ -69,10 +69,6 @@ export class StatusService implements OnInit {
     user_id: this.decoded.user_id,
   };
 
-  greeting() {
-    //console.log("hello");
-  }
-
   setStatus(values: any, field: string) {
     this.session[field] = values;
   }
@@ -83,7 +79,7 @@ export class StatusService implements OnInit {
 
   incrementStep() {
     this.activeStep += 1;
-    //console.log(this.activeStep);
+    console.log(this.activeStep);
   }
   getActiveStep(): number {
     return this.activeStep;
@@ -102,7 +98,7 @@ export class StatusService implements OnInit {
       pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
     };
 
-    //console.log(body);
+    console.log(body);
     return this.http.post(
       "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
       body,
@@ -174,6 +170,7 @@ export class StatusService implements OnInit {
   translations: any = {};
 
   setTranslations(lang: string, resource: string) {
+    // sessionStorage.removeItem("translations");
     const headers = { "x-api-key": this.token };
     this.http
       .get(
@@ -186,18 +183,26 @@ export class StatusService implements OnInit {
           resource,
         { headers: headers }
       )
-      .pipe((res) => (this.translations = res))
-      .subscribe();
+      // .pipe((res) => (this.translations = res))
+      .subscribe((res) => {
+        // alert(res);
+        console.log(res);
+        sessionStorage.setItem("translations", JSON.stringify(res));
+        const currentUrl = window.location.pathname;
+        console.log(currentUrl);
+
+        window.location.href = currentUrl + "?lang=" + lang;
+      });
   }
 
   setConfiguration() {
     return this.http
       .get(
         "https://api.gsped.it/" +
-          this.decoded.instance +
+          "testbed" + // TODO modificare con il decoded
           "/ResourceConfiguration?resource=" +
           "resi",
-        { headers: { "X-API-KEY": this.token } }
+        { headers: { "X-API-KEY": sessionStorage.getItem("token") || "" } }
       )
       .pipe((res) => (this.response = res));
   }

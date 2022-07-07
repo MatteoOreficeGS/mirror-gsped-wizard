@@ -49,9 +49,10 @@ export class ShipmentComponent implements OnInit {
 
     this.status.response.subscribe((res: any) => {
       this.response = res;
-      this.hasPayment = this.response.configuration.modules.filter(
-        (module: { moduleName: string }) => module.moduleName === "payment"
-      ).length === 1;
+      this.hasPayment =
+        this.response.configuration.modules.filter(
+          (module: { moduleName: string }) => module.moduleName === "payment"
+        ).length === 1;
       this.currentModule = this.response.configuration?.modules.filter(
         (module: any) => module.moduleName === "shipment"
       )[0].moduleConfig;
@@ -352,6 +353,9 @@ export class ShipmentComponent implements OnInit {
     this.status
       .handleRateComparative(this.bodyRateComparativa)
       .subscribe((res) => {
+        if (res.hasOwnProperty("error")) {
+          alert(res.error);
+        }
         this.dataRateComparative = res;
         this.costExposure = {};
         let couriers = Object.keys(res.passivo);

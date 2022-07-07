@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
     public http: HttpClient,
     public router: Router
   ) {
-    if (window.location.pathname === "/init") {
+    if (window.location.pathname === "/") {
       this.route.queryParams.subscribe((params: any) => {
         if ((params.lang, params.origin)) {
           this.queryParams = params;

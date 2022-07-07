@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: "shipment", component: ShipmentComponent, /* outlet: "steps" */ },
   { path: "payment", component: PaymentComponent, /* outlet: "steps" */ },
   { path: "awb_printing", component: StampaAwbComponent, /* outlet: "steps" */ },
-  { path: "init", component: StartComponent, /* outlet: "page" */ },
+  { path: "", component: StartComponent, /* outlet: "page" */ },
   { path: "**", component: ErrorPageComponent, /* outlet: "page" */ },
   // { path: "", redirectTo: "/sender?lang=it_IT", pathMatch: "full" },
   // { path: "**", redirectTo: "/sender?lang=it_IT", pathMatch: "full" },

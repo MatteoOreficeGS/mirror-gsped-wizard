@@ -16,11 +16,32 @@ export class AppComponent implements OnInit {
     public http: HttpClient,
     public router: Router
   ) {
-    if (window.location.pathname === "/") {
+    window.addEventListener(
+      "message",
+      (event) => {
+        // Do not do anything unless the message was from
+        // a domain we trust.
+        console.log(event);
+
+        if (event.origin !== "https://example.org") return;
+
+        // Create a local copy of the variable we were passed.
+        var test_parameter = event.data;
+
+        // Do something...
+
+        // Optionally reply to the message (Page A must also have
+        // a 'message' event listener to receive this message).
+        // event.source.postMessage('Done!', 'https://example.org');
+      },
+      false
+    );
+
+    if (window.location.pathname === "/" || true) {
       this.route.queryParams.subscribe((params: any) => {
         if ((params.lang, params.origin)) {
           this.queryParams = params;
-          this.getToken(params.origin, "https://www.vodafone.it").subscribe(
+          this.getToken(params.origin).subscribe(
             (res: any) => {
               console.log(res);
               this.token = res.token;
@@ -39,7 +60,7 @@ export class AppComponent implements OnInit {
               });
             },
             (error: any) => {
-              alert(JSON.stringify(error.error.error));
+              alert(JSON.stringify(error));
             }
           );
         } else {
@@ -67,11 +88,7 @@ export class AppComponent implements OnInit {
   token: string = "";
   decoded: any;
 
-  getToken(origin: any, refer: any): Observable<any> {
-    return this.http.get("https://api.gsped.it/Token?origin=" + origin, {
-      headers: new HttpHeaders({
-        refer: refer,
-      }),
-    });
+  getToken(origin: any): Observable<any> {
+    return this.http.get("https://api.gsped.it/Token?origin=" + origin);
   }
 }

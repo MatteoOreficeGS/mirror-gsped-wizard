@@ -26,17 +26,24 @@ export class StatusService implements OnInit {
 
   activeStep: number = 0;
 
-  token = sessionStorage.getItem("token") || "";
-  //  example "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoiMjIiLCJpbnN0YW5jZSI6InRlc3RiZWQiLCJleHAiOjE2NTY0Mjc2MjB9.GOkYTTQ7vsgPp9F9RF4VJEj2IA6dZ7OOVRDuBwy/PmE=";
-  decoded: any = jwt_decode(this.token);
+  // token = sessionStorage.getItem("token") || "";
+  token = "";
+  // token =    "eyJhbGciOiAiSFMyNTYiLCJ0eXAiOiAiSldUIn0=.eyJ1c2VyX2lkIjoiMjIiLCJpbnN0YW5jZSI6InRlc3RiZWQiLCJleHAiOjE2NTY0Mjc2MjB9.GOkYTTQ7vsgPp9F9RF4VJEj2IA6dZ7OOVRDuBwy/PmE=";
+  decoded: any;
+
+  decodeToken() {
+    this.decoded = jwt_decode(sessionStorage.getItem("token") || "");
+    this.session.user_id = this.decoded?.user_id;
+  }
 
   getConfiguration(): Observable<any> {
+    const decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
     return this.http.get(
       "https://api.gsped.it/" +
-        this.decoded.instance +
+        decoded.instance +
         "/ResourceConfiguration?resource=" +
         "resi",
-      { headers: { "X-API-KEY": this.token } }
+      { headers: { "X-API-KEY": sessionStorage.getItem("token") || "" } }
     );
   }
 
@@ -66,7 +73,6 @@ export class StatusService implements OnInit {
     shipment: {},
     step: null,
     flow: "resoFacile",
-    user_id: this.decoded.user_id,
   };
 
   setStatus(values: any, field: string) {
@@ -89,8 +95,9 @@ export class StatusService implements OnInit {
   }
 
   pickupAvailability(): Observable<any> {
+    const decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
     const date = new Date(); /* .toLocaleString() */
-    const headers = { "x-api-key": this.token };
+    const headers = { "x-api-key": sessionStorage.getItem("token") || "" };
     const body = {
       ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
       corriere: "104",
@@ -100,7 +107,7 @@ export class StatusService implements OnInit {
 
     console.log(body);
     return this.http.post(
-      "https://api.gsped.it/" + this.decoded.instance + "/PickupAvailability",
+      "https://api.gsped.it/" + decoded.instance + "/PickupAvailability",
       body,
       { headers: headers }
     );
@@ -114,16 +121,18 @@ export class StatusService implements OnInit {
   }
 
   handleShipment(payload: any): Observable<any> {
-    const headers = { "x-api-key": this.token };
+    const decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
+    const headers = { "x-api-key": sessionStorage.getItem("token") || "" };
     return this.http.post(
-      "https://api.gsped.it/" + this.decoded.instance + "/Shipment",
+      "https://api.gsped.it/" + decoded.instance + "/Shipment",
       payload,
       { headers: headers }
     );
   }
 
   handleRateComparative(body: any): Observable<any> {
-    const headers = { "x-api-key": this.token };
+    const decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
+    const headers = { "x-api-key": sessionStorage.getItem("token") || "" };
     body = body;
 
     body = Object.entries(body);
@@ -135,10 +144,7 @@ export class StatusService implements OnInit {
     body = body.join("&");
 
     return this.http.get(
-      "https://api.gsped.it/" +
-        this.decoded.instance +
-        "/RateComparativa?" +
-        body,
+      "https://api.gsped.it/" + decoded.instance + "/RateComparativa?" + body,
       { headers: headers }
     );
   }
@@ -170,12 +176,16 @@ export class StatusService implements OnInit {
   translations: any = {};
 
   setTranslations(lang: string, resource: string) {
+    console.log(sessionStorage.getItem("token") || "");
+
+    let decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
+
     // sessionStorage.removeItem("translations");
-    const headers = { "x-api-key": this.token };
+    const headers = { "x-api-key": sessionStorage.getItem("token") || "" };
     this.http
       .get(
         "https://api.gsped.it/" +
-          this.decoded.instance +
+          decoded.instance +
           "/Translations?" +
           "lang=" +
           lang +
@@ -208,21 +218,22 @@ export class StatusService implements OnInit {
   }
 
   getGooglePlace(address: string, lang: string) {
+    const decoded: any = jwt_decode(sessionStorage.getItem("token") || "");
     return this.http
       .get(
         "https://api.gsped.it/" +
-          this.decoded.instance +
+          decoded.instance +
           "/AddressAutocomplete?input=" +
           address +
           "&lang=" +
           lang,
-        { headers: { "X-API-KEY": this.token } }
+        { headers: { "X-API-KEY": sessionStorage.getItem("token") || "" } }
       )
       .pipe((res) => (this.response = res));
   }
 
   /* getLenguageSolved() {
-    const headers = { "x-api-key": this.token };
+    const headers = { "x-api-key": sessionStorage.getItem("token") || "" };
     let x;
     return this.http
       .get(

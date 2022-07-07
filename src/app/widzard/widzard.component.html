@@ -3,7 +3,7 @@
     <img
       class="items-center justift-center text-center w-full"
       alt="banner"
-      src={{response.configuration?.bannerExtra}}
+      src="{{ response.configuration?.bannerExtra }}"
     />
     <h1
       class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
@@ -34,7 +34,7 @@
           [ngClass]="activeStep === i ? 'font-bold' : ''"
           class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
         >
-          {{ modules.moduleName }}
+          {{ translations[modules.moduleName] }}
         </div>
       </div>
     </div>
@@ -43,9 +43,8 @@
     >
       {{ response.configuration?.modules[activeStep].moduleName }}
     </div>
-    <div
-      class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg"
-    >
+    <div class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg">
+      <!-- {{ response | json }} -->
       <router-outlet></router-outlet>
     </div>
   </div>

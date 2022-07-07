@@ -18,6 +18,8 @@ import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { ErrorPageComponent } from './error-page/error-page.component';
+import { StartComponent } from './start/start.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     PaymentComponent,
     StampaAwbComponent,
     NavbarComponent,
+    ErrorPageComponent,
+    StartComponent,
   ],
   imports: [
     MatAutocompleteModule,

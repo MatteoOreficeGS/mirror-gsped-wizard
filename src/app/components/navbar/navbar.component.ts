@@ -48,9 +48,10 @@ export class NavbarComponent implements OnInit {
   }
 
   handleSetTranslations(lang: string) {
-    // this.router.navigate(["/sender"], { queryParams: { lang: lang } });
-      this.currentUrl = this.router.url.slice(1).split("?")[0];
-      window.location.href = "/" + this.currentUrl + "?lang=" + lang;
-      this.service.setTranslations(lang, "resi");
+    this.currentUrl = this.router.url.slice(1).split("?")[0];
+    this.router.navigate([this.currentUrl], { queryParams: { lang: lang } });
+    console.log(lang);
+    this.service.setTranslations(lang, "resi");
+    // window.location.href = "/" + this.currentUrl + "?lang=" + lang;
   }
 }

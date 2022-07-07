@@ -10,11 +10,11 @@ import { StatusService } from "../status.service";
 export class WidzardComponent implements OnInit {
   constructor(private router: Router, public status: StatusService) {
     this.stepSrc = this.status.stepSource;
-
+    this.translations = JSON.parse(sessionStorage.getItem("translations") || "{}")
     this.stepSrc.subscribe((value) => {
       this.activeStep = value;
     });
-    // //console.log(this.configuration);
+    // console.log(this.configuration);
     router.events.subscribe(() => {
       this.setStep(1);
       this.stepName = this.router.url.slice(1).split("?")[0];
@@ -22,7 +22,7 @@ export class WidzardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // //console.log(this.status.getResponse().subscribe((res: any) => //console.log(res) ));
+    // this.status.getResponse().subscribe((res: any) => console.log(res));
     this.status.getConfiguration().subscribe((res) => {
       this.response = res;
       // this.response.configuration.modules =
@@ -31,18 +31,18 @@ export class WidzardComponent implements OnInit {
           return object.moduleName === this.stepName;
         }
       );
-      //console.log(index + 1);
+      console.log(index + 1);
       this.setStep(index);
     });
   }
 
   response: any = {};
-
+  translations:any = {}
   stepName = "";
 
   /*   configuration = this.status
     .getConfiguration()
-    .subscribe((res) => //console.log(res)); */
+    .subscribe((res) => console.log(res)); */
   // bannerExtra = this.response.configuration.bannerExtra;
 
   stepSrc?: Subject<number>;

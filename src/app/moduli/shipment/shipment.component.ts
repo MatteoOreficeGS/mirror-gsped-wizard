@@ -96,7 +96,7 @@ export class ShipmentComponent implements OnInit {
   formShipment: FormGroup;
 
   send() {
-    //console.log(this.formShipment.value);
+    console.log(this.formShipment.value);
     this.incrementStep();
   }
   selectCourier(courier: any) {
@@ -166,8 +166,8 @@ export class ShipmentComponent implements OnInit {
   }
 
   showLocalStorage() {
-    //console.log(JSON.parse(sessionStorage.getItem("sender") || "{}"));
-    //console.log(JSON.parse(sessionStorage.getItem("recipient") || "{}"));
+    console.log(JSON.parse(sessionStorage.getItem("sender") || "{}"));
+    console.log(JSON.parse(sessionStorage.getItem("recipient") || "{}"));
   }
 
   setDataColli() {
@@ -209,32 +209,32 @@ export class ShipmentComponent implements OnInit {
 
       // formattedDatacolli.daticolli = x;
 
-      // //console.log("formattedDatacolli", formattedDatacolli);
+      // console.log("formattedDatacolli", formattedDatacolli);
 
       this.bodyRateComparativa = {
         ...this.bodyRateComparativa,
         ...this.datacolli,
       };
 
-      //console.log("bodyRateComparativa", this.bodyRateComparativa);
+      console.log("bodyRateComparativa", this.bodyRateComparativa);
 
       this.showInput = false;
       switch (this.currentModule.selectCourier.couriers.selectionMode) {
         case "AUTOMATIC":
         case "automatic":
-          //console.log("seleziono da solo");
+          console.log("seleziono da solo");
           this.showCourierLowestPrice();
           this.checkPickUpAviability();
           break;
         case "DYNAMIC":
         case "dynamic":
-          //console.log("mostro direttamente i prezzi");
+          console.log("mostro direttamente i prezzi");
           this.showCouriersPices();
           this.checkPickUpAviability();
           break;
         case "FIXED":
         case "fixed":
-          //console.log("seleziona l'utente");
+          console.log("seleziona l'utente");
           this.showCourierSelection = true;
           break;
       }
@@ -244,7 +244,7 @@ export class ShipmentComponent implements OnInit {
   checkPickUpAviability() {
     this.status.pickupAvailability().subscribe(
       (res) => {
-        //console.log(res);
+        console.log(res);
         if (res.hasOwnProperty("result")) {
           this.pickupAvailability = res.result;
         }
@@ -259,12 +259,12 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleSetService() {
-    //console.log(this.formShipment.value.service);
+    console.log(this.formShipment.value.service);
   }
 
   setShipmentPayload() {
-    //console.log(this.status.session);
-    //console.log("creo il payload per la spedizione");
+    console.log(this.status.session);
+    console.log("creo il payload per la spedizione");
     this.payloadShipment = {
       creazione_postume: this.hasPayment,
       corriere: this.courierSelected.gspedCourierCode,
@@ -282,7 +282,7 @@ export class ShipmentComponent implements OnInit {
       ...JSON.parse(sessionStorage.getItem("recipient") || "{}"),
     };
 
-    //console.log("payloadShipment: ", this.payloadShipment);
+    console.log("payloadShipment: ", this.payloadShipment);
   }
 
   checkPaymentModule() {
@@ -291,19 +291,19 @@ export class ShipmentComponent implements OnInit {
         .handleRateComparative(this.bodyRateComparativa)
         .subscribe((res) => {
           this.dataRateComparative = res;
-          //console.log(res);
+          console.log(res);
           this.costExposure = res.passivo[this.courierSelected.name];
           this.rateComparativeServices = Object.keys(this.costExposure);
           this.rateComparativeServices.forEach((element) => {
-            //console.log(element);
+            console.log(element);
             this.varie_dettaglio[element] = Object.keys(
               this.costExposure[element].varie_dettaglio
             );
           });
-          //console.log(this.varie_dettaglio);
+          console.log(this.varie_dettaglio);
         });
     } else {
-      //console.log("passo direttamente alla etichetta");
+      console.log("passo direttamente alla etichetta");
     }
   }
 
@@ -330,11 +330,11 @@ export class ShipmentComponent implements OnInit {
         this.costExposure = {};
 
         this.costExposure[this.services[0].name] = selectedService;
-        //console.log(this.costExposure);
+        console.log(this.costExposure);
 
         this.rateComparativeServices = Object.keys(this.costExposure);
         this.rateComparativeServices.forEach((element) => {
-          //console.log(element);
+          console.log(element);
           this.varie_dettaglio[element] = Object.keys(
             this.costExposure[element].varie_dettaglio
           );
@@ -343,7 +343,7 @@ export class ShipmentComponent implements OnInit {
         this.costExposure[this.services[0]].varie_dettaglio
       ); */
 
-        //console.log(this.varie_dettaglio);
+        console.log(this.varie_dettaglio);
       });
   }
 
@@ -377,8 +377,8 @@ export class ShipmentComponent implements OnInit {
     let courierCode: number = -1;
 
     Object.keys(this.dataRateComparative.passivo).forEach((courier: any) => {
-      //console.log(courier);
-      //console.log(this.dataRateComparative.passivo);
+      console.log(courier);
+      console.log(this.dataRateComparative.passivo);
 
       if (
         this.dataRateComparative.passivo[courier].hasOwnProperty(serviceName)
@@ -391,16 +391,16 @@ export class ShipmentComponent implements OnInit {
 
     this.payloadShipment.corriere = courierCode;
     this.payloadShipment.servizio = serviceCode;
-    //console.log("payloadShipment", this.payloadShipment);
+    console.log("payloadShipment", this.payloadShipment);
     alert(JSON.stringify(this.payloadShipment, null, 4));
     // this.checkPickUpAviability();
   }
 
   incrementStep() {
-    //console.log(
-    //   "Faccio la chiamata all'endpoint con il payload",
-    //   this.payloadShipment
-    // );
+    console.log(
+      "Faccio la chiamata all'endpoint con il payload",
+      this.payloadShipment
+    );
     this.status
       .handleShipment(this.payloadShipment)
       .subscribe((res) => console.log(res));
@@ -409,7 +409,7 @@ export class ShipmentComponent implements OnInit {
   }
 
   next() {
-    //console.log(this.formShipment.value);
+    console.log(this.formShipment.value);
 
     if (this.formShipment.valid) {
       this.status.setStatus(this.formShipment.value, "shipment");

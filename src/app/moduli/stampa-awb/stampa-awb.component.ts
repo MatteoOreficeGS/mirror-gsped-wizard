@@ -37,7 +37,7 @@ export class StampaAwbComponent {
   }
 
   onSubmit() {
-    //console.log(this.skillsForm.value);
+    console.log(this.skillsForm.value);
   }
 }
 

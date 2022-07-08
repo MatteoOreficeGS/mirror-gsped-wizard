@@ -41,8 +41,9 @@ npm install
 Far partire il servizio
 
 ```
-ng serve --open
+ng serve
 ```
 
-Se non dovesse partire automaticamente puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
+Puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
+e aggiungere il parametro "origin" nella query string ("moldavia" o "indiaoneway")
 

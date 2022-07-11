@@ -12,6 +12,38 @@
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
           placeholder=" "
         />
+        <div
+          *ngIf="
+            formSender.get(field.value)?.invalid &&
+            formSender.get(field.value)?.errors &&
+            (formSender.get(field.value)?.dirty ||
+              formSender.get(field.value)?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="formSender.get(field.value)?.hasError('required')"
+          >
+            This field is required.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="formSender.get(field.value)?.hasError('minlength')"
+          >
+            The minimum length for this field is
+            {{formSender.get(field.value)?.errors?.["minlength"].requiredLength}}
+            characters.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="formSender.get(field.value)?.hasError('maxlength')"
+          >
+            The maximum length for this field is
+            {{formSender.get(field.value)?.errors?.["maxlength"].requiredLength}}
+            characters.
+          </small>
+        </div>
+
         <div *ngIf="field.label === 'indirizzo mittente'">
           <input
             autocomplete="{{ autocomplete }}"
@@ -57,6 +89,7 @@
   </div>
   <div class="text-center sm:text-left md:ml-12">
     <button
+      [disabled]="formSender.invalid"
       [ngClass]="
         formSender.valid
           ? 'bg-yellow-400 text-white '

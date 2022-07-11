@@ -61,6 +61,8 @@ export class RecipientComponent implements OnInit {
       console.log(this.currentModule);
       this.editable = this.currentModule.editable;
       Object.keys(this.currentModule.data).forEach((element: any) => {
+        console.log(element);
+
         this.formRecipient.controls[element].setValue(
           this.currentModule.data[element]
         );
@@ -195,7 +197,10 @@ export class RecipientComponent implements OnInit {
 
   nextStep() {
     if (this.formRecipient.valid) {
-      sessionStorage.setItem("recipient", JSON.stringify(this.formRecipient.value));
+      sessionStorage.setItem(
+        "recipient",
+        JSON.stringify(this.formRecipient.value)
+      );
       this.service.setStatus(this.formRecipient.value, "recipient");
       this.service.incrementStep();
       this.route.queryParams.subscribe((params: any) => {

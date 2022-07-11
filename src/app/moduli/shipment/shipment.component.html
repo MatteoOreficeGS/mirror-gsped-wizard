@@ -134,30 +134,8 @@
     </button>
   </ng-container>
   <ng-template #serviceChoice>
-    <div
-      class="md:flex md:flex-row md:col-span-full space-x-2 py-4"
-      *ngIf="currentModule?.selectCourier.couriers.selectionMode === 'FIXED'"
-    >
-      <select
-        (change)="selectCourier(courier)"
-        #courier
-        id="courier"
-        name="courier"
-        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-      >
-        <option [defaultSelected]="true" disabled>Seleziona corriere</option>
-        <ng-container *ngFor="let courier of couriers">
-          <option>{{ courier.name }}</option>
-        </ng-container>
-      </select>
-      <img
-        *ngIf="courierSelectedLogoUrl"
-        alt="logo corriere"
-        class="mt-4 md:mt-0"
-        src="{{ courierSelectedLogoUrl }}"
-      />
-    </div>
     <!-- {{ isLoading }} -->
+    <!-- TODO da sistemare -->
     <div *ngIf="pickupAvailability">
       <label
         *ngIf="pickupAvailability === 'KO'"

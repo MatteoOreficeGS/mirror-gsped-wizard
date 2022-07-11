@@ -61,7 +61,7 @@ export class ShipmentComponent implements OnInit {
       this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
       // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
 
-      this.currentModule.packagesDetails.fixedpackagesNumber = 2;
+      // this.currentModule.packagesDetails.fixedpackagesNumber = 2;
 
       // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
@@ -218,6 +218,7 @@ export class ShipmentComponent implements OnInit {
       };
 
       console.log("bodyRateComparativa", this.bodyRateComparativa);
+      this.setShipmentPayload();
 
       this.showInput = false;
       switch (this.currentModule.selectCourier.couriers.selectionMode) {
@@ -225,18 +226,18 @@ export class ShipmentComponent implements OnInit {
         case "automatic":
           console.log("seleziono da solo");
           this.showCourierLowestPrice();
-          this.checkPickUpAviability();
+          // this.checkPickUpAviability();
           break;
         case "DYNAMIC":
         case "dynamic":
           console.log("mostro direttamente i prezzi");
-          this.showCouriersPices();
-          this.checkPickUpAviability();
+          this.showCouriersPrices();
+          // this.checkPickUpAviability();
           break;
         case "FIXED":
         case "fixed":
           console.log("seleziona l'utente");
-          this.showCourierSelection = true;
+          this.showCourierConfigPrice();
           break;
       }
     }
@@ -269,10 +270,8 @@ export class ShipmentComponent implements OnInit {
     this.payloadShipment = {
       creazione_postume: this.hasPayment,
       corriere: this.courierSelected.gspedCourierCode,
-      servizio: 9,
       client_id: this.response.configuration.client_id,
       // contrassegno: 0, // come imposto questo campo
-      ddt_alpha: "TEST_GSPED",
       origine: "IT",
     };
 
@@ -288,9 +287,11 @@ export class ShipmentComponent implements OnInit {
 
   checkPaymentModule() {
     if (this.hasPayment) {
-      this.status
-        .handleRateComparative(this.bodyRateComparativa)
-        .subscribe((res) => {
+      this.status.handleRateComparative(this.bodyRateComparativa).subscribe(
+        (res) => {
+          if (res.hasOwnProperty("Error")) {
+            alert(res.Error);
+          }
           this.dataRateComparative = res;
           console.log(res);
           this.costExposure = res.passivo[this.courierSelected.name];
@@ -302,12 +303,16 @@ export class ShipmentComponent implements OnInit {
             );
           });
           console.log(this.varie_dettaglio);
-        });
+        },
+        (error) => {
+          alert(error.error);
+        }
+      );
     } else {
       console.log("passo direttamente alla etichetta");
     }
   }
-
+  // automatic
   showCourierLowestPrice() {
     let totale = 9999;
     let selectedService = 0;
@@ -315,6 +320,9 @@ export class ShipmentComponent implements OnInit {
     this.status
       .handleRateComparative(this.bodyRateComparativa)
       .subscribe((res) => {
+        if (res.hasOwnProperty("Error")) {
+          alert(res.Error);
+        }
         this.dataRateComparative = res;
         Object.keys(res.passivo).forEach((courier) => {
           Object.keys(res.passivo[courier]).forEach((service) => {
@@ -348,13 +356,84 @@ export class ShipmentComponent implements OnInit {
       });
   }
 
-  showCouriersPices() {
+  //fixed
+  showCourierConfigPrice() {
     this.services = [];
     this.status
       .handleRateComparative(this.bodyRateComparativa)
       .subscribe((res) => {
-        if (res.hasOwnProperty("error")) {
-          alert(res.error);
+        if (res.hasOwnProperty("Error")) {
+          alert(res.Error);
+        }
+
+        const couriersInfo: any = [];
+        this.currentModule.selectCourier.couriers.list.forEach(
+          (courier: any) => {
+            const services: any = [];
+            courier.services.list.forEach((service: any) => {
+              services.push({ name: service.name });
+            });
+            couriersInfo.push({ courier: courier.name, services: services });
+          }
+        );
+        const result: any = [];
+        couriersInfo.forEach((courierInfo: any) => {
+          const services: any = [];
+          const details: any = [];
+          Object.keys(res.passivo).forEach((key) => {
+            courierInfo.services.forEach((service: any) => {
+              if (res.passivo[`${key}`][`${service.name}`]) {
+                Object.keys(res.passivo[`${key}`][`${service.name}`]).forEach(
+                  (detail) => {
+                    const varieDettaglio: any = [];
+                    if (detail == "varie_dettaglio") {
+                      Object.keys(
+                        res.passivo[`${key}`][`${service.name}`][`${detail}`]
+                      ).forEach((varie_dettaglio) => {
+                        varieDettaglio.push({
+                          name: varie_dettaglio,
+                          value:
+                            res.passivo[`${key}`][`${service.name}`][
+                              `${detail}`
+                            ][`${varie_dettaglio}`],
+                        });
+                      });
+                      details.push({
+                        name: detail,
+                        value: varieDettaglio,
+                      });
+                    } else {
+                      details.push({
+                        name: detail,
+                        value:
+                          res.passivo[`${key}`][`${service.name}`][`${detail}`],
+                      });
+                    }
+                  }
+                );
+                services.push({
+                  name: service.name,
+                  details: details,
+                });
+              }
+            });
+          });
+          result.push({
+            courier: courierInfo.courier,
+            services: services,
+          });
+        });
+        console.log(result);
+      });
+  }
+  // dynamic
+  showCouriersPrices() {
+    this.services = [];
+    this.status
+      .handleRateComparative(this.bodyRateComparativa)
+      .subscribe((res) => {
+        if (res.hasOwnProperty("Error")) {
+          alert(res.Error);
         }
         this.dataRateComparative = res;
         this.costExposure = {};
@@ -374,6 +453,7 @@ export class ShipmentComponent implements OnInit {
             });
           });
         });
+        console.log(this.costExposure);
       });
   }
 
@@ -397,6 +477,7 @@ export class ShipmentComponent implements OnInit {
     this.payloadShipment.servizio = serviceCode;
     console.log("payloadShipment", this.payloadShipment);
     alert(JSON.stringify(this.payloadShipment, null, 4));
+    this.incrementStep();
     // this.checkPickUpAviability();
   }
 
@@ -405,11 +486,11 @@ export class ShipmentComponent implements OnInit {
       "Faccio la chiamata all'endpoint con il payload",
       this.payloadShipment
     );
-    this.status
-      .handleShipment(this.payloadShipment)
-      .subscribe((res) => console.log(res));
-    this.status.incrementStep();
-    // this.next();
+    this.status.handleShipment(this.payloadShipment).subscribe((res) => {
+      console.log(res);
+      sessionStorage.setItem("shipment", JSON.stringify(res));
+    });
+    this.next();
   }
 
   next() {
@@ -417,9 +498,15 @@ export class ShipmentComponent implements OnInit {
 
     if (this.formShipment.valid) {
       this.status.setStatus(this.formShipment.value, "shipment");
-      this.status.incrementStep();
-      this.router.navigate(["payment"]);
       this.status.changestep(this.step++);
+      this.status.incrementStep();
+      this.route.queryParams.subscribe((params: any) => {
+        if (params.lang || true) {
+          this.router.navigate(["payment"], {
+            queryParams: { lang: params.lang },
+          });
+        }
+      });
     }
   }
 

@@ -61,26 +61,26 @@ export class ShipmentComponent implements OnInit {
       this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
       // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
 
-      // this.currentModule.packagesDetails.fixedpackagesNumber = 2;
+      this.currentModule.packagesDetails.fixedpackagesNumber = 1;
 
       // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
       // this.currentModule.enable = true;
 
-      if (this.currentModule.packagesDetails.fixedpackagesNumber > 1) {
+      if (this.currentModule.packagesDetails.fixedpackagesNumber > 0) {
         this.addPackage();
-        this.addPackage();
+        // this.addPackage();
       }
 
       this.couriers = this.currentModule.selectCourier.couriers.list;
       this.label = this.currentModule.packagesDetails.label;
       // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
       this.fieldsLabel = [
-        { label: "altezza", placeholder: "cm", step: 1 },
-        { label: "lunghezza", placeholder: "cm", step: 1 },
-        { label: "larghezza", placeholder: "cm", step: 1 },
-        { label: "volume", placeholder: "m³", step: 0.01 },
-        { label: "peso", placeholder: "kg", step: 0.1 },
+        { label: "altezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+        { label: "lunghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+        { label: "larghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+        { label: "peso", placeholder: "kg", step: 0.1, min: 0.5, max: 10 },
+        // { label: "volume", placeholder: "m³", step: 0.01 },
       ];
 
       this.bodyRateComparativa = {
@@ -110,10 +110,9 @@ export class ShipmentComponent implements OnInit {
     this.services = this.currentModule.selectCourier.couriers.list.filter(
       (el: { name: string }) => el.name === this.courierSelected.name
     )[0].services.list;
-    this.isLoading = true;
 
     this.checkPaymentModule();
-    this.checkPickUpAviability();
+    // this.checkPickUpAviability();
     /* this.services.forEach((service: { name: string }) => {
       this.addService(service.name);
     }); */
@@ -135,7 +134,7 @@ export class ShipmentComponent implements OnInit {
   packageNumber = 1;
   varie_dettaglio?: any = {};
   rateComparativeServices?: Array<string>;
-  isLoading?: boolean;
+  isLoading: boolean = false;
   showInput: boolean = true;
   bodyRateComparativa: any;
   datacolli: any = {};
@@ -144,11 +143,10 @@ export class ShipmentComponent implements OnInit {
 
   newPackage(): FormGroup {
     return this.fb.group({
-      lunghezza: [10, Validators.required],
-      larghezza: [10, Validators.required],
-      altezza: [10, Validators.required],
-      peso: [0.01, Validators.required],
-      volume: [0.1, Validators.required],
+      lunghezza: ["", Validators.required],
+      larghezza: ["", Validators.required],
+      altezza: ["", Validators.required],
+      peso: ["", Validators.required],
     });
   }
 
@@ -176,22 +174,27 @@ export class ShipmentComponent implements OnInit {
       .map((value: { peso: any }) => value.peso)
       .reduce((a: any, b: any) => a + b, 0);
     const volumeTot = this.formShipment.value.dimensions
-      .map((value: { volume: any }) => value.volume)
+      .map(
+        (value: { altezza: any; larghezza: any; lunghezza: any }) =>
+          (value.lunghezza * value.larghezza * value.altezza) / 1000000
+      )
       .reduce((a: any, b: any) => a + b, 0);
+
+    console.log(volumeTot);
 
     this.datacolli =
       this.formShipment.value.dimensions.length === 0
         ? {
             colli: 1,
-            daticolli: [
+            daticolli: JSON.stringify([
               { altezza: 1, larghezza: 1, lunghezza: 1, volume: 1, peso: 1 },
-            ],
+            ]),
             peso: 1,
             volume: 1,
           }
         : {
             colli: this.formShipment.value.dimensions.length,
-            daticolli: this.formShipment.value.dimensions,
+            daticolli: JSON.stringify(this.formShipment.value.dimensions),
             peso: pesoTot,
             volume: volumeTot,
           };
@@ -200,6 +203,8 @@ export class ShipmentComponent implements OnInit {
   confirmInsurance() {
     if (this.formShipment.valid) {
       this.setDataColli();
+
+      this.isLoading = true;
 
       // let formattedDatacolli: any = { ...this.datacolli };
 
@@ -243,7 +248,7 @@ export class ShipmentComponent implements OnInit {
     }
   }
 
-  checkPickUpAviability() {
+  /* checkPickUpAviability() {
     this.status.pickupAvailability().subscribe(
       (res) => {
         console.log(res);
@@ -256,9 +261,9 @@ export class ShipmentComponent implements OnInit {
         this.pickupAvailability = "KO";
       }
     );
-    this.isLoading = false;
+    //this.isLoading = false;
     this.setShipmentPayload();
-  }
+  } */
 
   handleSetService() {
     console.log(this.formShipment.value.service);
@@ -322,6 +327,7 @@ export class ShipmentComponent implements OnInit {
       .subscribe((res) => {
         if (res.hasOwnProperty("Error")) {
           alert(res.Error);
+          return;
         }
         this.dataRateComparative = res;
         Object.keys(res.passivo).forEach((courier) => {
@@ -351,9 +357,10 @@ export class ShipmentComponent implements OnInit {
         /* this.varie_dettaglio[this.services[0]] = Object.keys(
         this.costExposure[this.services[0]].varie_dettaglio
       ); */
-
+        this.isLoading = false;
         console.log(this.varie_dettaglio);
       });
+    //this.isLoading = false;
   }
 
   //fixed
@@ -424,6 +431,7 @@ export class ShipmentComponent implements OnInit {
           });
         });
         console.log(result);
+        this.isLoading = false;
       });
   }
   // dynamic
@@ -454,6 +462,7 @@ export class ShipmentComponent implements OnInit {
           });
         });
         console.log(this.costExposure);
+        this.isLoading = false;
       });
   }
 

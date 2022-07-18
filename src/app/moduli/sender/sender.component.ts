@@ -1,8 +1,17 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router, Routes } from "@angular/router";
-import { Subject } from "rxjs";
+import { map, Observable, startWith, Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
+
+export interface User {
+  name: string;
+}
 
 @Component({
   selector: "app-sender",
@@ -138,8 +147,8 @@ export class SenderComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    /* this.service.translations.subscribe((message: any) => {
+  // ngOnInit() {
+  /* this.service.translations.subscribe((message: any) => {
       console.log(message);
       if (message !== "this.myVar") {
         console.log("123");
@@ -147,50 +156,56 @@ export class SenderComponent implements OnInit {
         console.log(321);
       }
     }); */
-  }
+  // }
 
   googlePlace(address: HTMLInputElement) {
-    if (address.value.length > 3) {
-      this.showPredictions === false &&
-        (this.showPredictions = true) /* : null */;
-      this.service
-        .getGooglePlace(address.value, "it")
-        .subscribe((response: any) => {
-          this.predictionsAddress = [];
-          response.predictions.map((prediction: any) =>
-            this.predictionsAddress.push({
-              terms: prediction.terms,
-              description: prediction.description,
-            })
-          );
-          console.log(this.predictionsAddress);
+    this.showPredictions === false &&
+      (this.showPredictions = true) /* : null */;
+    this.service
+      .getGooglePlace(address.value, "it")
+      .subscribe((response: any) => {
+        this.predictionsAddress = [];
+        response.predictions.map((prediction: any) =>
+          this.predictionsAddress.push({
+            terms: prediction.terms,
+            description: prediction.description,
+          })
+        );
+        console.log(this.predictionsAddress);
 
-          // console.log((JSON.parse(response[0].replaceAll("\n", ""))))
-        });
-      // console.log(address.value);
-    }
+        // console.log((JSON.parse(response[0].replaceAll("\n", ""))))
+      });
+    // console.log(address.value);
   }
 
   labels: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
   currentModule: any = {};
-  predictionsAddress: Array<any> = [];
+  predictionsAddress: any;
   fields: Array<any> = [];
   editable?: boolean;
   formSender: FormGroup;
 
   //Local Variable defined
   formattedaddress = " ";
-  options: any = {
+  /* options: any = {
     types: ["address"],
     componentRestrictions: { country: ["it"] },
-  };
+  }; */
 
   setAddress(prediction: any) {
     console.log(prediction);
-    this.formSender.controls["sender_addr"].setValue(prediction);
+    this.formSender.controls["sender_addr"].setValue(prediction.terms[0].value);
+    this.formSender.controls["sender_city"].setValue(prediction.terms[1].value);
+    this.formSender.controls["sender_country_code"].setValue(
+      prediction.terms[3].value.slice(0, 2).toUpperCase()
+    );
     this.showPredictions = false;
+  }
+
+  showPrediction(predictions: any) {
+    console.log(predictions);
   }
 
   nextStep() {
@@ -211,4 +226,28 @@ export class SenderComponent implements OnInit {
 
   stepSrc?: Subject<number>;
   step: number = 1;
+
+  myControl = new FormControl("");
+  options: User[] = [{ name: "Mary" }, { name: "Shelley" }, { name: "Igor" }];
+  filteredOptions?: Observable<User[]>;
+
+  control = new FormControl("");
+  streets: string[] = [
+    "Champs-Élysées",
+    "Lombard Street",
+    "Abbey Road",
+    "Fifth Avenue",
+  ];
+  filteredStreets?: Observable<string[]>;
+
+  ngOnInit() {}
+
+  onChangeSearch(event: any) {
+    // console.log(event);
+    this.googlePlace(event);
+  }
+
+  selectEvent(event: any) {
+    console.log(event);
+  }
 }

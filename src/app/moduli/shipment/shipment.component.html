@@ -4,9 +4,12 @@
 >
   Show Storage
 </button> -->
+<div *ngIf="isLoading" >
+  <mat-icon class="animate-spin">hourglass_bottom</mat-icon>
+</div>
 <form [formGroup]="formShipment">
   <ng-container *ngIf="showInput; else serviceChoice">
-    <div *ngIf="currentModule?.packagesDetails.fixedpackagesNumber > 1">
+    <div *ngIf="currentModule?.packagesDetails.fixedpackagesNumber > 0">
       <div class="flex">
         <button
           [disabled]="packageNumber > 4"
@@ -42,11 +45,42 @@
                   formControlName="{{ field.label }}"
                   step="{{ field.step }}"
                   type="number"
-                  min="0.01"
-                  [max]="field.label === 'volume' ? 2 : 100"
+                  [min]="field.min"
+                  [max]="field.max"
                   class="w-28 lg:w-32 shadow-sm sm:text-sm border-gray-300 rounded-md"
                   placeholder="{{ field.placeholder }}"
                 />
+                <div
+                  *ngIf="
+                    formShipment.get(field.label)?.invalid &&
+                    formShipment.get(field.label)?.errors &&
+                    (formShipment.get(field.label)?.dirty ||
+                      formShipment.get(field.label)?.touched)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="formShipment.get(field.label)?.hasError('required')"
+                  >
+                    This field is required.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="formShipment.get(field.label)?.hasError('minlength')"
+                  >
+                    The minimum length for this field is
+                    {{formShipment.get(field.label)?.errors?.["minlength"].requiredLength}}
+                    characters.
+                  </small>
+                  <small
+                    class="text-danger"
+                    *ngIf="formShipment.get(field.label)?.hasError('maxlength')"
+                  >
+                    The maximum length for this field is
+                    {{formShipment.get(field.label)?.errors?.["maxlength"].requiredLength}}
+                    characters.
+                  </small>
+                </div>
               </div>
             </div>
           </div>
@@ -61,14 +95,15 @@
           <div class="flex items-center h-5 space-x-2">
             <div class="ml-3 text-sm">
               <label for="outwardInsurance" class="font-medium text-gray-700">
-                Andata
+                Andata €
               </label>
             </div>
             <input
               [formControlName]="'outwardInsurance'"
               id="outwardInsurance"
               name="outwardInsurance"
-              type="text"
+              type="number"
+              [min]="0"
               class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
             />
           </div>
@@ -83,14 +118,16 @@
           <div class="flex items-center h-5 space-x-2">
             <div class="ml-3 text-sm">
               <label for="returnInsurance" class="font-medium text-gray-700">
-                Ritorno
+                Ritorno €
               </label>
             </div>
             <input
               [formControlName]="'returnInsurance'"
               id="returnInsurance"
               name="returnInsurance"
-              type="text"
+              type="number"
+              [min]="0"
+              [max]="1000"
               class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
             />
           </div>

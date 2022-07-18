@@ -46,7 +46,7 @@
 
         <div *ngIf="field.label === 'indirizzo mittente'">
           <input
-            autocomplete="{{ autocomplete }}"
+            autocomplete="false"
             [formControlName]="field.value"
             type="text"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
@@ -59,7 +59,7 @@
           <div
             id="predictions"
             *ngIf="showPredictions"
-            class="absolute top-0 mt-24 right-0 bg-slate-200 z-50"
+            class="bg-slate-200 z-50"
           >
             <ng-container *ngFor="let prediction of predictionsAddress">
               <a (click)="setAddress(prediction)">
@@ -101,28 +101,5 @@
     >
       Continua
     </button>
-  </div>
-</form>
-
-<form class="example-form">
-  <div class="ng-autocomplete">
-    <ng-autocomplete
-      [data]="predictionsAddress"
-      searchKeyword="description"
-      placeHolder="Enter the Country Name"
-      (selected)="selectEvent($event)"
-      (inputChanged)="onChangeSearch($event)"
-      [itemTemplate]="itemTemplateApi"
-      [notFoundTemplate]="notFoundTemplate"
-    >
-    </ng-autocomplete>
-
-    <ng-template #itemTemplateApi let-item>
-      <a innerHTML="item.description"></a>
-    </ng-template>
-
-    <ng-template #notFoundTemplate let-notFound>
-      <div [innerHTML]="notFound"></div>
-    </ng-template>
   </div>
 </form>

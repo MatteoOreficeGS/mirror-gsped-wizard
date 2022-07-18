@@ -60,6 +60,9 @@ export class WidzardComponent implements OnInit {
 
   setStep(i: number) {
     // this.activeStep = this.status.getActiveStep();
+    this.router.navigate([
+      // this.configuration.modules[this.activeStep].moduleName,
+    ]);
     this.activeStep = i;
   }
 }

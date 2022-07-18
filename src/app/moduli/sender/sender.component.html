@@ -56,15 +56,17 @@
             list="predictions"
             placeholder=" "
           />
-
-          <datalist id="predictions" *ngIf="true">
+          <div
+            id="predictions"
+            *ngIf="showPredictions"
+            class="absolute top-0 mt-24 right-0 bg-slate-200 z-50"
+          >
             <ng-container *ngFor="let prediction of predictionsAddress">
-              <option
-                (change)="setAddress(prediction)"
-                value="{{ prediction.description }}"
-              ></option>
+              <a (click)="setAddress(prediction)">
+                {{ prediction.description }}"
+              </a>
             </ng-container>
-          </datalist>
+          </div>
         </div>
         <label
           class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 capitalize"
@@ -99,5 +101,28 @@
     >
       Continua
     </button>
+  </div>
+</form>
+
+<form class="example-form">
+  <div class="ng-autocomplete">
+    <ng-autocomplete
+      [data]="predictionsAddress"
+      searchKeyword="description"
+      placeHolder="Enter the Country Name"
+      (selected)="selectEvent($event)"
+      (inputChanged)="onChangeSearch($event)"
+      [itemTemplate]="itemTemplateApi"
+      [notFoundTemplate]="notFoundTemplate"
+    >
+    </ng-autocomplete>
+
+    <ng-template #itemTemplateApi let-item>
+      <a innerHTML="item.description"></a>
+    </ng-template>
+
+    <ng-template #notFoundTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
   </div>
 </form>

@@ -1,80 +1,68 @@
-import { Component, OnInit } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router, Routes } from "@angular/router";
-import { Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-recipient",
   templateUrl: "./recipient.component.html",
 })
-export class RecipientComponent implements OnInit {
+export class RecipientComponent {
   status: any = {};
 
   constructor(
     public fb: FormBuilder,
+    public http: HttpClient,
     public service: StatusService,
+    public store: StoreService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.stepSrc = this.service.stepSource;
+    this.step = this.store.modules.filter(
+      (module: any) => "/" + module.name === router.url.split("?")[0]
+    )[0].step;
 
     this.formRecipient = fb.group({
-      rcpt_name: ["", Validators.required],
-      rcpt_city: [
-        this.service.session.recipient.rcpt_city,
-        Validators.required,
-      ],
-      rcpt_contact: [
-        this.service.session.recipient.rcpt_contact,
-        Validators.required,
-      ],
-      rcpt_cap: [this.service.session.recipient.rcpt_cap, Validators.required],
+      rcpt_name: [store.recipient?.rcpt_city, Validators.required],
+      rcpt_city: [store.recipient?.rcpt_city, Validators.required],
+      rcpt_contact: [store.recipient?.rcpt_contact, Validators.required],
+      rcpt_cap: [store.recipient?.rcpt_cap, Validators.required],
       rcpt_prov: [
-        this.service.session.recipient.rcpt_prov,
+        store.recipient?.rcpt_prov,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_country_code: [
-        this.service.session.recipient.rcpt_country_code,
+        store.recipient?.rcpt_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_email: [
-        this.service.session.recipient.rcpt_email,
+        store.recipient?.rcpt_email,
         [Validators.required, Validators.email],
       ],
-      rcpt_phone: [
-        this.service.session.recipient.rcpt_phone,
-        Validators.required,
-      ],
-      rcpt_addr: [
-        this.service.session.recipient.rcpt_addr,
-        Validators.required,
-      ],
+      rcpt_phone: [store.recipient?.rcpt_phone, Validators.required],
+      rcpt_addr: [store.recipient?.rcpt_addr, Validators.required],
     });
 
     //set current module
-    this.service.response.subscribe((res: any) => {
-      // console.log(res);
-      this.currentModule = res.configuration.modules.filter(
-        (module: { moduleName: string }) => module.moduleName === "recipient"
-      )[0].moduleConfig;
-      console.log(this.currentModule);
-      this.editable = this.currentModule.editable;
-      Object.keys(this.currentModule.data).forEach((element: any) => {
-        console.log(element);
-
+    this.currentModule = store.configuration.modules.filter(
+      (module: { moduleName: string }) => module.moduleName === "recipient"
+    )[0].moduleConfig;
+    this.editable = this.currentModule.editable;
+    Object.keys(this.currentModule.data).forEach((element: any) => {
+      if (this.currentModule.data[element]) {
         this.formRecipient.controls[element].setValue(
           this.currentModule.data[element]
         );
-      });
+      }
     });
 
     // form init and validation
 
     this.autocomplete = this.currentModule.autocomplete;
 
-    this.labels =
-      JSON.parse(sessionStorage.getItem("translations") || "{}") || {};
+    this.labels = store.translations;
 
     this.fields = [
       {
@@ -140,37 +128,30 @@ export class RecipientComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    /* this.service.translations.subscribe((message: any) => {
-      console.log(message);
-      if (message !== "this.myVar") {
-        console.log("123");
-      } else {
-        console.log(321);
-      }
-    }); */
-  }
-
-  googlePlace(address: HTMLInputElement) {
-    if (address.value.length > 3) {
-      this.showPredictions === false &&
-        (this.showPredictions = true) /* : null */;
-      this.service
-        .getGooglePlace(address.value, "it")
-        .subscribe((response: any) => {
-          this.predictionsAddress = [];
-          response.predictions.map((prediction: any) =>
-            this.predictionsAddress.push({
-              terms: prediction.terms,
-              description: prediction.description,
-            })
-          );
-          console.log(this.predictionsAddress);
-
-          // console.log((JSON.parse(response[0].replaceAll("\n", ""))))
-        });
-      // console.log(address.value);
-    }
+  googlePlace(address: HTMLInputElement, lang: string = "it") {
+    const decoded: any = this.store.decodedToken;
+    console.log(decoded);
+    this.predictionsAddress = [];
+    this.showPredictions === false && (this.showPredictions = true);
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          decoded.instance +
+          "/AddressAutocomplete?input=" +
+          address.value +
+          "&lang=" +
+          lang,
+        { headers: { "X-API-KEY": this.store.token } }
+      )
+      .subscribe((response: any) => {
+        response.predictions.map((prediction: any) =>
+          this.predictionsAddress.push({
+            terms: prediction.terms,
+            description: prediction.description,
+          })
+        );
+        console.log(this.predictionsAddress);
+      });
   }
 
   labels: any = {};
@@ -181,6 +162,7 @@ export class RecipientComponent implements OnInit {
   fields: Array<any> = [];
   editable?: boolean;
   formRecipient: FormGroup;
+  step: number;
 
   //Local Variable defined
   formattedaddress = " ";
@@ -191,18 +173,21 @@ export class RecipientComponent implements OnInit {
 
   setAddress(prediction: any) {
     console.log(prediction);
-    this.formRecipient.controls["rcpt_addr"].setValue(prediction);
+    this.formRecipient.controls["rcpt_addr"].setValue(
+      prediction.terms[0].value
+    );
+    this.formRecipient.controls["rcpt_city"].setValue(
+      prediction.terms[1].value
+    );
+    this.formRecipient.controls["rcpt_country_code"].setValue(
+      prediction.terms[3].value.slice(0, 2).toUpperCase()
+    );
     this.showPredictions = false;
   }
 
   nextStep() {
     if (this.formRecipient.valid) {
-      sessionStorage.setItem(
-        "recipient",
-        JSON.stringify(this.formRecipient.value)
-      );
-      this.service.setStatus(this.formRecipient.value, "recipient");
-      this.service.incrementStep();
+      this.store.recipient = this.formRecipient.value;
       this.route.queryParams.subscribe((params: any) => {
         if (params.lang || true) {
           this.router.navigate(["shipment"], {
@@ -210,10 +195,6 @@ export class RecipientComponent implements OnInit {
           });
         }
       });
-      this.service.changestep(this.step++);
     }
   }
-
-  stepSrc?: Subject<number>;
-  step: number = 1;
 }

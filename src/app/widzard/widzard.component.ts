@@ -1,65 +1,38 @@
-import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
-import { NavigationEnd, Router } from "@angular/router";
-import { Subject } from "rxjs";
+import { Component, Input } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "../status.service";
+import { StoreService } from "../store.service";
 
 @Component({
   selector: "app-widzard",
   templateUrl: "./widzard.component.html",
 })
-export class WidzardComponent implements OnInit {
-  constructor(private router: Router, public status: StatusService) {
-    this.stepSrc = this.status.stepSource;
-    this.translations = JSON.parse(sessionStorage.getItem("translations") || "{}")
-    this.stepSrc.subscribe((value) => {
-      this.activeStep = value;
-    });
-    // console.log(this.configuration);
-    router.events.subscribe(() => {
-      this.setStep(1);
-      this.stepName = this.router.url.slice(1).split("?")[0];
-    });
-  }
-
-  ngOnInit(): void {
-    // this.status.getResponse().subscribe((res: any) => console.log(res));
-    this.status.getConfiguration().subscribe((res) => {
-      this.response = res;
-      // this.response.configuration.modules =
-      const index = this.response.configuration.modules.findIndex(
-        (object: { moduleName: string }) => {
-          return object.moduleName === this.stepName;
-        }
-      );
-      console.log(index + 1);
-      this.setStep(index);
-    });
+export class WidzardComponent {
+  @Input() step = 0;
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    public status: StatusService,
+    public store: StoreService
+  ) {
+    this.response = store.configuration;
+    this.translations = store.translations;
   }
 
   response: any = {};
-  translations:any = {}
+  translations: any = {};
   stepName = "";
 
-  /*   configuration = this.status
-    .getConfiguration()
-    .subscribe((res) => console.log(res)); */
-  // bannerExtra = this.response.configuration.bannerExtra;
-
-  stepSrc?: Subject<number>;
-  public activeStep: number = 0;
-
-  /* incrementStep() {
-    if (this.activeStep !== this.widzard[0].steps.fields.length - 1) {
-      this.activeStep += 1;
-    }
-    this.router.navigate([
-      this.configuration.modules[this.activeStep].moduleName,
-    ]);
-  }
-  */
-
   setStep(i: number) {
-    // this.activeStep = this.status.getActiveStep();
-    this.activeStep = i;
+    const navigateTo = this.store.modules.filter(
+      (module: any) => module.step === i + 1
+    );
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.lang) {
+        this.router.navigate([navigateTo[0].name], {
+          queryParams: { lang: params.lang },
+        });
+      }
+    });
   }
 }

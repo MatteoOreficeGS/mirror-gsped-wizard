@@ -1,87 +1,96 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Component, HostListener, OnInit } from "@angular/core";
+import { Component, HostListener } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Observable } from "rxjs";
+import { forkJoin, Observable } from "rxjs";
 import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
+import { StoreService } from "./store.service";
+import { environment } from "./enviroment";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
 })
-export class AppComponent implements OnInit {
-  @HostListener("window:beforeunload", ["$event"])
+export class AppComponent {
+  /* @HostListener("window:beforeunload", ["$event"])
   treno($event: { returnValue: string }) {
     if (true) $event.returnValue = "Your data will be lost!";
-  }
+  } */
 
   constructor(
     public status: StatusService,
+    public store: StoreService,
     private route: ActivatedRoute,
     public http: HttpClient,
     public router: Router
   ) {
-    window.addEventListener("beforeunload", (event) => {
+    /*     window.addEventListener("beforeunload", (event) => {
       event.preventDefault();
-      event.returnValue = "Unsaved modifications";
       return event;
-    });
-    if (window.location.pathname === "/" || true) {
+    }); */
+    if (window.location.pathname === "/") {
       this.route.queryParams.subscribe((params: any) => {
-        if ((params.lang, params.origin)) {
-          this.queryParams = params;
+        if (params.origin) {
           this.getToken(params.origin).subscribe(
             (res: any) => {
-              console.log(res);
-              this.token = res.token;
-              this.decoded = jwt_decode(res.token);
-              // this.status.decodeToken();
-              sessionStorage.setItem("token", res.token);
-              this.status.decoded = this.decoded;
-              this.status
-                .setConfiguration()
-                .subscribe((res: any) =>
-                  sessionStorage.setItem("configuation", res.configuration)
+              store.token = res.token;
+              store.decodedToken = jwt_decode(res.token);
+              forkJoin(
+                this.getConfiguration(res.token, jwt_decode(res.token)),
+                this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+              ).subscribe((res: any) => {
+                this.store.configuration = res[0].configuration;
+                const modules = res[0].configuration.modules.map(
+                  (module: { moduleName: string }, i: number) => {
+                    return { step: i + 1, name: module.moduleName };
+                  }
                 );
-              this.status.setTranslations("it_IT", "resi");
-              this.router.navigate(["/sender"], {
-                queryParams: { lang: "it_IT" },
+                this.store.modules = modules;
+                this.store.translations = res[1];
+                this.router.navigate(["/" + modules[0].name], {
+                  queryParams: { lang: "it_IT" },
+                });
               });
             },
             (error: any) => {
               alert(JSON.stringify(error));
             }
           );
-        } else {
-          console.log("Errore parametri");
         }
       });
     }
   }
-  /* constructor(public status: StatusService) {
-    if (!this.token) {
-      chiamo
-    }
-  } */
-  ngOnInit(): void {
-    console.log();
-    let token = sessionStorage.getItem("token");
-    console.log("token", token);
-
-    this.status.setConfiguration();
-
-    // this.status.setTranslations("it_IT", "resi");
-  }
-
-  queryParams: any;
-  token: string = "";
-  decoded: any;
 
   getToken(origin: any): Observable<any> {
-    return this.http.get("https://api.gsped.it/Token?origin=" + origin);
+    return this.http.get(environment.API_URL + "Token?origin=" + origin);
   }
 
-  doSomething() {
-    confirm("vuoi vermantre uscire?");
+  getConfiguration(token: any, decoded: any, resource = environment.flow) {
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/ResourceConfiguration?resource=" +
+        resource,
+      { headers: { "X-API-KEY": token } }
+    );
+  }
+
+  getTranslations(
+    lang: string,
+    token: any,
+    decoded: any,
+    resource = environment.flow
+  ): Observable<any> {
+    const headers = { "x-api-key": token };
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/Translations?" +
+        "lang=" +
+        lang +
+        "&resource=" +
+        resource,
+      { headers: headers }
+    );
   }
 }

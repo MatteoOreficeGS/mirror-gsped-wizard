@@ -1,266 +1,277 @@
-<!-- <button
-  class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-  (click)="showLocalStorage()"
->
-  Show Storage
-</button> -->
-<div *ngIf="isLoading" >
-  <mat-icon class="animate-spin">hourglass_bottom</mat-icon>
-</div>
-<form [formGroup]="formShipment">
-  <ng-container *ngIf="showInput; else serviceChoice">
-    <div *ngIf="currentModule?.packagesDetails.fixedpackagesNumber > 0">
-      <div class="flex">
-        <button
-          [disabled]="packageNumber > 4"
-          class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          (click)="addPackage()"
-        >
-          Aggiungi collo
-        </button>
-
-        <button
-          *ngIf="packageNumber > 2"
-          class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          (click)="removePackage()"
-        >
-          Rimuovi collo
-        </button>
-      </div>
-
-      <div formArrayName="dimensions">
-        <div *ngFor="let package of dimensions.controls; let i = index">
-          <div
-            class="md:flex md:flex-row w-full items-center w-full p-2"
-            [formGroupName]="i"
+<app-navbar></app-navbar>
+<app-widzard [step]="step">
+  <!-- <button
+    class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    (click)="showLocalStorage()"
+    >
+    Show Storage
+  </button> -->
+  <div *ngIf="isLoading">
+    <mat-icon class="animate-spin">hourglass_bottom</mat-icon>
+  </div>
+  <form [formGroup]="formShipment">
+    <ng-container *ngIf="showInput; else serviceChoice">
+      <div *ngIf="currentModule?.packagesDetails.fixedpackagesNumber > 0">
+        <div class="flex">
+          <button
+            [disabled]="packageNumber > 4"
+            class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            (click)="addPackage()"
           >
-            <span class="mr-6">{{ i + 1 }})</span>
+            Aggiungi collo
+          </button>
+
+          <button
+            *ngIf="packageNumber > 2"
+            class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            (click)="removePackage()"
+          >
+            Rimuovi collo
+          </button>
+        </div>
+
+        <div formArrayName="dimensions">
+          <div *ngFor="let package of dimensions.controls; let i = index">
             <div
-              *ngFor="let field of fieldsLabel"
-              class="justify-items-center w-full mb-1"
+              class="md:flex md:flex-row w-full items-center w-full p-2"
+              [formGroupName]="i"
             >
-              <div class="grid grid-cols-2 md:grid-cols-1">
-                <label>{{ field.label }}*</label>
-                <input
-                  formControlName="{{ field.label }}"
-                  step="{{ field.step }}"
-                  type="number"
-                  [min]="field.min"
-                  [max]="field.max"
-                  class="w-28 lg:w-32 shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  placeholder="{{ field.placeholder }}"
-                />
-                <div
-                  *ngIf="
-                    formShipment.get(field.label)?.invalid &&
-                    formShipment.get(field.label)?.errors &&
-                    (formShipment.get(field.label)?.dirty ||
-                      formShipment.get(field.label)?.touched)
-                  "
-                >
-                  <small
-                    class="text-danger"
-                    *ngIf="formShipment.get(field.label)?.hasError('required')"
+              <span class="mr-6">{{ i + 1 }})</span>
+              <div
+                *ngFor="let field of fieldsLabel"
+                class="justify-items-center w-full mb-1"
+              >
+                <div class="grid grid-cols-2 md:grid-cols-1">
+                  <label>{{ field.label }}*</label>
+                  <input
+                    formControlName="{{ field.label }}"
+                    step="{{ field.step }}"
+                    type="number"
+                    [min]="field.min"
+                    [max]="field.max"
+                    class="w-28 lg:w-32 shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    placeholder="{{ field.placeholder }}"
+                  />
+                  <div
+                    *ngIf="
+                      formShipment.get(field.label)?.invalid &&
+                      formShipment.get(field.label)?.errors &&
+                      (formShipment.get(field.label)?.dirty ||
+                        formShipment.get(field.label)?.touched)
+                    "
                   >
-                    This field is required.
-                  </small>
-                  <small
-                    class="text-danger"
-                    *ngIf="formShipment.get(field.label)?.hasError('minlength')"
-                  >
-                    The minimum length for this field is
-                    {{formShipment.get(field.label)?.errors?.["minlength"].requiredLength}}
-                    characters.
-                  </small>
-                  <small
-                    class="text-danger"
-                    *ngIf="formShipment.get(field.label)?.hasError('maxlength')"
-                  >
-                    The maximum length for this field is
-                    {{formShipment.get(field.label)?.errors?.["maxlength"].requiredLength}}
-                    characters.
-                  </small>
+                    <small
+                      class="text-danger"
+                      *ngIf="
+                        formShipment.get(field.label)?.hasError('required')
+                      "
+                    >
+                      This field is required.
+                    </small>
+                    <small
+                      class="text-danger"
+                      *ngIf="
+                        formShipment.get(field.label)?.hasError('minlength')
+                      "
+                    >
+                      The minimum length for this field is
+                      {{formShipment.get(field.label)?.errors?.["minlength"].requiredLength}}
+                      characters.
+                    </small>
+                    <small
+                      class="text-danger"
+                      *ngIf="
+                        formShipment.get(field.label)?.hasError('maxlength')
+                      "
+                    >
+                      The maximum length for this field is
+                      {{formShipment.get(field.label)?.errors?.["maxlength"].requiredLength}}
+                      characters.
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <fieldset *ngIf="currentModule?.insurance.enable" class="py-4">
-      <div class="text-base font-medium text-gray-900">Assicurazione</div>
-      <div class="mt-4 space-y-4">
-        <div class="relative flex items-start">
-          <div class="flex items-center h-5 space-x-2">
-            <div class="ml-3 text-sm">
-              <label for="outwardInsurance" class="font-medium text-gray-700">
-                Andata €
-              </label>
+      <fieldset *ngIf="currentModule?.insurance.enable" class="py-4">
+        <div class="text-base font-medium text-gray-900">Assicurazione</div>
+        <div class="mt-4 space-y-4">
+          <div class="relative flex items-start">
+            <div class="flex items-center h-5 space-x-2">
+              <div class="ml-3 text-sm">
+                <label for="outwardInsurance" class="font-medium text-gray-700">
+                  Andata €
+                </label>
+              </div>
+              <input
+                [formControlName]="'outwardInsurance'"
+                id="outwardInsurance"
+                name="outwardInsurance"
+                type="number"
+                [min]="0"
+                class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
+              />
             </div>
-            <input
-              [formControlName]="'outwardInsurance'"
-              id="outwardInsurance"
-              name="outwardInsurance"
-              type="number"
-              [min]="0"
-              class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
-            />
           </div>
-        </div>
-        <div
-          class="relative flex items-start"
-          *ngIf="
-            currentModule?.returnLabel.enable &&
-            currentModule?.returnLabel.insurance.enable
-          "
-        >
-          <div class="flex items-center h-5 space-x-2">
-            <div class="ml-3 text-sm">
-              <label for="returnInsurance" class="font-medium text-gray-700">
-                Ritorno €
-              </label>
+          <div
+            class="relative flex items-start"
+            *ngIf="
+              currentModule?.returnLabel.enable &&
+              currentModule?.returnLabel.insurance.enable
+            "
+          >
+            <div class="flex items-center h-5 space-x-2">
+              <div class="ml-3 text-sm">
+                <label for="returnInsurance" class="font-medium text-gray-700">
+                  Ritorno €
+                </label>
+              </div>
+              <input
+                [formControlName]="'returnInsurance'"
+                id="returnInsurance"
+                name="returnInsurance"
+                type="number"
+                [min]="0"
+                [max]="1000"
+                class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
+              />
             </div>
-            <input
-              [formControlName]="'returnInsurance'"
-              id="returnInsurance"
-              name="returnInsurance"
-              type="number"
-              [min]="0"
-              [max]="1000"
-              class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
-            />
-          </div>
-        </div>
-      </div>
-    </fieldset>
-
-    <fieldset class="py-4">
-      <div class="text-base font-medium text-gray-900">Codice Sconto</div>
-      <div class="mt-4 space-y-4">
-        <div class="relative flex items-start">
-          <div class="flex items-center h-5 space-x-2">
-            <div class="ml-3 text-sm">
-              <label for="coupon" class="font-medium text-gray-700">
-                Codice
-              </label>
-            </div>
-            <input
-              [formControlName]="'coupon'"
-              id="coupon"
-              name="coupon"
-              type="text"
-              class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
-            />
-          </div>
-        </div>
-      </div>
-    </fieldset>
-
-    <button
-      class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
-      [class]="
-        formShipment.valid
-          ? 'text-white bg-yellow-400 cursor-pointer'
-          : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
-      "
-      type="button"
-      (click)="confirmInsurance()"
-    >
-      Conferma dettagli
-    </button>
-  </ng-container>
-  <ng-template #serviceChoice>
-    <!-- {{ isLoading }} -->
-    <!-- TODO da sistemare -->
-    <div *ngIf="pickupAvailability">
-      <label
-        *ngIf="pickupAvailability === 'KO'"
-        class="text-base font-medium text-red-400"
-      >
-        non disponibile per il ritiro in giornata
-      </label>
-      <label
-        *ngIf="pickupAvailability === 'OK'"
-        class="text-base font-medium text-green-400"
-      >
-        disponibile per il ritiro in giornata
-      </label>
-
-      <fieldset class="mt-4">
-        <div
-          class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10"
-        >
-          <div class="flex items-center" *ngIf="pickupAvailability === 'OK'">
-            <input
-              name="pickup-time"
-              type="radio"
-              class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-            />
-            <label class="ml-3 block text-sm font-medium text-gray-700">
-              ritiro oggi alle 15:00
-            </label>
-          </div>
-
-          <div class="flex items-center">
-            <input
-              checked
-              name="pickup-time"
-              type="radio"
-              class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-            />
-            <label class="ml-3 block text-sm font-medium text-gray-700">
-              ritiro domani alle 10:00
-            </label>
           </div>
         </div>
       </fieldset>
-    </div>
-    <div
-      *ngIf="costExposure"
-      class="flex flex-wrap justify-center items-center space-x-4 mt-4"
-    >
-      <ng-container class="" *ngFor="let service of services">
-        <div class="bg-white p-4 rounded-lg shadow-lg h-80 w-64 relative mb-4">
-          <p class="text-md">{{ service.name }}</p>
-          <div class="mt-4 mb-10">
-            <p class="text-gray-600 font-semibold">
-              Totale: €{{ costExposure[service.name].totale }}
-            </p>
-            <p class="text-gray-600">
-              Nolo: €{{ costExposure[service.name].nolo }}
-            </p>
-            <p class="text-gray-600">
-              Varie: €{{ costExposure[service.name].varie }}
-            </p>
-          </div>
-          <h3 class="text-md font-medium">dettagli:</h3>
-          <ul class="tracking-wide">
-            <div
-              class="flex items-center space-x-3 text-xs lowercase"
-              *ngFor="let dettaglio of varie_dettaglio[service.name]"
-            >
-              <li>
-                {{ dettaglio }}: €{{
-                  costExposure[service.name].varie_dettaglio[dettaglio]
-                }}
-              </li>
-            </div>
-          </ul>
-          <button
-            class="bg-yellow-400 py-3 px-8 mt-4 rounded text-sm font-semibold hover:bg-opacity-75 mt-auto absolute bottom-0 mb-4"
-            (click)="setCourierService(service.name, service.code)"
-          >
-            Conferma
-          </button>
-        </div>
-      </ng-container>
-    </div>
-  </ng-template>
 
-  <!-- <button
+      <fieldset class="py-4">
+        <div class="text-base font-medium text-gray-900">Codice Sconto</div>
+        <div class="mt-4 space-y-4">
+          <div class="relative flex items-start">
+            <div class="flex items-center h-5 space-x-2">
+              <div class="ml-3 text-sm">
+                <label for="coupon" class="font-medium text-gray-700">
+                  Codice
+                </label>
+              </div>
+              <input
+                [formControlName]="'coupon'"
+                id="coupon"
+                name="coupon"
+                type="text"
+                class="focus:ring-indigo-500 h-8 border-gray-300 rounded"
+              />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
+        [class]="
+          formShipment.valid
+            ? 'text-white bg-yellow-400 cursor-pointer'
+            : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
+        "
+        type="button"
+        (click)="confirmInsurance()"
+      >
+        Conferma dettagli
+      </button>
+    </ng-container>
+    <ng-template #serviceChoice>
+      <!-- {{ isLoading }} -->
+      <!-- TODO da sistemare -->
+      <div *ngIf="pickupAvailability">
+        <label
+          *ngIf="pickupAvailability === 'KO'"
+          class="text-base font-medium text-red-400"
+        >
+          non disponibile per il ritiro in giornata
+        </label>
+        <label
+          *ngIf="pickupAvailability === 'OK'"
+          class="text-base font-medium text-green-400"
+        >
+          disponibile per il ritiro in giornata
+        </label>
+
+        <fieldset class="mt-4">
+          <div
+            class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10"
+          >
+            <div class="flex items-center" *ngIf="pickupAvailability === 'OK'">
+              <input
+                name="pickup-time"
+                type="radio"
+                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+              />
+              <label class="ml-3 block text-sm font-medium text-gray-700">
+                ritiro oggi alle 15:00
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                checked
+                name="pickup-time"
+                type="radio"
+                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+              />
+              <label class="ml-3 block text-sm font-medium text-gray-700">
+                ritiro domani alle 10:00
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div
+        *ngIf="costExposure"
+        class="flex flex-wrap justify-center items-center space-x-4 mt-4"
+      >
+        <ng-container class="" *ngFor="let service of services">
+          <div
+            class="bg-white p-4 rounded-lg shadow-lg h-80 w-64 relative mb-4"
+          >
+            <p class="text-md">{{ service.name }}</p>
+            <div class="mt-4 mb-10">
+              <p class="text-gray-600 font-semibold">
+                Totale: €{{ costExposure[service.name].totale }}
+              </p>
+              <p class="text-gray-600">
+                Nolo: €{{ costExposure[service.name].nolo }}
+              </p>
+              <p class="text-gray-600">
+                Varie: €{{ costExposure[service.name].varie }}
+              </p>
+            </div>
+            <h3 class="text-md font-medium">dettagli:</h3>
+            <ul class="tracking-wide">
+              <div
+                class="flex items-center space-x-3 text-xs lowercase"
+                *ngFor="let dettaglio of varie_dettaglio[service.name]"
+              >
+                <li>
+                  {{ dettaglio }}: €{{
+                    costExposure[service.name].varie_dettaglio[dettaglio]
+                  }}
+                </li>
+              </div>
+            </ul>
+            <button
+              class="bg-yellow-400 py-3 px-8 mt-4 rounded text-sm font-semibold hover:bg-opacity-75 mt-auto absolute bottom-0 mb-4"
+              (click)="setCourierService(service.name, service.code, costExposure[service.name].totale)"
+            >
+              Conferma
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </ng-template>
+
+    <!-- <button
     class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer bg-yellow-400 text-white"
-  >
+    >
     Continua
   </button> -->
-</form>
+  </form>
+</app-widzard>

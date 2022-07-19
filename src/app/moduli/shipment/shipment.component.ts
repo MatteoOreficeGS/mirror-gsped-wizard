@@ -1,14 +1,13 @@
-import { Component, OnInit, SimpleChanges } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
   FormArray,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subject } from "rxjs";
 import { StatusService } from "src/app/status.service";
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-shipment",
@@ -18,16 +17,17 @@ export class ShipmentComponent implements OnInit {
   constructor(
     public fb: FormBuilder,
     public status: StatusService,
+    public store: StoreService,
     public router: Router,
     public route: ActivatedRoute
   ) {
+    this.step = this.store.modules.filter((module: any) => "/" + module.name === router.url.split("?")[0])[0].step;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: "",
       coupon: "",
       returnInsurance: "",
     });
-    this.stepSrc = this.status.stepSource;
   }
 
   get dimensions(): FormArray {
@@ -35,27 +35,14 @@ export class ShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (
-      !(sessionStorage.getItem("sender") && sessionStorage.getItem("recipient"))
-    ) {
-      this.route.queryParams.subscribe((params: any) => {
-        if (params.lang) {
-          this.router.navigate(["sender"], {
-            queryParams: { lang: params.lang },
-          });
-        }
-      });
-    }
-
-    this.status.response.subscribe((res: any) => {
-      this.response = res;
+    this.currentModule = this.store.configuration.modules.filter(
+      (module: any) => module.moduleName === "shipment"
+    )[0].moduleConfig;
+    // this.store.c.subscribe((res: any) => {
       this.hasPayment =
-        this.response.configuration.modules.filter(
+        this.store.configuration.modules.filter(
           (module: { moduleName: string }) => module.moduleName === "payment"
         ).length === 1;
-      this.currentModule = this.response.configuration?.modules.filter(
-        (module: any) => module.moduleName === "shipment"
-      )[0].moduleConfig;
 
       // this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
       this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
@@ -85,14 +72,12 @@ export class ShipmentComponent implements OnInit {
 
       this.bodyRateComparativa = {
         tipo_listino: "passivo",
-        client_id: this.response.configuration.client_id,
-        ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
-        ...JSON.parse(sessionStorage.getItem("recipient") || "{}"),
+        client_id: this.store.configuration.client_id,
+        ...this.store.sender,
+        ...this.store.recipient,
       };
-    });
+    // });
   }
-
-  response: any = {};
 
   formShipment: FormGroup;
 
@@ -120,6 +105,8 @@ export class ShipmentComponent implements OnInit {
       this.fb.group({ service: ["", Validators.required] })
     ); */
   }
+
+  step:number;
   showCourierSelection: boolean = false;
   courierSelected = { name: "", gspedCourierCode: 104 };
   courierSelectedLogoUrl = null;
@@ -164,11 +151,6 @@ export class ShipmentComponent implements OnInit {
     }
   }
 
-  showLocalStorage() {
-    console.log(JSON.parse(sessionStorage.getItem("sender") || "{}"));
-    console.log(JSON.parse(sessionStorage.getItem("recipient") || "{}"));
-  }
-
   setDataColli() {
     const pesoTot = this.formShipment.value.dimensions
       .map((value: { peso: any }) => value.peso)
@@ -203,7 +185,7 @@ export class ShipmentComponent implements OnInit {
   confirmInsurance() {
     if (this.formShipment.valid) {
       this.setDataColli();
-
+      this.store.coupon = this.formShipment.value.coupon;
       this.isLoading = true;
 
       // let formattedDatacolli: any = { ...this.datacolli };
@@ -270,12 +252,11 @@ export class ShipmentComponent implements OnInit {
   }
 
   setShipmentPayload() {
-    console.log(this.status.session);
     console.log("creo il payload per la spedizione");
     this.payloadShipment = {
-      creazione_postume: this.hasPayment,
+      creazione_postuma: this.hasPayment,
       corriere: this.courierSelected.gspedCourierCode,
-      client_id: this.response.configuration.client_id,
+      client_id: this.store.configuration.client_id,
       // contrassegno: 0, // come imposto questo campo
       origine: "IT",
     };
@@ -283,8 +264,8 @@ export class ShipmentComponent implements OnInit {
     this.payloadShipment = {
       ...this.payloadShipment,
       ...this.datacolli,
-      ...JSON.parse(sessionStorage.getItem("sender") || "{}"),
-      ...JSON.parse(sessionStorage.getItem("recipient") || "{}"),
+      ...this.store.sender,
+      ...this.store.recipient,
     };
 
     console.log("payloadShipment: ", this.payloadShipment);
@@ -466,8 +447,9 @@ export class ShipmentComponent implements OnInit {
       });
   }
 
-  setCourierService(serviceName: string, serviceCode: number) {
+  setCourierService(serviceName: string, serviceCode: number, totale:any) {
     let courierCode: number = -1;
+    this.store.totale = totale;
 
     Object.keys(this.dataRateComparative.passivo).forEach((courier: any) => {
       console.log(courier);
@@ -497,7 +479,7 @@ export class ShipmentComponent implements OnInit {
     );
     this.status.handleShipment(this.payloadShipment).subscribe((res) => {
       console.log(res);
-      sessionStorage.setItem("shipment", JSON.stringify(res));
+      this.store.shipment = res;
     });
     this.next();
   }
@@ -506,9 +488,7 @@ export class ShipmentComponent implements OnInit {
     console.log(this.formShipment.value);
 
     if (this.formShipment.valid) {
-      this.status.setStatus(this.formShipment.value, "shipment");
-      this.status.changestep(this.step++);
-      this.status.incrementStep();
+      this.store.shipment = this.formShipment.value;
       this.route.queryParams.subscribe((params: any) => {
         if (params.lang || true) {
           this.router.navigate(["payment"], {
@@ -519,6 +499,4 @@ export class ShipmentComponent implements OnInit {
     }
   }
 
-  stepSrc?: Subject<number>;
-  step: number = 3;
 }

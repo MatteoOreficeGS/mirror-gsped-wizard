@@ -1,87 +1,67 @@
-import { Component, OnInit } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
-import { ActivatedRoute, Router, Routes } from "@angular/router";
-import { map, Observable, startWith, Subject } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Component } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
-
-export interface User {
-  name: string;
-}
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-sender",
   templateUrl: "./sender.component.html",
 })
-export class SenderComponent implements OnInit {
+export class SenderComponent {
   status: any = {};
 
   constructor(
     public fb: FormBuilder,
     public service: StatusService,
+    public store: StoreService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {
-    this.stepSrc = this.service.stepSource;
-
+    this.step = this.store.modules.filter(
+      (module: any) => "/" + module.name === router.url.split("?")[0]
+    )[0].step;
+    console.log(this.store.sender);
     this.formSender = fb.group({
-      sender_name: ["", Validators.required],
-      sender_city: [
-        this.service.session.sender.sender_city,
-        Validators.required,
-      ],
-      sender_contact: [
-        this.service.session.sender.sender_contact,
-        Validators.required,
-      ],
-      sender_cap: [this.service.session.sender.sender_cap, Validators.required],
+      sender_name: [store.sender?.sender_name, Validators.required],
+      sender_city: [store.sender?.sender_city, Validators.required],
+      sender_contact: [store.sender?.sender_contact, Validators.required],
+      sender_cap: [store.sender?.sender_cap, Validators.required],
       sender_prov: [
-        this.service.session.sender.sender_prov,
+        store.sender?.sender_prov,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_country_code: [
-        this.service.session.sender.sender_country_code,
+        store.sender?.sender_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_email: [
-        this.service.session.sender.sender_email,
+        store.sender?.sender_email,
         [Validators.required, Validators.email],
       ],
-      sender_phone: [
-        this.service.session.sender.sender_phone,
-        Validators.required,
-      ],
-      sender_addr: [
-        this.service.session.sender.sender_addr,
-        Validators.required,
-      ],
+      sender_phone: [store.sender?.sender_phone, Validators.required],
+      sender_addr: [store.sender?.sender_addr, Validators.required],
     });
 
-    //set current module
-    this.service.response.subscribe((res: any) => {
-      // console.log(res);
-      this.currentModule = res.configuration.modules.filter(
-        (module: { moduleName: string }) => module.moduleName === "sender"
-      )[0].moduleConfig;
-      console.log(this.currentModule);
-      this.editable = this.currentModule.editable;
-      Object.keys(this.currentModule.data).forEach((element: any) => {
+    this.currentModule = store.configuration.modules.filter(
+      (module: { moduleName: string }) => module.moduleName === "sender"
+    )[0].moduleConfig;
+    console.log(this.currentModule);
+    this.editable = this.currentModule.editable;
+    Object.keys(this.currentModule.data).forEach((element: any) => {
+      if (this.currentModule.data[element]) {
         this.formSender.controls[element].setValue(
           this.currentModule.data[element]
         );
-      });
+      }
     });
-
     // form init and validation
 
     this.autocomplete = this.currentModule.autocomplete;
 
-    this.labels =
-      JSON.parse(sessionStorage.getItem("translations") || "{}") || {};
+    this.labels = store.translations;
 
     this.fields = [
       {
@@ -147,24 +127,22 @@ export class SenderComponent implements OnInit {
     });
   }
 
-  // ngOnInit() {
-  /* this.service.translations.subscribe((message: any) => {
-      console.log(message);
-      if (message !== "this.myVar") {
-        console.log("123");
-      } else {
-        console.log(321);
-      }
-    }); */
-  // }
-
-  googlePlace(address: HTMLInputElement) {
-    this.showPredictions === false &&
-      (this.showPredictions = true) /* : null */;
-    this.service
-      .getGooglePlace(address.value, "it")
+  googlePlace(address: HTMLInputElement, lang: string = "it") {
+    const decoded: any = this.store.decodedToken;
+    console.log(decoded);
+    this.predictionsAddress = [];
+    this.showPredictions === false && (this.showPredictions = true);
+    return this.http
+      .get(
+        "https://api.gsped.it/" +
+          decoded.instance +
+          "/AddressAutocomplete?input=" +
+          address.value +
+          "&lang=" +
+          lang,
+        { headers: { "X-API-KEY": this.store.token } }
+      )
       .subscribe((response: any) => {
-        this.predictionsAddress = [];
         response.predictions.map((prediction: any) =>
           this.predictionsAddress.push({
             terms: prediction.terms,
@@ -172,27 +150,20 @@ export class SenderComponent implements OnInit {
           })
         );
         console.log(this.predictionsAddress);
-
-        // console.log((JSON.parse(response[0].replaceAll("\n", ""))))
       });
-    // console.log(address.value);
   }
-
+  step: any;
   labels: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
   currentModule: any = {};
-  predictionsAddress: any;
+  predictionsAddress: any = [];
   fields: Array<any> = [];
   editable?: boolean;
   formSender: FormGroup;
 
   //Local Variable defined
   formattedaddress = " ";
-  /* options: any = {
-    types: ["address"],
-    componentRestrictions: { country: ["it"] },
-  }; */
 
   setAddress(prediction: any) {
     console.log(prediction);
@@ -204,50 +175,17 @@ export class SenderComponent implements OnInit {
     this.showPredictions = false;
   }
 
-  showPrediction(predictions: any) {
-    console.log(predictions);
-  }
-
   nextStep() {
     if (this.formSender.valid) {
-      sessionStorage.setItem("sender", JSON.stringify(this.formSender.value));
-      this.service.setStatus(this.formSender.value, "sender");
-      this.service.incrementStep();
+      this.store.sender = this.formSender.value;
       this.route.queryParams.subscribe((params: any) => {
         if (params.lang || true) {
           this.router.navigate(["recipient"], {
+            // TODO cambiare con il vero step successivo
             queryParams: { lang: params.lang },
           });
         }
       });
-      this.service.changestep(this.step++);
     }
-  }
-
-  stepSrc?: Subject<number>;
-  step: number = 1;
-
-  myControl = new FormControl("");
-  options: User[] = [{ name: "Mary" }, { name: "Shelley" }, { name: "Igor" }];
-  filteredOptions?: Observable<User[]>;
-
-  control = new FormControl("");
-  streets: string[] = [
-    "Champs-Élysées",
-    "Lombard Street",
-    "Abbey Road",
-    "Fifth Avenue",
-  ];
-  filteredStreets?: Observable<string[]>;
-
-  ngOnInit() {}
-
-  onChangeSearch(event: any) {
-    // console.log(event);
-    this.googlePlace(event);
-  }
-
-  selectEvent(event: any) {
-    console.log(event);
   }
 }

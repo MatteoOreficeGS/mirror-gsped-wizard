@@ -24,7 +24,6 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
-    console.log(router);
     /*     window.addEventListener("beforeunload", (event) => {
       event.preventDefault();
       return event;
@@ -33,6 +32,7 @@ export class AppComponent {
       if (params.origin) {
         this.getToken(params.origin).subscribe(
           (res: any) => {
+            store.origin = params.origin;
             store.token = res.token;
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
@@ -41,13 +41,14 @@ export class AppComponent {
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               const modules = res[0].configuration.modules.map(
-                (module: { moduleName: string }, i: number) => {
-                  return { step: i + 1, name: module.moduleName };
+                (module: { moduleName: string }) => {
+                  return module.moduleName;
                 }
               );
+              console.log(modules[0]);
               this.store.modules = modules;
               this.store.translations = res[1];
-              this.router.navigate(["/" + modules[0].name], {
+              this.router.navigate(["/" + modules[0]], {
                 queryParams: { lang: "it_IT" },
               });
             });
@@ -57,7 +58,36 @@ export class AppComponent {
           }
         );
       }
-      if (params.uuid && router.url) {}
+      if (params.uuid /* && router.url */) {
+        this.http
+          .get(
+            environment.API_URL +
+              "testbed" + //TODO da cambiare col token
+              "/resoFacile/payment/display/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe((res: any) => {
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              const modules = res[0].configuration.modules.map(
+                (module: { moduleName: string }) => {
+                  return module.moduleName;
+                }
+              );
+              console.log(modules[0]);
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              // this.router.navigate(["/" + modules[0]], {
+              //   queryParams: { lang: "it_IT" },
+              // });
+            });
+          });
+      }
     });
   }
 

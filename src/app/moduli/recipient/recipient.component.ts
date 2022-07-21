@@ -20,10 +20,6 @@ export class RecipientComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.step = this.store.modules.filter(
-      (module: any) => "/" + module.name === router.url.split("?")[0]
-    )[0].step;
-
     this.formRecipient = fb.group({
       rcpt_name: [store.recipient?.rcpt_city, Validators.required],
       rcpt_city: [store.recipient?.rcpt_city, Validators.required],
@@ -157,7 +153,6 @@ export class RecipientComponent {
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
   formRecipient: FormGroup;
-  step: number;
 
   setAddress(prediction: any) {
     console.log(prediction);
@@ -176,12 +171,8 @@ export class RecipientComponent {
   nextStep() {
     if (this.formRecipient.valid) {
       this.store.recipient = this.formRecipient.value;
-      this.route.queryParams.subscribe((params: any) => {
-        if (params.lang || true) {
-          this.router.navigate(["shipment"], {
-            queryParams: { lang: params.lang },
-          });
-        }
+      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+        queryParamsHandling: "merge",
       });
     }
   }

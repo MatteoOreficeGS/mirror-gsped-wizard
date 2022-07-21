@@ -21,9 +21,6 @@ export class PaymentComponent implements OnInit {
     public router: Router,
     public fb: FormBuilder
   ) {
-    this.step = this.store.modules.filter(
-      (module: any) => "/" + module.name === router.url.split("?")[0]
-    )[0].step;
     console.log(this.selectedProvider);
     this.formPayment = fb.group({
       cardHolderName: "",
@@ -50,7 +47,7 @@ export class PaymentComponent implements OnInit {
   selectedProvider: string = "";
   shipmentResponse: any = {};
   isHandledPayment: boolean = false;
-  step: number;
+  isPaymentHanldeCompleted: any = false;
 
   redirectPayment() {
     this.isHandledPayment = true;
@@ -80,13 +77,17 @@ export class PaymentComponent implements OnInit {
         cardHolderPhone: this.formPayment.value.cardHolderPhone, // questo form
         customField: "reso bla bla bla per bla bla ecc ecc", // scelgo io
       },
-      session: {}, //Quello che mi serve per dopo
+      session: { orign: this.store.origin }, //Quello che mi serve per dopo
     };
 
     this.handlePayment(this.bodyPayment).subscribe(
       (res) => {
+        this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
         console.log(res);
-        window.open(res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid , "_blank");
+        window.open(
+          res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid,
+          "_blank"
+        );
       },
       (error) => {
         alert(JSON.stringify(error, null, 4));
@@ -95,10 +96,19 @@ export class PaymentComponent implements OnInit {
     // window.open('https://www.google.com', "_blank");
   }
 
+  handleRecovery() {
+    this.router.navigate(["error-payment/monetaweb"], {
+      queryParamsHandling: "merge",
+      queryParams: { uuid: this.isPaymentHanldeCompleted },
+    });
+  }
+
   // TODO modificare con la env
   handlePayment(bodyPayment: any): Observable<any> {
     return this.http.post(
-      "https://api.gsped.it/testbed/resoFacile/payment/process/monetaweb",
+      environment.API_URL +
+        this.store.decodedToken.instance +
+        "/resoFacile/payment/process/monetaweb",
       bodyPayment,
       { headers: { "X-API-KEY": this.store.token } }
     );

@@ -1,10 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormArray,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -21,7 +16,6 @@ export class ShipmentComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute
   ) {
-    this.step = this.store.modules.filter((module: any) => "/" + module.name === router.url.split("?")[0])[0].step;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: "",
@@ -39,43 +33,50 @@ export class ShipmentComponent implements OnInit {
       (module: any) => module.moduleName === "shipment"
     )[0].moduleConfig;
     // this.store.c.subscribe((res: any) => {
-      this.hasPayment =
-        this.store.configuration.modules.filter(
-          (module: { moduleName: string }) => module.moduleName === "payment"
-        ).length === 1;
+    this.hasPayment =
+      this.store.configuration.modules.filter(
+        (module: { moduleName: string }) => module.moduleName === "payment"
+      ).length === 1;
 
-      // this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
-      this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
-      // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
+    // this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
+    this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
+    // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
 
-      this.currentModule.packagesDetails.fixedpackagesNumber = 1;
+    // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
 
-      // this.currentModule.selectCourier.couriers.list[0].services.list.push({gspedServiceCode: 1, name: "prova123"})
+    // this.currentModule.enable = true;
 
-      // this.currentModule.enable = true;
-
-      if (this.currentModule.packagesDetails.fixedpackagesNumber > 0) {
-        this.addPackage();
-        // this.addPackage();
-      }
-
-      this.couriers = this.currentModule.selectCourier.couriers.list;
-      this.label = this.currentModule.packagesDetails.label;
-      // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
-      this.fieldsLabel = [
-        { label: "altezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-        { label: "lunghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-        { label: "larghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-        { label: "peso", placeholder: "kg", step: 0.1, min: 0.5, max: 10 },
-        // { label: "volume", placeholder: "m³", step: 0.01 },
-      ];
-
-      this.bodyRateComparativa = {
-        tipo_listino: "passivo",
-        client_id: this.store.configuration.client_id,
-        ...this.store.sender,
-        ...this.store.recipient,
+    if (this.currentModule.packagesDetails.enable) {
+      this.addPackage();
+      // this.addPackage();
+    } else {
+      this.datacolli = {
+        colli: 1,
+        daticolli: JSON.stringify([
+          { altezza: 1, larghezza: 1, lunghezza: 1, volume: 1, peso: 1 },
+        ]),
+        peso: 1,
+        volume: 1,
       };
+    }
+
+    this.couriers = this.currentModule.selectCourier.couriers.list;
+    this.label = this.currentModule.packagesDetails.label;
+    // this.fieldsLabel = this.currentModule.packagesDetails.fieldsLabel;
+    this.fieldsLabel = [
+      { label: "altezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+      { label: "lunghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+      { label: "larghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
+      { label: "peso", placeholder: "kg", step: 0.1, min: 0.5, max: 10 },
+      // { label: "volume", placeholder: "m³", step: 0.01 },
+    ];
+
+    this.bodyRateComparativa = {
+      tipo_listino: "passivo",
+      client_id: this.store.configuration.client_id,
+      ...this.store.sender,
+      ...this.store.recipient,
+    };
     // });
   }
 
@@ -106,7 +107,6 @@ export class ShipmentComponent implements OnInit {
     ); */
   }
 
-  step:number;
   showCourierSelection: boolean = false;
   courierSelected = { name: "", gspedCourierCode: 104 };
   courierSelectedLogoUrl = null;
@@ -164,27 +164,19 @@ export class ShipmentComponent implements OnInit {
 
     console.log(volumeTot);
 
-    this.datacolli =
-      this.formShipment.value.dimensions.length === 0
-        ? {
-            colli: 1,
-            daticolli: JSON.stringify([
-              { altezza: 1, larghezza: 1, lunghezza: 1, volume: 1, peso: 1 },
-            ]),
-            peso: 1,
-            volume: 1,
-          }
-        : {
-            colli: this.formShipment.value.dimensions.length,
-            daticolli: JSON.stringify(this.formShipment.value.dimensions),
-            peso: pesoTot,
-            volume: volumeTot,
-          };
+    this.datacolli = {
+      colli: this.formShipment.value.dimensions.length,
+      daticolli: JSON.stringify(this.formShipment.value.dimensions),
+      peso: pesoTot,
+      volume: volumeTot,
+    };
   }
 
   confirmInsurance() {
     if (this.formShipment.valid) {
-      this.setDataColli();
+      if (this.currentModule.packagesDetails.enable) {
+        this.setDataColli();
+      }
       this.store.coupon = this.formShipment.value.coupon;
       this.isLoading = true;
 
@@ -447,7 +439,7 @@ export class ShipmentComponent implements OnInit {
       });
   }
 
-  setCourierService(serviceName: string, serviceCode: number, totale:any) {
+  setCourierService(serviceName: string, serviceCode: number, totale: any) {
     let courierCode: number = -1;
     this.store.totale = totale;
 
@@ -467,7 +459,7 @@ export class ShipmentComponent implements OnInit {
     this.payloadShipment.corriere = courierCode;
     this.payloadShipment.servizio = serviceCode;
     console.log("payloadShipment", this.payloadShipment);
-    alert(JSON.stringify(this.payloadShipment, null, 4));
+    // alert(JSON.stringify(this.payloadShipment, null, 4));
     this.incrementStep();
     // this.checkPickUpAviability();
   }
@@ -485,18 +477,11 @@ export class ShipmentComponent implements OnInit {
   }
 
   next() {
-    console.log(this.formShipment.value);
-
     if (this.formShipment.valid) {
       this.store.shipment = this.formShipment.value;
-      this.route.queryParams.subscribe((params: any) => {
-        if (params.lang || true) {
-          this.router.navigate(["payment"], {
-            queryParams: { lang: params.lang },
-          });
-        }
+      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+        queryParamsHandling: "merge",
       });
     }
   }
-
 }

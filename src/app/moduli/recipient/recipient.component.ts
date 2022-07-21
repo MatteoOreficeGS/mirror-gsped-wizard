@@ -144,12 +144,7 @@ export class RecipientComponent {
         { headers: { "X-API-KEY": this.store.token } }
       )
       .subscribe((response: any) => {
-        response.predictions.map((prediction: any) =>
-          this.predictionsAddress.push({
-            terms: prediction.terms,
-            description: prediction.description,
-          })
-        );
+        this.predictionsAddress = response;
         console.log(this.predictionsAddress);
       });
   }
@@ -157,30 +152,23 @@ export class RecipientComponent {
   labels: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
+  editable?: boolean;
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
-  editable?: boolean;
   formRecipient: FormGroup;
   step: number;
-
-  //Local Variable defined
-  formattedaddress = " ";
-  options: any = {
-    types: ["address"],
-    componentRestrictions: { country: ["it"] },
-  };
 
   setAddress(prediction: any) {
     console.log(prediction);
     this.formRecipient.controls["rcpt_addr"].setValue(
-      prediction.terms[0].value
+      prediction.street + " " + prediction.streetNumber
     );
-    this.formRecipient.controls["rcpt_city"].setValue(
-      prediction.terms[1].value
-    );
+    this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
+    this.formRecipient.controls["rcpt_city"].setValue(prediction.city);
+    this.formRecipient.controls["rcpt_prov"].setValue(prediction.district);
     this.formRecipient.controls["rcpt_country_code"].setValue(
-      prediction.terms[3].value.slice(0, 2).toUpperCase()
+      prediction.country
     );
     this.showPredictions = false;
   }

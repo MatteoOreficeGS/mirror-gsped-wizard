@@ -1,5 +1,9 @@
 export const environment = {
-  production: false,
+  PRODUCTION: false,
   API_URL: "https://api.gsped.it/",
-  flow: "resi",
+  // development
+  CURRENT_URL: "http://localhost:4200/",
+  // production
+  // CURRENT_URL: "http://localhost:4200/",
+  FLOW: "resi",
 };

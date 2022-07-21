@@ -65,7 +65,7 @@
             >
               <ng-container *ngFor="let prediction of predictionsAddress">
                 <a (click)="setAddress(prediction)">
-                  {{ prediction.description }}"
+                  {{ prediction.toList }}
                 </a>
                 <br />
               </ng-container>

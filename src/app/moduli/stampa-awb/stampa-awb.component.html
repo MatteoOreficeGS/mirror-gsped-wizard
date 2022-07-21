@@ -1,35 +1,13 @@
-<form [formGroup]="skillsForm" (ngSubmit)="onSubmit()">
- 
-  <p>
-    <label for="name">Name </label>
-    <input type="text" id="name" name="name" formControlName="name">
-  </p>
- 
- 
-  Skills:
-  <div formArrayName="skills">
-    <div *ngFor="let skill of skills.controls; let i=index">
-      <div [formGroupName]="i">
-        {{i}}
-        skill name :
-        <input type="text" formControlName="skill">
-        exp:
-        <input type="text" formControlName="exp">
- 
-        <button (click)="removeSkill(i)">Remove</button>
-      </div>
-    </div>
-  </div>
- 
-  <p>
-    <button type="submit">Submit</button>
-  </p>
- 
-</form>
- 
- 
-<p>
-  <button type="button" (click)="addSkills()">Add</button>
-</p>
- 
-{{this.skillsForm.value | json}}
+<app-navbar></app-navbar>
+<app-widzard [step]="6">
+  il pagamento è andato a buon fine
+
+  <button (click)="awbPrinting()">stampa etichetta</button>
+  <a
+    download="file.pdf"
+    [attr.href]="'data:application/octet-stream;base64,' + b64"
+    title="Download pdf document"
+  >
+    download
+  </a>
+</app-widzard>

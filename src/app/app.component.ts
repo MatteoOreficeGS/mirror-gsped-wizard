@@ -24,48 +24,48 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
+    console.log(router);
     /*     window.addEventListener("beforeunload", (event) => {
       event.preventDefault();
       return event;
     }); */
-    if (window.location.pathname === "/") {
-      this.route.queryParams.subscribe((params: any) => {
-        if (params.origin) {
-          this.getToken(params.origin).subscribe(
-            (res: any) => {
-              store.token = res.token;
-              store.decodedToken = jwt_decode(res.token);
-              forkJoin(
-                this.getConfiguration(res.token, jwt_decode(res.token)),
-                this.getTranslations("it_IT", res.token, jwt_decode(res.token))
-              ).subscribe((res: any) => {
-                this.store.configuration = res[0].configuration;
-                const modules = res[0].configuration.modules.map(
-                  (module: { moduleName: string }, i: number) => {
-                    return { step: i + 1, name: module.moduleName };
-                  }
-                );
-                this.store.modules = modules;
-                this.store.translations = res[1];
-                this.router.navigate(["/" + modules[0].name], {
-                  queryParams: { lang: "it_IT" },
-                });
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.origin) {
+        this.getToken(params.origin).subscribe(
+          (res: any) => {
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              const modules = res[0].configuration.modules.map(
+                (module: { moduleName: string }, i: number) => {
+                  return { step: i + 1, name: module.moduleName };
+                }
+              );
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              this.router.navigate(["/" + modules[0].name], {
+                queryParams: { lang: "it_IT" },
               });
-            },
-            (error: any) => {
-              alert(JSON.stringify(error));
-            }
-          );
-        }
-      });
-    }
+            });
+          },
+          (error: any) => {
+            alert(JSON.stringify(error));
+          }
+        );
+      }
+      if (params.uuid && router.url) {}
+    });
   }
 
   getToken(origin: any): Observable<any> {
     return this.http.get(environment.API_URL + "Token?origin=" + origin);
   }
 
-  getConfiguration(token: any, decoded: any, resource = environment.flow) {
+  getConfiguration(token: any, decoded: any, resource = environment.FLOW) {
     return this.http.get(
       environment.API_URL +
         decoded.instance +
@@ -79,7 +79,7 @@ export class AppComponent {
     lang: string,
     token: any,
     decoded: any,
-    resource = environment.flow
+    resource = environment.FLOW
   ): Observable<any> {
     const headers = { "x-api-key": token };
     return this.http.get(

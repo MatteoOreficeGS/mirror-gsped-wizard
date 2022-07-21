@@ -59,7 +59,7 @@ export class SenderComponent {
     });
     // form init and validation
 
-    this.autocomplete = this.currentModule.autocomplete;
+    this.autocomplete = this.currentModule.autocomplete ? "on" : "off";
 
     this.labels = store.translations;
 
@@ -128,34 +128,30 @@ export class SenderComponent {
   }
 
   googlePlace(address: HTMLInputElement, lang: string = "it") {
-    const decoded: any = this.store.decodedToken;
-    console.log(decoded);
-    this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    return this.http
-      .get(
-        "https://api.gsped.it/" +
-          decoded.instance +
-          "/AddressAutocomplete?input=" +
-          address.value +
-          "&lang=" +
-          lang,
-        { headers: { "X-API-KEY": this.store.token } }
-      )
-      .subscribe((response: any) => {
-        response.predictions.map((prediction: any) =>
-          this.predictionsAddress.push({
-            terms: prediction.terms,
-            description: prediction.description,
-          })
-        );
-        console.log(this.predictionsAddress);
-      });
+    if (address.value.length >= 10) {
+      const decoded: any = this.store.decodedToken;
+      this.predictionsAddress = [];
+      this.showPredictions === false && (this.showPredictions = true);
+      this.http
+        .get(
+          "https://api.gsped.it/" +
+            decoded.instance +
+            "/AddressAutocomplete?input=" +
+            address.value +
+            "&lang=" +
+            lang,
+          { headers: { "X-API-KEY": this.store.token } }
+        )
+        .subscribe((response: any) => {
+          this.predictionsAddress = response;
+          console.log(this.predictionsAddress);
+        });
+    } 
   }
   step: any;
   labels: any = {};
   showPredictions: boolean = false;
-  autocomplete: boolean = false;
+  autocomplete: string;
   currentModule: any = {};
   predictionsAddress: any = [];
   fields: Array<any> = [];
@@ -167,10 +163,14 @@ export class SenderComponent {
 
   setAddress(prediction: any) {
     console.log(prediction);
-    this.formSender.controls["sender_addr"].setValue(prediction.terms[0].value);
-    this.formSender.controls["sender_city"].setValue(prediction.terms[1].value);
+    this.formSender.controls["sender_addr"].setValue(
+      prediction.street + " " + prediction.streetNumber
+    );
+    this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
+    this.formSender.controls["sender_city"].setValue(prediction.city);
+    this.formSender.controls["sender_prov"].setValue(prediction.district);
     this.formSender.controls["sender_country_code"].setValue(
-      prediction.terms[3].value.slice(0, 2).toUpperCase()
+      prediction.country
     );
     this.showPredictions = false;
   }

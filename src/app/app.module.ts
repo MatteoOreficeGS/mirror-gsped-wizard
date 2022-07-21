@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { MatIconModule } from "@angular/material/icon";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AppRoutingModule } from "./app-routing.module";
@@ -21,7 +20,7 @@ import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
 import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { AutocompleteLibModule } from "angular-ng-autocomplete";
+import { ErrorPaymentComponent } from './error-payment/error-payment.component';
 
 @NgModule({
   declarations: [
@@ -37,13 +36,12 @@ import { AutocompleteLibModule } from "angular-ng-autocomplete";
     NavbarComponent,
     ErrorPageComponent,
     StartComponent,
+    ErrorPaymentComponent,
   ],
   imports: [
-    AutocompleteLibModule,
     BrowserAnimationsModule,
     MatInputModule,
     MatFormFieldModule,
-    MatAutocompleteModule,
     BrowserModule,
     AppRoutingModule,
     MatIconModule,

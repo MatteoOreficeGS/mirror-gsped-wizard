@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
@@ -69,9 +70,9 @@ export class PaymentComponent implements OnInit {
             clienti_id: shipmentResponse.client_id,
           },
         ],
-        displayUrl: "http://gsped-wizard.gsped.it/display/", //scelgo io
         utenti_id: decodedToken.user_id, //utente dal token
-        recoveryUrl: "http://gsped-wizard.gsped.it/recovery/", //scelgo io
+        displayUrl: environment.CURRENT_URL + "/awb-printing", //scelgo io
+        recoveryUrl: environment.CURRENT_URL + "/error-payment", //scelgo io
         language: "it", //fisso
         description: "reso bla bla bla per bla bla ecc ecc", // scelgo io
         cardHolderName: this.formPayment.value.cardHolderName, // questo form

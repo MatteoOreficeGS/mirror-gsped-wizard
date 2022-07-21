@@ -21,6 +21,7 @@ import { StartComponent } from "./start/start.component";
 import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorPaymentComponent } from './error-payment/error-payment.component';
+import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ErrorPaymentComponent } from './error-payment/error-payment.component';
     ErrorPageComponent,
     StartComponent,
     ErrorPaymentComponent,
+    FatturaDHLComponent,
   ],
   imports: [
     BrowserAnimationsModule,

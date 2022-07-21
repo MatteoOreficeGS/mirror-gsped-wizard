@@ -20,9 +20,9 @@ export class SenderComponent {
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
-    this.step = this.store.modules.filter(
-      (module: any) => "/" + module.name === router.url.split("?")[0]
-    )[0].step;
+    // this.step = this.store.modules.filter(
+    //   (module: any) => "/" + module.name === router.url.split("?")[0]
+    // )[0].step;
     console.log(this.store.sender);
     this.formSender = fb.group({
       sender_name: [store.sender?.sender_name, Validators.required],
@@ -146,7 +146,7 @@ export class SenderComponent {
           this.predictionsAddress = response;
           console.log(this.predictionsAddress);
         });
-    } 
+    }
   }
   step: any;
   labels: any = {};
@@ -178,13 +178,8 @@ export class SenderComponent {
   nextStep() {
     if (this.formSender.valid) {
       this.store.sender = this.formSender.value;
-      this.route.queryParams.subscribe((params: any) => {
-        if (params.lang || true) {
-          this.router.navigate(["recipient"], {
-            // TODO cambiare con il vero step successivo
-            queryParams: { lang: params.lang },
-          });
-        }
+      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+        queryParamsHandling: "merge",
       });
     }
   }

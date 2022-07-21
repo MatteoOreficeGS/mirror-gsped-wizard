@@ -1,5 +1,8 @@
 <app-navbar></app-navbar>
-<app-widzard [step]="6">
+<app-widzard>
+
+  {{result | json}}
+
   il pagamento è andato a buon fine
 
   <button (click)="awbPrinting()">stampa etichetta</button>

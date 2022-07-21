@@ -8,22 +8,24 @@ import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
 import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
 import { ErrorPaymentComponent } from "./error-payment/error-payment.component";
+import { FatturaDHLComponent } from "./moduli/fattura-dhl/fattura-dhl.component";
 
 const routes: Routes = [
-  { path: "sender", component: SenderComponent /* outlet: "steps" */ },
-  { path: "recipient", component: RecipientComponent /* outlet: "steps" */ },
-  { path: "shipment", component: ShipmentComponent /* outlet: "steps" */ },
-  { path: "payment", component: PaymentComponent /* outlet: "steps" */ },
-  { path: "awb-printing", component: StampaAwbComponent /* outlet: "steps" */ },
+  { path: "sender", component: SenderComponent },
+  { path: "recipient", component: RecipientComponent },
+  { path: "shipment", component: ShipmentComponent },
+  { path: "payment", component: PaymentComponent },
+  {
+    path: "awb-printing",
+    children: [{ path: "monetaweb", component: StampaAwbComponent }],
+  },
+  { path: "fatturaDHL", component: FatturaDHLComponent },
   {
     path: "error-payment",
-    component: ErrorPaymentComponent,
     children: [{ path: "monetaweb", component: ErrorPaymentComponent }],
   },
-  { path: "", component: StartComponent /* outlet: "page" */ },
-  { path: "**", component: ErrorPageComponent /* outlet: "page" */ },
-  // { path: "", redirectTo: "/sender?lang=it_IT", pathMatch: "full" },
-  // { path: "**", redirectTo: "/sender?lang=it_IT", pathMatch: "full" },
+  { path: "", component: StartComponent },
+  { path: "**", component: ErrorPageComponent },
 ];
 
 @NgModule({

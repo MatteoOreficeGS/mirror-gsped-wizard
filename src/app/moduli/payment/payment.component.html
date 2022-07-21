@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<app-widzard [step]="step">
+<app-widzard>
   <form [formGroup]="formPayment">
     <fieldset class="py-4">
       <div class="text-base font-medium text-gray-900">Dati Acquirente</div>
@@ -66,6 +66,6 @@
       <span>Vai al Pagamento</span>
       <mat-icon>open_in_new</mat-icon>
     </button>
-    <a *ngIf="isHandledPayment">Problemi col pagamento?</a>
+    <button (click)="handleRecovery()" *ngIf="isPaymentHanldeCompleted">Problemi col pagamento?</button>
   </div>
 </app-widzard>

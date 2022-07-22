@@ -53,6 +53,7 @@ export class AppComponent {
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0]], {
+              // this.router.navigate(["/" + "fatturaDHL"], {
                 queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });
             });
@@ -63,7 +64,7 @@ export class AppComponent {
             });
           }
         );
-      } 
+      }
       // else if (params.uuid /* && router.url */) {
       //   this.http
       //     .get(
@@ -93,10 +94,6 @@ export class AppComponent {
       //         // });
       //       });
       //     });
-      // } else {
-      //   // this.router.navigate(["/error-page"], {
-      //   //   queryParams: { lang: params.lang ? params.lang : "it_IT" },
-      //   // });
       // }
     });
   }

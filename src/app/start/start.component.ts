@@ -6,8 +6,8 @@ import { Component } from "@angular/core";
 })
 export class StartComponent {
   constructor() {
-    if (window.location.href.split("?").length < 2 || false) {
-      window.location.href = "http://localhost:4200/?origin=moldavia";
-    }
+    // if (window.location.href.split("?").length < 2 || false) {
+    //   window.location.href = "http://localhost:4200/?origin=moldavia";
+    // }
   }
 }

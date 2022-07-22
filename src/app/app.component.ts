@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Component, HostListener } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { forkJoin, Observable } from "rxjs";
+import { forkJoin, mergeMap, Observable } from "rxjs";
 import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
 import { StoreService } from "./store.service";
@@ -53,7 +53,7 @@ export class AppComponent {
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0]], {
-              // this.router.navigate(["/" + "fatturaDHL"], {
+                // this.router.navigate(["/" + "fatturaDHL"], {
                 queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });
             });
@@ -64,37 +64,52 @@ export class AppComponent {
             });
           }
         );
+      } else if (params.uuid /* && router.url */) {
+        this.http
+          .get(
+            environment.API_URL +
+              "testbed" + //TODO da cambiare col token
+              "/resoFacile/payment/display/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe((res: any) => {
+            this.store.token = res.session.token;
+            this.store.shipmentID = res.session.shipmentID;
+            this.router.navigate(["/awb-printing/monetaweb"], {
+              // this.router.navigate(["/" + "fatturaDHL"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+              queryParamsHandling: "merge",
+            });
+          });
       }
-      // else if (params.uuid /* && router.url */) {
-      //   this.http
-      //     .get(
-      //       environment.API_URL +
-      //         "testbed" + //TODO da cambiare col token
-      //         "/resoFacile/payment/display/monetaweb?uuid=" +
-      //         params.uuid
-      //     )
-      //     .subscribe((res: any) => {
-      //       store.token = res.token;
-      //       store.decodedToken = jwt_decode(res.token);
-      //       forkJoin(
-      //         this.getConfiguration(res.token, jwt_decode(res.token)),
-      //         this.getTranslations("it_IT", res.token, jwt_decode(res.token))
-      //       ).subscribe((res: any) => {
-      //         this.store.configuration = res[0].configuration;
-      //         const modules = res[0].configuration.modules.map(
-      //           (module: { moduleName: string }) => {
-      //             return module.moduleName;
-      //           }
-      //         );
-      //         console.log(modules[0]);
-      //         this.store.modules = modules;
-      //         this.store.translations = res[1];
-      //         // this.router.navigate(["/" + modules[0]], {
-      //         //   queryParams: { lang: "it_IT" },
-      //         // });
-      //       });
-      //     });
-      // }
+      /* this.http
+          .get(
+            environment.API_URL +
+              "testbed" + //TODO da cambiare col token
+              "/resoFacile/payment/display/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe((res: any) => {
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              const modules = res[0].configuration.modules.map(
+                (module: { moduleName: string }) => {
+                  return module.moduleName;
+                }
+              );
+              console.log(modules[0]);
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              // this.router.navigate(["/" + modules[0]], {
+              //   queryParams: { lang: "it_IT" },
+              // });
+            });
+          }); */
     });
   }
 

@@ -77,7 +77,7 @@ export class PaymentComponent implements OnInit {
         cardHolderPhone: this.formPayment.value.cardHolderPhone, // questo form
         customField: "reso bla bla bla per bla bla ecc ecc", // scelgo io
       },
-      session: { orign: this.store.origin }, //Quello che mi serve per dopo
+      session: { orign: this.store.origin, token: this.store.token, shipmentID: shipmentResponse.id }, //Quello che mi serve per dopo
     };
 
     this.handlePayment(this.bodyPayment).subscribe(

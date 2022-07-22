@@ -22,6 +22,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorPaymentComponent } from './error-payment/error-payment.component';
 import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
+import { CustomValidatorDirective } from './custom-validator.directive';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component'
     StartComponent,
     ErrorPaymentComponent,
     FatturaDHLComponent,
+    CustomValidatorDirective,
   ],
   imports: [
     BrowserAnimationsModule,

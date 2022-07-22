@@ -45,7 +45,7 @@ export class RecipientComponent {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "recipient"
     )[0].moduleConfig;
-    this.editable = this.currentModule.editable;
+    this.readonly = !this.currentModule.editable;
     Object.keys(this.currentModule.data).forEach((element: any) => {
       if (this.currentModule.data[element]) {
         this.formRecipient.controls[element].setValue(
@@ -148,7 +148,7 @@ export class RecipientComponent {
   labels: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
-  editable?: boolean;
+  readonly?: boolean;
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];

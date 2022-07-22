@@ -20,10 +20,6 @@ export class SenderComponent {
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
-    // this.step = this.store.modules.filter(
-    //   (module: any) => "/" + module.name === router.url.split("?")[0]
-    // )[0].step;
-    console.log(this.store.sender);
     this.formSender = fb.group({
       sender_name: [store.sender?.sender_name, Validators.required],
       sender_city: [store.sender?.sender_city, Validators.required],
@@ -49,7 +45,7 @@ export class SenderComponent {
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
     console.log(this.currentModule);
-    this.editable = this.currentModule.editable;
+    this.readonly = !this.currentModule.editable;
     Object.keys(this.currentModule.data).forEach((element: any) => {
       if (this.currentModule.data[element]) {
         this.formSender.controls[element].setValue(
@@ -155,7 +151,7 @@ export class SenderComponent {
   currentModule: any = {};
   predictionsAddress: any = [];
   fields: Array<any> = [];
-  editable?: boolean;
+  readonly?: boolean;
   formSender: FormGroup;
 
   //Local Variable defined

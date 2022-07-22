@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
 @Component({
@@ -8,17 +9,22 @@ import { StoreService } from "src/app/store.service";
   templateUrl: "./fattura-dhl.component.html",
 })
 export class FatturaDHLComponent implements OnInit {
-  constructor(public fb:FormBuilder, private router: Router, private store: StoreService) {
+  constructor(
+    public fb: FormBuilder,
+    private router: Router,
+    private store: StoreService,
+    private status: StatusService
+  ) {
     this.formInvoice = fb.group({
-      sender_name: [],
-      sender_city: [],
-      sender_contact: [],
-      sender_cap: [],
-      sender_prov: [],
-      sender_country_code: [],
-      sender_email: [],
-      sender_phone: [],
-      sender_addr: [],
+      sender_name: ["", Validators.required],
+      sender_city: ["", Validators.required],
+      sender_contact: ["", Validators.required],
+      sender_cap: ["", Validators.required],
+      sender_prov: ["", Validators.required],
+      sender_country_code: ["", Validators.required],
+      sender_email: ["", Validators.required],
+      sender_phone: ["", Validators.required],
+      sender_addr: ["", Validators.required],
     });
   }
 
@@ -59,11 +65,24 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   nextStep() {
-    if (this.formInvoice.valid) {
-      this.store.sender = this.formInvoice.value;
-      this.router.navigate([this.store.modules[this.store.currentStep++]], {
-        queryParamsHandling: "merge",
-      });
+    this.store.payloadShipment.fatturaDHL = [
+      {
+        cap: 15121,
+      },
+    ];
+    console.log(this.store.payloadShipment);
+    // TODO settare il form
+    if (this.formInvoice.valid || true) {
+      this.store.invoice = this.formInvoice.value;
+      this.status
+        .handleShipment(this.store.payloadShipment)
+        .subscribe((res) => {
+          console.log(res);
+          this.store.shipment = res;
+          this.router.navigate([this.store.modules[this.store.currentStep++]], {
+            queryParamsHandling: "merge",
+          });
+        });
     }
   }
 }

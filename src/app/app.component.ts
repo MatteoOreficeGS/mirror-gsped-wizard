@@ -37,7 +37,11 @@ export class AppComponent {
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
               this.getConfiguration(res.token, jwt_decode(res.token)),
-              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+              this.getTranslations(
+                params.lang ? params.lang : "it_IT",
+                res.token,
+                jwt_decode(res.token)
+              )
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               const modules = res[0].configuration.modules.map(
@@ -49,45 +53,51 @@ export class AppComponent {
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0]], {
-                queryParams: { lang: "it_IT" },
+                queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });
             });
           },
           (error: any) => {
-            alert(JSON.stringify(error));
+            this.router.navigate(["/error-page"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+            });
           }
         );
-      }
-      if (params.uuid /* && router.url */) {
-        this.http
-          .get(
-            environment.API_URL +
-              "testbed" + //TODO da cambiare col token
-              "/resoFacile/payment/display/monetaweb?uuid=" +
-              params.uuid
-          )
-          .subscribe((res: any) => {
-            store.token = res.token;
-            store.decodedToken = jwt_decode(res.token);
-            forkJoin(
-              this.getConfiguration(res.token, jwt_decode(res.token)),
-              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
-            ).subscribe((res: any) => {
-              this.store.configuration = res[0].configuration;
-              const modules = res[0].configuration.modules.map(
-                (module: { moduleName: string }) => {
-                  return module.moduleName;
-                }
-              );
-              console.log(modules[0]);
-              this.store.modules = modules;
-              this.store.translations = res[1];
-              // this.router.navigate(["/" + modules[0]], {
-              //   queryParams: { lang: "it_IT" },
-              // });
-            });
-          });
-      }
+      } 
+      // else if (params.uuid /* && router.url */) {
+      //   this.http
+      //     .get(
+      //       environment.API_URL +
+      //         "testbed" + //TODO da cambiare col token
+      //         "/resoFacile/payment/display/monetaweb?uuid=" +
+      //         params.uuid
+      //     )
+      //     .subscribe((res: any) => {
+      //       store.token = res.token;
+      //       store.decodedToken = jwt_decode(res.token);
+      //       forkJoin(
+      //         this.getConfiguration(res.token, jwt_decode(res.token)),
+      //         this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+      //       ).subscribe((res: any) => {
+      //         this.store.configuration = res[0].configuration;
+      //         const modules = res[0].configuration.modules.map(
+      //           (module: { moduleName: string }) => {
+      //             return module.moduleName;
+      //           }
+      //         );
+      //         console.log(modules[0]);
+      //         this.store.modules = modules;
+      //         this.store.translations = res[1];
+      //         // this.router.navigate(["/" + modules[0]], {
+      //         //   queryParams: { lang: "it_IT" },
+      //         // });
+      //       });
+      //     });
+      // } else {
+      //   // this.router.navigate(["/error-page"], {
+      //   //   queryParams: { lang: params.lang ? params.lang : "it_IT" },
+      //   // });
+      // }
     });
   }
 

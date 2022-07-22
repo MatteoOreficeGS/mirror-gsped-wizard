@@ -42,7 +42,7 @@
                 class="justify-items-center w-full mb-1"
               >
                 <div class="grid grid-cols-2 md:grid-cols-1">
-                  <label>{{ field.label }}*</label>
+                  <label>{{ translations[field.label] }}*</label>
                   <input
                     formControlName="{{ field.label }}"
                     step="{{ field.step }}"
@@ -97,13 +97,13 @@
       </div>
 
       <fieldset *ngIf="currentModule?.insurance.enable" class="py-4">
-        <div class="text-base font-medium text-gray-900">Assicurazione</div>
+        <!-- <div class="text-base font-medium text-gray-900">Assicurazione</div> -->
         <div class="mt-4 space-y-4">
           <div class="relative flex items-start">
             <div class="flex items-center h-5 space-x-2">
               <div class="ml-3 text-sm">
                 <label for="outwardInsurance" class="font-medium text-gray-700">
-                  Andata €
+                  {{translations[currentModule.insurance.label]}} €
                 </label>
               </div>
               <input
@@ -126,7 +126,7 @@
             <div class="flex items-center h-5 space-x-2">
               <div class="ml-3 text-sm">
                 <label for="returnInsurance" class="font-medium text-gray-700">
-                  Ritorno €
+                  {{translations[currentModule.returnLabel.insurance.label]}} €
                 </label>
               </div>
               <input

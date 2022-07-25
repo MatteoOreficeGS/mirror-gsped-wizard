@@ -176,7 +176,7 @@ export class FatturaDHLComponent implements OnInit {
         }
       });
 
-      alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
+      // alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
 
       this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
         console.log(res);

@@ -60,6 +60,7 @@
               [formControlName]="module.value"
               [type]="module.type"
               [required]="module.required"
+              [max]="module.max && module.max"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
             />
 
@@ -76,7 +77,9 @@
     <button
       [disabled]="false"
       [ngClass]="
-        formInvoice.valid ? 'bg-yellow-400 text-white ' : 'bg-yellow-200 text-slate-200'
+        formInvoice.valid
+          ? 'bg-yellow-400 text-white '
+          : 'bg-yellow-200 text-slate-200'
       "
       class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
     >

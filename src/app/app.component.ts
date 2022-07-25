@@ -74,7 +74,8 @@ export class AppComponent {
           )
           .subscribe((res: any) => {
             this.store.token = res.session.token;
-            this.store.shipmentID = res.session.shipmentID;
+            this.store.outwardShipmentID = res.session.outwardShipmentID;
+            this.store.returnShipmentID = res.session.returnShipmentID;
             this.router.navigate(["/awb-printing/monetaweb"], {
               // this.router.navigate(["/" + "fatturaDHL"], {
               queryParams: { lang: params.lang ? params.lang : "it_IT" },

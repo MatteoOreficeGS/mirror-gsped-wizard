@@ -17,17 +17,9 @@ export class FatturaDHLComponent implements OnInit {
   ) {
     this.selected = "privato";
     this.formInvoice = fb.group({
-      codice_fiscale: ["", Validators.required],
+      codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
       pec: [""],
-      sdi: ["", Validators.required],
-      // nome: ["", Validators.required],
-      // cognome: ["", Validators.required],
-      // societa: [""],
-      // indirizzo: ["", Validators.required],
-      // nazione: ["", Validators.required],
-      // cap: ["", Validators.required],
-      // citta: ["", Validators.required],
-      // email: ["", Validators.required],
+      sdi: [""],
     });
   }
 
@@ -39,9 +31,10 @@ export class FatturaDHLComponent implements OnInit {
       label: "codice fiscale",
       type: "text",
       required: true,
+      max: 16,
     },
     { value: "pec", label: "PEC", type: "email", required: false },
-    { value: "sdi", label: "CFE/SDI", type: "text", required: true },
+    { value: "sdi", label: "CFE/SDI", type: "text", required: false },
   ];
   formInvoice: FormGroup;
   selected: string;
@@ -50,8 +43,12 @@ export class FatturaDHLComponent implements OnInit {
   currentModule: any =
     "border-indigo-500 text-indigo-600 w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
 
-  handleSetInvoiceModules(type:string) {
-    if(confirm("Sei sucuro di cambaire modulo? i dati fin'ora inseriti andranno persi")) {
+  handleSetInvoiceModules(type: string) {
+    if (
+      confirm(
+        "Sei sucuro di cambaire modulo? i dati fin'ora inseriti andranno persi"
+      )
+    ) {
       this.setInvoiceModules(type);
     }
   }
@@ -62,9 +59,9 @@ export class FatturaDHLComponent implements OnInit {
     switch (type) {
       case "privato":
         this.formInvoice = this.fb.group({
-          codice_fiscale: ["", Validators.required],
+          codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
           pec: [""],
-          sdi: ["", Validators.required],
+          sdi: [""],
         });
         this.invoiceModules = [
           {
@@ -79,12 +76,12 @@ export class FatturaDHLComponent implements OnInit {
             type: "email",
             required: false,
           },
-          { value: "sdi", label: "CFE/SDI", type: "text", required: true },
+          { value: "sdi", label: "CFE/SDI", type: "text", required: false },
         ];
         break;
       case "piva":
         this.formInvoice = this.fb.group({
-          codice_fiscale: ["", Validators.required],
+          codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
           pec: [""],
           sdi: ["", Validators.required],
         });
@@ -131,22 +128,63 @@ export class FatturaDHLComponent implements OnInit {
 
   nextStep() {
     // TODO settare il form
-    console.log(this.formInvoice.value);
-    console.log(this.formInvoice.valid);
     if (this.formInvoice.valid) {
-      this.store.payloadShipment.fattura_dhl = [
-        this.formInvoice.value
-      ];
+      this.store.payloadShipment.fattura_dhl = [this.formInvoice.value];
+      this.store.payloadShipment.documenti =
+        this.store.configuration.modules[2].moduleConfig.documentFlag;
       this.store.invoice = this.formInvoice.value;
       this.status
         .handleShipment(this.store.payloadShipment)
         .subscribe((res) => {
-          console.log(res);
-          this.store.shipment = res;
-          this.router.navigate([this.store.modules[this.store.currentStep++]], {
-            queryParamsHandling: "merge",
-          });
+          this.store.outwardShipment = res;
         });
+
+      console.log(this.store.payloadShipment);
+      this.store.payloadShipment = {
+        ...this.store.payloadShipment,
+        ...this.store.recipient,
+      };
+
+      // inverto il mittente con il destinatario per la spedizione di ritorno
+      // let returnPayloadShipment: any = {};
+      let returnPayloadShipment: any = this.store.payloadShipment;
+
+      // this.store.sender.forEach((element:any) => {
+      //   returnPayloadShipment[element]
+      // });
+
+      let senderValues = Object.keys(this.store.sender);
+      let recipientValues = Object.keys(this.store.recipient);
+
+      // for (let i = 0; i < senderValues.length; i++) {
+      // delete returnPayloadShipment[recipientValues[i]];
+      // delete returnPayloadShipment[senderValues[i]];
+      // }
+
+      let auxReturnPayloadShipment: any = {};
+
+      for (let i = 0; i < senderValues.length; i++) {
+        auxReturnPayloadShipment[senderValues[i]] =
+          this.store.payloadShipment[recipientValues[i]];
+        auxReturnPayloadShipment[recipientValues[i]] =
+          this.store.payloadShipment[senderValues[i]];
+      }
+
+      Object.keys(returnPayloadShipment).forEach((element) => {
+        if (!auxReturnPayloadShipment.hasOwnProperty(element)) {
+          auxReturnPayloadShipment[element] = returnPayloadShipment[element];
+        }
+      });
+
+      alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
+
+      this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
+        console.log(res);
+        this.store.returnShipment = res;
+      });
+      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+        queryParamsHandling: "merge",
+      });
     }
   }
 }

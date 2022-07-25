@@ -51,7 +51,8 @@ export class PaymentComponent implements OnInit {
 
   redirectPayment() {
     this.isHandledPayment = true;
-    const shipmentResponse = this.store.shipment;
+    const outwardShipmentResponse = this.store.outwardShipment;
+    const returnShipmentResponse = this.store.returnShipment;
     const decodedToken: any = this.store.decodedToken;
 
     this.bodyPayment = {
@@ -60,11 +61,19 @@ export class PaymentComponent implements OnInit {
         items: [
           {
             item: "Trasporto",
-            item_id: shipmentResponse.id,
+            item_id: outwardShipmentResponse.id,
             amount: this.store.totale,
             codiceSconto: "",
             currency: "EUR",
-            clienti_id: shipmentResponse.client_id,
+            clienti_id: outwardShipmentResponse.client_id,
+          },
+          {
+            item: "Trasporto",
+            item_id: returnShipmentResponse.id,
+            amount: this.store.totale,
+            codiceSconto: "",
+            currency: "EUR",
+            clienti_id: returnShipmentResponse.client_id,
           },
         ],
         utenti_id: decodedToken.user_id, //utente dal token
@@ -77,17 +86,20 @@ export class PaymentComponent implements OnInit {
         cardHolderPhone: this.formPayment.value.cardHolderPhone, // questo form
         customField: "reso bla bla bla per bla bla ecc ecc", // scelgo io
       },
-      session: { orign: this.store.origin, token: this.store.token, shipmentID: shipmentResponse.id }, //Quello che mi serve per dopo
+      session: {
+        origin: this.store.origin,
+        token: this.store.token,
+        outwardShipmentID: outwardShipmentResponse.id,
+        returnShipmentID: returnShipmentResponse.id,
+      }, //Quello che mi serve per dopo
     };
 
     this.handlePayment(this.bodyPayment).subscribe(
       (res) => {
         this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
         console.log(res);
-        window.open(
-          res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid,
-          "_blank"
-        );
+        window.document.location.href =
+          res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid;
       },
       (error) => {
         alert(JSON.stringify(error, null, 4));

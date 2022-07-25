@@ -25,9 +25,11 @@ export class StoreService {
     // sender_addr: "Via Dante 23",
   };
   recipient: any;
-  shipment: any = {};
+  outwardShipment: any = {};
+  returnShipment: any = {};
   payloadShipment: any = {};
   totale:any;
   invoice:any;
-  shipmentID:any;
+  outwardShipmentID:any;
+  returnShipmentID:any;
 }

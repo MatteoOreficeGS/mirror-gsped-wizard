@@ -48,15 +48,11 @@ export class ShipmentComponent implements OnInit {
 
     if (this.currentModule.packagesDetails.enable) {
       this.addPackage();
-    } 
-    else {
+    } else {
       this.datacolli = {
         colli: 1,
-        daticolli: JSON.stringify([
-          { altezza: 1, larghezza: 1, lunghezza: 1, volume: 1, peso: 1 },
-        ]),
-        peso: 1,
-        volume: 1,
+        peso: 0.5,
+        volume: 0,
       };
     }
 
@@ -466,7 +462,7 @@ export class ShipmentComponent implements OnInit {
 
   next() {
     if (this.formShipment.valid) {
-      this.store.shipment = this.formShipment.value;
+      this.store.outwardShipment = this.formShipment.value;
       this.router.navigate([this.store.modules[this.store.currentStep++]], {
         queryParamsHandling: "merge",
       });

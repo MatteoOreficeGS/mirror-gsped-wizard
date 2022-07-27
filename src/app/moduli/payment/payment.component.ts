@@ -45,6 +45,15 @@ export class PaymentComponent implements OnInit {
         type: "text",
       },
     ];
+    Object.keys(store.sender).forEach((element: any) => {
+      this.sender[this.translations[element]] = store.sender[element];
+    });
+
+    Object.keys(store.recipient).forEach((element: any) => {
+      this.recipient[this.translations[element]] = store.recipient[element];
+    });
+
+    console.log(this.sender);
   }
 
   ngOnInit(): void {
@@ -68,6 +77,9 @@ export class PaymentComponent implements OnInit {
   isPaymentHanldeCompleted: any = false;
   translations: any = {};
   fields: any = {};
+  sender: any = {};
+  recipient: any = {};
+  shipment: any = {};
 
   redirectPayment() {
     this.isHandledPayment = true;
@@ -125,7 +137,6 @@ export class PaymentComponent implements OnInit {
         alert(JSON.stringify(error, null, 4));
       }
     );
-    // window.open('https://www.google.com', "_blank");
   }
 
   // TODO modificare con la env

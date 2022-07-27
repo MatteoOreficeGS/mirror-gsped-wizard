@@ -31,9 +31,4 @@ export class WidzardComponent {
       queryParamsHandling: "merge",
     });
   }
-
-  showStore() {
-    console.log("sender", this.store.sender);
-    console.log("recipient", this.store.recipient);
-  }
 }

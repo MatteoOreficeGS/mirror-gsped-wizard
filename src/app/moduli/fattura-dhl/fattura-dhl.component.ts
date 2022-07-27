@@ -81,7 +81,7 @@ export class FatturaDHLComponent implements OnInit {
         break;
       case "piva":
         this.formInvoice = this.fb.group({
-          codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
+          codice_fiscale: ["", [Validators.required, Validators.maxLength(11)]],
           pec: [""],
           sdi: ["", Validators.required],
         });

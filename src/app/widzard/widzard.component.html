@@ -1,20 +1,18 @@
+<button (click)="showStore()">
+  show
+</button>
 <div class="lg:mx-10">
   <div class="h-full overflow-y-scroll">
     <img
       class="items-center justift-center text-center w-full mt-4"
       alt="banner"
-      [src]="response.bannerExtra"
+      [src]="bannerExtra"
     />
-    <h1
-      class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
-    >
-      {{ title }}
-    </h1>
     <div
       class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
     >
       <div
-        *ngFor="let modules of response.modules; let i = index"
+        *ngFor="let module of modules; let i = index"
         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
       >
         <button
@@ -34,14 +32,14 @@
           [ngClass]="step === i + 1 ? 'font-bold' : ''"
           class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
         >
-          {{ translations[modules.moduleName] }}
+          {{ translations[module.label] ? translations[module.label] : "XXXX" }}
         </div>
       </div>
     </div>
     <div
       class="lg:hidden mx-auto font-semibold mt-4 text-lg text-center text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
     >
-      {{ translations[response.modules[step - 1].moduleName] }}
+      {{ translations[modules[step - 1].label] }}
     </div>
     <div class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg">
       <ng-content></ng-content>

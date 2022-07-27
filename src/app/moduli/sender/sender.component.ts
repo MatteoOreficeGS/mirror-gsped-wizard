@@ -20,8 +20,63 @@ export class SenderComponent {
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
+    this.currentModule = store.configuration.modules.filter(
+      (module: { moduleName: string }) => module.moduleName === "sender"
+    )[0].moduleConfig;
+    console.log(this.currentModule);
+    this.readonly = !this.currentModule.editable;
+
     this.formSender = fb.group({
-      sender_name: [store.sender?.sender_name, Validators.required],
+      sender_name: [
+        this.currentModule.data.sender_name.split(" ")[0],
+        Validators.required,
+      ],
+      sender_surname: [
+        this.currentModule.data.sender_name.split(" ").slice(1).join(" "),
+        Validators.required,
+      ],
+      sender_city: [this.currentModule.data.sender_city, Validators.required],
+      sender_contact: [
+        this.currentModule.data.sender_contact,
+        Validators.required,
+      ],
+      sender_cap: [this.currentModule.data.sender_cap, Validators.required],
+      sender_prov: [
+        this.currentModule.data.sender_prov,
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+      ],
+      sender_country_code: [
+        this.currentModule.data.sender_country_code,
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+      ],
+      sender_email: [
+        this.currentModule.data.sender_email,
+        [Validators.required, Validators.email],
+      ],
+      sender_phone: [this.currentModule.data.sender_phone, Validators.required],
+      sender_addr: [this.currentModule.data.sender_addr, Validators.required],
+    });
+
+    Object.keys(store.sender).forEach((element: any) => {
+      if (store.sender.hasOwnProperty(element)) {
+        if (store.sender[element] !== this.formSender.value[element]) {
+          if (element === "sender_name") {
+            this.formSender.controls["sender_name"].setValue(
+              store.sender[element].split(" ")[0]
+            );
+            this.formSender.controls["sender_surname"].setValue(
+              store.sender[element].split(" ").slice(1).join(" ")
+            );
+          } else {
+            this.formSender.controls[element].setValue(store.sender[element]);
+          }
+        }
+      }
+    });
+
+    /* this.formSender = fb.group({
+      sender_name: [store.sender?.sender_name.split(' ')[0], Validators.required],
+      sender_surname: [store.sender?.sender_name.split(' ').slice(1).join(' '), Validators.required],
       sender_city: [store.sender?.sender_city, Validators.required],
       sender_contact: [store.sender?.sender_contact, Validators.required],
       sender_cap: [store.sender?.sender_cap, Validators.required],
@@ -41,18 +96,13 @@ export class SenderComponent {
       sender_addr: [store.sender?.sender_addr, Validators.required],
     });
 
-    this.currentModule = store.configuration.modules.filter(
-      (module: { moduleName: string }) => module.moduleName === "sender"
-    )[0].moduleConfig;
-    console.log(this.currentModule);
-    this.readonly = !this.currentModule.editable;
     Object.keys(this.currentModule.data).forEach((element: any) => {
       if (this.currentModule.data[element]) {
         this.formSender.controls[element].setValue(
           this.currentModule.data[element]
         );
       }
-    });
+    }); */
     // form init and validation
 
     this.autocomplete = this.currentModule.autocomplete ? "on" : "off";
@@ -62,7 +112,13 @@ export class SenderComponent {
     this.fields = [
       {
         value: "sender_name",
-        label: this.labels.sender_name,
+        label: this.labels.nome,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "sender_surname",
+        label: this.labels.cognome,
         type: "text",
         required: true,
       },
@@ -173,8 +229,12 @@ export class SenderComponent {
 
   nextStep() {
     if (this.formSender.valid) {
+      this.formSender.value.sender_name +=
+        " " + this.formSender.value.sender_surname;
+      delete this.formSender.value.sender_surname;
       this.store.sender = this.formSender.value;
-      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+      console.log(this.formSender.value);
+      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
         queryParamsHandling: "merge",
       });
     }

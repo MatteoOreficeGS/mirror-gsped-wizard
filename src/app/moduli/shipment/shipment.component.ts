@@ -463,7 +463,7 @@ export class ShipmentComponent implements OnInit {
   next() {
     if (this.formShipment.valid) {
       this.store.outwardShipment = this.formShipment.value;
-      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
         queryParamsHandling: "merge",
       });
     }

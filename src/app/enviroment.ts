@@ -6,5 +6,4 @@ export const environment = {
   // production
   // CURRENT_URL: "http://localhost:4200/",
   FLOW: "resi",
-  TITLE: "Reso Facile"
 };

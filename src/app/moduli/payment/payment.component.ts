@@ -27,6 +27,24 @@ export class PaymentComponent implements OnInit {
       cardHolderEmail: ["", Validators.email],
       cardHolderPhone: "",
     });
+    this.translations = store.translations;
+    this.fields = [
+      {
+        value: "cardHolderName",
+        label: this.translations.cc_cardholder_name,
+        type: "text",
+      },
+      {
+        value: "cardHolderEmail",
+        label: this.translations.cc_cardholder_email,
+        type: "email",
+      },
+      {
+        value: "cardHolderPhone",
+        label: this.translations.cc_cardholder_phone,
+        type: "text",
+      },
+    ];
   }
 
   ngOnInit(): void {
@@ -48,6 +66,8 @@ export class PaymentComponent implements OnInit {
   shipmentResponse: any = {};
   isHandledPayment: boolean = false;
   isPaymentHanldeCompleted: any = false;
+  translations: any = {};
+  fields: any = {};
 
   redirectPayment() {
     this.isHandledPayment = true;
@@ -106,13 +126,6 @@ export class PaymentComponent implements OnInit {
       }
     );
     // window.open('https://www.google.com', "_blank");
-  }
-
-  handleRecovery() {
-    this.router.navigate(["error-payment/monetaweb"], {
-      queryParamsHandling: "merge",
-      queryParams: { uuid: this.isPaymentHanldeCompleted },
-    });
   }
 
   // TODO modificare con la env

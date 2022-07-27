@@ -44,15 +44,27 @@ export class AppComponent {
               )
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
-              const modules = res[0].configuration.modules.map(
-                (module: { moduleName: string }) => {
-                  return module.moduleName;
+              let modules = res[0].configuration.modules.map((module: any) => {
+                if (module.moduleConfig.hidden) {
+                  if (module.moduleName === "sender") {
+                    this.store.sender = module.moduleConfig.data;
+                  }
+                  if (module.moduleName === "recipient") {
+                    this.store.recipient = module.moduleConfig.data;
+                  }
+                  return null;
+                } else {
+                  return {
+                    module: module.moduleName,
+                    label: module.moduleConfig.label,
+                  };
                 }
-              );
-              console.log(modules[0]);
+              });
+              modules = modules.filter((module: any) => module);
+              console.log(modules);
               this.store.modules = modules;
               this.store.translations = res[1];
-              this.router.navigate(["/" + modules[0]], {
+              this.router.navigate(["/" + modules[0].module], {
                 // this.router.navigate(["/" + "fatturaDHL"], {
                 queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });
@@ -65,6 +77,7 @@ export class AppComponent {
           }
         );
       } else if (params.uuid /* && router.url */) {
+        setTimeout(() => {}, 1000);
         this.http
           .get(
             environment.API_URL +

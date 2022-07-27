@@ -178,11 +178,12 @@ export class FatturaDHLComponent implements OnInit {
 
       // alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
 
-      this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
+      // this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
+        this.status.handleShipment(this.store.payloadShipment).subscribe((res) => {
         console.log(res);
         this.store.returnShipment = res;
       });
-      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
         queryParamsHandling: "merge",
       });
     }

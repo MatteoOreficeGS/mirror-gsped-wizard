@@ -20,40 +20,58 @@ export class RecipientComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.formRecipient = fb.group({
-      rcpt_name: [store.recipient?.rcpt_city, Validators.required],
-      rcpt_city: [store.recipient?.rcpt_city, Validators.required],
-      rcpt_contact: [store.recipient?.rcpt_contact, Validators.required],
-      rcpt_cap: [store.recipient?.rcpt_cap, Validators.required],
-      rcpt_prov: [
-        store.recipient?.rcpt_prov,
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
-      ],
-      rcpt_country_code: [
-        store.recipient?.rcpt_country_code,
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
-      ],
-      rcpt_email: [
-        store.recipient?.rcpt_email,
-        [Validators.required, Validators.email],
-      ],
-      rcpt_phone: [store.recipient?.rcpt_phone, Validators.required],
-      rcpt_addr: [store.recipient?.rcpt_addr, Validators.required],
-    });
-
     //set current module
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "recipient"
     )[0].moduleConfig;
     this.readonly = !this.currentModule.editable;
-    Object.keys(this.currentModule.data).forEach((element: any) => {
-      if (this.currentModule.data[element]) {
-        this.formRecipient.controls[element].setValue(
-          this.currentModule.data[element]
-        );
-      }
+
+    this.formRecipient = fb.group({
+      rcpt_name: [
+        this.currentModule.data.rcpt_name.split(" ")[0],
+        Validators.required,
+      ],
+      rcpt_surname: [
+        this.currentModule.data.rcpt_name.split(" ").slice(1).join(" "),
+        Validators.required,
+      ],
+      rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
+      rcpt_contact: [this.currentModule.data.rcpt_contact, Validators.required],
+      rcpt_cap: [this.currentModule.data.rcpt_cap, Validators.required],
+      rcpt_prov: [
+        this.currentModule.data.rcpt_prov,
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+      ],
+      rcpt_country_code: [
+        this.currentModule.data.rcpt_country_code,
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+      ],
+      rcpt_email: [
+        this.currentModule.data.rcpt_email,
+        [Validators.required, Validators.email],
+      ],
+      rcpt_phone: [this.currentModule.data.rcpt_phone, Validators.required],
+      rcpt_addr: [this.currentModule.data.rcpt_addr, Validators.required],
     });
 
+    Object.keys(store.recipient).forEach((element: any) => {
+      if (store.recipient.hasOwnProperty(element)) {
+        if (store.recipient[element] !== this.formRecipient.value[element]) {
+          if (element === "rcpt_name") {
+            this.formRecipient.controls["rcpt_name"].setValue(
+              store.recipient[element].split(" ")[0]
+            );
+            this.formRecipient.controls["rcpt_surname"].setValue(
+              store.recipient[element].split(" ").slice(1).join(" ")
+            );
+          } else {
+            this.formRecipient.controls[element].setValue(
+              store.recipient[element]
+            );
+          }
+        }
+      }
+    });
     // form init and validation
 
     this.autocomplete = this.currentModule.autocomplete;
@@ -63,7 +81,13 @@ export class RecipientComponent {
     this.fields = [
       {
         value: "rcpt_name",
-        label: this.labels.rcpt_name,
+        label: this.labels.nome,
+        type: "text",
+        required: true,
+      },
+      {
+        value: "rcpt_surname",
+        label: this.labels.cognome,
         type: "text",
         required: true,
       },
@@ -170,8 +194,12 @@ export class RecipientComponent {
 
   nextStep() {
     if (this.formRecipient.valid) {
+      this.formRecipient.value.rcpt_name +=
+        " " + this.formRecipient.value.rcpt_surname;
+      delete this.formRecipient.value.rcpt_surname;
       this.store.recipient = this.formRecipient.value;
-      this.router.navigate([this.store.modules[this.store.currentStep++]], {
+      console.log(this.formRecipient.value);
+      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
         queryParamsHandling: "merge",
       });
     }

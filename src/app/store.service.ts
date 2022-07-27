@@ -14,7 +14,7 @@ export class StoreService {
   modules?: any;
   sender: any = {
     //RIMUOVERE
-    // sender_name: "lorenzo",
+    // sender_name: "Mario Rossi Verdi Gialli",
     // sender_city: "Milan",
     // sender_contact: "contatto",
     // sender_cap: "26100",
@@ -24,7 +24,7 @@ export class StoreService {
     // sender_phone: "3343343344",
     // sender_addr: "Via Dante 23",
   };
-  recipient: any;
+  recipient: any = {};
   outwardShipment: any = {};
   returnShipment: any = {};
   payloadShipment: any = {};

@@ -16,7 +16,18 @@ export class ShipmentComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute
   ) {
+    this.currentModule = this.store.configuration.modules.filter(
+      (module: any) => module.moduleName === "shipment"
+    )[0].moduleConfig;
+    this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
+    // this.store.c.subscribe((res: any) => {
+    this.hasPayment =
+      this.store.configuration.modules.filter(
+        (module: { moduleName: string }) => module.moduleName === "payment"
+      ).length === 1;
     this.translations = store.translations;
+    store.isDocumentShipment = /* false;// */this.currentModule.documentFlag;
+    this.isDocumentShipment = /* false;// */this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: "",
@@ -30,15 +41,6 @@ export class ShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentModule = this.store.configuration.modules.filter(
-      (module: any) => module.moduleName === "shipment"
-    )[0].moduleConfig;
-    // this.store.c.subscribe((res: any) => {
-    this.hasPayment =
-      this.store.configuration.modules.filter(
-        (module: { moduleName: string }) => module.moduleName === "payment"
-      ).length === 1;
-
     // this.currentModule.selectCourier.couriers.selectionMode = "AUTOMATIC";
     this.currentModule.selectCourier.couriers.selectionMode = "DYNAMIC";
     // this.currentModule.selectCourier.couriers.selectionMode = "FIXED";
@@ -108,6 +110,7 @@ export class ShipmentComponent implements OnInit {
   hasPayment?: boolean;
   translations: any;
   formShipment: FormGroup;
+  isDocumentShipment: boolean;
 
   newPackage(): FormGroup {
     return this.fb.group({
@@ -157,6 +160,19 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
+
+    // setting the insurance value at 100 if checkbox is checked at 0 if not
+    if (this.formShipment.value.outwardInsurance === true) {
+      this.formShipment.controls["outwardInsurance"].setValue(100);
+    } else if(this.formShipment.value.outwardInsurance === false)  {
+      this.formShipment.controls["outwardInsurance"].setValue(0);
+    }
+    if (this.formShipment.value.returnInsurance === true) {
+      this.formShipment.controls["returnInsurance"].setValue(100);
+    } else if(this.formShipment.value.returnInsurance === false) {
+      this.formShipment.controls["returnInsurance"].setValue(0);
+    }
+    console.log("formShipment", this.formShipment.value);
     if (this.formShipment.valid) {
       if (this.currentModule.packagesDetails.enable) {
         this.setDataColli();
@@ -179,6 +195,8 @@ export class ShipmentComponent implements OnInit {
         ...this.bodyRateComparativa,
         ...this.datacolli,
       };
+
+      // this.bodyRateComparativa.valore = this.formShipment.value.outwardInsurance;
 
       console.log("bodyRateComparativa", this.bodyRateComparativa);
       this.setShipmentPayload();
@@ -463,9 +481,12 @@ export class ShipmentComponent implements OnInit {
   next() {
     if (this.formShipment.valid) {
       this.store.outwardShipment = this.formShipment.value;
-      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
-        queryParamsHandling: "merge",
-      });
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
     }
   }
 }

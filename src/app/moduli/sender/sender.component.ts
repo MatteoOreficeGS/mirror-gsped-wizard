@@ -216,7 +216,8 @@ export class SenderComponent {
   setAddress(prediction: any) {
     console.log(prediction);
     this.formSender.controls["sender_addr"].setValue(
-      prediction.street + " " + prediction.streetNumber
+      prediction.street +
+      (prediction.streetNumber != undefined ? " " + prediction.streetNumber : "")
     );
     this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
     this.formSender.controls["sender_city"].setValue(prediction.city);

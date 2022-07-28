@@ -11,6 +11,8 @@ export class StoreService {
   configuration: any;
   translations: any;
   coupon: string = "";
+  isDocumentShipment?: boolean;
+  hasReturnShipment?: boolean;
   modules?: any;
   sender: any = {
     //RIMUOVERE

@@ -90,24 +90,6 @@ export class PaymentComponent implements OnInit {
     this.bodyPayment = {
       monetaweb: {
         origine: "resoFacile", //fisso
-        items: [
-          {
-            item: "Trasporto",
-            item_id: outwardShipmentResponse.id,
-            amount: this.store.totale,
-            codiceSconto: "",
-            currency: "EUR",
-            clienti_id: outwardShipmentResponse.client_id,
-          },
-          {
-            item: "Trasporto",
-            item_id: returnShipmentResponse.id,
-            amount: this.store.totale,
-            codiceSconto: "",
-            currency: "EUR",
-            clienti_id: returnShipmentResponse.client_id,
-          },
-        ],
         utenti_id: decodedToken.user_id, //utente dal token
         displayUrl: environment.CURRENT_URL + "/awb-printing", //scelgo io
         recoveryUrl: environment.CURRENT_URL + "/error-payment", //scelgo io
@@ -125,6 +107,30 @@ export class PaymentComponent implements OnInit {
         returnShipmentID: returnShipmentResponse.id,
       }, //Quello che mi serve per dopo
     };
+
+    let items = [
+      {
+        item: "Trasporto",
+        item_id: outwardShipmentResponse.id,
+        amount: this.store.totale,
+        codiceSconto: "",
+        currency: "EUR",
+        clienti_id: outwardShipmentResponse.client_id,
+      },
+    ];
+
+    if (this.store.hasReturnShipment) {
+      items.push({
+        item: "Trasporto",
+        item_id: returnShipmentResponse.id,
+        amount: this.store.totale,
+        codiceSconto: "",
+        currency: "EUR",
+        clienti_id: returnShipmentResponse.client_id,
+      });
+    }
+
+    this.bodyPayment.monetaweb.items = items;
 
     this.handlePayment(this.bodyPayment).subscribe(
       (res) => {

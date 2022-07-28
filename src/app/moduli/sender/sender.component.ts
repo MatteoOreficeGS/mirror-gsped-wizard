@@ -74,41 +74,8 @@ export class SenderComponent {
       }
     });
 
-    /* this.formSender = fb.group({
-      sender_name: [store.sender?.sender_name.split(' ')[0], Validators.required],
-      sender_surname: [store.sender?.sender_name.split(' ').slice(1).join(' '), Validators.required],
-      sender_city: [store.sender?.sender_city, Validators.required],
-      sender_contact: [store.sender?.sender_contact, Validators.required],
-      sender_cap: [store.sender?.sender_cap, Validators.required],
-      sender_prov: [
-        store.sender?.sender_prov,
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
-      ],
-      sender_country_code: [
-        store.sender?.sender_country_code,
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
-      ],
-      sender_email: [
-        store.sender?.sender_email,
-        [Validators.required, Validators.email],
-      ],
-      sender_phone: [store.sender?.sender_phone, Validators.required],
-      sender_addr: [store.sender?.sender_addr, Validators.required],
-    });
-
-    Object.keys(this.currentModule.data).forEach((element: any) => {
-      if (this.currentModule.data[element]) {
-        this.formSender.controls[element].setValue(
-          this.currentModule.data[element]
-        );
-      }
-    }); */
-    // form init and validation
-
     this.autocomplete = this.currentModule.autocomplete ? "on" : "off";
-
     this.labels = store.translations;
-
     this.fields = [
       {
         value: "sender_name",
@@ -151,12 +118,14 @@ export class SenderComponent {
         label: this.labels.sender_prov,
         type: "text",
         required: true,
+        maxLenght: 2,
       },
       {
         value: "sender_country_code",
         label: this.labels.sender_country_code,
         type: "text",
         required: true,
+        maxLenght: 2,
       },
       {
         value: "sender_email",
@@ -172,34 +141,20 @@ export class SenderComponent {
       },
     ];
 
-    let langParam = "";
-
     this.route.queryParams.subscribe((params: any) => {
-      langParam = params.lang;
+      this.langParam = params.lang;
     });
   }
 
-  googlePlace(address: HTMLInputElement, lang: string = "it") {
-    if (address.value.length >= 10) {
-      const decoded: any = this.store.decodedToken;
-      this.predictionsAddress = [];
-      this.showPredictions === false && (this.showPredictions = true);
-      this.http
-        .get(
-          "https://api.gsped.it/" +
-            decoded.instance +
-            "/AddressAutocomplete?input=" +
-            address.value +
-            "&lang=" +
-            lang,
-          { headers: { "X-API-KEY": this.store.token } }
-        )
-        .subscribe((response: any) => {
-          this.predictionsAddress = response;
-          console.log(this.predictionsAddress);
-        });
-    }
+  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
+    this.predictionsAddress = [];
+    this.showPredictions === false && (this.showPredictions = true);
+    this.service.googlePlace(address.value, lang).subscribe((response: any) => {
+      this.predictionsAddress = response;
+      console.log(this.predictionsAddress);
+    });
   }
+
   step: any;
   labels: any = {};
   showPredictions: boolean = false;
@@ -209,6 +164,7 @@ export class SenderComponent {
   fields: Array<any> = [];
   readonly?: boolean;
   formSender: FormGroup;
+  langParam = "";
 
   //Local Variable defined
   formattedaddress = " ";
@@ -217,7 +173,9 @@ export class SenderComponent {
     console.log(prediction);
     this.formSender.controls["sender_addr"].setValue(
       prediction.street +
-      (prediction.streetNumber != undefined ? " " + prediction.streetNumber : "")
+        (prediction.streetNumber != undefined
+          ? " " + prediction.streetNumber
+          : "")
     );
     this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
     this.formSender.controls["sender_city"].setValue(prediction.city);
@@ -235,9 +193,12 @@ export class SenderComponent {
       delete this.formSender.value.sender_surname;
       this.store.sender = this.formSender.value;
       console.log(this.formSender.value);
-      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
-        queryParamsHandling: "merge",
-      });
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
     }
   }
 }

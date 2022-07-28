@@ -120,12 +120,14 @@ export class RecipientComponent {
         label: this.labels.rcpt_prov,
         type: "text",
         required: true,
+        maxlength: 2,
       },
       {
         value: "rcpt_country_code",
         label: this.labels.rcpt_country_code,
         type: "text",
         required: true,
+        maxlength: 2,
       },
       {
         value: "rcpt_email",
@@ -141,34 +143,22 @@ export class RecipientComponent {
       },
     ];
 
-    let langParam = "";
 
     this.route.queryParams.subscribe((params: any) => {
-      langParam = params.lang;
+      this.langParam = params.lang;
     });
   }
 
-  googlePlace(address: HTMLInputElement, lang: string = "it") {
-    const decoded: any = this.store.decodedToken;
-    console.log(decoded);
+  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
-    return this.http
-      .get(
-        "https://api.gsped.it/" +
-          decoded.instance +
-          "/AddressAutocomplete?input=" +
-          address.value +
-          "&lang=" +
-          lang,
-        { headers: { "X-API-KEY": this.store.token } }
-      )
-      .subscribe((response: any) => {
-        this.predictionsAddress = response;
-        console.log(this.predictionsAddress);
-      });
+    this.service.googlePlace(address.value, lang).subscribe((response: any) => {
+      this.predictionsAddress = response;
+      console.log(this.predictionsAddress);
+    });
   }
 
+  langParam = "";
   labels: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
@@ -182,7 +172,9 @@ export class RecipientComponent {
     console.log(prediction);
     this.formRecipient.controls["rcpt_addr"].setValue(
       prediction.street +
-        (prediction.streetNumber != undefined ? " " + prediction.streetNumber : "")
+        (prediction.streetNumber != undefined
+          ? " " + prediction.streetNumber
+          : "")
     );
     this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
     this.formRecipient.controls["rcpt_city"].setValue(prediction.city);

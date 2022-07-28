@@ -18,6 +18,7 @@ export class WidzardComponent {
     this.modules = store.modules;
     this.bannerExtra = store.configuration.bannerExtra;
     this.translations = store.translations;
+    
   }
   step: number;
   modules: any;

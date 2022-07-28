@@ -146,46 +146,52 @@ export class FatturaDHLComponent implements OnInit {
       };
 
       // inverto il mittente con il destinatario per la spedizione di ritorno
-      // let returnPayloadShipment: any = {};
-      let returnPayloadShipment: any = this.store.payloadShipment;
+      if (this.store.hasReturnShipment) {
+        // let returnPayloadShipment: any = {};
+        let returnPayloadShipment: any = this.store.payloadShipment;
 
-      // this.store.sender.forEach((element:any) => {
-      //   returnPayloadShipment[element]
-      // });
+        // this.store.sender.forEach((element:any) => {
+        //   returnPayloadShipment[element]
+        // });
 
-      let senderValues = Object.keys(this.store.sender);
-      let recipientValues = Object.keys(this.store.recipient);
+        let senderValues = Object.keys(this.store.sender);
+        let recipientValues = Object.keys(this.store.recipient);
 
-      // for (let i = 0; i < senderValues.length; i++) {
-      // delete returnPayloadShipment[recipientValues[i]];
-      // delete returnPayloadShipment[senderValues[i]];
-      // }
+        // for (let i = 0; i < senderValues.length; i++) {
+        // delete returnPayloadShipment[recipientValues[i]];
+        // delete returnPayloadShipment[senderValues[i]];
+        // }
 
-      let auxReturnPayloadShipment: any = {};
+        let auxReturnPayloadShipment: any = {};
 
-      for (let i = 0; i < senderValues.length; i++) {
-        auxReturnPayloadShipment[senderValues[i]] =
-          this.store.payloadShipment[recipientValues[i]];
-        auxReturnPayloadShipment[recipientValues[i]] =
-          this.store.payloadShipment[senderValues[i]];
-      }
-
-      Object.keys(returnPayloadShipment).forEach((element) => {
-        if (!auxReturnPayloadShipment.hasOwnProperty(element)) {
-          auxReturnPayloadShipment[element] = returnPayloadShipment[element];
+        for (let i = 0; i < senderValues.length; i++) {
+          auxReturnPayloadShipment[senderValues[i]] =
+            this.store.payloadShipment[recipientValues[i]];
+          auxReturnPayloadShipment[recipientValues[i]] =
+            this.store.payloadShipment[senderValues[i]];
         }
-      });
 
-      // alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
+        Object.keys(returnPayloadShipment).forEach((element) => {
+          if (!auxReturnPayloadShipment.hasOwnProperty(element)) {
+            auxReturnPayloadShipment[element] = returnPayloadShipment[element];
+          }
+        });
 
-      // this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
-        this.status.handleShipment(this.store.payloadShipment).subscribe((res) => {
-        console.log(res);
-        this.store.returnShipment = res;
-      });
-      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
-        queryParamsHandling: "merge",
-      });
+        // alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
+        // this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
+        this.status
+          .handleShipment(this.store.payloadShipment)
+          .subscribe((res) => {
+            console.log(res);
+            this.store.returnShipment = res;
+          });
+      }
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
     }
   }
 }

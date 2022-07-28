@@ -49,26 +49,27 @@ export class StampaAwbComponent {
           "data:application/octet-stream;base64," + this.b64pdf
         );
       });
-    this.http
-      .get(
-        environment.API_URL +
-          "testbed" + //TODO da cambiare col token
-          "/shipment?id=" +
-          this.store.returnShipmentID,
-        { headers: headers }
-      )
-      .subscribe((response: any) => {
-        // alert(JSON.stringify(response, null, 4));
-        this.result = response;
-        this.b64pdf = this.result.label_pdf[0];
-        this.pdfReturn = this.domSanitizer.bypassSecurityTrustUrl(
-          "data:application/octet-stream;base64," + this.b64pdf
-        );
-      });
+    if (this.store.returnShipmentID) {
+      this.http
+        .get(
+          environment.API_URL +
+            "testbed" + //TODO da cambiare col token
+            "/shipment?id=" +
+            this.store.returnShipmentID,
+          { headers: headers }
+        )
+        .subscribe((response: any) => {
+          // alert(JSON.stringify(response, null, 4));
+          this.result = response;
+          this.b64pdf = this.result.label_pdf[0];
+          this.pdfReturn = this.domSanitizer.bypassSecurityTrustUrl(
+            "data:application/octet-stream;base64," + this.b64pdf
+          );
+        });
+    }
   }
 
   awbPrinting() {
-
     // const byteArray = new Uint8Array(
     //   atob(this.result.label_pdf[0])
     //     .split("")

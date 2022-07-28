@@ -181,7 +181,8 @@ export class RecipientComponent {
   setAddress(prediction: any) {
     console.log(prediction);
     this.formRecipient.controls["rcpt_addr"].setValue(
-      prediction.street + " " + prediction.streetNumber
+      prediction.street +
+        (prediction.streetNumber != undefined ? " " + prediction.streetNumber : "")
     );
     this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
     this.formRecipient.controls["rcpt_city"].setValue(prediction.city);
@@ -199,9 +200,12 @@ export class RecipientComponent {
       delete this.formRecipient.value.rcpt_surname;
       this.store.recipient = this.formRecipient.value;
       console.log(this.formRecipient.value);
-      this.router.navigate([this.store.modules[this.store.currentStep++].module], {
-        queryParamsHandling: "merge",
-      });
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
     }
   }
 }

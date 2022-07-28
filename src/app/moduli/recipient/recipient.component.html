@@ -5,59 +5,42 @@
       <ng-container *ngFor="let field of fields">
         <div class="relative z-0 w-full mb-6 group mx-auto">
           <input
-            [readonly]="readonly"
-            [ngClass]="readonly ? 'cursor-not-allowed': ''"
             *ngIf="field.label !== 'indirizzo destinatario'"
-            autocomplete="{{ autocomplete }}"
-            [formControlName]="field.value"
-            type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
-            placeholder=" "
-          />
-          <div
-            *ngIf="
+            [readonly]="readonly"
+            [maxlength]="field.maxLenght"
+            [ngClass]="readonly ? 'cursor-not-allowed' : ''"
+            [ngClass]="
               formRecipient.get(field.value)?.invalid &&
               formRecipient.get(field.value)?.errors &&
               (formRecipient.get(field.value)?.dirty ||
                 formRecipient.get(field.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
             "
-          >
-            <small
-              class="text-danger"
-              *ngIf="formRecipient.get(field.value)?.hasError('required')"
-            >
-              This field is required.
-            </small>
-            <small
-              class="text-danger"
-              *ngIf="formRecipient.get(field.value)?.hasError('minlength')"
-            >
-              The minimum length for this field is
-              {{formRecipient.get(field.value)?.errors?.["minlength"].requiredLength}}
-              characters.
-            </small>
-            <small
-              class="text-danger"
-              *ngIf="formRecipient.get(field.value)?.hasError('maxlength')"
-            >
-              The maximum length for this field is
-              {{formRecipient.get(field.value)?.errors?.["maxlength"].requiredLength}}
-              characters.
-            </small>
-          </div>
-
+            autocomplete="{{ autocomplete }}"
+            [formControlName]="field.value"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
+          />
           <div *ngIf="field.label === 'indirizzo destinatario'">
             <input
               [readonly]="readonly"
               [ngClass]="readonly ? 'cursor-not-allowed' : ''"
+              [ngClass]="
+                formRecipient.get(field.value)?.invalid &&
+                formRecipient.get(field.value)?.errors &&
+                (formRecipient.get(field.value)?.dirty ||
+                  formRecipient.get(field.value)?.touched)
+                  ? 'border-red-500'
+                  : 'border-gray-300'
+              "
               autocomplete="off"
               [formControlName]="field.value"
               type="text"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer capitalize"
-              (input)="googlePlace(address)"
+              (input)="handleGooglePlace(address)"
               #address
               name="address"
-              list="predictions"
               placeholder=" "
             />
             <div

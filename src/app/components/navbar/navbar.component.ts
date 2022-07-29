@@ -15,7 +15,7 @@ export class NavbarComponent {
   ) {
     this.response = this.store.configuration;
     this.theme = "#" + this.response.mainColor;
-    this.lenguages = this.response.i18n;
+    this.lenguages = this.response.i18n.length > 1 ? this.response.i18n : [] ;
   }
 
   response: any = {};

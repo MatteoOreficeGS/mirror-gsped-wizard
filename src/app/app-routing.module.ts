@@ -9,14 +9,17 @@ import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
 import { ErrorPaymentComponent } from "./error-payment/error-payment.component";
 import { FatturaDHLComponent } from "./moduli/fattura-dhl/fattura-dhl.component";
+import { VodafoneComponent } from "./vodafone/vodafone.component";
 
 const routes: Routes = [
   { path: "sender", component: SenderComponent },
   { path: "recipient", component: RecipientComponent },
+  { path: "vodafone", component: VodafoneComponent },
   { path: "shipment", component: ShipmentComponent },
   { path: "payment", component: PaymentComponent },
   {
     path: "awb-printing",
+    component: StampaAwbComponent,
     children: [{ path: "monetaweb", component: StampaAwbComponent }],
   },
   { path: "fatturaDHL", component: FatturaDHLComponent },

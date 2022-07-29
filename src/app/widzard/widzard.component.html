@@ -1,92 +1,46 @@
 <div class="lg:mx-10">
-  <div class="h-[80vh] overflow-y-scroll">
+  <div class="h-full overflow-y-scroll">
     <img
-      class="items-center justift-center text-center w-full"
+      *ngIf="bannerExtra"
+      class="items-center justift-center text-center w-full mt-4"
       alt="banner"
-      src="https://it.return.alphatest.boxdrop.com/images/logo/consulate-of-america-milan.png"
+      [src]="bannerExtra"
     />
-    <h1
-      class="order-1 text-gray-900 dark:text-slate-400 text-3xl font-extrabold tracking-tight mt-2 ml-4 text-center mb-2 md:mb-0 transition-all"
-    >
-      {{ widzard[0].type }}
-    </h1>
     <div
-      class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[72%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
+      class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
     >
       <div
-        *ngFor="let modules of response.configuration.modules; let i = index"
+        *ngFor="let module of modules; let i = index"
         class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
       >
         <button
           [ngClass]="
-            activeStep === i
-              ? theme
-              : activeStep > i
+            step === i + 1
+              ? 'bg-yellow-500'
+              : step > i
               ? 'bg-yellow-200'
-              : 'bg-slate-100 dark:bg-slate-500'
+              : 'bg-slate-100 dark:bg-slate-500 pointer-event-none'
           "
           class="min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
-          (click)="setIndex(i)"
+          (click)="i < step && setStep(i)"
         >
           {{ i + 1 }}
         </button>
         <div
-          [ngClass]="activeStep === i ? 'font-bold' : ''"
+          [ngClass]="step === i + 1 ? 'font-bold' : ''"
           class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
         >
-          {{ modules.moduleLabel }}
+          {{ translations[module.label] ? translations[module.label] : "XXXX" }}
         </div>
       </div>
     </div>
     <div
-      class="lg:hidden mx-auto font-medium mt-4 text-lg text-center capitalize"
+      class="lg:hidden mx-auto font-semibold mt-4 text-lg text-center text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
     >
-      {{ response.configuration.modules[activeStep].moduleLabel }}
+      {{ translations[modules[step - 1].label] }}
     </div>
-    <div
-      class="h-[60vh] lg:h-72 overflow-y-scroll p-8 mx-auto bg-slate-100 border border-1 rounded-lg"
-      [ngClass]="
-        activeStep === 1 ? 'grid grid-cols-1 gap-4 sm:grid-cols-2' : ''
-      "
-    >
-      <div class="w-full" *ngFor="let value of widzard[0].steps[activeStep]">
-        <ng-container [ngSwitch]="value.type">
-          <ng-container *ngSwitchCase="'text'">
-            <app-text-input field="{{ value.value }}"></app-text-input>
-          </ng-container>
-          <ng-container *ngSwitchCase="'label'">
-            <app-label-input
-              label="{{ value.value }}"
-              img="{{ value.img }}"
-            ></app-label-input>
-          </ng-container>
-          <ng-container *ngSwitchCase="'readonly'">
-            <app-readonly
-              label="{{ value.img }}"
-              value="{{ value.value }}"
-            ></app-readonly>
-          </ng-container>
-          <ng-container *ngSwitchCase="'button'">
-            <div class="">
-              <app-button-widzard text="{{ value.value }}"></app-button-widzard>
-            </div>
-          </ng-container>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="text-center sm:text-left md:ml-12">
-      <button
-        (click)="incrementStep()"
-        [ngClass]="theme"
-        class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
-      >
-        {{
-          activeStep === response.configuration.modules.length - 1
-            ? "Conferma"
-            : "Prossimo"
-        }}
-      </button>
+    <div class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg">
+      <ng-content></ng-content>
     </div>
   </div>
 </div>

@@ -1,0 +1,103 @@
+<!-- <app-navbar></app-navbar>
+<app-widzard> -->
+
+<div class="relative">
+  <nav
+    class="border-gray-200 px-2 sm:px-4 py-2.5"
+    ng-reflect-ng-style="[object Object]"
+    style="background-color: rgb(255, 204, 53)"
+  >
+    <div class="flex flex-row justify-between items-center md:px-6">
+      <div>
+        <img
+          alt="banner"
+          class="mr-3 h-8 sm:h-9"
+          src="https://www.gsped.it/pubblica/returndhl/logodhltrasparente.png"
+        />
+      </div>
+      <div class="flex md:w-auto">
+        <ul
+          class="flex flex-1 md:flex-row md:text-sm md:font-medium divide-x divide-black"
+        >
+          <li>
+            <button
+              class="block py-2 px-1 md:py-3 text-red-500 md:text-lg rounded bg-transparent md:p-2 uppercase"
+            >
+              it
+            </button>
+          </li>
+          <li>
+            <button
+              class="block py-2 px-1 md:py-3 text-red-500 md:text-lg rounded bg-transparent md:p-2 uppercase"
+            >
+              en
+            </button>
+          </li>
+          <!--bindings={
+    "ng-reflect-ng-for-of": "it_IT,en_US"
+  }-->
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="lg:mx-10">
+  <div class="h-full overflow-y-scroll">
+    <!-- <img
+      alt="banner"
+      class="items-center justift-center text-center w-full mt-4"
+      src="https://www.gsped.it/pubblica/returndhl/moldaviamilan.png"
+    /> -->
+
+    <div class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg mt-4">
+      Il pagamento è andato a buon fine
+
+      <!-- <button (click)="awbPrinting()">stampa etichetta</button> -->
+      <div *ngIf="pdfOutward">
+        <a
+          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+          download="outward_label.pdf"
+          [href]="pdfOutward"
+          title="Download pdf document"
+        >
+          scarica etichetta di andata
+        </a>
+        <!--  <button
+      [disabled]="isHandledPayment"
+      (click)="redirectPayment()"
+      type="button"
+      class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+    >
+      <span>Vai al Pagamento</span>
+      <mat-icon>open_in_new</mat-icon>
+    </button> -->
+      </div>
+
+      <div *ngIf="pdfReturn">
+        <a
+          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+          download="return_label.pdf"
+          [href]="pdfReturn"
+          title="Download pdf document"
+        >
+          scarica etichetta di ritorno
+        </a>
+        <!--  <button
+      [disabled]="isHandledPayment"
+      (click)="redirectPayment()"
+      type="button"
+      class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+    >
+      <span>Vai al Pagamento</span>
+      <mat-icon>open_in_new</mat-icon>
+    </button> -->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- {{result | json}} -->
+
+<!-- </app-widzard> -->

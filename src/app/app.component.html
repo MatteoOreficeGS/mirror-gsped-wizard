@@ -1,45 +1,11 @@
 <div class="dark:bg-[#1A1A40]">
-  <app-navbar [theme]="primaryTheme"></app-navbar>
-  <div class="dark:bg-slate-800 mt-2 mx-2 rounded-[30px] pb-2">
+  <div class="dark:bg-slate-800 rounded-md pb-2">
     <div class="grid grid-cols-12">
-      <!-- <div class="md:col-span-1 lg:col-span-2 hidden md:block">
-        <app-sidebar></app-sidebar>
-      </div> -->
-      <div class="col-span-full md:col-span-10 md:col-start-2 md:px-4">
-        <app-widzard [theme]="primaryTheme"></app-widzard>
+      <div class="col-span-full">
+        <router-outlet></router-outlet>
+        <!-- <app-widzard></app-widzard> -->
       </div>
     </div>
   </div>
-  <!-- <div
-    class="flex flex-row shadow-md hidden sm:block fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-5 mr-5 h-12 py-2 w-80 bg-slate-400 bg-white dark:bg-slate-400"
-  >
-    <div class="flex flex-row">
-      <div class="mr-4 text-slate-600 dark:text-slate-200">Themes</div>
-      <a
-        class="block w-8 h-8 cursor-pointer bg-blue-800 rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
-        (click)="setTheme(0)"
-      ></a>
-      <a
-        class="block w-8 h-8 cursor-pointer bg-[#823297] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
-        (click)="setTheme(1)"
-      ></a>
-      <a
-        class="block w-8 h-8 cursor-pointer bg-[#F62DA2] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
-        (click)="setTheme(2)"
-      ></a
-      ><a
-        class="block w-8 h-8 cursor-pointer bg-[#22D3EE] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
-        (click)="setTheme(3)"
-      ></a
-      ><a
-        class="block w-8 h-8 cursor-pointer bg-[#DDCEF7] rounded-full mr-1 hover:border-slate-200 dark:border-darkmode-600"
-        (click)="setTheme(4)"
-      ></a
-      ><a
-        class="block w-8 h-8 cursor-pointer bg-[#22CCA8] rounded-full hover:border-slate-200 border-slate-300 dark:border-darkmode-800/80"
-        (click)="setTheme(5)"
-      ></a>
-    </div>
-  </div> -->
   <app-footer></app-footer>
 </div>

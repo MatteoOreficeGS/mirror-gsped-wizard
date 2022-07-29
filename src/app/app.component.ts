@@ -1,80 +1,162 @@
-import { Component } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Component, HostListener } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { forkJoin, mergeMap, Observable } from "rxjs";
+import { StatusService } from "./status.service";
+import jwt_decode from "jwt-decode";
+import { StoreService } from "./store.service";
+import { environment } from "./enviroment";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
 })
 export class AppComponent {
-  themes = {
-    navbar: [
-      "bg-gradient-to-br from-purple-600 to-blue-500",
-      "bg-gradient-to-r from-[#125B50] to-[#FA05E4]",
-      "bg-gradient-to-br from-[#f25f50] to-[#FA05E4]",
-      "bg-yellow-400",
-      "bg-gradient-to-br from-purple-300 to-slate-200",
-      "bg-gradient-to-r from-indigo-500 via-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700",
-    ],
-    buttons: [
-      {
-        active: "bg-gradient-to-br from-purple-600 to-blue-500",
-        completed: "bg-gradient-to-br from-blue-500 to-green-200",
-      },
-      {
-        active: "bg-gradient-to-br from-[#125B50] to-[#FA05E4]",
-        completed: "bg-gradient-to-br from-blue-500 to-red-200",
-      },
-      {
-        active: `bg-gradient-to-br from-[#f25f50] to-[#FA05E4]`,
-        completed: `bg-gradient-to-br from-[#FFDD83] to-[#E3F8FF] dark:to-[#28CC9E]`,
-      },
-      {
-        active: `bg-yellow-400`,
-        completed: `bg-gradient-to-br from-[#5FB295] to-[#180CA4]`,
-      },
-      {
-        active: `bg-gradient-to-br from-purple-300 to-slate-200`,
-        completed: `bg-gradient-to-br from-[#957FEF] to-[#ffff80]`,
-      },
-      {
-        active: `bg-gradient-to-r from-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700`,
-        completed: `bg-gradient-to-br from-[#2B99C9] to-[#BD1002]`,
-      },
-    ],
-    primary: [
-      "bg-gradient-to-br from-purple-600 to-blue-500",
-      "bg-gradient-to-r from-[#125B50] to-[#FA05E4]",
-      "bg-gradient-to-br from-[#f25f50] to-[#FA05E4]",
-      "bg-yellow-400",
-      "bg-gradient-to-br from-purple-300 to-slate-200",
-      "bg-gradient-to-r from-indigo-500 via-cyan-400 to-green-500 dark:from-purple-900 dark:to-purple-700",
-    ],
-    secondary: [
-      "bg-gradient-to-br from-blue-500 to-green-200",
-      "bg-gradient-to-br from-blue-500 to-red-200",
-      `bg-gradient-to-br from-[#FFDD83] to-[#E3F8FF] dark:to-[#28CC9E]`,
-      `bg-gradient-to-br from-[#5FB295] to-[#180CA4]`,
-      `bg-gradient-to-br from-[#957FEF] to-[#ffff80]`,
-      `bg-gradient-to-br from-[#2B99C9] to-[#BD1002]`,
-    ],
-  };
+  /* @HostListener("window:beforeunload", ["$event"])
+  treno($event: { returnValue: string }) {
+    if (true) $event.returnValue = "Your data will be lost!";
+  } */
 
-  primaryTheme = this.themes.primary[3];
-  secondaryTheme = this.themes.secondary[3];
-
-  setTheme(type: number) {
-    this.primaryTheme = this.themes.primary[type];
-    this.secondaryTheme = this.themes.secondary[type];
+  constructor(
+    public status: StatusService,
+    public store: StoreService,
+    private route: ActivatedRoute,
+    public http: HttpClient,
+    public router: Router
+  ) {
+    /*     window.addEventListener("beforeunload", (event) => {
+      event.preventDefault();
+      return event;
+    }); */
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.origin) {
+        this.getToken(params.origin).subscribe(
+          (res: any) => {
+            store.origin = params.origin;
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations(
+                params.lang ? params.lang : "it_IT",
+                res.token,
+                jwt_decode(res.token)
+              )
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              let modules = res[0].configuration.modules.map((module: any) => {
+                if (module.moduleConfig.hidden) {
+                  if (module.moduleName === "sender") {
+                    this.store.sender = module.moduleConfig.data;
+                  }
+                  if (module.moduleName === "recipient") {
+                    this.store.recipient = module.moduleConfig.data;
+                  }
+                  return null;
+                } else {
+                  return {
+                    module: module.moduleName,
+                    label: module.moduleConfig.label,
+                  };
+                }
+              });
+              modules = modules.filter((module: any) => module);
+              console.log(modules);
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              this.router.navigate(["/" + modules[0].module], {
+                // this.router.navigate(["/" + "fatturaDHL"], {
+                queryParams: { lang: params.lang ? params.lang : "it_IT" },
+              });
+            });
+          },
+          (error: any) => {
+            this.router.navigate(["/error-page"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+            });
+          }
+        );
+      } else if (params.uuid /* && router.url */) {
+        setTimeout(() => {}, 1000);
+        this.http
+          .get(
+            environment.API_URL +
+              "testbed" + //TODO da cambiare col token
+              "/resoFacile/payment/display/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe((res: any) => {
+            this.store.token = res.session.token;
+            this.store.outwardShipmentID = res.session.outwardShipmentID;
+            this.store.returnShipmentID = res.session.returnShipmentID;
+            this.router.navigate(["/awb-printing/monetaweb"], {
+              // this.router.navigate(["/" + "fatturaDHL"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+              queryParamsHandling: "merge",
+            });
+          });
+      }
+      /* this.http
+          .get(
+            environment.API_URL +
+              "testbed" + //TODO da cambiare col token
+              "/resoFacile/payment/display/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe((res: any) => {
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations("it_IT", res.token, jwt_decode(res.token))
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              const modules = res[0].configuration.modules.map(
+                (module: { moduleName: string }) => {
+                  return module.moduleName;
+                }
+              );
+              console.log(modules[0]);
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              // this.router.navigate(["/" + modules[0]], {
+              //   queryParams: { lang: "it_IT" },
+              // });
+            });
+          }); */
+    });
   }
 
-  /* getRandomColor() {
-    var letters = "0123456789ABCDEF";
-    var color = "#";
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    console.log(color);
+  getToken(origin: any): Observable<any> {
+    return this.http.get(environment.API_URL + "Token?origin=" + origin);
+  }
 
-    return color;
-  } */
+  getConfiguration(token: any, decoded: any, resource = environment.FLOW) {
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/ResourceConfiguration?resource=" +
+        resource,
+      { headers: { "X-API-KEY": token } }
+    );
+  }
+
+  getTranslations(
+    lang: string,
+    token: any,
+    decoded: any,
+    resource = environment.FLOW
+  ): Observable<any> {
+    const headers = { "x-api-key": token };
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/Translations?" +
+        "lang=" +
+        lang +
+        "&resource=" +
+        resource,
+      { headers: headers }
+    );
+  }
 }

@@ -1,38 +1,60 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { MatIconModule } from "@angular/material/icon";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatSliderModule } from "@angular/material/slider";
-
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { SidebarComponent } from "./sidebar/sidebar.component";
+import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { WidzardComponent } from "./widzard/widzard.component";
-import { NavbarComponent } from "./navbar/navbar.component";
-import { TextInputComponent } from "./widzard/text-input/text-input.component";
-import { LabelInputComponent } from "./widzard/label-input/label-input.component";
-import { ButtonWidzardComponent } from "./widzard/button-widzard/button-widzard.component";
-import { ReadonlyComponent } from "./widzard/readonly/readonly.component";
-import { FooterComponent } from './footer/footer.component';
+import { NavbarComponent } from "./components/navbar/navbar.component";
+import { FooterComponent } from "./components/footer/footer.component";
+import { SenderComponent } from "./moduli/sender/sender.component";
+import { RecipientComponent } from "./moduli/recipient/recipient.component";
+import { ShipmentComponent } from "./moduli/shipment/shipment.component";
+import { PaymentComponent } from "./moduli/payment/payment.component";
+import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { ErrorPageComponent } from "./error-page/error-page.component";
+import { StartComponent } from "./start/start.component";
+import { MatSelectModule } from "@angular/material/select";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { ErrorPaymentComponent } from './error-payment/error-payment.component';
+import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
+import { CustomValidatorDirective } from './custom-validator.directive';
+import { VodafoneComponent } from './vodafone/vodafone.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SidebarComponent,
     WidzardComponent,
-    NavbarComponent,
-    TextInputComponent,
-    LabelInputComponent,
-    ButtonWidzardComponent,
-    ReadonlyComponent,
     FooterComponent,
+    SenderComponent,
+    RecipientComponent,
+    ShipmentComponent,
+    PaymentComponent,
+    StampaAwbComponent,
+    NavbarComponent,
+    ErrorPageComponent,
+    StartComponent,
+    ErrorPaymentComponent,
+    FatturaDHLComponent,
+    CustomValidatorDirective,
+    VodafoneComponent,
   ],
   imports: [
+    BrowserAnimationsModule,
+    MatInputModule,
+    MatFormFieldModule,
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    MatTooltipModule,
-    MatSliderModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

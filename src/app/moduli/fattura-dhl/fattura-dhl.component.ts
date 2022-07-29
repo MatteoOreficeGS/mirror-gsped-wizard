@@ -19,7 +19,7 @@ export class FatturaDHLComponent implements OnInit {
     this.formInvoice = fb.group({
       codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
       pec: [""],
-      sdi: [""],
+      sdi: ["0000000"],
     });
   }
 
@@ -61,7 +61,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
           pec: [""],
-          sdi: [""],
+          sdi: ["0000000"],
         });
         this.invoiceModules = [
           {
@@ -98,14 +98,15 @@ export class FatturaDHLComponent implements OnInit {
         break;
       case "estero":
         this.formInvoice = this.fb.group({
-          nome: ["", Validators.required],
-          cognome: ["", Validators.required],
-          societa: [""],
+          nome: [this.store.sender.sender_name.split(" ")[1], Validators.required],
+          cognome: [this.store.sender.sender_name.split(" ").slice(1).join(" "), Validators.required],
+          societa: [this.store.sender.sender_contact],
           indirizzo: ["", Validators.required],
           nazione: ["", Validators.required],
           cap: ["", Validators.required],
           citta: ["", Validators.required],
-          email: ["", Validators.required],
+          email: [this.store.sender.sender_email, Validators.required],
+          phone: [this.store.sender.sender_phone, Validators.required],
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
@@ -121,6 +122,7 @@ export class FatturaDHLComponent implements OnInit {
           { value: "cap", label: "CAP", type: "text", required: true },
           { value: "citta", label: "Città", type: "text", required: true },
           { value: "email", label: "e-mail", type: "email", required: true },
+          { value: "phone", label: "phone", type: "text", required: true },
         ];
         break;
     }
@@ -131,7 +133,8 @@ export class FatturaDHLComponent implements OnInit {
     if (this.formInvoice.valid) {
       this.store.payloadShipment.fattura_dhl = [this.formInvoice.value];
       this.store.payloadShipment.documenti =
-        this.store.configuration.modules[2].moduleConfig.documentFlag;
+        this.store.isDocumentShipment ? 1 : 0;
+      this.store.payloadShipment.valore = this.store.outwardInsurance;
       this.store.invoice = this.formInvoice.value;
       this.status
         .handleShipment(this.store.payloadShipment)

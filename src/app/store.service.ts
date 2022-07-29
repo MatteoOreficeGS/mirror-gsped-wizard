@@ -10,7 +10,7 @@ export class StoreService {
   decodedToken: any;
   configuration: any;
   translations: any;
-  coupon: string = "";
+  codiceSconto: string = "";
   isDocumentShipment?: boolean;
   hasReturnShipment?: boolean;
   modules?: any;
@@ -18,7 +18,6 @@ export class StoreService {
     //RIMUOVERE
     // sender_name: "Mario Rossi Verdi Gialli",
     // sender_city: "Milan",
-    // sender_contact: "contatto",
     // sender_cap: "26100",
     // sender_prov: "MI",
     // sender_country_code: "IT",
@@ -29,7 +28,9 @@ export class StoreService {
   recipient: any = {};
   outwardShipment: any = {};
   returnShipment: any = {};
-  payloadShipment: any = {};
+  payloadShipment: any = {}; 
+  outwardInsurance: any;
+  returnInsurance: any;
   totale:any;
   invoice:any;
   outwardShipmentID:any;

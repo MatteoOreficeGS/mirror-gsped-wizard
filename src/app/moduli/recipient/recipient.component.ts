@@ -36,7 +36,7 @@ export class RecipientComponent {
         Validators.required,
       ],
       rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
-      rcpt_contact: [this.currentModule.data.rcpt_contact, Validators.required],
+      rcpt_contact: [this.currentModule.data.rcpt_contact],
       rcpt_cap: [this.currentModule.data.rcpt_cap, Validators.required],
       rcpt_prov: [
         this.currentModule.data.rcpt_prov,
@@ -95,7 +95,7 @@ export class RecipientComponent {
         value: "rcpt_contact",
         label: this.labels.rcpt_contact,
         type: "text",
-        required: true,
+        required: false,
       },
       {
         value: "rcpt_addr",

@@ -36,10 +36,7 @@ export class SenderComponent {
         Validators.required,
       ],
       sender_city: [this.currentModule.data.sender_city, Validators.required],
-      sender_contact: [
-        this.currentModule.data.sender_contact,
-        Validators.required,
-      ],
+      sender_contact: [this.currentModule.data.sender_contact],
       sender_cap: [this.currentModule.data.sender_cap, Validators.required],
       sender_prov: [
         this.currentModule.data.sender_prov,
@@ -93,7 +90,7 @@ export class SenderComponent {
         value: "sender_contact",
         label: this.labels.sender_contact,
         type: "text",
-        required: true,
+        required: false,
       },
       {
         value: "sender_addr",

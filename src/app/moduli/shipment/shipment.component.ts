@@ -26,13 +26,14 @@ export class ShipmentComponent implements OnInit {
         (module: { moduleName: string }) => module.moduleName === "payment"
       ).length === 1;
     this.translations = store.translations;
-    store.isDocumentShipment = /* false;// */this.currentModule.documentFlag;
-    this.isDocumentShipment = /* false;// */this.currentModule.documentFlag;
+    store.isDocumentShipment = /* false;// */ this.currentModule.documentFlag;
+    this.isDocumentShipment = /* false;// */ this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: "",
-      coupon: "",
+      codiceSconto: "",
       returnInsurance: "",
+      termsconditions: "",
     });
   }
 
@@ -160,16 +161,16 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
-
     // setting the insurance value at 100 if checkbox is checked at 0 if not
     if (this.formShipment.value.outwardInsurance === true) {
       this.formShipment.controls["outwardInsurance"].setValue(100);
-    } else if(this.formShipment.value.outwardInsurance === false)  {
+      this.store.outwardInsurance = 100;
+    } else if (this.formShipment.value.outwardInsurance === false) {
       this.formShipment.controls["outwardInsurance"].setValue(0);
     }
     if (this.formShipment.value.returnInsurance === true) {
-      this.formShipment.controls["returnInsurance"].setValue(100);
-    } else if(this.formShipment.value.returnInsurance === false) {
+      this.store.returnInsurance = 100;
+    } else if (this.formShipment.value.returnInsurance === false) {
       this.formShipment.controls["returnInsurance"].setValue(0);
     }
     console.log("formShipment", this.formShipment.value);
@@ -177,7 +178,7 @@ export class ShipmentComponent implements OnInit {
       if (this.currentModule.packagesDetails.enable) {
         this.setDataColli();
       }
-      this.store.coupon = this.formShipment.value.coupon;
+      this.store.codiceSconto = this.formShipment.value.codiceSconto;
       this.isLoading = true;
 
       // let formattedDatacolli: any = { ...this.datacolli };
@@ -195,6 +196,15 @@ export class ShipmentComponent implements OnInit {
         ...this.bodyRateComparativa,
         ...this.datacolli,
       };
+
+      this.bodyRateComparativa.valore =
+        this.formShipment.value.outwardInsurance;
+      this.bodyRateComparativa.documenti = this.isDocumentShipment ? 1 : 0;
+
+      this.formShipment.value.codiceSconto
+        ? (this.bodyRateComparativa.codice_sconto =
+            this.formShipment.value.codiceSconto)
+        : null;
 
       // this.bodyRateComparativa.valore = this.formShipment.value.outwardInsurance;
 

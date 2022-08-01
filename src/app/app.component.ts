@@ -61,7 +61,7 @@ export class AppComponent {
                 }
               });
               modules = modules.filter((module: any) => module);
-              console.log(modules);
+              this.store.hasPayment = modules.includes("payment");
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0].module], {

@@ -143,7 +143,6 @@ export class RecipientComponent {
       },
     ];
 
-
     this.route.queryParams.subscribe((params: any) => {
       this.langParam = params.lang;
     });
@@ -154,7 +153,6 @@ export class RecipientComponent {
     this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
       this.predictionsAddress = response;
-      console.log(this.predictionsAddress);
     });
   }
 
@@ -169,7 +167,6 @@ export class RecipientComponent {
   formRecipient: FormGroup;
 
   setAddress(prediction: any) {
-    console.log(prediction);
     this.formRecipient.controls["rcpt_addr"].setValue(
       prediction.street +
         (prediction.streetNumber != undefined
@@ -191,7 +188,6 @@ export class RecipientComponent {
         " " + this.formRecipient.value.rcpt_surname;
       delete this.formRecipient.value.rcpt_surname;
       this.store.recipient = this.formRecipient.value;
-      console.log(this.formRecipient.value);
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

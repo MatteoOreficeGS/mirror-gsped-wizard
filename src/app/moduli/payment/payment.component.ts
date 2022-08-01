@@ -112,7 +112,7 @@ export class PaymentComponent implements OnInit {
       {
         item: "Trasporto",
         item_id: outwardShipmentResponse.id,
-        amount: this.store.totale,
+        amount: this.store.chosenCourier.outward.data.totale,
         // amount: 15.54,
         codiceSconto: this.store.codiceSconto,
         currency: "EUR",
@@ -124,7 +124,7 @@ export class PaymentComponent implements OnInit {
       items.push({
         item: "Trasporto",
         item_id: returnShipmentResponse.id,
-        amount: this.store.totale,
+        amount: this.store.chosenCourier.return.data.totale,
         // amount: 15.54,
         codiceSconto: this.store.codiceSconto,
         currency: "EUR",

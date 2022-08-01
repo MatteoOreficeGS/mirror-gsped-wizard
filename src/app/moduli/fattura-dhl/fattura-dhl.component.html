@@ -54,14 +54,41 @@
         automatico.
       </p>
       <div class="grid grid-cols-2 gap-x-4">
-        <ng-container *ngFor="let module of invoiceModules">
-          <div class="relative z-0 w-full mt-6 group mx-auto">
+        <div *ngFor="let module of invoiceModules">
+          <div class="relative w-full mt-6 group mx-auto">
             <input
+              *ngIf="module.value !== 'indirizzo'"
               [formControlName]="module.value"
               [type]="module.type"
               [required]="module.required"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             />
+
+            <div *ngIf="module.value === 'indirizzo'">
+              <input
+                autocomplete="off"
+                [formControlName]="module.value"
+                type="text"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                (input)="handleGooglePlace(address)"
+                #address
+                name="address"
+              />
+              <div
+                id="predictions"
+                *ngIf="showPredictions"
+                class="bg-blue-200 z-50 absolute w-full"
+              >
+                <ng-container *ngFor="let prediction of predictionsAddress">
+                  <div
+                    (click)="setAddress(prediction)"
+                    class="hover:bg-blue-400 cursor-pointer"
+                  >
+                    {{ prediction.toList }}
+                  </div>
+                </ng-container>
+              </div>
+            </div>
 
             <label
               class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
@@ -70,7 +97,7 @@
               <span *ngIf="module.required" class="text-red-500">*</span>
             </label>
           </div>
-        </ng-container>
+        </div>
       </div>
     </div>
     <button

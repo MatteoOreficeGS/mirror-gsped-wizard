@@ -14,13 +14,15 @@ export class StatusService {
     private store: StoreService
   ) {}
 
-  pickupAvailability(): Observable<any> {
+  pickupAvailability(corriere:any): Observable<any> {
     const decoded: any = this.store.decodedToken;
     const date = new Date(); /* .toLocaleString() */
     const headers = { "x-api-key": this.store.token };
     const body = {
       ...this.store.sender,
       pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
+      corriere: corriere,
+      client_id: this.store.configuration.client_id
     };
 
     console.log(body);
@@ -67,9 +69,28 @@ export class StatusService {
           lang,
         { headers: { "X-API-KEY": this.store.token } }
       );
-    }
-    else {
+    } else {
       return of();
     }
+  }
+
+  invertAddressData(obj: any): any {
+    const keys = [
+      ["rcpt_addr", "sender_addr"],
+      ["rcpt_cap", "sender_cap"],
+      ["rcpt_city", "sender_city"],
+      ["rcpt_contact", "sender_contact"],
+      ["rcpt_country_code", "sender_country_code"],
+      ["rcpt_email", "sender_email"],
+      ["rcpt_name", "sender_name"],
+      ["rcpt_phone", "sender_phone"],
+      ["rcpt_prov", "sender_prov"],
+    ];
+    let tmp = obj;
+
+    keys.forEach((key: any) => {
+      [tmp[key[0]], tmp[key[1]]] = [tmp[key[1]], tmp[key[0]]];
+    });
+    return tmp;
   }
 }

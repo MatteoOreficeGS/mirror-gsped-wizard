@@ -23,7 +23,6 @@ export class SenderComponent {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
-    console.log(this.currentModule);
     this.readonly = !this.currentModule.editable;
 
     this.formSender = fb.group({
@@ -148,7 +147,6 @@ export class SenderComponent {
     this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
       this.predictionsAddress = response;
-      console.log(this.predictionsAddress);
     });
   }
 
@@ -167,7 +165,6 @@ export class SenderComponent {
   formattedaddress = " ";
 
   setAddress(prediction: any) {
-    console.log(prediction);
     this.formSender.controls["sender_addr"].setValue(
       prediction.street +
         (prediction.streetNumber != undefined
@@ -189,7 +186,6 @@ export class SenderComponent {
         " " + this.formSender.value.sender_surname;
       delete this.formSender.value.sender_surname;
       this.store.sender = this.formSender.value;
-      console.log(this.formSender.value);
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

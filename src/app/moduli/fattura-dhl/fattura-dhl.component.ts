@@ -16,28 +16,16 @@ export class FatturaDHLComponent implements OnInit {
     private status: StatusService
   ) {
     this.selected = "privato";
-    this.formInvoice = fb.group({
-      codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
-      pec: [""],
-      sdi: ["0000000"],
-    });
+    this.setInvoiceModules(this.selected);
   }
 
   ngOnInit(): void {}
 
-  invoiceModules: any = [
-    {
-      value: "codice_fiscale",
-      label: "codice fiscale",
-      type: "text",
-      required: true,
-      max: 16,
-    },
-    { value: "pec", label: "PEC", type: "email", required: false },
-    { value: "sdi", label: "CFE/SDI", type: "text", required: false },
-  ];
-  formInvoice: FormGroup;
+  formInvoice: FormGroup = this.fb.group({});
   selected: string;
+  invoiceModules: any;
+  predictionsAddress: any;
+  showPredictions: boolean = false;
   otherModule: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentModule: any =
@@ -55,7 +43,6 @@ export class FatturaDHLComponent implements OnInit {
 
   setInvoiceModules(type: string) {
     this.selected = type;
-    this.formInvoice = this.fb.group({});
     switch (type) {
       case "privato":
         this.formInvoice = this.fb.group({
@@ -98,8 +85,14 @@ export class FatturaDHLComponent implements OnInit {
         break;
       case "estero":
         this.formInvoice = this.fb.group({
-          nome: [this.store.sender.sender_name.split(" ")[1], Validators.required],
-          cognome: [this.store.sender.sender_name.split(" ").slice(1).join(" "), Validators.required],
+          nome: [
+            this.store.sender.sender_name.split(" ")[1],
+            Validators.required,
+          ],
+          cognome: [
+            this.store.sender.sender_name.split(" ").slice(1).join(" "),
+            Validators.required,
+          ],
           societa: [this.store.sender.sender_contact],
           indirizzo: ["", Validators.required],
           nazione: ["", Validators.required],
@@ -128,67 +121,33 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
+  handleGooglePlace(address: HTMLInputElement) {
+    console.log(address.value);
+    this.predictionsAddress = [];
+    this.showPredictions === false && (this.showPredictions = true);
+    this.status.googlePlace(address.value, "it").subscribe((response: any) => {
+      this.predictionsAddress = response;
+      console.log(this.predictionsAddress);
+    });
+  }
+  setAddress(prediction: any) {
+    this.formInvoice.controls["indirizzo"].setValue(
+      prediction.street +
+        (prediction.streetNumber != undefined
+          ? " " + prediction.streetNumber
+          : "")
+    );
+    this.formInvoice.controls["cap"].setValue(prediction.postalCode);
+    this.formInvoice.controls["citta"].setValue(prediction.city);
+    // this.formInvoice.controls["sender_prov"].setValue(prediction.district);
+    this.formInvoice.controls["nazione"].setValue(prediction.country);
+    this.showPredictions = false;
+  }
+
   nextStep() {
     // TODO settare il form
     if (this.formInvoice.valid) {
-      this.store.payloadShipment.fattura_dhl = [this.formInvoice.value];
-      this.store.payloadShipment.documenti =
-        this.store.isDocumentShipment ? 1 : 0;
-      this.store.payloadShipment.valore = this.store.outwardInsurance;
       this.store.invoice = this.formInvoice.value;
-      this.status
-        .handleShipment(this.store.payloadShipment)
-        .subscribe((res) => {
-          this.store.outwardShipment = res;
-        });
-
-      console.log(this.store.payloadShipment);
-      this.store.payloadShipment = {
-        ...this.store.payloadShipment,
-        ...this.store.recipient,
-      };
-
-      // inverto il mittente con il destinatario per la spedizione di ritorno
-      if (this.store.hasReturnShipment) {
-        // let returnPayloadShipment: any = {};
-        let returnPayloadShipment: any = this.store.payloadShipment;
-
-        // this.store.sender.forEach((element:any) => {
-        //   returnPayloadShipment[element]
-        // });
-
-        let senderValues = Object.keys(this.store.sender);
-        let recipientValues = Object.keys(this.store.recipient);
-
-        // for (let i = 0; i < senderValues.length; i++) {
-        // delete returnPayloadShipment[recipientValues[i]];
-        // delete returnPayloadShipment[senderValues[i]];
-        // }
-
-        let auxReturnPayloadShipment: any = {};
-
-        for (let i = 0; i < senderValues.length; i++) {
-          auxReturnPayloadShipment[senderValues[i]] =
-            this.store.payloadShipment[recipientValues[i]];
-          auxReturnPayloadShipment[recipientValues[i]] =
-            this.store.payloadShipment[senderValues[i]];
-        }
-
-        Object.keys(returnPayloadShipment).forEach((element) => {
-          if (!auxReturnPayloadShipment.hasOwnProperty(element)) {
-            auxReturnPayloadShipment[element] = returnPayloadShipment[element];
-          }
-        });
-
-        // alert(JSON.stringify(auxReturnPayloadShipment, null, 4));
-        // this.status.handleShipment(auxReturnPayloadShipment).subscribe((res) => {
-        this.status
-          .handleShipment(this.store.payloadShipment)
-          .subscribe((res) => {
-            console.log(res);
-            this.store.returnShipment = res;
-          });
-      }
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

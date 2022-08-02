@@ -29,7 +29,8 @@ export class AppComponent {
       return event;
     }); */
     this.route.queryParams.subscribe((params: any) => {
-      if (params.origin) {
+      // alert(JSON.stringify(params, null, 4));
+      if (params.origin && !params.uuid) {
         this.getToken(params.origin).subscribe(
           (res: any) => {
             store.origin = params.origin;
@@ -61,7 +62,10 @@ export class AppComponent {
                 }
               });
               modules = modules.filter((module: any) => module);
-              this.store.hasPayment = modules.includes("payment");
+              this.store.hasPayment =
+                modules.filter((element: any) => element.module === "payment")
+                  .length > 0;
+              console.log(this.store.hasPayment);
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0].module], {
@@ -76,25 +80,60 @@ export class AppComponent {
             });
           }
         );
-      } else if (params.uuid /* && router.url */) {
-        setTimeout(() => {}, 1000);
-        this.http
-          .get(
-            environment.API_URL +
-              "testbed" + //TODO da cambiare col token
-              "/resoFacile/payment/display/monetaweb?uuid=" +
-              params.uuid
-          )
-          .subscribe((res: any) => {
-            this.store.token = res.session.token;
-            this.store.outwardShipmentID = res.session.outwardShipmentID;
-            this.store.returnShipmentID = res.session.returnShipmentID;
-            this.router.navigate(["/awb-printing/monetaweb"], {
-              // this.router.navigate(["/" + "fatturaDHL"], {
-              queryParams: { lang: params.lang ? params.lang : "it_IT" },
-              queryParamsHandling: "merge",
+      } else if (params.uuid && params.origin /* && router.url */) {
+        this.getToken(params.origin).subscribe(
+          (res: any) => {
+            store.origin = params.origin;
+            store.token = res.token;
+            store.decodedToken = jwt_decode(res.token);
+            forkJoin(
+              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getTranslations(
+                params.lang ? params.lang : "it_IT",
+                res.token,
+                jwt_decode(res.token)
+              )
+            ).subscribe((res: any) => {
+              this.store.configuration = res[0].configuration;
+              let modules = res[0].configuration.modules.map((module: any) => {
+                if (module.moduleConfig.hidden) {
+                  if (module.moduleName === "sender") {
+                    this.store.sender = module.moduleConfig.data;
+                  }
+                  if (module.moduleName === "recipient") {
+                    this.store.recipient = module.moduleConfig.data;
+                  }
+                  return null;
+                } else {
+                  return {
+                    module: module.moduleName,
+                    label: module.moduleConfig.label,
+                  };
+                }
+              });
+              modules = modules.filter((module: any) => module);
+              this.store.hasPayment =
+                modules.filter((element: any) => element.module === "payment")
+                  .length > 0;
+              console.log(this.store.hasPayment);
+              this.store.modules = modules;
+              this.store.translations = res[1];
+              this.store.currentStep = modules.length;
+              this.router.navigate(["/" + modules[modules.length - 1].module], {
+                // this.router.navigate(["/" + "fatturaDHL"], {
+                queryParams: {
+                  lang: params.lang ? params.lang : "it_IT",
+                  uuid: params.uuid,
+                },
+              });
             });
-          });
+          },
+          (error: any) => {
+            this.router.navigate(["/error-page"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+            });
+          }
+        );
       }
       /* this.http
           .get(

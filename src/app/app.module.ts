@@ -22,7 +22,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorPaymentComponent } from './error-payment/error-payment.component';
 import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
-import { CustomValidatorDirective } from './custom-validator.directive';
 import { VodafoneComponent } from './moduli/vodafone/vodafone.component';
 
 @NgModule({
@@ -41,7 +40,6 @@ import { VodafoneComponent } from './moduli/vodafone/vodafone.component';
     StartComponent,
     ErrorPaymentComponent,
     FatturaDHLComponent,
-    CustomValidatorDirective,
     VodafoneComponent,
   ],
   imports: [

@@ -83,52 +83,46 @@ export class PaymentComponent implements OnInit {
 
   redirectPayment() {
     this.isHandledPayment = true;
-    const outwardShipmentResponse = this.store.outwardShipment;
-    const returnShipmentResponse = this.store.returnShipment;
     const decodedToken: any = this.store.decodedToken;
-
     this.bodyPayment = {
       monetaweb: {
-        origine: "resoFacile", //fisso
-        utenti_id: decodedToken.user_id, //utente dal token
-        displayUrl: environment.CURRENT_URL + "/awb-printing", //scelgo io
-        recoveryUrl: environment.CURRENT_URL + "/error-payment", //scelgo io
-        language: "it", //fisso
-        description: "reso bla bla bla per bla bla ecc ecc", // scelgo io
-        cardHolderName: this.formPayment.value.cardHolderName, // questo form
-        cardHolderEmail: this.formPayment.value.cardHolderEmail, // questo form
-        cardHolderPhone: this.formPayment.value.cardHolderPhone, // questo form
-        customField: "reso bla bla bla per bla bla ecc ecc", // scelgo io
+        origine: "resoFacile",
+        utenti_id: decodedToken.user_id,
+        displayUrl: environment.CURRENT_URL + "/",
+        recoveryUrl: environment.CURRENT_URL + "/error-payment",
+        language: "it",
+        description: "reso bla bla bla per bla bla ecc ecc",
+        cardHolderName: this.formPayment.value.cardHolderName,
+        cardHolderEmail: this.formPayment.value.cardHolderEmail,
+        cardHolderPhone: this.formPayment.value.cardHolderPhone,
+        customField: "reso bla bla bla per bla bla ecc ecc",
       },
       session: {
         origin: this.store.origin,
-        token: this.store.token,
-        outwardShipmentID: outwardShipmentResponse.id,
-        returnShipmentID: returnShipmentResponse.id,
-      }, //Quello che mi serve per dopo
+        outwardShipmentID: this.store.outwardShipment.id,
+        returnShipmentID: this.store.returnShipment.id,
+      },
     };
 
     let items = [
       {
         item: "Trasporto",
-        item_id: outwardShipmentResponse.id,
+        item_id: this.store.outwardShipment.id,
         amount: this.store.chosenCourier.outward.data.totale,
-        // amount: 15.54,
         codiceSconto: this.store.codiceSconto,
         currency: "EUR",
-        clienti_id: outwardShipmentResponse.client_id,
+        clienti_id: this.store.outwardShipment.client_id,
       },
     ];
 
     if (this.store.hasReturnShipment) {
       items.push({
         item: "Trasporto",
-        item_id: returnShipmentResponse.id,
+        item_id: this.store.returnShipment.id,
         amount: this.store.chosenCourier.return.data.totale,
-        // amount: 15.54,
         codiceSconto: this.store.codiceSconto,
         currency: "EUR",
-        clienti_id: returnShipmentResponse.client_id,
+        clienti_id: this.store.returnShipment.client_id,
       });
     }
 
@@ -147,7 +141,6 @@ export class PaymentComponent implements OnInit {
     );
   }
 
-  // TODO modificare con la env
   handlePayment(bodyPayment: any): Observable<any> {
     return this.http.post(
       environment.API_URL +

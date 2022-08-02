@@ -1,5 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -47,7 +52,7 @@ export class FatturaDHLComponent implements OnInit {
       case "privato":
         this.formInvoice = this.fb.group({
           codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
-          pec: [""],
+          pec: ["", [ValidateEmail]],
           sdi: ["0000000"],
         });
         this.invoiceModules = [
@@ -69,7 +74,7 @@ export class FatturaDHLComponent implements OnInit {
       case "piva":
         this.formInvoice = this.fb.group({
           codice_fiscale: ["", [Validators.required, Validators.maxLength(11)]],
-          pec: [""],
+          pec: ["", ValidateEmail],
           sdi: ["", Validators.required],
         });
         this.invoiceModules = [
@@ -98,8 +103,8 @@ export class FatturaDHLComponent implements OnInit {
           nazione: ["", Validators.required],
           cap: ["", Validators.required],
           citta: ["", Validators.required],
-          email: [this.store.sender.sender_email, Validators.required],
-          phone: [this.store.sender.sender_phone, Validators.required],
+          email: [this.store.sender.sender_email, ValidateEmail],
+          phone: [this.store.sender.sender_phone, ValidatePhone],
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
@@ -145,7 +150,6 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   nextStep() {
-    // TODO settare il form
     if (this.formInvoice.valid) {
       this.store.invoice = this.formInvoice.value;
       this.router.navigate(
@@ -156,4 +160,29 @@ export class FatturaDHLComponent implements OnInit {
       );
     }
   }
+}
+
+function ValidateEmail(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
+  if (control.value.length > 0) {
+    if (!control.value.match(validRegex)) {
+      return { emailInvalid: true };
+    }
+  }
+  return null;
+}
+
+function ValidatePhone(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+  if (!control.value.match(validRegex)) {
+    return { phoneInvalid: true };
+  }
+  return null;
 }

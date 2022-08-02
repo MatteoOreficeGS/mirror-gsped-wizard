@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 })
 export class StoreService {
   currentStep: number = 1;
-  origin?:string;
+  origin?: string;
   token: any;
   decodedToken: any;
   configuration: any;
@@ -17,9 +17,9 @@ export class StoreService {
   modules?: any;
   sender: any = {
     //RIMUOVERE
-    // sender_name: "Mario Rossi Verdi Gialli",
+    // sender_name: "Mario Rossi Verdi",
     // sender_city: "Milan",
-    // sender_cap: "26100",
+    // sender_cap: "20121",
     // sender_prov: "MI",
     // sender_country_code: "IT",
     // sender_email: "mail@gmail.com",
@@ -29,12 +29,14 @@ export class StoreService {
   recipient: any = {};
   outwardShipment: any = {};
   returnShipment: any = {};
-  payloadShipment: any = {}; 
+  payloadShipment: any = {};
   outwardInsurance: any;
   returnInsurance: any;
-  totale:any;
-  invoice:any;
-  outwardShipmentID:any;
-  returnShipmentID:any;
-  chosenCourier:any;
+  totale: any;
+  invoice: any;
+  chosenCourier: any;
+  isSenderCompiled?: boolean;
+  selectedProducts: any = null;
+  productDestination: any;
+  displayPayment: any;
 }

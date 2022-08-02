@@ -1,6 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -45,12 +50,10 @@ export class SenderComponent {
         this.currentModule.data.sender_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
-      sender_email: [
-        this.currentModule.data.sender_email,
-        [Validators.required, Validators.email],
-      ],
-      sender_phone: [this.currentModule.data.sender_phone, Validators.required],
+      sender_email: [this.currentModule.data.sender_email, [ValidateEmail]],
+      sender_phone: [this.currentModule.data.sender_phone, [ValidatePhone]],
       sender_addr: [this.currentModule.data.sender_addr, Validators.required],
+      sender_addr_secondary: "",
     });
 
     Object.keys(store.sender).forEach((element: any) => {
@@ -70,7 +73,7 @@ export class SenderComponent {
       }
     });
 
-    this.autocomplete = this.currentModule.autocomplete ? "on" : "off";
+    this.autocomplete = this.currentModule.autocomplete;
     this.labels = store.translations;
     this.fields = [
       {
@@ -93,9 +96,15 @@ export class SenderComponent {
       },
       {
         value: "sender_addr",
-        label: this.labels.sender_addr || "sender_addr",
+        label: this.labels.sender_addr,
         type: "text",
         required: true,
+      },
+      {
+        value: "sender_addr_secondary",
+        label: this.labels.sender_addr_secondary || "indirizzo secondario",
+        type: "text",
+        required: false,
       },
       {
         value: "sender_city",
@@ -142,9 +151,13 @@ export class SenderComponent {
     });
   }
 
-  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
+  handleGooglePlace(
+    address: HTMLInputElement,
+    type: string,
+    lang: string = this.langParam
+  ) {
     this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
+    this.showPredictions === false && (this.showPredictions = type);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
       this.predictionsAddress = response;
     });
@@ -152,7 +165,7 @@ export class SenderComponent {
 
   step: any;
   labels: any = {};
-  showPredictions: boolean = false;
+  showPredictions: any = false;
   autocomplete: string;
   currentModule: any = {};
   predictionsAddress: any = [];
@@ -180,6 +193,13 @@ export class SenderComponent {
     this.showPredictions = false;
   }
 
+  setSingleAddress(prediction: any) {
+    this.formSender.controls["sender_addr_secondary"].setValue(
+      prediction.toList
+    );
+    this.showPredictions = false;
+  }
+
   nextStep() {
     if (this.formSender.valid) {
       this.formSender.value.sender_name +=
@@ -194,4 +214,28 @@ export class SenderComponent {
       );
     }
   }
+}
+
+function ValidateEmail(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
+
+  if (!control.value.match(validRegex)) {
+    return { emailInvalid: true };
+  }
+  return null;
+}
+
+function ValidatePhone(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+  if (!control.value.match(validRegex)) {
+    return { phoneInvalid: true };
+  }
+  return null;
 }

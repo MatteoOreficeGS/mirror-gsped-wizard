@@ -16,29 +16,46 @@ export class StampaAwbComponent {
     private route: ActivatedRoute,
     private store: StoreService
   ) {
-    // this.route.queryParams.subscribe((params: any) => {
-    //   if (params.uuid) {
-    //     this.checkPayment(params.uuid);
-    //   }
-    // });
-    setTimeout(() => {
-      this.getShipments();
-    }, 500);
+    this.displayPayment = this.store.displayPayment;
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.uuid) {
+        this.checkPayment(params.uuid).subscribe((res: any) => {
+          console.log(res);
+          this.getShipments(
+            res.session.outwardShipmentID,
+            res.session.returnShipmentID
+          );
+        });
+      } else {
+        this.getShipments(
+          this.store.outwardShipment.id,
+          this.store.returnShipment.id
+        );
+      }
+    });
+    // setTimeout(() => {
+    //   this.getShipments();
+    // }, 500);
+
+    /* 
+          .subscribe((res: any) => {
+        this.store.outwardShipment.id = res.session.outwardShipmentID;
+        this.store.returnShipment.id = res.session.returnShipmentID;
+        console.log(res);
+        console.log(this.store.outwardShipment);
+      }); */
   }
 
-  getShipments() {
-    console.log(
-      this.store.token,
-      this.store.outwardShipmentID,
-      this.store.returnShipmentID
-    );
+  getShipments(outwardShipmentID: any, returnShipmentID: any) {
+    console.log(outwardShipmentID, returnShipmentID);
     const headers = { "x-api-key": this.store.token };
     this.http
       .get(
         environment.API_URL +
           "testbed" + //TODO da cambiare col token
           "/shipment?id=" +
-          this.store.outwardShipmentID,
+          // this.store.outwardShipmentID ? this.store.outwardShipmentID : this.store.outwardShipment.id,
+          outwardShipmentID,
         { headers: headers }
       )
       .subscribe((response: any) => {
@@ -49,13 +66,13 @@ export class StampaAwbComponent {
           "data:application/octet-stream;base64," + this.b64pdf
         );
       });
-    if (this.store.returnShipmentID) {
+    if (returnShipmentID) {
       this.http
         .get(
           environment.API_URL +
             "testbed" + //TODO da cambiare col token
             "/shipment?id=" +
-            this.store.returnShipmentID,
+            returnShipmentID,
           { headers: headers }
         )
         .subscribe((response: any) => {
@@ -78,8 +95,20 @@ export class StampaAwbComponent {
     // this.b64pdf = new Blob([byteArray], { type: "application/pdf" });
   }
 
+  checkPayment(uuid: string) {
+    const headers = { "x-api-key": this.store.token };
+    return this.http.get(
+      environment.API_URL +
+        "/testbed" +
+        "/resoFacile/payment/display/monetaweb?uuid=" +
+        uuid,
+      { headers: headers }
+    );
+  }
+
   result: any;
   b64pdf: any;
   pdfOutward: any;
   pdfReturn: any;
+  displayPayment: any;
 }

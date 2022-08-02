@@ -255,7 +255,7 @@ export class ShipmentComponent implements OnInit {
     this.store.payloadShipment = {
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,
-      origine: "IT",
+      origine: this.store.sender.sender_country_code,
       ...this.store.payloadShipment,
       ...this.datacolli,
     };
@@ -286,12 +286,7 @@ export class ShipmentComponent implements OnInit {
     );
   }
 
-  filterRateComparativeResults(
-    isReturn: boolean,
-    mode: string,
-    response: any,
-    filters: any = null
-  ) {
+  filterRateComparativeResults(isReturn: boolean, mode: string, response: any) {
     switch (mode) {
       case "FIXED":
         let configCouriers: any;
@@ -365,18 +360,30 @@ export class ShipmentComponent implements OnInit {
       ? 1
       : 0;
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
+    // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
       ...this.store.sender,
       ...this.store.recipient,
+      corriere: this.store.chosenCourier.outward.courierCode,
+      servizio: this.store.chosenCourier.outward.serviceCode,
     };
-    outwardPayloadShipment.corriere =
-      this.store.chosenCourier.outward.courierCode;
-    outwardPayloadShipment.servizio =
-      this.store.chosenCourier.outward.serviceCode;
+    if (this.store.selectedProducts) {
+      outwardPayloadShipment[this.store.productDestination] =
+        this.store.selectedProducts;
+    }
+    console.log(outwardPayloadShipment);
     this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
+      if (!this.store.hasReturnShipment) {
+        this.router.navigate(
+          [this.store.modules[this.store.currentStep++].module],
+          {
+            queryParamsHandling: "merge",
+          }
+        );
+      }
     });
 
     // inverto il mittente con il destinatario per la spedizione di ritorno
@@ -397,6 +404,12 @@ export class ShipmentComponent implements OnInit {
       this.status.handleShipment(returnPayloadShipment).subscribe((res) => {
         console.log(res);
         this.store.returnShipment = res;
+        this.router.navigate(
+          [this.store.modules[this.store.currentStep++].module],
+          {
+            queryParamsHandling: "merge",
+          }
+        );
       });
     }
   }
@@ -405,13 +418,6 @@ export class ShipmentComponent implements OnInit {
     if (this.canContinue) {
       this.store.chosenCourier = this.chosenCourier;
       this.handleShipments();
-      //TODO aspettare che finiscano le chiamate prima di continuare
-      this.router.navigate(
-        [this.store.modules[this.store.currentStep++].module],
-        {
-          queryParamsHandling: "merge",
-        }
-      );
     }
   }
 }

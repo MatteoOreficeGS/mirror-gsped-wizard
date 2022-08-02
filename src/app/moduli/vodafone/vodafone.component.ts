@@ -25,7 +25,7 @@ export class VodafoneComponent implements OnInit {
     this.formVodafone = fb.group({
       description: ["", [Validators.nullValidator]],
     });
-
+    this.store.productDestination = this.currentModule.destination;
     this.choices = this.currentModule.choices;
     this.selected = this.choices[0].choice;
     this.choiceText = this.choices[0].text;
@@ -63,6 +63,16 @@ export class VodafoneComponent implements OnInit {
   }
 
   nextStep() {
+    const selectedProducts = this.products.map((product: any) => {
+      {
+        return product.selected ? product.name : null;
+      }
+    });
+    if (this.currentModule.output === "concat_string") {
+      this.store.selectedProducts = selectedProducts.join(" ");
+    } else {
+      // Nuove direttive da configurazione
+    }
     this.router.navigate(
       [this.store.modules[this.store.currentStep++].module],
       {

@@ -269,68 +269,132 @@
           </div>
         </fieldset>
       </div>
-
-      <div
+      <!-- andata -->
+      <section
+        class="bg-white dark:bg-gray-900"
         *ngIf="outwardCostExposure.length"
-        class="flex flex-wrap justify-center space-x-4 mt-4"
       >
-        andata:
-        <div
-          *ngFor="let service of outwardCostExposure"
-          class="bg-white p-4 rounded-lg shadow-lg h-80 w-auto relative mb-4"
-          (click)="selectCourier('outward', service)"
-          [ngClass]="
-            chosenCourier?.outward.serviceName === service.serviceName
-              ? 'shadow-lg shadow-red-500/50'
-              : 'shadow-lg'
-          "
-        >
-          corriere: {{ service.courier }}
-          <hr />
-          service: {{ service.serviceName }}
-          <hr />
-          totale: {{ service.data.totale }}
-          <hr />
-          varie: {{ service.data.varie }}
-          <hr />
-          nolo: {{ service.data.nolo }}
-          <hr />
-          <div *ngFor="let varie_d of service.data.varie_dettaglio | keyvalue">
-            {{ varie_d.key }}: {{ varie_d.value }}
+        <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
+          <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+            <h2
+              class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+            >
+              Seleziona il corriere di andata
+            </h2>
           </div>
-        </div>
-      </div>
+          <div
+            class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
+          >
+            <div
+              *ngFor="let service of outwardCostExposure"
+              class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white"
+            >
+              <div class="flex items-center space-x-2">
+                <input
+                  class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300"
+                  type="radio"
+                  [value]="service.serviceName"
+                  name="outward"
+                  (click)="selectCourier('outward', service)"
+                />
+                <span class="text-2xl font-semibold">
+                  {{ service.courier }}
+                </span>
+                <span
+                  class="font-normal text-gray-500 sm:text-lg dark:text-gray-400"
+                >
+                  {{ service.serviceName }}
+                </span>
+              </div>
 
-      <div
-        *ngIf="returnCostExposure.length"
-        class="flex flex-wrap justify-center space-x-4 mt-4"
-      >
-        ritorno:
-        <div
-          *ngFor="let service of returnCostExposure"
-          class="bg-white p-4 rounded-lg h-80 w-auto relative mb-4"
-          (click)="selectCourier('return', service)"
-          [ngClass]="
-            chosenCourier?.return.serviceName === service.serviceName
-              ? 'shadow-lg shadow-red-500/50'
-              : 'shadow-lg'
-          "
-        >
-          corriere: {{ service.courier }}
-          <hr />
-          service: {{ service.serviceName }}
-          <hr />
-          totale: {{ service.data.totale }}
-          <hr />
-          varie: {{ service.data.varie }}
-          <hr />
-          nolo: {{ service.data.nolo }}
-          <hr />
-          <div *ngFor="let varie_d of service.data.varie_dettaglio | keyvalue">
-            {{ varie_d.key }}: {{ varie_d.value }}
+              <div class="flex justify-center items-baseline my-8">
+                <span class="mr-2 text-2xl font-extrabold">
+                  totale: {{ service.data.totale }}
+                </span>
+              </div>
+              <ul role="list" class="mb-8 space-y-4 text-left list-disc">
+                <li class="flex items-center space-x-3">
+                  <span>varie: {{ service.data.varie }}</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                  <span>nolo: {{ service.data.nolo }}</span>
+                </li>
+                <li
+                  class="flex items-center space-x-3"
+                  *ngFor="
+                    let varie_d of service.data.varie_dettaglio | keyvalue
+                  "
+                >
+                  <span>{{ varie_d.key }}: {{ varie_d.value }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+      <!-- ritorno -->
+      <section
+        class="bg-white dark:bg-gray-900"
+        *ngIf="returnCostExposure.length"
+      >
+        <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
+          <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+            <h2
+              class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+            >
+              Seleziona il corriere di ritorno
+            </h2>
+          </div>
+          <div
+            class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
+          >
+            <div
+              *ngFor="let service of returnCostExposure"
+              class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white"
+            >
+              <div class="flex items-center space-x-2">
+                <input
+                  class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300"
+                  type="radio"
+                  [value]="service.serviceName"
+                  name="retrun"
+                  (click)="selectCourier('return', service)"
+                />
+                <span class="text-2xl font-semibold">
+                  {{ service.courier }}
+                </span>
+                <span
+                  class="font-normal text-gray-500 sm:text-lg dark:text-gray-400"
+                >
+                  {{ service.serviceName }}
+                </span>
+              </div>
+
+              <div class="flex justify-center items-baseline my-8">
+                <span class="mr-2 text-2xl font-extrabold">
+                  totale: {{ service.data.totale }}
+                </span>
+              </div>
+              <ul role="list" class="mb-8 space-y-4 text-left list-disc">
+                <li class="flex items-center space-x-3">
+                  <span>varie: {{ service.data.varie }}</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                  <span>nolo: {{ service.data.nolo }}</span>
+                </li>
+                <li
+                  class="flex items-center space-x-3"
+                  *ngFor="
+                    let varie_d of service.data.varie_dettaglio | keyvalue
+                  "
+                >
+                  <span>{{ varie_d.key }}: {{ varie_d.value }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
       <button
         type="button"
         (click)="incrementStep()"

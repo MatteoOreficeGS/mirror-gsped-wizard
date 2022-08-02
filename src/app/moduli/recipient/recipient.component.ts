@@ -1,6 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router, Routes } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -48,9 +53,9 @@ export class RecipientComponent {
       ],
       rcpt_email: [
         this.currentModule.data.rcpt_email,
-        [Validators.required, Validators.email],
+        [ValidateEmail],
       ],
-      rcpt_phone: [this.currentModule.data.rcpt_phone, Validators.required],
+      rcpt_phone: [this.currentModule.data.rcpt_phone, ValidatePhone],
       rcpt_addr: [this.currentModule.data.rcpt_addr, Validators.required],
     });
 
@@ -196,4 +201,28 @@ export class RecipientComponent {
       );
     }
   }
+}
+
+function ValidateEmail(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
+
+  if (!control.value.match(validRegex)) {
+    return { emailInvalid: true };
+  }
+  return null;
+}
+
+function ValidatePhone(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+  if (!control.value.match(validRegex)) {
+    return { phoneInvalid: true };
+  }
+  return null;
 }

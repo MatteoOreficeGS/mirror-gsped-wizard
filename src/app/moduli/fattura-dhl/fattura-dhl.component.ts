@@ -19,8 +19,8 @@ export class FatturaDHLComponent implements OnInit {
     private router: Router,
     private store: StoreService,
     private status: StatusService
-  ) {
-    this.selected = "privato";
+  ) { 
+    this.selected = !this.store.invoice ? "privato" : this.store.invoice.type;
     this.setInvoiceModules(this.selected);
   }
 
@@ -48,24 +48,25 @@ export class FatturaDHLComponent implements OnInit {
 
   setInvoiceModules(type: string) {
     this.selected = type;
+    
     switch (type) {
       case "privato":
-        this.formInvoice = this.fb.group({
-          codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
-          pec: ["", [ValidateEmail]],
-          sdi: ["0000000"],
-        });
-        /* Object.keys(this.store.invoice).forEach((element: any) => {
-          if (this.store.invoice.hasOwnProperty(element)) {
-            if (
-              this.store.invoice[element] !== this.formInvoice.value[element]
-            ) {
-              this.formInvoice.controls[element].setValue(
-                this.store.invoice[element]
-              );
-            }
-          }
-        }); */
+        if (!this.store.invoice) {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
+            pec: ["", [ValidateEmail]],
+            sdi: ["0000000"],
+            type: type
+          });
+        } else {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
+            pec: [this.store.invoice.pec, [ValidateEmail]],
+            sdi: [this.store.invoice.sdi],
+            type: type
+          });
+        }
+        
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -83,22 +84,23 @@ export class FatturaDHLComponent implements OnInit {
         ];
         break;
       case "piva":
+
+      if (!this.store.invoice) {
         this.formInvoice = this.fb.group({
           codice_fiscale: ["", [Validators.required, Validators.maxLength(11)]],
           pec: ["", ValidateEmail],
           sdi: ["", Validators.required],
+          type: type
         });
-        /* Object.keys(this.store.invoice).forEach((element: any) => {
-          if (this.store.invoice.hasOwnProperty(element)) {
-            if (
-              this.store.invoice[element] !== this.formInvoice.value[element]
-            ) {
-              this.formInvoice.controls[element].setValue(
-                this.store.invoice[element]
-              );
-            }
-          }
-        }); */
+      } else {
+        this.formInvoice = this.fb.group({
+          codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
+          pec: [this.store.invoice.pec, [ValidateEmail]],
+          sdi: [this.store.invoice.sdi],
+          type: type
+        });
+      }
+        
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -127,18 +129,8 @@ export class FatturaDHLComponent implements OnInit {
           citta: ["", Validators.required],
           email: [this.store.sender.sender_email, ValidateEmail],
           phone: [this.store.sender.sender_phone, ValidatePhone],
+          type: type
         });
-        /* Object.keys(this.store.invoice).forEach((element: any) => {
-          if (this.store.invoice.hasOwnProperty(element)) {
-            if (
-              this.store.invoice[element] !== this.formInvoice.value[element]
-            ) {
-              this.formInvoice.controls[element].setValue(
-                this.store.invoice[element]
-              );
-            }
-          }
-        }); */
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
           { value: "cognome", label: "cognome", type: "text", required: true },
@@ -160,12 +152,10 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   handleGooglePlace(address: HTMLInputElement) {
-    console.log(address.value);
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
     this.status.googlePlace(address.value, "it").subscribe((response: any) => {
       this.predictionsAddress = response;
-      console.log(this.predictionsAddress);
     });
   }
   setAddress(prediction: any) {
@@ -177,7 +167,6 @@ export class FatturaDHLComponent implements OnInit {
     );
     this.formInvoice.controls["cap"].setValue(prediction.postalCode);
     this.formInvoice.controls["citta"].setValue(prediction.city);
-    // this.formInvoice.controls["sender_prov"].setValue(prediction.district);
     this.formInvoice.controls["nazione"].setValue(prediction.country);
     this.showPredictions = false;
   }

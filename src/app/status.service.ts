@@ -47,13 +47,8 @@ export class StatusService {
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     body = Object.entries(body);
-    body = body.map((element: any) => {
-      return element.join("=");
-    });
-    body = body.join("&");
     return this.http.get(
-      "https://api.gsped.it/" + decoded.instance + "/RateComparativa?" + body,
-      { headers: headers }
+      "https://api.gsped.it/" + decoded.instance + "/RateComparativa", { headers: headers, params: body},
     );
   }
 

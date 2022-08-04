@@ -143,18 +143,21 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
-    
     // setting the insurance value at 100 if checkbox is checked at 0 if not
     if (this.formShipment.value.outwardInsurance === true) {
       this.formShipment.controls["outwardInsurance"].setValue(100);
       this.store.outwardInsurance = 100;
     } else if (this.formShipment.value.outwardInsurance === false) {
       this.formShipment.controls["outwardInsurance"].setValue(0);
+    } else {
+      this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
     }
     if (this.formShipment.value.returnInsurance === true) {
       this.store.returnInsurance = 100;
     } else if (this.formShipment.value.returnInsurance === false) {
       this.formShipment.controls["returnInsurance"].setValue(0);
+    } else {
+      this.store.returnInsurance = this.formShipment.value.returnInsurance;
     }
     if (this.formShipment.valid) {
       if (this.currentModule.packagesDetails.enable) {
@@ -331,7 +334,6 @@ export class ShipmentComponent implements OnInit {
             configServices.includes(element.serviceCode)
         );
         return response;
-
       case "AUTOMATIC":
         // filtrare per il corriere piu economico
         let maxPrice = 10000;
@@ -342,15 +344,14 @@ export class ShipmentComponent implements OnInit {
           }
         });
         return response;
-
       case "DYNAMIC":
       default:
         return response;
-
     }
   }
 
   handleShipments() {
+    delete this.store.invoice.type;
     this.store.payloadShipment.fattura_dhl = this.store.invoice;
     this.store.payloadShipment.documenti = this.store.isDocumentShipment
       ? 1
@@ -369,7 +370,6 @@ export class ShipmentComponent implements OnInit {
       outwardPayloadShipment[this.store.productDestination] =
         this.store.selectedProducts;
     }
-  
     this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
       if (!this.store.hasReturnShipment) {
@@ -398,7 +398,6 @@ export class ShipmentComponent implements OnInit {
         }),
       };
       this.status.handleShipment(returnPayloadShipment).subscribe((res) => {
-        console.log(res);
         this.store.returnShipment = res;
         this.router.navigate(
           [this.store.modules[this.store.currentStep++].module],

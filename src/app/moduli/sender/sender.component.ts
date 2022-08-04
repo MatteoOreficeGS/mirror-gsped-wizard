@@ -29,7 +29,6 @@ export class SenderComponent {
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
     this.readonly = !this.currentModule.editable;
-
     this.formSender = fb.group({
       sender_name: [
         this.currentModule.data.sender_name.split(" ")[0],
@@ -232,7 +231,7 @@ function ValidatePhone(
   control: AbstractControl
 ): { [key: string]: any } | null {
   var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{1,6}$/im;
 
   if (!control.value.match(validRegex)) {
     return { phoneInvalid: true };

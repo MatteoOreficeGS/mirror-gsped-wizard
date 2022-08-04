@@ -51,4 +51,5 @@ export class StoreService {
   selectedProducts: any = null;
   productDestination: any;
   displayPayment: any;
+  isLastModule: boolean = false;
 }

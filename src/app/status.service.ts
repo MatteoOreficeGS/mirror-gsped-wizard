@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StoreService } from "./store.service";
 
 @Injectable({
@@ -10,6 +10,7 @@ import { StoreService } from "./store.service";
 export class StatusService {
   constructor(
     public http: HttpClient,
+    private router: Router,
     private route: ActivatedRoute,
     private store: StoreService
   ) {}
@@ -93,5 +94,16 @@ export class StatusService {
       [tmp[key[0]], tmp[key[1]]] = [tmp[key[1]], tmp[key[0]]];
     });
     return tmp;
+  }
+
+  previousStep() {
+    if (this.store.currentStep > 1) {
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep--].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
   }
 }

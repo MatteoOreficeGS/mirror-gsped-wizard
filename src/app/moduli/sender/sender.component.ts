@@ -30,7 +30,6 @@ export class SenderComponent {
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
     this.readonly = !this.currentModule.editable;
-
     this.formSender = fb.group({
       sender_name: [
         this.currentModule.data.sender_name,

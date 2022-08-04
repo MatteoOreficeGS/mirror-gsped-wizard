@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StoreService } from "./store.service";
 
 @Injectable({
@@ -10,6 +10,7 @@ import { StoreService } from "./store.service";
 export class StatusService {
   constructor(
     public http: HttpClient,
+    private router: Router,
     private route: ActivatedRoute,
     private store: StoreService
   ) {}
@@ -47,13 +48,8 @@ export class StatusService {
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     body = Object.entries(body);
-    body = body.map((element: any) => {
-      return element.join("=");
-    });
-    body = body.join("&");
     return this.http.get(
-      "https://api.gsped.it/" + decoded.instance + "/RateComparativa?" + body,
-      { headers: headers }
+      "https://api.gsped.it/" + decoded.instance + "/RateComparativa", { headers: headers, params: body},
     );
   }
 
@@ -92,5 +88,16 @@ export class StatusService {
       [tmp[key[0]], tmp[key[1]]] = [tmp[key[1]], tmp[key[0]]];
     });
     return tmp;
+  }
+
+  previousStep() {
+    if (this.store.currentStep > 1) {
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep--].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
   }
 }

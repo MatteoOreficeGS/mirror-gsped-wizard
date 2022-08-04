@@ -17,14 +17,14 @@ export class StoreService {
   modules?: any;
   sender: any = {
     //RIMUOVERE
-    // sender_name: "Mario Rossi Verdi",
-    // sender_city: "Milan",
-    // sender_cap: "20121",
-    // sender_prov: "MI",
-    // sender_country_code: "IT",
-    // sender_email: "mail@gmail.com",
-    // sender_phone: "3343343344",
-    // sender_addr: "Via Dante 23",
+    //  sender_name: "Mario Rossi Verdi",
+    //  sender_city: "Milan",
+    //  sender_cap: "20121",
+    //  sender_prov: "MI",
+    //  sender_country_code: "IT",
+    //  sender_email: "mail@gmail.com",
+    //  sender_phone: "3343343344",
+    //  sender_addr: "Via Dante 23",
   };
   recipient: any = {
     // rcpt_name: "Mario Rossi Verdi",
@@ -48,4 +48,5 @@ export class StoreService {
   selectedProducts: any = null;
   productDestination: any;
   displayPayment: any;
+  isLastModule: boolean = false;
 }

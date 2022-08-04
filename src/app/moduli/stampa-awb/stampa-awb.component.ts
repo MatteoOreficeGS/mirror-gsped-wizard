@@ -16,7 +16,7 @@ export class StampaAwbComponent {
     private route: ActivatedRoute,
     private store: StoreService
   ) {
-    this.displayPayment = this.store.displayPayment;
+    this.displayPayment = this.store.displayPayment ? this.store.displayPayment : null;
     this.getShipments(
       this.store.outwardShipment.id,
       this.store.returnShipment.id

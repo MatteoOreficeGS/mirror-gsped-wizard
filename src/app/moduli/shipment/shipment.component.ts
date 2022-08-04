@@ -362,7 +362,7 @@ export class ShipmentComponent implements OnInit {
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
 
-    const newsender = {
+    const newSender = {
       sender_name: this.store.sender.sender_name + " " + this.store.sender.sender_surname,
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
@@ -374,7 +374,7 @@ export class ShipmentComponent implements OnInit {
       sender_contact: this.store.sender.sender_contact
     }
 
-    const newrecipient = {
+    const newRecipient = {
       rcpt_name: this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname,
       rcpt_city: this.store.recipient.rcpt_city,
       rcpt_cap: this.store.recipient.rcpt_cap,
@@ -388,8 +388,8 @@ export class ShipmentComponent implements OnInit {
 
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
-      ...newsender,
-      ...newrecipient,
+      ...newSender,
+      ...newRecipient,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };

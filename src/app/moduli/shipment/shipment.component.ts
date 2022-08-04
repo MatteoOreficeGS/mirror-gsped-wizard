@@ -29,9 +29,9 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      outwardInsurance: "",
+      outwardInsurance: 0,
       codiceSconto: "",
-      returnInsurance: "",
+      returnInsurance: 0,
       termsconditions: "",
     });
   }
@@ -181,7 +181,8 @@ export class ShipmentComponent implements OnInit {
 
       // rateComparative di andata
       this.outwardBodyRateComparativa = this.bodyRateComparativa;
-      this.outwardBodyRateComparativa.valore = this.store.outwardInsurance;
+     
+      this.outwardBodyRateComparativa.valore = this.store.outwardInsurance ? this.store.outwardInsurance :this.formShipment.value.outwardInsurance;
       this.outwardBodyRateComparativa = {
         ...this.outwardBodyRateComparativa,
         ...this.store.sender,
@@ -218,7 +219,7 @@ export class ShipmentComponent implements OnInit {
       // rateComparative di ritorno
       if (this.store.hasReturnShipment) {
         this.returnBodyRateComparativa = this.bodyRateComparativa;
-        this.returnBodyRateComparativa.valore = this.store.returnInsurance;
+        this.returnBodyRateComparativa.valore = this.store.returnInsurance ? this.store.returnInsurance : this.formShipment.value.returnInsurance;
         this.returnBodyRateComparativa = {
           ...this.returnBodyRateComparativa,
           ...this.status.invertAddressData({
@@ -279,14 +280,10 @@ export class ShipmentComponent implements OnInit {
   handleRateComparative(body: any): Observable<any> {
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
-    body = Object.entries(body);
-    body = body.map((element: any) => {
-      return element.join("=");
-    });
-    body = body.join("&");
+    
     return this.http.get(
-      environment.API_URL + decoded.instance + "/RateComparativa?" + body,
-      { headers: headers }
+      environment.API_URL + decoded.instance + "/RateComparativa",
+      { headers: headers, params: body }
     );
   }
 

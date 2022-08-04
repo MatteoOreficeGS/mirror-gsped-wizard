@@ -143,7 +143,6 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
-    console.log("formShipment value", this.formShipment.value);
     // setting the insurance value at 100 if checkbox is checked at 0 if not
     if (this.formShipment.value.outwardInsurance === true) {
       this.formShipment.controls["outwardInsurance"].setValue(100);
@@ -378,7 +377,6 @@ export class ShipmentComponent implements OnInit {
       outwardPayloadShipment[this.store.productDestination] =
         this.store.selectedProducts;
     }
-    console.log(outwardPayloadShipment);
     this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
       if (!this.store.hasReturnShipment) {
@@ -407,7 +405,6 @@ export class ShipmentComponent implements OnInit {
         }),
       };
       this.status.handleShipment(returnPayloadShipment).subscribe((res) => {
-        console.log(res);
         this.store.returnShipment = res;
         this.router.navigate(
           [this.store.modules[this.store.currentStep++].module],

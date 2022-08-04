@@ -184,15 +184,21 @@ export class SenderComponent {
     this.showPredictions = false;
   }
 
-  setSingleAddress(prediction: any) {
-    this.formSender.controls["sender_addr_secondary"].setValue(
-      prediction.toList
-    );
-    this.showPredictions = false;
-  }
-
   nextStep() {
     if (this.formSender.valid) {
+      this.formSender.value.sender_name +=
+        " " + this.formSender.value.sender_surname;
+      delete this.formSender.value.sender_surname;
+
+      this.formSender.controls["sender_addr"].setValue(
+        (
+          this.formSender.value.sender_addr +
+          " " +
+          this.formSender.value.sender_addr_secondary
+        ).slice(0, 50)
+      );
+      delete this.formSender.value.sender_addr_secondary;
+
       this.store.sender = this.formSender.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

@@ -136,7 +136,7 @@ export class ShipmentComponent implements OnInit {
 
     this.datacolli = {
       colli: this.formShipment.value.dimensions.length,
-      daticolli: JSON.stringify(this.formShipment.value.dimensions),
+      daticolli: this.formShipment.value.dimensions,
       peso: pesoTot,
       volume: volumeTot,
     };
@@ -181,7 +181,9 @@ export class ShipmentComponent implements OnInit {
 
       // rateComparative di andata
       this.outwardBodyRateComparativa = this.bodyRateComparativa;
-      this.outwardBodyRateComparativa.valore = this.store.outwardInsurance ? this.store.outwardInsurance :this.formShipment.value.outwardInsurance;
+      this.outwardBodyRateComparativa.valore = this.store.outwardInsurance
+        ? this.store.outwardInsurance
+        : this.formShipment.value.outwardInsurance;
       this.outwardBodyRateComparativa = {
         ...this.outwardBodyRateComparativa,
         ...this.store.sender,
@@ -218,7 +220,9 @@ export class ShipmentComponent implements OnInit {
       // rateComparative di ritorno
       if (this.store.hasReturnShipment) {
         this.returnBodyRateComparativa = this.bodyRateComparativa;
-        this.returnBodyRateComparativa.valore = this.store.returnInsurance ? this.store.returnInsurance : this.formShipment.value.returnInsurance;
+        this.returnBodyRateComparativa.valore = this.store.returnInsurance
+          ? this.store.returnInsurance
+          : this.formShipment.value.returnInsurance;
         this.returnBodyRateComparativa = {
           ...this.returnBodyRateComparativa,
           ...this.status.invertAddressData({
@@ -277,12 +281,13 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleRateComparative(body: any): Observable<any> {
+    let bodyAux = { ...body };
+    bodyAux.daticolli = JSON.stringify(body.daticolli);
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
-
     return this.http.get(
       environment.API_URL + decoded.instance + "/RateComparativa",
-      { headers: headers, params: body }
+      { headers: headers, params: bodyAux }
     );
   }
 
@@ -348,12 +353,11 @@ export class ShipmentComponent implements OnInit {
       case "DYNAMIC":
       default:
         return response;
-
-      }
+    }
   }
 
   handleShipments() {
-    delete this.store.invoice.type; 
+    delete this.store.invoice.type;
     this.store.payloadShipment.fattura_dhl = this.store.invoice;
     this.store.payloadShipment.documenti = this.store.isDocumentShipment
       ? 1
@@ -363,7 +367,8 @@ export class ShipmentComponent implements OnInit {
     this.store.payloadShipment.valore = this.store.outwardInsurance;
 
     const newSender = {
-      sender_name: this.store.sender.sender_name + " " + this.store.sender.sender_surname,
+      sender_name:
+        this.store.sender.sender_name + " " + this.store.sender.sender_surname,
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
       sender_prov: this.store.sender.sender_prov,
@@ -371,11 +376,14 @@ export class ShipmentComponent implements OnInit {
       sender_email: this.store.sender.sender_email,
       sender_phone: this.store.sender.phone,
       sender_addr: this.store.sender.sender_addr,
-      sender_contact: this.store.sender.sender_contact
-    }
+      sender_contact: this.store.sender.sender_contact,
+    };
 
     const newRecipient = {
-      rcpt_name: this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname,
+      rcpt_name:
+        this.store.recipient.rcpt_name +
+        " " +
+        this.store.recipient.rcpt_surname,
       rcpt_city: this.store.recipient.rcpt_city,
       rcpt_cap: this.store.recipient.rcpt_cap,
       rcpt_prov: this.store.recipient.rcpt_prov,
@@ -383,8 +391,8 @@ export class ShipmentComponent implements OnInit {
       rcpt_email: this.store.recipient.rcpt_email,
       rcpt_phone: this.store.recipient.rcpt_phone,
       rcpt_addr: this.store.recipient.rcpt_addr,
-      rcpt_contact: this.store.recipient.rcpt_contact
-    }
+      rcpt_contact: this.store.recipient.rcpt_contact,
+    };
 
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,

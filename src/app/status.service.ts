@@ -15,7 +15,7 @@ export class StatusService {
     private store: StoreService
   ) {}
 
-  pickupAvailability(corriere:any): Observable<any> {
+  pickupAvailability(corriere: any): Observable<any> {
     const decoded: any = this.store.decodedToken;
     const date = new Date(); /* .toLocaleString() */
     const headers = { "x-api-key": this.store.token };
@@ -23,7 +23,7 @@ export class StatusService {
       ...this.store.sender,
       pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
       corriere: corriere,
-      client_id: this.store.configuration.client_id
+      client_id: this.store.configuration.client_id,
     };
 
     console.log(body);
@@ -45,11 +45,15 @@ export class StatusService {
   }
 
   handleRateComparative(body: any): Observable<any> {
+    console.log(body);
+    let bodyAux = { ...body };
+    bodyAux.daticolli = JSON.stringify(body.daticolli);
+    console.log(bodyAux);
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
-    body = Object.entries(body);
     return this.http.get(
-      "https://api.gsped.it/" + decoded.instance + "/RateComparativa", { headers: headers, params: body},
+      "https://api.gsped.it/" + decoded.instance + "/RateComparativa",
+      { headers: headers, params: bodyAux }
     );
   }
 

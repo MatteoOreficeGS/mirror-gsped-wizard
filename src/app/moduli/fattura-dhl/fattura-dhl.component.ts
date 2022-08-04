@@ -56,7 +56,7 @@ export class FatturaDHLComponent implements OnInit {
         }
       }
     });
-    return false;
+    return result;
   }
 
 

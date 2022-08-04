@@ -138,6 +138,7 @@ export class AppComponent {
                   this.store.translations = res[1];
                   this.store.currentStep = modules.length;
                   console.log("navigo a awb-printing");
+                  this.store.isLastModule = true;
                   this.router.navigate(["/" + modules[modules.length - 1].module], {
                     // this.router.navigate(["/" + "fatturaDHL"], {
                     queryParams: {

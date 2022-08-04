@@ -67,6 +67,7 @@
     </div>
     <div class="text-center sm:text-left md:ml-12">
       <button
+        [disabled]="formRecipient.invalid"
         [ngClass]="
           formRecipient.valid
             ? 'bg-yellow-400 text-white '

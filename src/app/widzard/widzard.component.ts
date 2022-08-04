@@ -14,22 +14,32 @@ export class WidzardComponent {
     public status: StatusService,
     public store: StoreService
   ) {
-    this.step = store.currentStep;
+    this.currentStep = store.currentStep;
+    console.log(this.currentStep);
     this.modules = store.modules;
     this.bannerExtra = store.configuration.bannerExtra;
     this.translations = store.translations;
-    
+    this.isLastModule = this.store.isLastModule;
   }
-  step: number;
+
+  handlePreviousStep() {
+    console.log(this.store.currentStep);
+    // console.log(this.store.modules[this.store.currentStep].module);
+    // console.log(this.store.modules[this.store.currentStep - 1].module);
+    if (this.store.currentStep > 1) {
+      this.store.currentStep -= 1;
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep - 1].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
+  }
+
+  isLastModule: boolean;
+  currentStep: number;
   modules: any;
   translations: any = {};
   bannerExtra: any;
-
-  setStep(i: number) {
-    const navigateTo = this.store.modules[i].module;
-    this.store.currentStep = i + 1;
-    this.router.navigate([navigateTo], {
-      queryParamsHandling: "merge",
-    });
-  }
 }

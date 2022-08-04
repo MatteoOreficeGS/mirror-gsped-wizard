@@ -79,6 +79,7 @@ export class StatusService {
       ["rcpt_country_code", "sender_country_code"],
       ["rcpt_email", "sender_email"],
       ["rcpt_name", "sender_name"],
+      ["rcpt_surname", "sender_surname"],
       ["rcpt_phone", "sender_phone"],
       ["rcpt_prov", "sender_prov"],
     ];

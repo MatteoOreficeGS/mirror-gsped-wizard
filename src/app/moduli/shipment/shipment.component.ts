@@ -181,7 +181,6 @@ export class ShipmentComponent implements OnInit {
 
       // rateComparative di andata
       this.outwardBodyRateComparativa = this.bodyRateComparativa;
-     
       this.outwardBodyRateComparativa.valore = this.store.outwardInsurance ? this.store.outwardInsurance :this.formShipment.value.outwardInsurance;
       this.outwardBodyRateComparativa = {
         ...this.outwardBodyRateComparativa,
@@ -280,7 +279,7 @@ export class ShipmentComponent implements OnInit {
   handleRateComparative(body: any): Observable<any> {
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
-    
+
     return this.http.get(
       environment.API_URL + decoded.instance + "/RateComparativa",
       { headers: headers, params: body }
@@ -334,6 +333,7 @@ export class ShipmentComponent implements OnInit {
             configServices.includes(element.serviceCode)
         );
         return response;
+
       case "AUTOMATIC":
         // filtrare per il corriere piu economico
         let maxPrice = 10000;
@@ -344,14 +344,16 @@ export class ShipmentComponent implements OnInit {
           }
         });
         return response;
+
       case "DYNAMIC":
       default:
         return response;
-    }
+
+      }
   }
 
   handleShipments() {
-    delete this.store.invoice.type;
+    delete this.store.invoice.type; 
     this.store.payloadShipment.fattura_dhl = this.store.invoice;
     this.store.payloadShipment.documenti = this.store.isDocumentShipment
       ? 1
@@ -359,10 +361,35 @@ export class ShipmentComponent implements OnInit {
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
+
+    const newSender = {
+      sender_name: this.store.sender.sender_name + " " + this.store.sender.sender_surname,
+      sender_city: this.store.sender.sender_city,
+      sender_cap: this.store.sender.sender_cap,
+      sender_prov: this.store.sender.sender_prov,
+      sender_country_code: this.store.sender.sender_country_code,
+      sender_email: this.store.sender.sender_email,
+      sender_phone: this.store.sender.phone,
+      sender_addr: this.store.sender.sender_addr,
+      sender_contact: this.store.sender.sender_contact
+    }
+
+    const newRecipient = {
+      rcpt_name: this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname,
+      rcpt_city: this.store.recipient.rcpt_city,
+      rcpt_cap: this.store.recipient.rcpt_cap,
+      rcpt_prov: this.store.recipient.rcpt_prov,
+      rcpt_country_code: this.store.recipient.rcpt_country_code,
+      rcpt_email: this.store.recipient.rcpt_email,
+      rcpt_phone: this.store.recipient.rcpt_phone,
+      rcpt_addr: this.store.recipient.rcpt_addr,
+      rcpt_contact: this.store.recipient.rcpt_contact
+    }
+
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
-      ...this.store.sender,
-      ...this.store.recipient,
+      ...newSender,
+      ...newRecipient,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
@@ -370,7 +397,7 @@ export class ShipmentComponent implements OnInit {
       outwardPayloadShipment[this.store.productDestination] =
         this.store.selectedProducts;
     }
-    
+
     this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
       if (!this.store.hasReturnShipment) {

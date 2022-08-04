@@ -8,6 +8,7 @@ import {
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -39,12 +40,25 @@ export class FatturaDHLComponent implements OnInit {
   handleSetInvoiceModules(type: string) {
     if (
       confirm(
-        "Sei sucuro di cambaire modulo? i dati fin'ora inseriti andranno persi"
+        "Sei sicuro di cambiare modulo? i dati fin'ora inseriti andranno persi"
       )
     ) {
       this.setInvoiceModules(type);
     }
   }
+
+  isSenderPrefilled() {
+    let result = false;
+    this.store.configuration.modules.forEach((element: { moduleName: string; moduleConfig: { data: { sender_name: string; sender_addr: string; }; }; }) => {
+      if (element.moduleName == 'sender') {
+        if (element.moduleConfig.data.sender_name && element.moduleConfig.data.sender_addr) {
+          result = true;
+        }
+      }
+    });
+    return result;
+  }
+
 
   setInvoiceModules(type: string) {
     this.selected = type;
@@ -115,21 +129,20 @@ export class FatturaDHLComponent implements OnInit {
       case "estero":
         this.formInvoice = this.fb.group({
           nome: [
-            this.store.sender.sender_name.split(" ")[1],
+            this.isSenderPrefilled() ? this.store.recipient.rcpt_name : this.store.sender.sender_name,
             Validators.required,
           ],
           cognome: [
-            this.store.sender.sender_name.split(" ").slice(1).join(" "),
+            this.isSenderPrefilled() ? this.store.recipient.rcpt_surname : this.store.sender.sender_surname,
             Validators.required,
           ],
-          societa: [this.store.sender.sender_contact],
+          societa: [this.isSenderPrefilled() ? this.store.recipient.rcpt_contact : this.store.sender.sender_contact],
           indirizzo: ["", Validators.required],
           nazione: ["", Validators.required],
           cap: ["", Validators.required],
           citta: ["", Validators.required],
-          email: [this.store.sender.sender_email, ValidateEmail],
-          phone: [this.store.sender.sender_phone, ValidatePhone],
-          type: type
+          email: [this.isSenderPrefilled() ? this.store.recipient.rcpt_email : this.store.sender.sender_email, ValidateEmail],
+          phone: [this.isSenderPrefilled() ? this.store.recipient.rcpt_phone : this.store.sender.sender_phone, ValidatePhone],
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
@@ -173,6 +186,10 @@ export class FatturaDHLComponent implements OnInit {
 
   nextStep() {
     if (this.formInvoice.valid) {
+      this.formInvoice.controls["nome"].setValue(
+        this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
+      );
+      this.formInvoice.removeControl("cognome");
       this.store.invoice = this.formInvoice.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
@@ -182,29 +199,4 @@ export class FatturaDHLComponent implements OnInit {
       );
     }
   }
-}
-
-function ValidateEmail(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-  if (control.value.length > 0) {
-    if (!control.value.match(validRegex)) {
-      return { emailInvalid: true };
-    }
-  }
-  return null;
-}
-
-function ValidatePhone(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-  if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
-  }
-  return null;
 }

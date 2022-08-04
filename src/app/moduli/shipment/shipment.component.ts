@@ -368,7 +368,8 @@ export class ShipmentComponent implements OnInit {
 
     const newSender = {
       sender_name:
-        this.store.sender.sender_name + " " + this.store.sender.sender_surname,
+        this.store.sender.sender_name + 
+        (this.store.sender.sender_surname == null ? "" : " " + this.store.sender.sender_surname),
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
       sender_prov: this.store.sender.sender_prov,

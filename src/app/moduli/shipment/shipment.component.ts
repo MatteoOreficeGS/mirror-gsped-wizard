@@ -363,9 +363,21 @@ export class ShipmentComponent implements OnInit {
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
+
+    const newsender = {
+      sender_name: this.store.sender.sender.name +" " + this.store.sender.surname,
+      sender_city: this.store.sender.sender_city,
+      sender_cap: this.store.sender.sender_cap,
+      sender_prov: this.store.sender.sender_cap,
+      sender_country_code: this.store.sender.sender_country_code,
+      sender_email: this.store.sender.sender_email,
+      sender_phone: this.store.sender.phone,
+      sender_addr: this.store.sender.sender_addr
+  }
+
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
-      ...this.store.sender,
+      ...newsender,
       ...this.store.recipient,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,

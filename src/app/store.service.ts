@@ -16,8 +16,8 @@ export class StoreService {
   hasPayment?: boolean;
   modules?: any;
   sender: any = {
-    //RIMUOVERE
-    // sender_name: "Mario Rossi Verdi",
+    // ESEMPIO
+    // sender_namesurname: "Mario Rossi Verdi",
     // sender_city: "Milan",
     // sender_cap: "20121",
     // sender_prov: "MI",
@@ -27,7 +27,8 @@ export class StoreService {
     // sender_addr: "Via Dante 23",
   };
   recipient: any = {
-    // rcpt_name: "Mario Rossi Verdi",
+    // ESEMPIO
+    // rcpt_namesurname: "Mario Rossi Verdi",
     // rcpt_city: "Verona",
     // rcpt_cap: "37138",
     // rcpt_prov: "VR",

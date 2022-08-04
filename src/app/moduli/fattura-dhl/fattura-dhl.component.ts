@@ -8,6 +8,7 @@ import {
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -39,7 +40,7 @@ export class FatturaDHLComponent implements OnInit {
   handleSetInvoiceModules(type: string) {
     if (
       confirm(
-        "Sei sucuro di cambaire modulo? i dati fin'ora inseriti andranno persi"
+        "Sei sicuro di cambiare modulo? i dati fin'ora inseriti andranno persi"
       )
     ) {
       this.setInvoiceModules(type);
@@ -91,11 +92,11 @@ export class FatturaDHLComponent implements OnInit {
       case "estero":
         this.formInvoice = this.fb.group({
           nome: [
-            this.store.sender.sender_name.split(" ")[1],
+            this.store.sender.sender_name,
             Validators.required,
           ],
           cognome: [
-            this.store.sender.sender_name.split(" ").slice(1).join(" "),
+            this.store.sender.sender_surname,
             Validators.required,
           ],
           societa: [this.store.sender.sender_contact],
@@ -160,29 +161,4 @@ export class FatturaDHLComponent implements OnInit {
       );
     }
   }
-}
-
-function ValidateEmail(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-  if (control.value.length > 0) {
-    if (!control.value.match(validRegex)) {
-      return { emailInvalid: true };
-    }
-  }
-  return null;
-}
-
-function ValidatePhone(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-  if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
-  }
-  return null;
 }

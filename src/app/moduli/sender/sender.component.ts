@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
 
 @Component({
   selector: "app-sender",
@@ -32,11 +33,11 @@ export class SenderComponent {
 
     this.formSender = fb.group({
       sender_name: [
-        this.currentModule.data.sender_name.split(" ")[0],
+        this.currentModule.data.sender_name,
         Validators.required,
       ],
       sender_surname: [
-        this.currentModule.data.sender_name.split(" ").slice(1).join(" "),
+        this.currentModule.data.sender_surname,
         Validators.required,
       ],
       sender_city: [this.currentModule.data.sender_city, Validators.required],
@@ -59,16 +60,7 @@ export class SenderComponent {
     Object.keys(store.sender).forEach((element: any) => {
       if (store.sender.hasOwnProperty(element)) {
         if (store.sender[element] !== this.formSender.value[element]) {
-          if (element === "sender_name") {
-            this.formSender.controls["sender_name"].setValue(
-              store.sender[element].split(" ")[0]
-            );
-            this.formSender.controls["sender_surname"].setValue(
-              store.sender[element].split(" ").slice(1).join(" ")
-            );
-          } else {
             this.formSender.controls[element].setValue(store.sender[element]);
-          }
         }
       }
     });
@@ -202,9 +194,8 @@ export class SenderComponent {
 
   nextStep() {
     if (this.formSender.valid) {
-      this.formSender.value.sender_name +=
-        " " + this.formSender.value.sender_surname;
-      delete this.formSender.value.sender_surname;
+      this.formSender.value.sender_namesurname =
+        this.formSender.value.sender_name + " " + this.formSender.value.sender_surname;
       this.store.sender = this.formSender.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
@@ -214,28 +205,4 @@ export class SenderComponent {
       );
     }
   }
-}
-
-function ValidateEmail(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-
-  if (!control.value.match(validRegex)) {
-    return { emailInvalid: true };
-  }
-  return null;
-}
-
-function ValidatePhone(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-  if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
-  }
-  return null;
 }

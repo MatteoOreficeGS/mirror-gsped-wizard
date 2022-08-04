@@ -25,6 +25,7 @@ export class StoreService {
     // sender_email: "mail@gmail.com",
     // sender_phone: "3343343344",
     // sender_addr: "Via Dante 23",
+    // sender_contact: "Societa' SPA"
   };
   recipient: any = {
     // ESEMPIO
@@ -36,6 +37,7 @@ export class StoreService {
     // rcpt_email: "mail2@gmail.com",
     // rcpt_phone: "3343343346",
     // rcpt_addr: "Via Pittagora 1",
+    // rcpt_contact: "Societa' SPA"
   };
   outwardShipment: any = {};
   returnShipment: any = {};

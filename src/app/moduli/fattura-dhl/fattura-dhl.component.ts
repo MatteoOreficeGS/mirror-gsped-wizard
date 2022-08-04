@@ -186,6 +186,10 @@ export class FatturaDHLComponent implements OnInit {
 
   nextStep() {
     if (this.formInvoice.valid) {
+      this.formInvoice.controls["nome"].setValue(
+        this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
+      );
+      this.formInvoice.removeControl("cognome");
       this.store.invoice = this.formInvoice.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { SenderComponent } from "../sender/sender.component";
 
 @Component({
   selector: "app-payment",
@@ -53,7 +54,20 @@ export class PaymentComponent implements OnInit {
       this.recipient[this.translations[element]] = store.recipient[element];
     });
 
-    console.log(this.sender);
+    this.senderNew = {
+      ...this.sender
+    };
+
+    this.recipientNew = {
+      ...this.recipient
+    };
+
+    delete this.senderNew["undefined"];
+    delete this.recipientNew["undefined"];
+  
+    this.senderNew[this.translations["sender_name"]] = this.store.sender.sender_name + " " + this.store.sender.sender_surname;
+    this.recipientNew[this.translations["rcpt_name"]] = this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname;
+
   }
 
   ngOnInit(): void {
@@ -80,6 +94,8 @@ export class PaymentComponent implements OnInit {
   sender: any = {};
   recipient: any = {};
   shipment: any = {};
+  senderNew: any = {};
+  recipientNew: any = {};
 
   redirectPayment() {
     this.isHandledPayment = true;

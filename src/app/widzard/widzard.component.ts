@@ -15,7 +15,6 @@ export class WidzardComponent {
     public store: StoreService
   ) {
     this.currentStep = store.currentStep;
-    console.log(this.currentStep);
     this.modules = store.modules;
     this.bannerExtra = store.configuration.bannerExtra;
     this.translations = store.translations;
@@ -23,9 +22,6 @@ export class WidzardComponent {
   }
 
   handlePreviousStep() {
-    console.log(this.store.currentStep);
-    // console.log(this.store.modules[this.store.currentStep].module);
-    // console.log(this.store.modules[this.store.currentStep - 1].module);
     if (this.store.currentStep > 1) {
       this.store.currentStep -= 1;
       this.router.navigate(

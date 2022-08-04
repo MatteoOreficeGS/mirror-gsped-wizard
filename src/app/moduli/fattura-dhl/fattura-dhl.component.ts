@@ -55,6 +55,17 @@ export class FatturaDHLComponent implements OnInit {
           pec: ["", [ValidateEmail]],
           sdi: ["0000000"],
         });
+        /* Object.keys(this.store.invoice).forEach((element: any) => {
+          if (this.store.invoice.hasOwnProperty(element)) {
+            if (
+              this.store.invoice[element] !== this.formInvoice.value[element]
+            ) {
+              this.formInvoice.controls[element].setValue(
+                this.store.invoice[element]
+              );
+            }
+          }
+        }); */
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -77,6 +88,17 @@ export class FatturaDHLComponent implements OnInit {
           pec: ["", ValidateEmail],
           sdi: ["", Validators.required],
         });
+        /* Object.keys(this.store.invoice).forEach((element: any) => {
+          if (this.store.invoice.hasOwnProperty(element)) {
+            if (
+              this.store.invoice[element] !== this.formInvoice.value[element]
+            ) {
+              this.formInvoice.controls[element].setValue(
+                this.store.invoice[element]
+              );
+            }
+          }
+        }); */
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -106,6 +128,17 @@ export class FatturaDHLComponent implements OnInit {
           email: [this.store.sender.sender_email, ValidateEmail],
           phone: [this.store.sender.sender_phone, ValidatePhone],
         });
+        /* Object.keys(this.store.invoice).forEach((element: any) => {
+          if (this.store.invoice.hasOwnProperty(element)) {
+            if (
+              this.store.invoice[element] !== this.formInvoice.value[element]
+            ) {
+              this.formInvoice.controls[element].setValue(
+                this.store.invoice[element]
+              );
+            }
+          }
+        }); */
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
           { value: "cognome", label: "cognome", type: "text", required: true },

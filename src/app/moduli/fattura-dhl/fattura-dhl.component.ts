@@ -19,8 +19,8 @@ export class FatturaDHLComponent implements OnInit {
     private router: Router,
     private store: StoreService,
     private status: StatusService
-  ) {
-    this.selected = "privato";
+  ) { 
+    this.selected = !this.store.invoice ? "privato" : this.store.invoice.type;
     this.setInvoiceModules(this.selected);
   }
 
@@ -48,13 +48,25 @@ export class FatturaDHLComponent implements OnInit {
 
   setInvoiceModules(type: string) {
     this.selected = type;
+    
     switch (type) {
       case "privato":
-        this.formInvoice = this.fb.group({
-          codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
-          pec: ["", [ValidateEmail]],
-          sdi: ["0000000"],
-        });
+        if (!this.store.invoice) {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
+            pec: ["", [ValidateEmail]],
+            sdi: ["0000000"],
+            type: type
+          });
+        } else {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
+            pec: [this.store.invoice.pec, [ValidateEmail]],
+            sdi: [this.store.invoice.sdi],
+            type: type
+          });
+        }
+        
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -72,11 +84,23 @@ export class FatturaDHLComponent implements OnInit {
         ];
         break;
       case "piva":
+
+      if (!this.store.invoice) {
         this.formInvoice = this.fb.group({
           codice_fiscale: ["", [Validators.required, Validators.maxLength(11)]],
           pec: ["", ValidateEmail],
           sdi: ["", Validators.required],
+          type: type
         });
+      } else {
+        this.formInvoice = this.fb.group({
+          codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
+          pec: [this.store.invoice.pec, [ValidateEmail]],
+          sdi: [this.store.invoice.sdi],
+          type: type
+        });
+      }
+        
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -105,6 +129,7 @@ export class FatturaDHLComponent implements OnInit {
           citta: ["", Validators.required],
           email: [this.store.sender.sender_email, ValidateEmail],
           phone: [this.store.sender.sender_phone, ValidatePhone],
+          type: type
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },

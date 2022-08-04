@@ -334,8 +334,6 @@ export class ShipmentComponent implements OnInit {
             configServices.includes(element.serviceCode)
         );
         return response;
-
-        break;
       case "AUTOMATIC":
         // filtrare per il corriere piu economico
         let maxPrice = 10000;
@@ -346,16 +344,14 @@ export class ShipmentComponent implements OnInit {
           }
         });
         return response;
-        break;
-
       case "DYNAMIC":
       default:
         return response;
-        break;
     }
   }
 
   handleShipments() {
+    delete this.store.invoice.type;
     this.store.payloadShipment.fattura_dhl = this.store.invoice;
     this.store.payloadShipment.documenti = this.store.isDocumentShipment
       ? 1

@@ -365,7 +365,7 @@ export class ShipmentComponent implements OnInit {
     this.store.payloadShipment.valore = this.store.outwardInsurance;
 
     const newsender = {
-      sender_name: this.store.sender.sender.name +" " + this.store.sender.surname,
+      sender_name: this.store.sender.sender.name + " " + this.store.sender.surname,
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
       sender_prov: this.store.sender.sender_cap,
@@ -373,12 +373,23 @@ export class ShipmentComponent implements OnInit {
       sender_email: this.store.sender.sender_email,
       sender_phone: this.store.sender.phone,
       sender_addr: this.store.sender.sender_addr
-  }
+    }
+
+    const newrecipient = {
+      rcpt_name: this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname,
+      rcpt_city: this.store.recipient.rcpt_city,
+      rcpt_cap: this.store.recipient.rcpt_cap,
+      rcpt_prov: this.store.recipient.rcpt_prov,
+      rcpt_country_code: this.store.recipient.rcpt_country_code,
+      rcpt_email: this.store.recipient.rcpt_email,
+      rcpt_phone: this.store.recipient.rcpt_phone,
+      rcpt_addr: this.store.recipient.rcpt_addr
+    }
 
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
       ...newsender,
-      ...this.store.recipient,
+      ...newrecipient,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };

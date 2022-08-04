@@ -17,7 +17,7 @@ export class StoreService {
   modules?: any;
   sender: any = {
     // ESEMPIO
-    // sender_namesurname: "Mario Rossi Verdi",
+    // sender_name: "Mario Rossi Verdi",
     // sender_city: "Milan",
     // sender_cap: "20121",
     // sender_prov: "MI",
@@ -28,7 +28,7 @@ export class StoreService {
   };
   recipient: any = {
     // ESEMPIO
-    // rcpt_namesurname: "Mario Rossi Verdi",
+    // rcpt_name: "Mario Rossi Verdi",
     // rcpt_city: "Verona",
     // rcpt_cap: "37138",
     // rcpt_prov: "VR",

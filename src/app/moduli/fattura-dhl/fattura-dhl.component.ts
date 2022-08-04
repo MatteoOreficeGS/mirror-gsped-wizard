@@ -47,6 +47,19 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
+  isSenderPrefilled() {
+    let result = false;
+    this.store.configuration.modules.forEach((element: { moduleName: string; moduleConfig: { data: { sender_name: string; sender_addr: string; }; }; }) => {
+      if (element.moduleName == 'sender') {
+        if (element.moduleConfig.data.sender_name && element.moduleConfig.data.sender_addr) {
+          result = true;
+        }
+      }
+    });
+    return false;
+  }
+
+
   setInvoiceModules(type: string) {
     this.selected = type;
     switch (type) {
@@ -92,20 +105,20 @@ export class FatturaDHLComponent implements OnInit {
       case "estero":
         this.formInvoice = this.fb.group({
           nome: [
-            this.store.sender.sender_name,
+            this.isSenderPrefilled() ? this.store.recipient.rcpt_name : this.store.sender.sender_name,
             Validators.required,
           ],
           cognome: [
-            this.store.sender.sender_surname,
+            this.isSenderPrefilled() ? this.store.recipient.rcpt_surname : this.store.sender.sender_surname,
             Validators.required,
           ],
-          societa: [this.store.sender.sender_contact],
+          societa: [this.isSenderPrefilled() ? this.store.recipient.rcpt_contact : this.store.sender.sender_contact],
           indirizzo: ["", Validators.required],
           nazione: ["", Validators.required],
           cap: ["", Validators.required],
           citta: ["", Validators.required],
-          email: [this.store.sender.sender_email, ValidateEmail],
-          phone: [this.store.sender.sender_phone, ValidatePhone],
+          email: [this.isSenderPrefilled() ? this.store.recipient.rcpt_email : this.store.sender.sender_email, ValidateEmail],
+          phone: [this.isSenderPrefilled() ? this.store.recipient.rcpt_phone : this.store.sender.sender_phone, ValidatePhone],
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },

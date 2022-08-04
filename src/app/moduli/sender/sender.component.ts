@@ -194,8 +194,6 @@ export class SenderComponent {
 
   nextStep() {
     if (this.formSender.valid) {
-      this.formSender.value.sender_namesurname =
-        this.formSender.value.sender_name + " " + this.formSender.value.sender_surname;
       this.store.sender = this.formSender.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

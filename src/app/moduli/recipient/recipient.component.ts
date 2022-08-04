@@ -190,9 +190,6 @@ export class RecipientComponent {
 
   nextStep() {
     if (this.formRecipient.valid) {
-      this.formRecipient.value.rcpt_name +=
-        " " + this.formRecipient.value.rcpt_surname;
-      delete this.formRecipient.value.rcpt_surname;
       this.store.recipient = this.formRecipient.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

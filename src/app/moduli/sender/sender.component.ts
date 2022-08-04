@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
 
 @Component({
   selector: "app-sender",
@@ -58,16 +59,7 @@ export class SenderComponent {
     Object.keys(store.sender).forEach((element: any) => {
       if (store.sender.hasOwnProperty(element)) {
         if (store.sender[element] !== this.formSender.value[element]) {
-          if (element === "sender_name") {
-            this.formSender.controls["sender_name"].setValue(
-              store.sender[element].split(" ")[0]
-            );
-            this.formSender.controls["sender_surname"].setValue(
-              store.sender[element].split(" ").slice(1).join(" ")
-            );
-          } else {
             this.formSender.controls[element].setValue(store.sender[element]);
-          }
         }
       }
     });
@@ -216,28 +208,4 @@ export class SenderComponent {
       );
     }
   }
-}
-
-function ValidateEmail(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-
-  if (!control.value.match(validRegex)) {
-    return { emailInvalid: true };
-  }
-  return null;
-}
-
-function ValidatePhone(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{1,6}$/im;
-
-  if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
-  }
-  return null;
 }

@@ -15,7 +15,7 @@ export class StatusService {
     private store: StoreService
   ) {}
 
-  pickupAvailability(corriere:any): Observable<any> {
+  pickupAvailability(corriere: any): Observable<any> {
     const decoded: any = this.store.decodedToken;
     const date = new Date(); /* .toLocaleString() */
     const headers = { "x-api-key": this.store.token };
@@ -23,7 +23,7 @@ export class StatusService {
       ...this.store.sender,
       pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
       corriere: corriere,
-      client_id: this.store.configuration.client_id
+      client_id: this.store.configuration.client_id,
     };
 
     console.log(body);
@@ -45,16 +45,15 @@ export class StatusService {
   }
 
   handleRateComparative(body: any): Observable<any> {
+    console.log(body);
+    let bodyAux = { ...body };
+    bodyAux.daticolli = JSON.stringify(body.daticolli);
+    console.log(bodyAux);
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
-    body = Object.entries(body);
-    body = body.map((element: any) => {
-      return element.join("=");
-    });
-    body = body.join("&");
     return this.http.get(
-      "https://api.gsped.it/" + decoded.instance + "/RateComparativa?" + body,
-      { headers: headers }
+      "https://api.gsped.it/" + decoded.instance + "/RateComparativa",
+      { headers: headers, params: bodyAux }
     );
   }
 
@@ -84,6 +83,7 @@ export class StatusService {
       ["rcpt_country_code", "sender_country_code"],
       ["rcpt_email", "sender_email"],
       ["rcpt_name", "sender_name"],
+      ["rcpt_surname", "sender_surname"],
       ["rcpt_phone", "sender_phone"],
       ["rcpt_prov", "sender_prov"],
     ];

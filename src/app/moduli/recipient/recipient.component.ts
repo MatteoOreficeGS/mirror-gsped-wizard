@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router, Routes } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
 
 @Component({
   selector: "app-recipient",
@@ -33,11 +34,11 @@ export class RecipientComponent {
 
     this.formRecipient = fb.group({
       rcpt_name: [
-        this.currentModule.data.rcpt_name.split(" ")[0],
+        this.currentModule.data.rcpt_name,
         Validators.required,
       ],
       rcpt_surname: [
-        this.currentModule.data.rcpt_name.split(" ").slice(1).join(" "),
+        this.currentModule.data.rcpt_surname,
         Validators.required,
       ],
       rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
@@ -215,28 +216,4 @@ export class RecipientComponent {
       );
     }
   }
-}
-
-function ValidateEmail(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-
-  if (!control.value.match(validRegex)) {
-    return { emailInvalid: true };
-  }
-  return null;
-}
-
-function ValidatePhone(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-  if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
-  }
-  return null;
 }

@@ -29,7 +29,7 @@ Scaricare la repository e spostarsi nella cartella del progetto
 
 ```
 git clone git@github.com:bluecube-it/gsped-wizard.git
-cd gsped-widard
+cd gsped-wizard
 ```
 
 Installare tutte le dipendenze del progetto
@@ -45,5 +45,4 @@ ng serve
 ```
 
 Puntare il browser sulla URL indicata nell'output del precedente comando - tipicamente http://localhost:4200/
-e aggiungere il parametro "origin" nella query string ("moldavia" o "indiaoneway")
-
+e aggiungere il parametro "origin" nella query string ("moldavia" o "indiaoneway", per i test usare **testmoldavia** e **testorticolario**).

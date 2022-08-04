@@ -370,6 +370,7 @@ export class ShipmentComponent implements OnInit {
       outwardPayloadShipment[this.store.productDestination] =
         this.store.selectedProducts;
     }
+    
     this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
       if (!this.store.hasReturnShipment) {

@@ -1,6 +1,10 @@
 <app-navbar></app-navbar>
 <app-widzard>
-  {{ displayPayment.response.message }}
+  <p *ngIf="displayPayment; else endWithoutPayment">
+    {{ displayPayment.response.message }}
+  </p>
+
+  <ng-template #endWithoutPayment> <p>Fine</p> </ng-template>
 
   <div *ngIf="pdfOutward">
     <a
@@ -23,5 +27,4 @@
       scarica etichetta di ritorno
     </a>
   </div>
-
 </app-widzard>

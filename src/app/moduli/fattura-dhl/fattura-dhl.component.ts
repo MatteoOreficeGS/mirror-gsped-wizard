@@ -152,12 +152,10 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   handleGooglePlace(address: HTMLInputElement) {
-    console.log(address.value);
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
     this.status.googlePlace(address.value, "it").subscribe((response: any) => {
       this.predictionsAddress = response;
-      console.log(this.predictionsAddress);
     });
   }
   setAddress(prediction: any) {
@@ -169,7 +167,6 @@ export class FatturaDHLComponent implements OnInit {
     );
     this.formInvoice.controls["cap"].setValue(prediction.postalCode);
     this.formInvoice.controls["citta"].setValue(prediction.city);
-    // this.formInvoice.controls["sender_prov"].setValue(prediction.district);
     this.formInvoice.controls["nazione"].setValue(prediction.country);
     this.showPredictions = false;
   }

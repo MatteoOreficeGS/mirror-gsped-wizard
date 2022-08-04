@@ -26,7 +26,16 @@ export class StoreService {
     // sender_phone: "3343343344",
     // sender_addr: "Via Dante 23",
   };
-  recipient: any = {};
+  recipient: any = {
+    // rcpt_name: "Mario Rossi Verdi",
+    // rcpt_city: "Verona",
+    // rcpt_cap: "37138",
+    // rcpt_prov: "VR",
+    // rcpt_country_code: "IT",
+    // rcpt_email: "mail2@gmail.com",
+    // rcpt_phone: "3343343346",
+    // rcpt_addr: "Via Pittagora 1",
+  };
   outwardShipment: any = {};
   returnShipment: any = {};
   payloadShipment: any = {};

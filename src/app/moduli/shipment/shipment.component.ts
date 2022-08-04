@@ -143,6 +143,7 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
+    console.log(this.formShipment.value);
     // setting the insurance value at 100 if checkbox is checked at 0 if not
     if (this.formShipment.value.outwardInsurance === true) {
       this.formShipment.controls["outwardInsurance"].setValue(100);

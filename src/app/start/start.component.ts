@@ -11,7 +11,7 @@ export class StartComponent {
     //   window.location.href = "http://localhost:4200/?origin=moldavia";
     // }
     this.route.queryParams.subscribe((params: any) => {
-      if (!params.origin) {
+      if (!(params.origin || params.uuid)) {
         this.router.navigate(["/error-page"], {
           queryParams: { lang: params.lang ? params.lang : "it_IT" },
         });

@@ -9,15 +9,16 @@ import { StoreService } from "src/app/store.service";
   templateUrl: "./navbar.component.html",
 })
 export class NavbarComponent {
-  constructor(
-    public store: StoreService,
-    private router: Router,
-  ) {
+  constructor(public store: StoreService, private router: Router) {
     this.response = this.store.configuration;
+    this.customerLogo = this.store.configuration.hasOwnProperty("customerLogo")
+      ? this.store.configuration.customerLogo
+      : null;
     this.theme = "#" + this.response.mainColor;
-    this.lenguages = this.response.i18n.length > 1 ? this.response.i18n : [] ;
+    this.lenguages = this.response.i18n.length > 1 ? this.response.i18n : [];
   }
 
+  customerLogo: string;
   response: any = {};
   currentUrl = "";
   theme = "";

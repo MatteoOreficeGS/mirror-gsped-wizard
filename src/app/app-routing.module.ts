@@ -27,7 +27,7 @@ const routes: Routes = [
     path: "error-payment",
     children: [{ path: "monetaweb", component: ErrorPaymentComponent }],
   },
-  { path: "", component: StartComponent },
+  { path: "", component: StartComponent, children: [{ path: "monetaweb", component: StartComponent }], },
   { path: "**", component: ErrorPageComponent },
 ];
 

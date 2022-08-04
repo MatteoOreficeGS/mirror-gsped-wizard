@@ -29,7 +29,7 @@ Scaricare la repository e spostarsi nella cartella del progetto
 
 ```
 git clone git@github.com:bluecube-it/gsped-wizard.git
-cd gsped-widard
+cd gsped-wizard
 ```
 
 Installare tutte le dipendenze del progetto

@@ -51,12 +51,10 @@ export class RecipientComponent {
         this.currentModule.data.rcpt_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
-      rcpt_email: [
-        this.currentModule.data.rcpt_email,
-        [ValidateEmail],
-      ],
+      rcpt_email: [this.currentModule.data.rcpt_email, [ValidateEmail]],
       rcpt_phone: [this.currentModule.data.rcpt_phone, ValidatePhone],
       rcpt_addr: [this.currentModule.data.rcpt_addr, Validators.required],
+      rcpt_addr_secondary: "",
     });
 
     Object.keys(store.recipient).forEach((element: any) => {
@@ -105,6 +103,12 @@ export class RecipientComponent {
       {
         value: "rcpt_addr",
         label: this.labels.rcpt_addr || "rcpt_addr",
+        type: "text",
+        required: true,
+      },
+      {
+        value: "rcpt_addr_secondary",
+        label: this.labels.rcpt_addr_secondary || "rcpt_addr_secondary",
         type: "text",
         required: true,
       },
@@ -192,6 +196,16 @@ export class RecipientComponent {
       this.formRecipient.value.rcpt_name +=
         " " + this.formRecipient.value.rcpt_surname;
       delete this.formRecipient.value.rcpt_surname;
+
+      this.formRecipient.controls["rcpt_addr"].setValue(
+        (
+          this.formRecipient.value.rcpt_addr +
+          " " +
+          this.formRecipient.value.rcpt_addr_secondary
+        ).slice(0, 50)
+      );
+      delete this.formRecipient.value.rcpt_addr_secondary;
+
       this.store.recipient = this.formRecipient.value;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

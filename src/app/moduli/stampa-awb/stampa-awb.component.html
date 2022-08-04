@@ -1,10 +1,7 @@
 <app-navbar></app-navbar>
 <app-widzard>
-  Il pagamento è andato a buon fine
+  {{ displayPayment.response.message }}
 
-  {{ displayPayment }}
-
-  <!-- <button (click)="awbPrinting()">stampa etichetta</button> -->
   <div *ngIf="pdfOutward">
     <a
       class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
@@ -27,5 +24,4 @@
     </a>
   </div>
 
-  <!-- {{result | json}} -->
 </app-widzard>

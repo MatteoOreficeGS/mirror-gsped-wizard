@@ -4,8 +4,9 @@
     [ngStyle]="{ 'background-color': '#FFCC35' }"
   >
     <div class="flex flex-row justify-between items-center md:px-6">
-      <div>
+      <div class="flex flex-row space-x-2">
         <img [src]="response.banner" class="mr-3 h-8 sm:h-9" alt="banner" />
+        <img *ngIf="customerLogo" [src]="customerLogo" class="mr-3 h-8 sm:h-9" alt="customerLogo" />
       </div>
 
       <div class="flex md:w-auto">

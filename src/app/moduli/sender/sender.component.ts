@@ -32,11 +32,11 @@ export class SenderComponent {
     this.readonly = !this.currentModule.editable;
     this.formSender = fb.group({
       sender_name: [
-        this.currentModule.data.sender_name,
+        this.currentModule.data.sender_name.split(" ")[0],
         Validators.required,
       ],
       sender_surname: [
-        this.currentModule.data.sender_surname,
+        this.currentModule.data.sender_name.split(" ").slice(1).join(" "),
         Validators.required,
       ],
       sender_city: [this.currentModule.data.sender_city, Validators.required],

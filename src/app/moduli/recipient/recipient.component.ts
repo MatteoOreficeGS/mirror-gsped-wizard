@@ -34,11 +34,11 @@ export class RecipientComponent {
 
     this.formRecipient = fb.group({
       rcpt_name: [
-        this.currentModule.data.rcpt_name.split(" ")[0],
+        this.currentModule.data.rcpt_name,
         Validators.required,
       ],
       rcpt_surname: [
-        this.currentModule.data.rcpt_name.split(" ").slice(1).join(" "),
+        this.currentModule.data.rcpt_surname,
         Validators.required,
       ],
       rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],

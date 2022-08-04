@@ -280,7 +280,7 @@ export class ShipmentComponent implements OnInit {
     body = body.map((element: any) => {
       return element.join("=");
     });
-    body = body.join("&");
+    body = body.join("&").replaceAll('\\', '');
     return this.http.get(
       environment.API_URL + decoded.instance + "/RateComparativa?" + body,
       { headers: headers }

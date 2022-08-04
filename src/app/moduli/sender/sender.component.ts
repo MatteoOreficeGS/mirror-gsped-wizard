@@ -155,7 +155,6 @@ export class SenderComponent {
     type: string,
     lang: string = this.langParam
   ) {
-    console.log(this.showPredictions, lang, address.value);
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = type);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {

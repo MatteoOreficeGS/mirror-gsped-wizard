@@ -10,7 +10,7 @@
     *ngIf="isLoading"
     class="h-full justify-center items-center mx-auto justify-items-center flex"
   >
-    <mat-icon class="animate-spin">refresh</mat-icon>
+  <mat-icon class="animate-spin text-red-700">sync</mat-icon>
   </div>
   <form [formGroup]="formShipment">
     <ng-container *ngIf="showInput; else serviceChoice">

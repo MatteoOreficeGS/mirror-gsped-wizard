@@ -59,7 +59,7 @@ export class SenderComponent {
     Object.keys(store.sender).forEach((element: any) => {
       if (store.sender.hasOwnProperty(element)) {
         if (store.sender[element] !== this.formSender.value[element]) {
-            this.formSender.controls[element].setValue(store.sender[element]);
+          this.formSender.controls[element].setValue(store.sender[element]);
         }
       }
     });
@@ -72,42 +72,47 @@ export class SenderComponent {
         label: this.labels.nome,
         type: "text",
         required: true,
+        columnspan: 2
       },
       {
         value: "sender_surname",
         label: this.labels.cognome,
         type: "text",
         required: true,
+        columnspan: 2
       },
       {
         value: "sender_contact",
         label: this.labels.sender_contact,
         type: "text",
         required: false,
+        columnspan: 4
       },
       {
         value: "sender_addr",
         label: this.labels.sender_addr,
         type: "text",
         required: true,
+        columnspan: 2
       },
       {
-        value: "sender_addr_secondary",
-        label: this.labels.sender_addr_secondary || "indirizzo secondario",
-        type: "text",
+        value: "sender_addr_secondary",type: "text",
         required: false,
+        columnspan: 2
       },
       {
         value: "sender_city",
         label: this.labels.sender_city,
         type: "text",
         required: true,
+        columnspan: 1
       },
       {
         value: "sender_cap",
         label: this.labels.sender_cap,
         type: "number",
         required: true,
+        columnspan: 1
       },
       {
         value: "sender_prov",
@@ -115,6 +120,7 @@ export class SenderComponent {
         type: "text",
         required: true,
         maxLenght: 2,
+        columnspan: 1
       },
       {
         value: "sender_country_code",
@@ -122,18 +128,21 @@ export class SenderComponent {
         type: "text",
         required: true,
         maxLenght: 2,
+        columnspan: 1
       },
       {
         value: "sender_email",
         label: this.labels.sender_email,
         type: "email",
         required: true,
+        columnspan: 2
       },
       {
         value: "sender_phone",
         label: this.labels.sender_phone,
         type: "number",
         required: true,
+        columnspan: 2
       },
     ];
 

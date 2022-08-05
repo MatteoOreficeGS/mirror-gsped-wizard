@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateInsurance, ValidatePackage } from "../libs/validation";
 
 @Component({
   selector: "app-shipment",
@@ -29,11 +30,13 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      outwardInsurance: 0,
+      outwardInsurance: ["0", [ValidateInsurance]],
       codiceSconto: "",
-      returnInsurance: 0,
-      termsconditions: "",
+      returnInsurance: ["0", [ValidateInsurance]],
+      termsconditions: ["", [Validators.required]],
     });
+    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
+    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
   }
 
   ngOnInit(): void {
@@ -50,10 +53,28 @@ export class ShipmentComponent implements OnInit {
     this.couriers = this.currentModule.selectCourier.couriers.list;
     this.label = this.currentModule.packagesDetails.fieldsLabel;
     this.fieldsLabel = [
-      { label: "altezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "lunghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "larghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "peso", placeholder: "kg", step: 0.1, min: 0.5, max: 10 },
+      {
+        label: "altezza",
+        value: "altezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      {
+        label: "lunghezza",
+        value: "lunghezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      {
+        label: "larghezza",
+        value: "larghezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      { label: "peso", value: "peso", placeholder: "kg", min: 0.5, max: 10 },
     ];
 
     this.bodyRateComparativa = {
@@ -68,10 +89,10 @@ export class ShipmentComponent implements OnInit {
 
   newPackage(): FormGroup {
     return this.fb.group({
-      lunghezza: ["", Validators.required],
-      larghezza: ["", Validators.required],
-      altezza: ["", Validators.required],
-      peso: ["", Validators.required],
+      lunghezza: ["", ValidatePackage],
+      larghezza: ["", ValidatePackage],
+      altezza: ["", ValidatePackage],
+      peso: ["", ValidatePackage],
     });
   }
 
@@ -122,6 +143,8 @@ export class ShipmentComponent implements OnInit {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
+  termsConditions: any;
+  termsPrivacy: any;
 
   setDataColli() {
     let dimensions = this.formShipment.value.dimensions.map(

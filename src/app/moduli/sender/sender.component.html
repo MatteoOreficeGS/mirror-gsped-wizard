@@ -1,9 +1,18 @@
 <app-navbar></app-navbar>
 <app-widzard>
   <form [formGroup]="formSender" (submit)="nextStep()">
-    <div class="grid lg:grid-cols-2 gap-x-4 relative">
+    <div class="grid lg:grid-cols-4 gap-x-4 relative">
       <ng-container *ngFor="let field of fields">
-        <div class="relative w-full mb-6 group mx-auto">
+        <div
+          class="relative w-full mb-6 group mx-auto"
+          [ngClass]="
+            field.columnspan === 2
+              ? 'col-span-2'
+              : field.columnspan === 4
+              ? 'col-span-4'
+              : ''
+          "
+        >
           <input
             [readonly]="readonly"
             [maxlength]="field.maxLenght"

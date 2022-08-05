@@ -46,54 +46,17 @@
                 *ngFor="let field of fieldsLabel"
                 class="justify-items-center w-full mb-1"
               >
+                <!-- {{ dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] | json }} -->
                 <div class="grid grid-cols-2 md:grid-cols-1">
                   <label>{{ translations[field.label] }}*</label>
                   <input
-                    formControlName="{{ field.label }}"
-                    step="{{ field.step }}"
+                    formControlName="{{ field.value }}"
+                    [ngClass]="dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] && dimensions.controls[i].get(field.value)?.touched ? 
+                    'border-red-500' : ''"
                     type="text"
-                    [min]="field.min"
-                    [max]="field.max"
-                    class="w-28 lg:w-32 shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    class="w-28 lg:w-32 shadow-sm sm:text-sm rounded-md"
                     placeholder="{{ field.placeholder }}"
                   />
-                  <div
-                    *ngIf="
-                      formShipment.get(field.label)?.invalid &&
-                      formShipment.get(field.label)?.errors &&
-                      (formShipment.get(field.label)?.dirty ||
-                        formShipment.get(field.label)?.touched)
-                    "
-                  >
-                    <small
-                      class="text-danger"
-                      *ngIf="
-                        formShipment.get(field.label)?.hasError('required')
-                      "
-                    >
-                      This field is required.
-                    </small>
-                    <small
-                      class="text-danger"
-                      *ngIf="
-                        formShipment.get(field.label)?.hasError('minlength')
-                      "
-                    >
-                      The minimum length for this field is
-                      {{formShipment.get(field.label)?.errors?.["minlength"].requiredLength}}
-                      characters.
-                    </small>
-                    <small
-                      class="text-danger"
-                      *ngIf="
-                        formShipment.get(field.label)?.hasError('maxlength')
-                      "
-                    >
-                      The maximum length for this field is
-                      {{formShipment.get(field.label)?.errors?.["maxlength"].requiredLength}}
-                      characters.
-                    </small>
-                  </div>
                 </div>
               </div>
             </div>
@@ -117,9 +80,16 @@
             [formControlName]="'outwardInsurance'"
             id="outwardInsurance"
             name="outwardInsurance"
-            type="number"
-            [min]="0"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+            type="text"
+            [ngClass]="
+              formShipment.get('outwardInsurance')?.invalid &&
+              formShipment.get('outwardInsurance')?.errors &&
+              (formShipment.get('outwardInsurance')?.dirty ||
+                formShipment.get('outwardInsurance')?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm rounded-md"
           />
           <input
             *ngIf="isDocumentShipment"
@@ -149,11 +119,18 @@
           <input
             *ngIf="!isDocumentShipment"
             [formControlName]="'returnInsurance'"
+            [ngClass]="
+              formShipment.get('returnInsurance')?.invalid &&
+              formShipment.get('returnInsurance')?.errors &&
+              (formShipment.get('returnInsurance')?.dirty ||
+                formShipment.get('returnInsurance')?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
             id="returnInsurance"
             name="returnInsurance"
-            type="number"
-            [min]="0"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+            type="text"
+            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm rounded-md"
           />
           <input
             *ngIf="isDocumentShipment"
@@ -195,7 +172,16 @@
           for="termsconditions"
           class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
         >
-          {{ translations.lbl_termsconditions }}
+          {{ termsConditions.textBefore }}
+          <a [href]="termsConditions.link" target="_blank" class="underline">{{
+            termsConditions.text
+          }}</a>
+          {{ termsConditions.textAfter }}
+          {{ termsPrivacy.textBefore }}
+          <a [href]="termsPrivacy.link" target="_blank" class="underline">{{
+            termsPrivacy.text
+          }}</a>
+          {{ termsPrivacy.textAfter }}
         </label>
         <div class="mt-1 sm:mt-0 sm:col-span-2">
           <input
@@ -203,7 +189,6 @@
             id="termsconditions"
             name="termsconditions"
             type="checkbox"
-            checked
             class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
           />
         </div>

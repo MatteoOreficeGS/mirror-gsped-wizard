@@ -38,10 +38,8 @@ export class AppComponent {
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
               this.getConfiguration(res.token, jwt_decode(res.token)),
-              this.getTranslations(
+              this.status.getTranslations(
                 params.lang ? params.lang : "it_IT",
-                res.token,
-                jwt_decode(res.token)
               )
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
@@ -103,10 +101,8 @@ export class AppComponent {
                     resToken.token,
                     jwt_decode(resToken.token)
                   ),
-                  this.getTranslations(
+                  this.status.getTranslations(
                     params.lang ? params.lang : "it_IT",
-                    resToken.token,
-                    jwt_decode(resToken.token)
                   )
                 ).subscribe((res: any) => {
                   console.log("all response", res);
@@ -170,25 +166,6 @@ export class AppComponent {
         "/ResourceConfiguration?resource=" +
         resource,
       { headers: { "X-API-KEY": token } }
-    );
-  }
-
-  getTranslations(
-    lang: string,
-    token: any,
-    decoded: any,
-    resource = environment.FLOW
-  ): Observable<any> {
-    const headers = { "x-api-key": token };
-    return this.http.get(
-      environment.API_URL +
-        decoded.instance +
-        "/Translations?" +
-        "lang=" +
-        lang +
-        "&resource=" +
-        resource,
-      { headers: headers }
     );
   }
 }

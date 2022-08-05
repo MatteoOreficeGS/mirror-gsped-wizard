@@ -3,6 +3,8 @@ import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StoreService } from "./store.service";
+import { environment } from "./enviroment";
+import jwtDecode from "jwt-decode";
 
 @Injectable({
   providedIn: "root",
@@ -14,6 +16,21 @@ export class StatusService {
     private route: ActivatedRoute,
     private store: StoreService
   ) {}
+
+  getTranslations(lang: string, resource = environment.FLOW): Observable<any> {
+    const headers = { "x-api-key": this.store.token };
+    const decoded: any = jwtDecode(this.store.token);
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/Translations?" +
+        "lang=" +
+        lang +
+        "&resource=" +
+        resource,
+      { headers: headers }
+    );
+  }
 
   pickupAvailability(corriere: any): Observable<any> {
     const decoded: any = this.store.decodedToken;

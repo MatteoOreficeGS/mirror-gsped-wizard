@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { environment } from "src/app/enviroment";
+import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
 @Component({
@@ -9,7 +10,12 @@ import { StoreService } from "src/app/store.service";
   templateUrl: "./navbar.component.html",
 })
 export class NavbarComponent {
-  constructor(public store: StoreService, private router: Router) {
+  constructor(
+    public store: StoreService,
+    private router: Router,
+    private http: HttpClient,
+    private status: StatusService
+  ) {
     this.response = this.store.configuration;
     this.customerLogo = this.store.configuration.hasOwnProperty("customerLogo")
       ? this.store.configuration.customerLogo
@@ -25,14 +31,17 @@ export class NavbarComponent {
   lenguages: Array<string> = [];
 
   handleSetTranslations(lang: string) {
-    this.currentUrl = this.router.url.slice(1).split("?")[0];
-    window.document.location.href =
-      environment.CURRENT_URL +
-      "?origin=" +
-      this.store.origin +
-      "&lang=" +
-      lang;
-    // TODO da vederre se è possibile cambiare le traduzioni senza refreshare la pagina
-    // qui devo chiamare /Translations e cambaire la store.translation
+    this.status.getTranslations(lang).subscribe((res: any) => {
+      this.store.translations = res;
+      this.router.navigateByUrl("/", { skipLocationChange: true }).then(() => {
+        this.router.navigate(
+          [this.store.modules[this.store.currentStep - 1].module],
+          {
+            queryParams: { lang: lang },
+            queryParamsHandling: "merge",
+          }
+        );
+      });
+    });
   }
 }

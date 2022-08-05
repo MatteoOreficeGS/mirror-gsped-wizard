@@ -391,8 +391,9 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleShipments() {
-    delete this.store.invoice.type;
-    this.store.payloadShipment.fattura_dhl = this.store.invoice;
+    this.store.invoice &&
+      (delete this.store.invoice.type,
+      (this.store.payloadShipment.fattura_dhl = this.store.invoice));
     this.store.payloadShipment.documenti = this.store.isDocumentShipment
       ? 1
       : 0;

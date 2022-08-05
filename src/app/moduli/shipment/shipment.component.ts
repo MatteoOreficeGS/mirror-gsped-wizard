@@ -124,10 +124,21 @@ export class ShipmentComponent implements OnInit {
   canContinue: boolean = false;
 
   setDataColli() {
-    const pesoTot = this.formShipment.value.dimensions
+    let dimensions = this.formShipment.value.dimensions.map(
+      (dimension: any) => {
+        return {
+          lunghezza: parseFloat(dimension.lunghezza.replaceAll(",", ".")),
+          larghezza: parseFloat(dimension.larghezza.replaceAll(",", ".")),
+          altezza: parseFloat(dimension.altezza.replaceAll(",", ".")),
+          peso: parseFloat(dimension.peso.replaceAll(",", ".")),
+        };
+      }
+    );
+
+    const pesoTot = dimensions
       .map((value: { peso: any }) => value.peso)
       .reduce((a: any, b: any) => a + b, 0);
-    const volumeTot = this.formShipment.value.dimensions
+    const volumeTot = dimensions
       .map(
         (value: { altezza: any; larghezza: any; lunghezza: any }) =>
           (value.lunghezza * value.larghezza * value.altezza) / 1000000
@@ -135,8 +146,8 @@ export class ShipmentComponent implements OnInit {
       .reduce((a: any, b: any) => a + b, 0);
 
     this.datacolli = {
-      colli: this.formShipment.value.dimensions.length,
-      daticolli: this.formShipment.value.dimensions,
+      colli: dimensions.length,
+      daticolli: dimensions,
       peso: pesoTot,
       volume: volumeTot,
     };
@@ -368,14 +379,16 @@ export class ShipmentComponent implements OnInit {
 
     const newSender = {
       sender_name:
-        this.store.sender.sender_name + 
-        (this.store.sender.sender_surname == null ? "" : " " + this.store.sender.sender_surname),
+        this.store.sender.sender_name +
+        (this.store.sender.sender_surname == null
+          ? ""
+          : " " + this.store.sender.sender_surname),
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
       sender_prov: this.store.sender.sender_prov,
       sender_country_code: this.store.sender.sender_country_code,
       sender_email: this.store.sender.sender_email,
-      sender_phone: this.store.sender.phone,
+      sender_phone: this.store.sender.sender_phone,
       sender_addr: this.store.sender.sender_addr,
       sender_contact: this.store.sender.sender_contact,
     };
@@ -383,7 +396,9 @@ export class ShipmentComponent implements OnInit {
     const newRecipient = {
       rcpt_name:
         this.store.recipient.rcpt_name +
-        (this.store.recipient.rcpt_surname == null ? "" : " " + this.store.recipient.rcpt_surname),
+        (this.store.recipient.rcpt_surname == null
+          ? ""
+          : " " + this.store.recipient.rcpt_surname),
       rcpt_city: this.store.recipient.rcpt_city,
       rcpt_cap: this.store.recipient.rcpt_cap,
       rcpt_prov: this.store.recipient.rcpt_prov,
@@ -429,8 +444,8 @@ export class ShipmentComponent implements OnInit {
       returnPayloadShipment = {
         ...returnPayloadShipment,
         ...this.status.invertAddressData({
-          ...this.store.sender,
-          ...this.store.recipient,
+          ...newSender,
+          ...newRecipient,
         }),
       };
       this.status.handleShipment(returnPayloadShipment).subscribe((res) => {

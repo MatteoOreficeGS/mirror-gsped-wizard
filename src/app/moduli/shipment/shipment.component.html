@@ -75,7 +75,6 @@
           {{ translations[currentModule.insurance.label] }} €
         </label>
         <div class="mt-1 sm:mt-0 sm:col-span-2">
-          {{ formShipment.get("outwardInsurance")?.errors | json }}
           <input
             *ngIf="!isDocumentShipment"
             [formControlName]="'outwardInsurance'"

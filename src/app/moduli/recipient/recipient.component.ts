@@ -33,14 +33,8 @@ export class RecipientComponent {
     this.readonly = !this.currentModule.editable;
 
     this.formRecipient = fb.group({
-      rcpt_name: [
-        this.currentModule.data.rcpt_name,
-        Validators.required,
-      ],
-      rcpt_surname: [
-        this.currentModule.data.rcpt_surname,
-        Validators.required,
-      ],
+      rcpt_name: [this.currentModule.data.rcpt_name, Validators.required],
+      rcpt_surname: [this.currentModule.data.rcpt_surname, Validators.required],
       rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
       rcpt_contact: [this.currentModule.data.rcpt_contact],
       rcpt_cap: [this.currentModule.data.rcpt_cap, Validators.required],
@@ -88,42 +82,49 @@ export class RecipientComponent {
         label: this.labels.nome,
         type: "text",
         required: true,
+        columnspan: 2,
       },
       {
         value: "rcpt_surname",
         label: this.labels.cognome,
         type: "text",
         required: true,
+        columnspan: 2,
       },
       {
         value: "rcpt_contact",
         label: this.labels.rcpt_contact,
         type: "text",
         required: false,
+        columnspan: 4,
       },
       {
         value: "rcpt_addr",
         label: this.labels.rcpt_addr || "rcpt_addr",
         type: "text",
         required: true,
+        columnspan: 2,
       },
       {
         value: "rcpt_addr_secondary",
-        label: this.labels.rcpt_addr_secondary || "rcpt_addr_secondary",
+        label: this.labels.rcpt_addr_secondary || "",
         type: "text",
-        required: true,
+        required: false,
+        columnspan: 2,
       },
       {
         value: "rcpt_city",
         label: this.labels.rcpt_city,
         type: "text",
         required: true,
+        columnspan: 1,
       },
       {
         value: "rcpt_cap",
         label: this.labels.rcpt_cap,
         type: "number",
         required: true,
+        columnspan: 1,
       },
       {
         value: "rcpt_prov",
@@ -131,6 +132,7 @@ export class RecipientComponent {
         type: "text",
         required: true,
         maxlength: 2,
+        columnspan: 1,
       },
       {
         value: "rcpt_country_code",
@@ -138,18 +140,21 @@ export class RecipientComponent {
         type: "text",
         required: true,
         maxlength: 2,
+        columnspan: 1,
       },
       {
         value: "rcpt_email",
         label: this.labels.rcpt_email,
         type: "email",
         required: true,
+        columnspan: 2,
       },
       {
         value: "rcpt_phone",
         label: this.labels.rcpt_phone,
         type: "number",
         required: true,
+        columnspan: 2,
       },
     ];
 

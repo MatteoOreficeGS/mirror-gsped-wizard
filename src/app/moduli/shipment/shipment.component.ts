@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
+import { ValidateInsurance, ValidatePackage } from "../libs/validation";
 
 @Component({
   selector: "app-shipment",
@@ -29,11 +30,13 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      outwardInsurance: 0,
+      outwardInsurance: ["0", [ValidateInsurance]],
       codiceSconto: "",
-      returnInsurance: 0,
-      termsconditions: "",
+      returnInsurance: ["0", [ValidateInsurance]],
+      termsconditions: ["", [Validators.required]],
     });
+    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
+    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
   }
 
   ngOnInit(): void {
@@ -50,10 +53,28 @@ export class ShipmentComponent implements OnInit {
     this.couriers = this.currentModule.selectCourier.couriers.list;
     this.label = this.currentModule.packagesDetails.fieldsLabel;
     this.fieldsLabel = [
-      { label: "altezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "lunghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "larghezza", placeholder: "cm", step: 1, min: 1, max: 100 },
-      { label: "peso", placeholder: "kg", step: 0.1, min: 0.5, max: 10 },
+      {
+        label: "altezza",
+        value: "altezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      {
+        label: "lunghezza",
+        value: "lunghezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      {
+        label: "larghezza",
+        value: "larghezza",
+        placeholder: "cm",
+        min: 1,
+        max: 100,
+      },
+      { label: "peso", value: "peso", placeholder: "kg", min: 0.5, max: 10 },
     ];
 
     this.bodyRateComparativa = {
@@ -68,10 +89,10 @@ export class ShipmentComponent implements OnInit {
 
   newPackage(): FormGroup {
     return this.fb.group({
-      lunghezza: ["", Validators.required],
-      larghezza: ["", Validators.required],
-      altezza: ["", Validators.required],
-      peso: ["", Validators.required],
+      lunghezza: ["", ValidatePackage],
+      larghezza: ["", ValidatePackage],
+      altezza: ["", ValidatePackage],
+      peso: ["", ValidatePackage],
     });
   }
 
@@ -122,12 +143,25 @@ export class ShipmentComponent implements OnInit {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
+  termsConditions: any;
+  termsPrivacy: any;
 
   setDataColli() {
-    const pesoTot = this.formShipment.value.dimensions
+    let dimensions = this.formShipment.value.dimensions.map(
+      (dimension: any) => {
+        return {
+          lunghezza: parseFloat(dimension.lunghezza.replaceAll(",", ".")),
+          larghezza: parseFloat(dimension.larghezza.replaceAll(",", ".")),
+          altezza: parseFloat(dimension.altezza.replaceAll(",", ".")),
+          peso: parseFloat(dimension.peso.replaceAll(",", ".")),
+        };
+      }
+    );
+
+    const pesoTot = dimensions
       .map((value: { peso: any }) => value.peso)
       .reduce((a: any, b: any) => a + b, 0);
-    const volumeTot = this.formShipment.value.dimensions
+    const volumeTot = dimensions
       .map(
         (value: { altezza: any; larghezza: any; lunghezza: any }) =>
           (value.lunghezza * value.larghezza * value.altezza) / 1000000
@@ -135,8 +169,8 @@ export class ShipmentComponent implements OnInit {
       .reduce((a: any, b: any) => a + b, 0);
 
     this.datacolli = {
-      colli: this.formShipment.value.dimensions.length,
-      daticolli: this.formShipment.value.dimensions,
+      colli: dimensions.length,
+      daticolli: dimensions,
       peso: pesoTot,
       volume: volumeTot,
     };
@@ -368,14 +402,16 @@ export class ShipmentComponent implements OnInit {
 
     const newSender = {
       sender_name:
-        this.store.sender.sender_name + 
-        (this.store.sender.sender_surname == null ? "" : " " + this.store.sender.sender_surname),
+        this.store.sender.sender_name +
+        (this.store.sender.sender_surname == null
+          ? ""
+          : " " + this.store.sender.sender_surname),
       sender_city: this.store.sender.sender_city,
       sender_cap: this.store.sender.sender_cap,
       sender_prov: this.store.sender.sender_prov,
       sender_country_code: this.store.sender.sender_country_code,
       sender_email: this.store.sender.sender_email,
-      sender_phone: this.store.sender.phone,
+      sender_phone: this.store.sender.sender_phone,
       sender_addr: this.store.sender.sender_addr,
       sender_contact: this.store.sender.sender_contact,
     };
@@ -383,7 +419,9 @@ export class ShipmentComponent implements OnInit {
     const newRecipient = {
       rcpt_name:
         this.store.recipient.rcpt_name +
-        (this.store.recipient.rcpt_surname == null ? "" : " " + this.store.recipient.rcpt_surname),
+        (this.store.recipient.rcpt_surname == null
+          ? ""
+          : " " + this.store.recipient.rcpt_surname),
       rcpt_city: this.store.recipient.rcpt_city,
       rcpt_cap: this.store.recipient.rcpt_cap,
       rcpt_prov: this.store.recipient.rcpt_prov,
@@ -429,8 +467,8 @@ export class ShipmentComponent implements OnInit {
       returnPayloadShipment = {
         ...returnPayloadShipment,
         ...this.status.invertAddressData({
-          ...this.store.sender,
-          ...this.store.recipient,
+          ...newSender,
+          ...newRecipient,
         }),
       };
       this.status.handleShipment(returnPayloadShipment).subscribe((res) => {

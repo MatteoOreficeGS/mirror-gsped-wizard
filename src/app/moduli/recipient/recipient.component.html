@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <app-widzard>
   <form [formGroup]="formRecipient" (submit)="nextStep()">
-    <div class="grid lg:grid-cols-4 gap-x-4 relative">
+    <div class="lg:grid lg:grid-cols-4 gap-x-4 relative">
       <ng-container *ngFor="let field of fields">
         <div
           class="relative w-full mb-6 group mx-auto"

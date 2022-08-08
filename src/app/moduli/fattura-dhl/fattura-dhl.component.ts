@@ -1,14 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
+import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -20,8 +15,8 @@ export class FatturaDHLComponent implements OnInit {
     private router: Router,
     private store: StoreService,
     private status: StatusService
-  ) { 
-    this.selected = !this.store.invoice ? "privato" : this.store.invoice.type;
+  ) {
+    this.selected = this.store.invoiceType ? this.store.invoiceType : "privato";
     this.setInvoiceModules(this.selected);
   }
 
@@ -47,40 +42,33 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
-  isSenderPrefilled() {
-    let result = false;
-    this.store.configuration.modules.forEach((element: { moduleName: string; moduleConfig: { data: { sender_name: string; sender_addr: string; }; }; }) => {
-      if (element.moduleName == 'sender') {
-        if (element.moduleConfig.data.sender_name && element.moduleConfig.data.sender_addr) {
-          result = true;
-        }
-      }
-    });
-    return result;
-  }
-
-
   setInvoiceModules(type: string) {
     this.selected = type;
-    
+
     switch (type) {
       case "privato":
         if (!this.store.invoice) {
           this.formInvoice = this.fb.group({
-            codice_fiscale: ["", [Validators.required, Validators.maxLength(16)]],
+            codice_fiscale: [
+              "",
+              [Validators.required, Validators.maxLength(16)],
+            ],
             pec: ["", [ValidateEmail]],
             sdi: ["0000000"],
-            type: type
+            type: type,
           });
         } else {
           this.formInvoice = this.fb.group({
-            codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
+            codice_fiscale: [
+              this.store.invoice.codice_fiscale,
+              [Validators.required, Validators.maxLength(16)],
+            ],
             pec: [this.store.invoice.pec, [ValidateEmail]],
             sdi: [this.store.invoice.sdi],
-            type: type
+            type: type,
           });
         }
-        
+
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -98,23 +86,28 @@ export class FatturaDHLComponent implements OnInit {
         ];
         break;
       case "piva":
+        if (!this.store.invoice) {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: [
+              "",
+              [Validators.required, Validators.maxLength(11)],
+            ],
+            pec: ["", ValidateEmail],
+            sdi: ["", Validators.required],
+            type: type,
+          });
+        } else {
+          this.formInvoice = this.fb.group({
+            codice_fiscale: [
+              this.store.invoice.codice_fiscale,
+              [Validators.required, Validators.maxLength(16)],
+            ],
+            pec: [this.store.invoice.pec, [ValidateEmail]],
+            sdi: [this.store.invoice.sdi],
+            type: type,
+          });
+        }
 
-      if (!this.store.invoice) {
-        this.formInvoice = this.fb.group({
-          codice_fiscale: ["", [Validators.required, Validators.maxLength(11)]],
-          pec: ["", ValidateEmail],
-          sdi: ["", Validators.required],
-          type: type
-        });
-      } else {
-        this.formInvoice = this.fb.group({
-          codice_fiscale: [this.store.invoice.codice_fiscale, [Validators.required, Validators.maxLength(16)]],
-          pec: [this.store.invoice.pec, [ValidateEmail]],
-          sdi: [this.store.invoice.sdi],
-          type: type
-        });
-      }
-        
         this.invoiceModules = [
           {
             value: "codice_fiscale",
@@ -129,20 +122,64 @@ export class FatturaDHLComponent implements OnInit {
       case "estero":
         this.formInvoice = this.fb.group({
           nome: [
-            this.isSenderPrefilled() ? this.store.recipient.rcpt_name : this.store.sender.sender_name,
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_name
+              : this.store.sender.sender_name,
             Validators.required,
           ],
           cognome: [
-            this.isSenderPrefilled() ? this.store.recipient.rcpt_surname : this.store.sender.sender_surname,
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_surname
+              : this.store.sender.sender_surname,
             Validators.required,
           ],
-          societa: [this.isSenderPrefilled() ? this.store.recipient.rcpt_contact : this.store.sender.sender_contact],
-          indirizzo: ["", Validators.required],
-          nazione: ["", Validators.required],
-          cap: ["", Validators.required],
-          citta: ["", Validators.required],
-          email: [this.isSenderPrefilled() ? this.store.recipient.rcpt_email : this.store.sender.sender_email, ValidateEmail],
-          phone: [this.isSenderPrefilled() ? this.store.recipient.rcpt_phone : this.store.sender.sender_phone, ValidatePhone],
+          societa: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_contact
+              : this.store.sender.sender_contact,
+          ],
+          indirizzo: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_addr
+              : this.store.sender.sender_addr,
+            Validators.required,
+          ],
+          nazione: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_country_code
+              : this.store.sender.sender_country_code,
+            Validators.required,
+          ],
+          cap: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_cap
+              : this.store.sender.sender_cap,
+            Validators.required,
+          ],
+          citta: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_city
+              : this.store.sender.sender_city,
+            Validators.required,
+          ],
+          provincia: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_prov
+              : this.store.sender.sender_prov,
+            Validators.required,
+          ],
+          email: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_email
+              : this.store.sender.sender_email,
+            ValidateEmail,
+          ],
+          phone: [
+            this.store.isSenderPrefilled
+              ? this.store.recipient.rcpt_phone
+              : this.store.sender.sender_phone,
+            ValidatePhone,
+          ],
         });
         this.invoiceModules = [
           { value: "nome", label: "nome", type: "email", required: true },
@@ -157,6 +194,12 @@ export class FatturaDHLComponent implements OnInit {
           { value: "nazione", label: "nazione", type: "text", required: true },
           { value: "cap", label: "CAP", type: "text", required: true },
           { value: "citta", label: "Città", type: "text", required: true },
+          {
+            value: "provincia",
+            label: "Provincia",
+            type: "text",
+            required: true,
+          },
           { value: "email", label: "e-mail", type: "email", required: true },
           { value: "phone", label: "phone", type: "text", required: true },
         ];
@@ -185,7 +228,7 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   nextStep() {
-    if (this.formInvoice.valid && (this.formInvoice.controls["nome"] != null) ) {
+    if (this.formInvoice.valid && this.formInvoice.controls["nome"] != null) {
       this.formInvoice.controls["nome"].setValue(
         this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
       );
@@ -193,12 +236,12 @@ export class FatturaDHLComponent implements OnInit {
     }
 
     this.store.invoice = this.formInvoice.value;
+    this.store.invoiceType = this.selected;
     this.router.navigate(
       [this.store.modules[this.store.currentStep++].module],
       {
         queryParamsHandling: "merge",
       }
     );
-
   }
 }

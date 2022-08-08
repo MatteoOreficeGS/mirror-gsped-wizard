@@ -5,7 +5,7 @@ export function ValidateEmail(
 ): { [key: string]: any } | null {
   const validRegex =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-z_A-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
-  if (control.value.length > 0) {
+  if (control.value && control.value.length > 0) {
     if (!control.value.match(validRegex)) {
       return { emailInvalid: true };
     }
@@ -57,10 +57,13 @@ export function ValidateInsurance(
   let value = control.value;
   const min = 0;
   const max = 10000; //TODO chiedere il massimo dell'assicurazione
-  value = value.replaceAll(",", ".");
   if (String(value).length === 0) {
     return null;
   }
+  if (typeof value === "boolean" || typeof value === "number") {
+    return null;
+  }
+  value.replaceAll(",", ".");
   if (String(value).split(".").length - 1 > 1) {
     return { InsuranceInvalid: "Invalid character" };
   }

@@ -25,7 +25,7 @@ export class StoreService {
     // sender_email: "mail@gmail.com",
     // sender_phone: "3343343344",
     // sender_addr: "Via Dante 23",
-    // sender_contact: "Societa' SPA"
+    // sender_contact: "Societa' SPA",
   };
   recipient: any = {
     // ESEMPIO
@@ -37,7 +37,7 @@ export class StoreService {
     // rcpt_email: "mail2@gmail.com",
     // rcpt_phone: "3343343346",
     // rcpt_addr: "Via Pittagora 1",
-    // rcpt_contact: "Societa' SPA"
+    // rcpt_contact: "Societa' SPA",
   };
   outwardShipment: any = {};
   returnShipment: any = {};
@@ -46,10 +46,12 @@ export class StoreService {
   returnInsurance: any;
   totale: any;
   invoice: any;
+  invoiceType: string = "privato";
   chosenCourier: any;
-  isSenderCompiled?: boolean;
   selectedProducts: any = null;
   productDestination: any;
   displayPayment: any;
   isLastModule: boolean = false;
+  isSenderPrefilled?: boolean;
+  beforePaymentSession: any;
 }

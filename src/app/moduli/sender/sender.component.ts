@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateEmail, ValidatePhone } from "src/app/moduli/libs/validation";
+import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 
 @Component({
   selector: "app-sender",

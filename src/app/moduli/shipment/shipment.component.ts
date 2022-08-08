@@ -1,12 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
+import { FormBuilder, FormGroup, FormArray } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateInsurance, ValidatePackage } from "../libs/validation";
+import { ValidateInsurance, ValidatePackage } from "../../libs/validation";
 
 @Component({
   selector: "app-shipment",
@@ -30,23 +30,21 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      outwardInsurance: ["0", [ValidateInsurance]],
+      outwardInsurance: ["", [ValidateInsurance]],
       codiceSconto: "",
-      returnInsurance: ["0", [ValidateInsurance]],
-      termsconditions: ["", [Validators.required]],
+      returnInsurance: ["", [ValidateInsurance]],
     });
-    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
-    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
   }
 
   ngOnInit(): void {
     if (this.currentModule.packagesDetails.enable) {
       this.addPackage();
     } else {
-      this.datacolli = {
+      this.daticolli = {
         colli: 1,
         peso: 0.5,
         volume: 0,
+        dimensions: []
       };
     }
 
@@ -76,11 +74,6 @@ export class ShipmentComponent implements OnInit {
       },
       { label: "peso", value: "peso", placeholder: "kg", min: 0.5, max: 10 },
     ];
-
-    this.bodyRateComparativa = {
-      tipo_listino: "passivo",
-      client_id: this.store.configuration.client_id,
-    };
   }
 
   get dimensions(): FormArray {
@@ -129,13 +122,11 @@ export class ShipmentComponent implements OnInit {
   isLoading: boolean = false;
   showInput: boolean = true;
   bodyRateComparativa: any;
-  datacolli: any = {};
+  daticolli: any = {};
   dataRateComparative: any = {};
   translations: any;
   formShipment: FormGroup;
   isDocumentShipment: boolean;
-  outwardBodyRateComparativa: any;
-  returnBodyRateComparativa: any;
   outwardCostExposure: any = [];
   returnCostExposure: any = [];
   chosenCourier: any = {
@@ -143,10 +134,8 @@ export class ShipmentComponent implements OnInit {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
-  termsConditions: any;
-  termsPrivacy: any;
 
-  setDataColli() {
+  setDatiColli() {
     let dimensions = this.formShipment.value.dimensions.map(
       (dimension: any) => {
         return {
@@ -168,7 +157,7 @@ export class ShipmentComponent implements OnInit {
       )
       .reduce((a: any, b: any) => a + b, 0);
 
-    this.datacolli = {
+    this.daticolli = {
       colli: dimensions.length,
       daticolli: dimensions,
       peso: pesoTot,
@@ -195,35 +184,38 @@ export class ShipmentComponent implements OnInit {
     }
     if (this.formShipment.valid) {
       if (this.currentModule.packagesDetails.enable) {
-        this.setDataColli();
+        this.setDatiColli();
       }
       this.store.codiceSconto = this.formShipment.value.codiceSconto;
       this.isLoading = true;
 
       this.bodyRateComparativa = {
-        ...this.bodyRateComparativa,
-        ...this.datacolli,
+        ...this.daticolli,
+        documenti: this.store.isDocumentShipment ? 1 : 0,
+        codice_sconto: this.formShipment.value.codiceSconto,
+        tipo_listino: "passivo",
+        client_id: this.store.configuration.client_id,
       };
-      this.bodyRateComparativa.documenti = this.store.isDocumentShipment
-        ? 1
-        : 0;
-      this.bodyRateComparativa.codice_sconto =
-        this.formShipment.value.codiceSconto;
 
       this.setShipmentPayload();
       this.showInput = false;
 
       // rateComparative di andata
-      this.outwardBodyRateComparativa = this.bodyRateComparativa;
-      this.outwardBodyRateComparativa.valore = this.store.outwardInsurance
-        ? this.store.outwardInsurance
-        : this.formShipment.value.outwardInsurance;
-      this.outwardBodyRateComparativa = {
-        ...this.outwardBodyRateComparativa,
-        ...this.store.sender,
-        ...this.store.recipient,
+      const outwardBodyRateComparativa = {
+        ...this.bodyRateComparativa,
+        valore: this.store.outwardInsurance
+          ? this.store.outwardInsurance
+          : this.formShipment.value.outwardInsurance,
+        sender_cap: this.store.sender.sender_cap,
+        sender_addr: this.store.sender.sender_addr,
+        sender_city: this.store.sender.sender_city,
+        sender_country_code: this.store.sender.sender_country_code,
+        rcpt_cap: this.store.recipient.rcpt_cap,
+        rcpt_addr: this.store.recipient.rcpt_addr,
+        rcpt_city: this.store.recipient.rcpt_city,
+        rcpt_country_code: this.store.recipient.rcpt_country_code,
       };
-      this.handleRateComparative(this.outwardBodyRateComparativa).subscribe(
+      this.handleRateComparative(outwardBodyRateComparativa).subscribe(
         (res: any) => {
           Object.keys(res.passivo).forEach((courier: any) => {
             Object.keys(res.passivo[courier]).forEach((service: any) => {
@@ -253,18 +245,22 @@ export class ShipmentComponent implements OnInit {
 
       // rateComparative di ritorno
       if (this.store.hasReturnShipment) {
-        this.returnBodyRateComparativa = this.bodyRateComparativa;
-        this.returnBodyRateComparativa.valore = this.store.returnInsurance
-          ? this.store.returnInsurance
-          : this.formShipment.value.returnInsurance;
-        this.returnBodyRateComparativa = {
-          ...this.returnBodyRateComparativa,
-          ...this.status.invertAddressData({
-            ...this.store.sender,
-            ...this.store.recipient,
-          }),
+        const returnBodyRateComparativa = {
+          ...this.bodyRateComparativa,
+          valore: this.store.returnInsurance
+            ? this.store.returnInsurance
+            : this.formShipment.value.returnInsurance,
+          //Inverto gli indirizzi di sender e recipient
+          sender_cap: this.store.recipient.rcpt_cap,
+          sender_addr: this.store.recipient.rcpt_addr,
+          sender_city: this.store.recipient.rcpt_city,
+          sender_country_code: this.store.recipient.rcpt_country_code,
+          rcpt_cap: this.store.sender.sender_cap,
+          rcpt_addr: this.store.sender.sender_addr,
+          rcpt_city: this.store.sender.sender_city,
+          rcpt_country_code: this.store.sender.sender_country_code,
         };
-        this.handleRateComparative(this.returnBodyRateComparativa).subscribe(
+        this.handleRateComparative(returnBodyRateComparativa).subscribe(
           (res: any) => {
             Object.keys(res.passivo).forEach((courier: any) => {
               Object.keys(res.passivo[courier]).forEach((service: any) => {
@@ -298,8 +294,7 @@ export class ShipmentComponent implements OnInit {
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,
-      ...this.store.payloadShipment,
-      ...this.datacolli,
+      ...this.daticolli,
     };
   }
 
@@ -315,13 +310,12 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleRateComparative(body: any): Observable<any> {
-    let bodyAux = { ...body };
-    bodyAux.daticolli = JSON.stringify(body.daticolli);
+    body.daticolli = JSON.stringify(body.daticolli);
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     return this.http.get(
       environment.API_URL + decoded.instance + "/RateComparativa",
-      { headers: headers, params: bodyAux }
+      { headers: headers, params: body }
     );
   }
 
@@ -392,11 +386,10 @@ export class ShipmentComponent implements OnInit {
 
   handleShipments() {
     this.store.invoice &&
-      (delete this.store.invoice.type,
-      (this.store.payloadShipment.fattura_dhl = this.store.invoice));
-    this.store.payloadShipment.documenti = this.store.isDocumentShipment
-      ? 1
-      : 0;
+      (this.store.payloadShipment.fattura_dhl = [this.store.invoice]),
+      (this.store.payloadShipment.documenti = this.store.isDocumentShipment
+        ? 1
+        : 0);
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;

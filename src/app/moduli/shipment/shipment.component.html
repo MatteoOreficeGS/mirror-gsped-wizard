@@ -10,7 +10,7 @@
     *ngIf="isLoading"
     class="h-full justify-center items-center mx-auto justify-items-center flex"
   >
-  <mat-icon class="animate-spin text-red-700">sync</mat-icon>
+    <mat-icon class="animate-spin text-red-700">sync</mat-icon>
   </div>
   <form [formGroup]="formShipment">
     <ng-container *ngIf="showInput; else serviceChoice">
@@ -72,7 +72,8 @@
           for="outwardInsurance"
           class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
         >
-          {{ translations[currentModule.insurance.label] }} €
+          {{ translations[currentModule.insurance.label] }}
+          <span *ngIf="!isDocumentShipment">€</span>
         </label>
         <div class="mt-1 sm:mt-0 sm:col-span-2">
           <input
@@ -113,7 +114,8 @@
           for="returnInsurance"
           class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
         >
-          {{ translations[currentModule.returnLabel.insurance.label] }} €
+          {{ translations[currentModule.returnLabel.insurance.label] }}
+          <span *ngIf="!isDocumentShipment">€</span>
         </label>
         <div class="mt-1 sm:mt-0 sm:col-span-2">
           <input
@@ -167,38 +169,11 @@
         </div>
       </div>
 
-      <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5 mb-5">
-        <label
-          for="termsconditions"
-          class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-        >
-          {{ termsConditions.textBefore }}
-          <a [href]="termsConditions.link" target="_blank" class="underline">{{
-            termsConditions.text
-          }}</a>
-          {{ termsConditions.textAfter }}
-          {{ termsPrivacy.textBefore }}
-          <a [href]="termsPrivacy.link" target="_blank" class="underline">{{
-            termsPrivacy.text
-          }}</a>
-          {{ termsPrivacy.textAfter }}
-        </label>
-        <div class="mt-1 sm:mt-0 sm:col-span-2">
-          <input
-            [formControlName]="'termsconditions'"
-            id="termsconditions"
-            name="termsconditions"
-            type="checkbox"
-            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-          />
-        </div>
-      </div>
-
       <button
-        [disabled]="!formShipment.value.termsconditions"
+        [disabled]="!formShipment.valid"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
-        [class]="
-          formShipment.valid && formShipment.value.termsconditions
+        [ngClass]="
+          formShipment.valid
             ? 'text-white bg-yellow-400 cursor-pointer'
             : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
         "
@@ -294,15 +269,15 @@
 
               <div class="flex justify-center items-baseline my-8">
                 <span class="mr-2 text-2xl font-extrabold">
-                  totale: {{ service.data.totale }}
+                  totale €: {{ service.data.totale }}
                 </span>
               </div>
               <ul role="list" class="mb-8 space-y-4 text-left list-disc">
                 <li class="flex items-center space-x-3">
-                  <span>varie: {{ service.data.varie }}</span>
+                  <span>varie €: {{ service.data.varie }}</span>
                 </li>
                 <li class="flex items-center space-x-3">
-                  <span>nolo: {{ service.data.nolo }}</span>
+                  <span>nolo €: {{ service.data.nolo }}</span>
                 </li>
                 <li
                   class="flex items-center space-x-3"
@@ -310,7 +285,7 @@
                     let varie_d of service.data.varie_dettaglio | keyvalue
                   "
                 >
-                  <span>{{ varie_d.key }}: {{ varie_d.value }}</span>
+                  <span>{{ varie_d.key }} €: {{ varie_d.value }}</span>
                 </li>
               </ul>
             </div>

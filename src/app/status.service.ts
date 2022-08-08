@@ -61,19 +61,6 @@ export class StatusService {
     );
   }
 
-  handleRateComparative(body: any): Observable<any> {
-    console.log(body);
-    let bodyAux = { ...body };
-    bodyAux.daticolli = JSON.stringify(body.daticolli);
-    console.log(bodyAux);
-    const decoded: any = this.store.decodedToken;
-    const headers = { "x-api-key": this.store.token };
-    return this.http.get(
-      "https://api.gsped.it/" + decoded.instance + "/RateComparativa",
-      { headers: headers, params: bodyAux }
-    );
-  }
-
   googlePlace(address: string, lang: string = "it"): Observable<any> {
     if (address.length >= 10) {
       const decoded: any = this.store.decodedToken;

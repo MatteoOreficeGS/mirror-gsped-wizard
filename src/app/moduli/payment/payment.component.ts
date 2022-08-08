@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
+import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { SenderComponent } from "../sender/sender.component";
 
 @Component({
   selector: "app-payment",
@@ -24,11 +24,26 @@ export class PaymentComponent implements OnInit {
   ) {
     console.log(this.selectedProvider);
     this.formPayment = fb.group({
-      cardHolderName: "",
-      cardHolderEmail: ["", Validators.email],
-      cardHolderPhone: "",
+      cardHolderName: this.store.isSenderPrefilled
+        ? this.store.recipient.rcpt_name
+        : this.store.sender.sender_name,
+      cardHolderEmail: [
+        this.store.isSenderPrefilled
+          ? this.store.recipient.rcpt_email
+          : this.store.sender.sender_email,
+        ValidateEmail,
+      ],
+      cardHolderPhone: [
+        this.store.isSenderPrefilled
+          ? this.store.recipient.rcpt_phone
+          : this.store.sender.sender_phone,
+        ValidatePhone,
+      ],
+      termsconditions: "",
     });
     this.translations = store.translations;
+    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
+    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
     this.fields = [
       {
         value: "cardHolderName",
@@ -55,19 +70,20 @@ export class PaymentComponent implements OnInit {
     });
 
     this.senderNew = {
-      ...this.sender
+      ...this.sender,
     };
 
     this.recipientNew = {
-      ...this.recipient
+      ...this.recipient,
     };
 
     delete this.senderNew["undefined"];
     delete this.recipientNew["undefined"];
-  
-    this.senderNew[this.translations["sender_name"]] = this.store.sender.sender_name + " " + this.store.sender.sender_surname;
-    this.recipientNew[this.translations["rcpt_name"]] = this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname;
 
+    this.senderNew[this.translations["sender_name"]] =
+      this.store.sender.sender_name + " " + this.store.sender.sender_surname;
+    this.recipientNew[this.translations["rcpt_name"]] =
+      this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname;
   }
 
   ngOnInit(): void {
@@ -96,6 +112,8 @@ export class PaymentComponent implements OnInit {
   shipment: any = {};
   senderNew: any = {};
   recipientNew: any = {};
+  termsConditions: any;
+  termsPrivacy: any;
 
   redirectPayment() {
     this.isHandledPayment = true;
@@ -117,6 +135,7 @@ export class PaymentComponent implements OnInit {
         origin: this.store.origin,
         outwardShipmentID: this.store.outwardShipment.id,
         returnShipmentID: this.store.returnShipment.id,
+        sender: this.store.sender,
       },
     };
 

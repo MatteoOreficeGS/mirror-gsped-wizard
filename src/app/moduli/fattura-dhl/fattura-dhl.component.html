@@ -2,20 +2,16 @@
 <app-widzard>
   <form [formGroup]="formInvoice" (submit)="nextStep()">
     <div class="sm:hidden">
-      <label for="tabs" class="sr-only">Select a tab</label>
-      <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
       <select
         id="tabs"
         name="tabs"
         class="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+        (change)="handleSetInvoiceModules(type.value)"
+        #type
       >
-        <option>My Account</option>
-
-        <option>Company</option>
-
-        <option selected>Team Members</option>
-
-        <option>Billing</option>
+        <option value="privato" selected>privato</option>
+        <option value="piva">azienda</option>
+        <option value="estero">estero</option>
       </select>
     </div>
     <div class="hidden sm:block">

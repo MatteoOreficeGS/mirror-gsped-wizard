@@ -1,12 +1,66 @@
 <app-navbar></app-navbar>
 <app-widzard>
-  <p *ngIf="displayPayment; else endWithoutPayment">
+  <div
+    class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
+    *ngIf="isPaymentCompleted"
+  >
+    <div *ngIf="currentModule.directDownload.enable">
+      <h1>{{ directDownload.label }}</h1>
+      <!-- <a target="_blank" [href]="labelLink">
+        {{ directDownload.text }}
+      </a> -->
+
+      <p *ngFor="let text of directDownload.text; let i = index">
+        <a
+          *ngIf="i === 4; else elseBlock"
+          [href]="labelLink"
+          target="_blank"
+          class="underline text-red-dhl"
+        >
+          {{ text }}</a
+        >
+        <ng-template #elseBlock>{{ text }}</ng-template>
+      </p>
+    </div>
+    <div>
+      <h1>{{ instructions.label }}</h1>
+      <p *ngFor="let text of instructions.text; let i = index">
+        {{ text }}
+        <ng-template #elseBlock>{{ text }}</ng-template>
+      </p>
+    </div>
+    <div *ngIf="currentModule.servicePoint.enable">
+      <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
+      <p>{{ translations[currentModule.servicePoint.text] }}</p>
+      <p>
+        {{ locationFinder?.location.keyword }}
+        {{ locationFinder?.name }}
+        {{ locationFinder?.place.address.streetAddress }}
+        {{ locationFinder?.place.address.postalCode }}
+        {{ locationFinder?.place.address.addressLocality }}
+      </p>
+      <div class="grid grid-cols-2 mt-2">
+        <ng-container *ngFor="let opening of locationFinder?.openingHours">
+          <span>
+            {{ opening.dayOfWeek.split("/")[3] }}
+          </span>
+          <span>{{ opening.opens }} - {{ opening.closes }}</span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!isPaymentCompleted">
     {{ displayPayment.response.message }}
   </p>
 
-  <ng-template #endWithoutPayment> <p>Fine</p> </ng-template>
+  <!-- <p *ngIf="displayPayment; else endWithoutPayment">
+    {{ displayPayment.response.message }}
+  </p>
 
-  <div *ngIf="pdfOutward">
+  <ng-template #endWithoutPayment> <p>Fine</p> </ng-template> -->
+
+  <!-- <div *ngIf="pdfOutward">
     <a
       class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
       download="outward_label.pdf"
@@ -26,5 +80,7 @@
     >
       scarica etichetta di ritorno
     </a>
-  </div>
+  </div> -->
 </app-widzard>
+
+<!-- http://localhost:4200/awb-printing?lang=it_IT&uuid=81d2224f55c4a8020a -->

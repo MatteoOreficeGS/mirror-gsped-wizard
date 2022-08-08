@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Component, HostListener } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { forkJoin, mergeMap, Observable } from "rxjs";
+import { forkJoin, Observable } from "rxjs";
 import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
 import { StoreService } from "./store.service";
@@ -29,7 +29,6 @@ export class AppComponent {
       return event;
     }); */
     this.route.queryParams.subscribe((params: any) => {
-      // alert(JSON.stringify(params, null, 4));
       if (params.origin && !params.uuid) {
         this.getToken(params.origin).subscribe(
           (res: any) => {
@@ -43,6 +42,7 @@ export class AppComponent {
               )
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
+              this.isSenderPrefilled();
               let modules = res[0].configuration.modules.map((module: any) => {
                 if (module.moduleConfig.hidden) {
                   if (module.moduleName === "sender") {
@@ -89,6 +89,7 @@ export class AppComponent {
           .subscribe((resDisplay: any) => {
             console.log("session", resDisplay.session);
             this.store.displayPayment = resDisplay.monetaweb;
+            this.store.beforePaymentSession = resDisplay.session;
             this.store.outwardShipment.id = resDisplay.session.outwardShipmentID;
             this.store.returnShipment.id = resDisplay.session.returnShipmentID;
             this.getToken(resDisplay.session.origin).subscribe(
@@ -167,5 +168,25 @@ export class AppComponent {
         resource,
       { headers: { "X-API-KEY": token } }
     );
+  }
+
+  isSenderPrefilled() {
+    let result = false;
+    this.store.configuration.modules.forEach(
+      (element: {
+        moduleName: string;
+        moduleConfig: { data: { sender_name: string; sender_addr: string } };
+      }) => {
+        if (element.moduleName === "sender") {
+          if (
+            element.moduleConfig.data.sender_name &&
+            element.moduleConfig.data.sender_addr
+          ) {
+            result = true;
+          }
+        }
+      }
+    );
+    this.store.isSenderPrefilled = result;
   }
 }

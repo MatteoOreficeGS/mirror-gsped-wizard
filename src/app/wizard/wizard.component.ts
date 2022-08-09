@@ -5,10 +5,10 @@ import { StatusService } from "../status.service";
 import { StoreService } from "../store.service";
 
 @Component({
-  selector: "app-widzard",
-  templateUrl: "./widzard.component.html",
+  selector: "app-wizard",
+  templateUrl: "./wizard.component.html",
 })
-export class WidzardComponent {
+export class WizardComponent {
   constructor(
     private router: Router,
     public status: StatusService,

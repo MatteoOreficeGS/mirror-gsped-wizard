@@ -33,8 +33,14 @@ export class RecipientComponent {
     this.readonly = !this.currentModule.editable;
 
     this.formRecipient = fb.group({
-      rcpt_name: [this.currentModule.data.rcpt_name, Validators.required],
-      rcpt_surname: [this.currentModule.data.rcpt_surname, Validators.required],
+      rcpt_name: [
+        this.currentModule.data.rcpt_name.split(" ")[0],
+        Validators.required,
+      ],
+      rcpt_surname: [
+        this.currentModule.data.rcpt_name.split(" ").slice(1).join(" "),
+        Validators.required,
+      ],
       rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
       rcpt_contact: [this.currentModule.data.rcpt_contact],
       rcpt_cap: [this.currentModule.data.rcpt_cap, Validators.required],
@@ -199,8 +205,15 @@ export class RecipientComponent {
 
   nextStep() {
     if (this.formRecipient.valid) {
-      this.formRecipient.value.rcpt_name +=
-        " " + this.formRecipient.value.rcpt_surname;
+      this.formRecipient.controls["rcpt_name"].setValue(
+        (
+          this.formRecipient.value.rcpt_name +
+          " " +
+          this.formRecipient.value.rcpt_surname
+        ).slice(0, 50)
+      );
+      this.store.recipientExtras.rcpt_surname =
+        this.formRecipient.value.rcpt_surname;
       delete this.formRecipient.value.rcpt_surname;
 
       this.formRecipient.controls["rcpt_addr"].setValue(
@@ -210,6 +223,8 @@ export class RecipientComponent {
           this.formRecipient.value.rcpt_addr_secondary
         ).slice(0, 50)
       );
+      this.store.recipientExtras.rcpt_addr_secondary =
+        this.formRecipient.value.rcpt_addr_secondary;
       delete this.formRecipient.value.rcpt_addr_secondary;
 
       this.store.recipient = this.formRecipient.value;

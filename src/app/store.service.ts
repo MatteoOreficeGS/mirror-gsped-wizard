@@ -27,6 +27,7 @@ export class StoreService {
     // sender_addr: "Via Dante 23",
     // sender_contact: "Societa' SPA",
   };
+  senderExtras: any = {};
   recipient: any = {
     // ESEMPIO
     // rcpt_name: "Mario Rossi Verdi",
@@ -39,6 +40,7 @@ export class StoreService {
     // rcpt_addr: "Via Pittagora 1",
     // rcpt_contact: "Societa' SPA",
   };
+  recipientExtras: any = {};
   outwardShipment: any = {};
   returnShipment: any = {};
   payloadShipment: any = {};

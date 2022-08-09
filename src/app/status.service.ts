@@ -109,4 +109,17 @@ export class StatusService {
       );
     }
   }
+
+  getDifference(a: string, b: string) {
+    const aux = b.split("").reverse();
+    const res = a
+      .split("")
+      .reverse()
+      .map((letter: any, i: number) => {
+        if (letter !== aux[i]) {
+          return letter;
+        }
+      });
+    return res.reverse().join("");
+  }
 }

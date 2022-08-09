@@ -203,6 +203,12 @@ export class RecipientComponent {
     this.showPredictions = false;
   }
 
+  hidePredictions() {
+    setTimeout(() => {
+      this.showPredictions = false;
+    }, 100);
+  }
+
   nextStep() {
     if (this.formRecipient.valid) {
       this.formRecipient.controls["rcpt_name"].setValue(

@@ -29,7 +29,7 @@
             autocomplete="off"
             [formControlName]="field.value"
             type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
           />
 
           <div *ngIf="field.value === 'sender_addr'">
@@ -47,20 +47,21 @@
               autocomplete="off"
               [formControlName]="field.value"
               type="text"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
               (input)="handleGooglePlace(address, 'primary')"
+              (blur)="hidePredictions()"
               #address
               name="address"
             />
             <div
               id="predictions"
               *ngIf="showPredictions === 'primary'"
-              class="bg-blue-200 z-50 absolute w-full"
+              class="bg-red-200 z-50 absolute w-full"
             >
               <ng-container *ngFor="let prediction of predictionsAddress">
                 <div
                   (click)="setAddress(prediction)"
-                  class="hover:bg-blue-400 cursor-pointer"
+                  class="hover:bg-red-300 cursor-pointer"
                 >
                   {{ prediction.toList }}
                 </div>
@@ -69,7 +70,7 @@
           </div>
 
           <label
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             {{ field.label }}
             <span *ngIf="field.required" class="text-red-400"> * </span>

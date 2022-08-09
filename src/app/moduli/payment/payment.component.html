@@ -8,7 +8,11 @@
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 space-y-4 md:space-y-0 md:space-x-4 items-top mx-auto mt-4">
+      <p class="mt-4">Totale addebito: € {{ totalAmount }}</p>
+
+      <div
+        class="grid md:grid-cols-2 space-y-4 md:space-y-0 md:space-x-4 items-top mx-auto mt-4"
+      >
         <div
           class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
         >
@@ -19,7 +23,7 @@
                   scope="col"
                   class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                 >
-                  Dati Mittente
+                  Mittente
                 </th>
               </tr>
             </thead>
@@ -102,7 +106,7 @@
                   scope="col"
                   class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                 >
-                  Dati Destinatario
+                  Destinatario
                 </th>
               </tr>
             </thead>
@@ -170,15 +174,13 @@
                   {{ recipient.rcpt_email }}
                 </td>
               </tr>
-              <tr></tr>
-
-              <!-- nel riepilogo dei dati di mittente e destinatario mettere i campi in questo ordine: nome, contatto,indirizzo linea1 indirizzo linea2 cap citta provincia nazione telefono mail per le indicazioni sul layout vedere il documento linkato qualche issue piu indietro -->
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+
   <form [formGroup]="formPayment" (submit)="redirectPayment()">
     <div class="grid lg:grid-cols-1 gap-x-4 relative mt-8 px-4 sm:px-6 lg:px-8">
       <ng-container *ngFor="let field of fields">
@@ -187,21 +189,29 @@
             autocomplete="off"
             [formControlName]="field.value"
             type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
           />
           <label
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             {{ field.label }}
           </label>
         </div>
       </ng-container>
-      <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5 mb-5">
+      <div class="flex items-start mb-6">
+        <div class="flex items-center h-5">
+          <input
+            [formControlName]="'termsconditions'"
+            id="termsconditions"
+            name="termsconditions"
+            type="checkbox"
+            class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+          />
+        </div>
         <label
-          for="termsconditions"
-          class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-        >
-          {{ termsConditions.textBefore }}
+          for="outwardInsurance"
+          class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >{{ termsConditions.textBefore }}
           <a [href]="termsConditions.link" target="_blank" class="underline">{{
             termsConditions.text
           }}</a>
@@ -212,15 +222,6 @@
           }}</a>
           {{ termsPrivacy.textAfter }}
         </label>
-        <div class="mt-1 sm:mt-0 sm:col-span-2">
-          <input
-            [formControlName]="'termsconditions'"
-            id="termsconditions"
-            name="termsconditions"
-            type="checkbox"
-            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-          />
-        </div>
       </div>
     </div>
     <div class="mx-auto items-center justify-center">

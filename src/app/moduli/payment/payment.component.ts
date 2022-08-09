@@ -42,6 +42,11 @@ export class PaymentComponent implements OnInit {
       termsconditions: "",
     });
     this.translations = store.translations;
+    this.totalAmount =
+      this.store.chosenCourier.outward.data.totale +
+      (this.store.chosenCourier.return.data
+        ? this.store.chosenCourier.return.data.totale
+        : 0);
     this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
     this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
     this.fields = [
@@ -64,29 +69,6 @@ export class PaymentComponent implements OnInit {
 
     this.recipient = this.store.recipient;
     this.sender = this.store.sender;
-    /* Object.keys(store.sender).forEach((element: any) => {
-      this.sender[this.translations[element]] = store.sender[element];
-    });
-
-    Object.keys(store.recipient).forEach((element: any) => {
-      this.recipient[this.translations[element]] = store.recipient[element];
-    }); */
-
-    this.senderNew = {
-      ...this.sender,
-    };
-
-    this.recipientNew = {
-      ...this.recipient,
-    };
-
-    delete this.senderNew["undefined"];
-    delete this.recipientNew["undefined"];
-
-    this.senderNew[this.translations["sender_name"]] =
-      this.store.sender.sender_name + " " + this.store.sender.sender_surname;
-    this.recipientNew[this.translations["rcpt_name"]] =
-      this.store.recipient.rcpt_name + " " + this.store.recipient.rcpt_surname;
   }
 
   ngOnInit(): void {
@@ -117,6 +99,7 @@ export class PaymentComponent implements OnInit {
   recipientNew: any = {};
   termsConditions: any;
   termsPrivacy: any;
+  totalAmount?: number;
 
   redirectPayment() {
     this.isHandledPayment = true;

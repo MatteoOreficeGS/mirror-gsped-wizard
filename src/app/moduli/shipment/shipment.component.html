@@ -1,83 +1,115 @@
 <app-navbar></app-navbar>
 <app-wizard>
-  <!-- <button
-    class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-    (click)="showLocalStorage()"
-    >
-    Show Storage
-  </button> -->
-  <div
-    *ngIf="isLoading"
-    class="h-full justify-center items-center mx-auto justify-items-center flex"
-  >
-    <mat-icon class="animate-spin text-red-700">sync</mat-icon>
+  <!-- Start Loading logo -->
+  <div class="text-center" *ngIf="isLoading">
+    <div role="status">
+      <svg
+        class="inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-red-dhl"
+        viewBox="0 0 100 101"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+          fill="currentColor"
+        />
+        <path
+          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+          fill="currentFill"
+        />
+      </svg>
+      <span class="sr-only">Loading...</span>
+    </div>
   </div>
+  <!-- End Loading logo -->
+
   <form [formGroup]="formShipment">
     <ng-container *ngIf="showInput; else serviceChoice">
       <div *ngIf="currentModule?.packagesDetails.enable">
-        <div class="flex">
-          <button
-            [disabled]="
-              packageNumber > currentModule.packagesDetails.fixedpackagesNumber
-            "
-            class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            (click)="addPackage()"
-          >
-            Aggiungi collo
-          </button>
-
-          <button
-            *ngIf="packageNumber >= 1"
-            class="mx-auto py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            (click)="removePackage()"
-          >
-            Rimuovi collo
-          </button>
+        <div class="flex w-full items-center">
+          <p class="mb-6 font-medium w-full">
+            Inserisci i dati dei colli da rendere
+          </p>
+          <div class="flex w-full justify-end space-x-2">
+            <button
+              *ngIf="packageNumber > 1"
+              class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+              (click)="removePackage()"
+            >
+              Rimuovi collo
+            </button>
+            <button
+              [disabled]="
+                packageNumber >
+                currentModule.packagesDetails.fixedpackagesNumber
+              "
+              class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+              (click)="addPackage()"
+            >
+              Aggiungi collo
+            </button>
+          </div>
         </div>
 
-        <div formArrayName="dimensions">
-          <div *ngFor="let package of dimensions.controls; let i = index">
+        <ul
+          formArrayName="dimensions"
+          class="mt-6 md:divide-y-0 divide-y divide-y-2 divide-red-dhl"
+        >
+          <li
+            *ngFor="let package of dimensions.controls; let i = index"
+            class="list-none md:list-decimal"
+          >
             <div
-              class="md:flex md:flex-row w-full items-center w-full p-2"
+              class="sm:grid sm:grid-cols-2 md:grid-cols-4 w-full items-center w-full p-2 pt-6 gap-x-4"
               [formGroupName]="i"
             >
-              <span class="mr-6">{{ i + 1 }})</span>
               <div
                 *ngFor="let field of fieldsLabel"
                 class="justify-items-center w-full mb-1"
               >
                 <!-- {{ dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] | json }} -->
-                <div class="grid grid-cols-2 md:grid-cols-1">
-                  <label>{{ translations[field.label] }}*</label>
+                <div class="md:px-0 relative w-full mb-6 group mx-auto">
+                  <label
+                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    {{ translations[field.label] }}
+                    <span class="text-red-400"> * </span>
+                  </label>
                   <input
                     formControlName="{{ field.value }}"
                     [ngClass]="dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] && dimensions.controls[i].get(field.value)?.touched ? 
-                    'border-red-500' : ''"
+                    'border-red-500' : 'border-gray-300'"
                     type="text"
-                    class="w-28 lg:w-32 shadow-sm sm:text-sm rounded-md"
-                    placeholder="{{ field.placeholder }}"
+                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-red-dhl peer"
                   />
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
 
       <div
-        class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5"
-        *ngIf="currentModule?.insurance.enable"
+        class="md:grid md:grid-cols-2 gap-x-4 relative"
+        *ngIf="
+          currentModule.insurance.enable ||
+          (currentModule.returnLabel.enable &&
+            currentModule?.returnLabel.insurance.enable)
+        "
       >
-        <label
-          for="outwardInsurance"
-          class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+        <p class="col-span-full mb-6 font-medium">Inserisci le assicurazioni</p>
+        <!-- assicurazione andata text -->
+        <div
+          class="relative w-full mb-6 group mx-auto"
+          *ngIf="currentModule.insurance.enable && !isDocumentShipment"
         >
-          {{ translations[currentModule.insurance.label] }}
-          <span *ngIf="!isDocumentShipment">€</span>
-        </label>
-        <div class="mt-1 sm:mt-0 sm:col-span-2">
+          <label
+            for="outwardInsurance"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ translations[currentModule.insurance.label] }} €
+          </label>
           <input
-            *ngIf="!isDocumentShipment"
             [formControlName]="'outwardInsurance'"
             id="outwardInsurance"
             name="outwardInsurance"
@@ -90,37 +122,30 @@
                 ? 'border-red-500'
                 : 'border-gray-300'
             "
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm rounded-md"
-          />
-          <input
-            *ngIf="isDocumentShipment"
-            [formControlName]="'outwardInsurance'"
-            id="outwardInsurance"
-            name="outwardInsurance"
-            type="checkbox"
-            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
           />
         </div>
-      </div>
 
-      <div
-        class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5 mb-5"
-        *ngIf="
-          currentModule?.returnLabel.enable &&
-          currentModule?.returnLabel.insurance.enable
-        "
-      >
-        <label
-          for="returnInsurance"
-          class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+        <!-- assicurazione ritorno text -->
+        <div
+          class="relative w-full mb-6 group mx-auto"
+          *ngIf="
+            currentModule?.returnLabel.enable &&
+            currentModule?.returnLabel.insurance.enable &&
+            !isDocumentShipment
+          "
         >
-          {{ translations[currentModule.returnLabel.insurance.label] }}
-          <span *ngIf="!isDocumentShipment">€</span>
-        </label>
-        <div class="mt-1 sm:mt-0 sm:col-span-2">
+          <label
+            for="returnInsurance"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ translations[currentModule.returnLabel.insurance.label] }} €
+          </label>
           <input
-            *ngIf="!isDocumentShipment"
             [formControlName]="'returnInsurance'"
+            id="returnInsurance"
+            name="returnInsurance"
+            type="text"
             [ngClass]="
               formShipment.get('returnInsurance')?.invalid &&
               formShipment.get('returnInsurance')?.errors &&
@@ -129,44 +154,75 @@
                 ? 'border-red-500'
                 : 'border-gray-300'
             "
-            id="returnInsurance"
-            name="returnInsurance"
-            type="text"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm rounded-md"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
           />
-          <input
-            *ngIf="isDocumentShipment"
-            [formControlName]="'returnInsurance'"
-            id="returnInsurance"
-            name="returnInsurance"
-            type="checkbox"
-            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-          />
+        </div>
+
+        <!-- assicurazione andata checkbox -->
+        <div
+          class="flex items-start mb-6"
+          *ngIf="currentModule.insurance.enable && isDocumentShipment"
+        >
+          <div class="flex items-center h-5">
+            <input
+              [formControlName]="'outwardInsurance'"
+              id="outwardInsurance"
+              name="outwardInsurance"
+              type="checkbox"
+              class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+
+            />
+          </div>
+          <label
+            for="outwardInsurance"
+            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            >{{ translations[currentModule.insurance.label] }}</label
+          >
+        </div>
+
+        <!-- assicurazione ritorno checkbox -->
+        <div
+          class="flex items-start mb-6"
+          *ngIf="
+            currentModule?.returnLabel.enable &&
+            currentModule?.returnLabel.insurance.enable &&
+            isDocumentShipment
+          "
+        >
+          <div class="flex items-center h-5">
+            <input
+              [formControlName]="'returnInsurance'"
+              id="returnInsurance"
+              name="returnInsurance"
+              type="checkbox"
+              class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+            />
+          </div>
+          <label
+            for="returnInsurance"
+            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            {{ translations[currentModule.returnLabel.insurance.label] }}
+          </label>
         </div>
       </div>
 
-      <div
-        class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5"
-      >
+      <p class="mb-6 font-medium">Inserisci eventuale codice sconto</p>
+      <div class="relative w-full md:w-1/2 mb-6 group">
         <label
           for="codiceSconto"
-          class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
-          {{
-            translations["codiceSconto"]
-              ? translations["codiceSconto"]
-              : "codiceSconto"
-          }}
+          {{ translations["codiceSconto"] || "Codice sconto" }} €
         </label>
-        <div class="mt-1 sm:mt-0 sm:col-span-2">
-          <input
-            [formControlName]="'codiceSconto'"
-            id="codiceSconto"
-            name="codiceSconto"
-            type="text"
-            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-          />
-        </div>
+        <input
+          [formControlName]="'codiceSconto'"
+          autocomplete="off"
+          id="codiceSconto"
+          name="codiceSconto"
+          type="text"
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+        />
       </div>
 
       <button
@@ -208,7 +264,7 @@
               <input
                 name="pickup-time"
                 type="radio"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                class="focus:ring-red-dhl h-6 w-6 text-red-dhl-dark border-gray-300"
               />
               <label class="ml-3 block text-sm font-medium text-gray-700">
                 ritiro oggi alle 15:00
@@ -220,7 +276,7 @@
                 checked
                 name="pickup-time"
                 type="radio"
-                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                class="focus:ring-red-dhl h-6 w-6 text-red-dhl-dark border-gray-300"
               />
               <label class="ml-3 block text-sm font-medium text-gray-700">
                 ritiro domani alle 10:00
@@ -236,11 +292,9 @@
       >
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-            <h2
-              class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-            >
+            <h1 class="text-xl font-semibold text-gray-900">
               Seleziona il corriere di andata
-            </h2>
+            </h1>
           </div>
           <div
             class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
@@ -251,7 +305,7 @@
             >
               <div class="flex items-center space-x-2">
                 <input
-                  class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300"
+                  class="focus:ring-red-500 h-6 w-6 text-red-600 border-gray-300"
                   type="radio"
                   [value]="service.serviceName"
                   name="outward"
@@ -299,11 +353,9 @@
       >
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-            <h2
-              class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
-            >
+            <h1 class="text-xl font-semibold text-gray-900">
               Seleziona il corriere di ritorno
-            </h2>
+            </h1>
           </div>
           <div
             class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0"
@@ -314,7 +366,7 @@
             >
               <div class="flex items-center space-x-2">
                 <input
-                  class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300"
+                  class="focus:ring-red-500 h-6 w-6 text-red-600 border-gray-300"
                   type="radio"
                   [value]="service.serviceName"
                   name="retrun"

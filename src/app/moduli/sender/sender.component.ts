@@ -197,6 +197,12 @@ export class SenderComponent {
     this.showPredictions = false;
   }
 
+  hidePredictions() {
+    setTimeout(() => {
+      this.showPredictions = false;
+    }, 100);
+  }
+
   nextStep() {
     if (this.formSender.valid) {
       this.formSender.controls["sender_name"].setValue(

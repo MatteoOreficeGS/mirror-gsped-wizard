@@ -5,7 +5,7 @@
       <select
         id="tabs"
         name="tabs"
-        class="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+        class="block w-full focus:ring-red-dhl focus:border-red-dhl border-gray-300 rounded-md"
         (change)="handleSetInvoiceModules(type.value)"
         #type
       >
@@ -17,7 +17,7 @@
     <div class="hidden sm:block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
-          <!-- Current: "border-indigo-500 text-indigo-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
+          <!-- Current: "border-red-dhl text-red-dhl-dark", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
           <div
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentModule : otherModule"
@@ -49,7 +49,7 @@
         contrassegnati da un asterisco sono obbligatori o si compilano in
         automatico.
       </p>
-      <div class="grid grid-cols-2 gap-x-4">
+      <div class="md:grid md:grid-cols-2 md:gap-x-4 p-4 md:p-0">
         <div *ngFor="let module of invoiceModules">
           <div class="relative w-full mt-6 group mx-auto">
             <input
@@ -57,7 +57,7 @@
               [formControlName]="module.value"
               [type]="module.type"
               [required]="module.required"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             />
 
             <div *ngIf="module.value === 'indirizzo'">
@@ -65,14 +65,14 @@
                 autocomplete="off"
                 [formControlName]="module.value"
                 type="text"
-                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
                 #address
                 name="address"
               />
             </div>
 
             <label
-              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               {{ module.label }}
               <span *ngIf="module.required" class="text-red-500">*</span>

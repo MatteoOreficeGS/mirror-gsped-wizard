@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<app-widzard>
+<app-wizard>
   <form [formGroup]="formRecipient" (submit)="nextStep()">
     <div class="lg:grid lg:grid-cols-4 gap-x-4 relative">
       <ng-container *ngFor="let field of fields">
@@ -88,4 +88,4 @@
       </button>
     </div>
   </form>
-</app-widzard>
+</app-wizard>

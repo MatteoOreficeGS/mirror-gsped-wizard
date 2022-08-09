@@ -61,13 +61,16 @@ export class PaymentComponent implements OnInit {
         type: "text",
       },
     ];
-    Object.keys(store.sender).forEach((element: any) => {
+
+    this.recipient = this.store.recipient;
+    this.sender = this.store.sender;
+    /* Object.keys(store.sender).forEach((element: any) => {
       this.sender[this.translations[element]] = store.sender[element];
     });
 
     Object.keys(store.recipient).forEach((element: any) => {
       this.recipient[this.translations[element]] = store.recipient[element];
-    });
+    }); */
 
     this.senderNew = {
       ...this.sender,

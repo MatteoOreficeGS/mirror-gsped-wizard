@@ -123,14 +123,20 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           nome: [
             this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_name
-              : this.store.sender.sender_name,
+              ? this.status.getDifference(
+                  this.store.recipient.rcpt_name,
+                  this.store.recipientExtras.rcpt_surname
+                )
+              : this.status.getDifference(
+                  this.store.sender.sender_name,
+                  this.store.senderExtras.sender_surname
+                ),
             Validators.required,
           ],
           cognome: [
             this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_surname
-              : this.store.sender.sender_surname,
+              ? this.store.recipientExtras.rcpt_surname
+              : this.store.senderExtras.sender_surname,
             Validators.required,
           ],
           societa: [

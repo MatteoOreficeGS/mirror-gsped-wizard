@@ -8,83 +8,179 @@
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 space-x-4 items-top mx-auto">
-        <div class="mt-8 flex flex-col">
-          <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block w-full py-2 align-middle md:px-6 lg:px-8">
-              <div
-                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
-              >
-                <table class="min-w-full divide-y divide-gray-300">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                      >
-                        Dati Mittente
-                      </th>
-                      <th
-                        scope="col"
-                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      ></th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr *ngFor="let item of senderNew | keyvalue">
-                      <td
-                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                      >
-                        {{ item.value }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="grid md:grid-cols-2 space-y-4 md:space-y-0 md:space-x-4 items-top mx-auto mt-4">
+        <div
+          class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
+                  Dati Mittente
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_name }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_contact }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_addr }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_cap }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_city }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_prov }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_country_code }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_phone }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ sender.sender_email }}
+                </td>
+              </tr>
 
-        <div class="mt-8 flex flex-col">
-          <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block w-full py-2 align-middle md:px-6 lg:px-8">
-              <div
-                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
-              >
-                <table class="min-w-full divide-y divide-gray-300">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                      >
-                        Dati Destinatario
-                      </th>
-                      <th
-                        scope="col"
-                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      ></th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr *ngFor="let item of recipientNew | keyvalue">
-                      <td
-                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                      >
-                        {{ item.value }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+              <!-- nel riepilogo dei dati di mittente e destinatario mettere i campi in questo ordine: nome, contatto,indirizzo linea1 indirizzo linea2 cap citta provincia nazione telefono mail per le indicazioni sul layout vedere il documento linkato qualche issue piu indietro -->
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
+                  Dati Destinatario
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_name }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_contact }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_addr }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_cap }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_city }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_prov }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_country_code }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_phone }}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ recipient.rcpt_email }}
+                </td>
+              </tr>
+              <tr></tr>
+
+              <!-- nel riepilogo dei dati di mittente e destinatario mettere i campi in questo ordine: nome, contatto,indirizzo linea1 indirizzo linea2 cap citta provincia nazione telefono mail per le indicazioni sul layout vedere il documento linkato qualche issue piu indietro -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
   <form [formGroup]="formPayment" (submit)="redirectPayment()">
-    <div class="grid lg:grid-cols-1 gap-x-4 relative mt-8">
+    <div class="grid lg:grid-cols-1 gap-x-4 relative mt-8 px-4 sm:px-6 lg:px-8">
       <ng-container *ngFor="let field of fields">
         <div class="relative z-0 w-full mb-6 group mx-auto">
           <input

@@ -34,6 +34,7 @@ export class ShipmentComponent implements OnInit {
       codiceSconto: "",
       returnInsurance: ["", [ValidateInsurance]],
     });
+    this.iva = this.store.configuration.vatPercentage;
   }
 
   ngOnInit(): void {
@@ -134,6 +135,7 @@ export class ShipmentComponent implements OnInit {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
+  iva:number;
 
   setDatiColli() {
     let dimensions = this.formShipment.value.dimensions.map(
@@ -216,6 +218,7 @@ export class ShipmentComponent implements OnInit {
         rcpt_country_code: this.store.recipient.rcpt_country_code,
       };
       this.handleRateComparative(outwardBodyRateComparativa).subscribe(
+        // TODO aggiungere IVA
         (res: any) => {
           Object.keys(res.passivo).forEach((courier: any) => {
             Object.keys(res.passivo[courier]).forEach((service: any) => {

@@ -206,7 +206,7 @@ export class RecipientComponent {
   hidePredictions() {
     setTimeout(() => {
       this.showPredictions = false;
-    }, 100);
+    }, 400);
   }
 
   nextStep() {

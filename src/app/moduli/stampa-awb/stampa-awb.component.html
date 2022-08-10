@@ -1,6 +1,34 @@
 <app-navbar></app-navbar>
 <app-wizard>
   <div
+    class="md:grid md:grid-cols-3 gap-y-4 space-y-4 md:space-y-0 mb-6"
+    *ngIf="showSummary"
+  >
+    <div>
+      <h1 class="uppercase text-xl mb-4">Mittente</h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
+        <p *ngFor="let field of summary.sender | keyvalue">{{ field.value }}</p>
+      </div>
+    </div>
+    <div>
+      <h1 class="uppercase text-xl mb-4">Destinatario</h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
+        <p *ngFor="let field of summary.recipient | keyvalue">
+          {{ field.value }}
+        </p>
+      </div>
+    </div>
+    <div *ngIf="summary.invoice">
+      <h1 class="uppercase text-xl mb-4">Fattura</h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
+        <p *ngFor="let field of summary.invoice | keyvalue">
+          {{ field.value }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div
     class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
     *ngIf="isPaymentCompleted"
   >
@@ -22,32 +50,34 @@
         <ng-template #elseBlock>{{ text }}</ng-template>
       </p>
     </div>
-    <div>
-      <h1>{{ instructions.label }}</h1>
-      <p *ngFor="let text of instructions.text; let i = index">
-        {{ text }}
-        <ng-template #elseBlock>{{ text }}</ng-template>
-      </p>
-    </div>
-    <div *ngIf="currentModule.servicePoint.enable">
-      <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
-      <p>{{ translations[currentModule.servicePoint.text] }}</p>
-      <p>
-        {{ locationFinder?.location.keyword }}
-        {{ locationFinder?.name }}
-        {{ locationFinder?.place.address.streetAddress }}
-        {{ locationFinder?.place.address.postalCode }}
-        {{ locationFinder?.place.address.addressLocality }}
-      </p>
-      <div class="grid grid-cols-2 mt-2">
-        <ng-container *ngFor="let opening of locationFinder?.openingHours">
-          <span>
-            {{ opening.dayOfWeek.split("/")[3] }}
-          </span>
-          <span>{{ opening.opens }} - {{ opening.closes }}</span>
-        </ng-container>
+    <ng-container *ngIf="instructions">
+      <div>
+        <h1>{{ instructions.label }}</h1>
+        <p *ngFor="let text of instructions.text; let i = index">
+          {{ text }}
+          <ng-template #elseBlock>{{ text }}</ng-template>
+        </p>
       </div>
-    </div>
+      <div *ngIf="currentModule.servicePoint.enable">
+        <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
+        <p>{{ translations[currentModule.servicePoint.text] }}</p>
+        <p>
+          {{ locationFinder?.location.keyword }}
+          {{ locationFinder?.name }}
+          {{ locationFinder?.place.address.streetAddress }}
+          {{ locationFinder?.place.address.postalCode }}
+          {{ locationFinder?.place.address.addressLocality }}
+        </p>
+        <div class="grid grid-cols-2 mt-2">
+          <ng-container *ngFor="let opening of locationFinder?.openingHours">
+            <span>
+              {{ opening.dayOfWeek.split("/")[3] }}
+            </span>
+            <span>{{ opening.opens }} - {{ opening.closes }}</span>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
   </div>
 
   <p *ngIf="!isPaymentCompleted">

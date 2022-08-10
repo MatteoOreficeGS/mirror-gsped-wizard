@@ -170,7 +170,6 @@
               name="outwardInsurance"
               type="checkbox"
               class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
-
             />
           </div>
           <label
@@ -323,15 +322,15 @@
 
               <div class="flex justify-center items-baseline my-8">
                 <span class="mr-2 text-2xl font-extrabold">
-                  totale €: {{ service.data.totale }}
+                  totale: €{{ service.data.totale }}
                 </span>
               </div>
               <ul role="list" class="mb-8 space-y-4 text-left list-disc">
                 <li class="flex items-center space-x-3">
-                  <span>varie €: {{ service.data.varie }}</span>
+                  <span>varie: €{{ service.data.varie }}</span>
                 </li>
                 <li class="flex items-center space-x-3">
-                  <span>nolo €: {{ service.data.nolo }}</span>
+                  <span>nolo: €{{ service.data.nolo }}</span>
                 </li>
                 <li
                   class="flex items-center space-x-3"
@@ -339,7 +338,15 @@
                     let varie_d of service.data.varie_dettaglio | keyvalue
                   "
                 >
-                  <span>{{ varie_d.key }} €: {{ varie_d.value }}</span>
+                  <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                </li>
+                <li class="flex items-center space-x-3" *ngIf="iva">
+                  <span
+                    >netto IVA: €{{
+                      service.data.totale / ((iva + 100) / 100)
+                        | number: "0.2-2"
+                    }}</span
+                  >
                 </li>
               </ul>
             </div>
@@ -384,15 +391,15 @@
 
               <div class="flex justify-center items-baseline my-8">
                 <span class="mr-2 text-2xl font-extrabold">
-                  totale: {{ service.data.totale }}
+                  totale: €{{ service.data.totale }}
                 </span>
               </div>
               <ul role="list" class="mb-8 space-y-4 text-left list-disc">
                 <li class="flex items-center space-x-3">
-                  <span>varie: {{ service.data.varie }}</span>
+                  <span>varie: €{{ service.data.varie }}</span>
                 </li>
                 <li class="flex items-center space-x-3">
-                  <span>nolo: {{ service.data.nolo }}</span>
+                  <span>nolo: €{{ service.data.nolo }}</span>
                 </li>
                 <li
                   class="flex items-center space-x-3"
@@ -400,7 +407,15 @@
                     let varie_d of service.data.varie_dettaglio | keyvalue
                   "
                 >
-                  <span>{{ varie_d.key }}: {{ varie_d.value }}</span>
+                  <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                </li>
+                <li class="flex items-center space-x-3" *ngIf="iva">
+                  <span
+                    >netto IVA: €{{
+                      service.data.totale / ((iva + 100) / 100)
+                        | number: "0.2-2"
+                    }}</span
+                  >
                 </li>
               </ul>
             </div>

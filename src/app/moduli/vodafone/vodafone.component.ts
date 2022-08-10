@@ -73,6 +73,7 @@ export class VodafoneComponent implements OnInit {
     } else {
       // Nuove direttive da configurazione
     }
+    this.store.isLastModule = true;
     this.router.navigate(
       [this.store.modules[this.store.currentStep++].module],
       {

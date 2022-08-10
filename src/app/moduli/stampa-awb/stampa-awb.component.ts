@@ -1,6 +1,5 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { environment } from "src/app/enviroment";
 import { StoreService } from "src/app/store.service";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -14,12 +13,12 @@ export class StampaAwbComponent {
   constructor(
     private domSanitizer: DomSanitizer,
     private http: HttpClient,
-    private route: ActivatedRoute,
     private store: StoreService
   ) {
     this.displayPayment = this.store.displayPayment
       ? this.store.displayPayment
-      : null;
+      : {};
+
     if (this.displayPayment.status === "canceled") {
       this.isPaymentCompleted = false;
     } else {
@@ -27,6 +26,14 @@ export class StampaAwbComponent {
       this.currentModule = this.store.configuration.modules.filter(
         (module: any) => module.moduleName === "awb-printing"
       )[0].moduleConfig;
+      this.showSummary = this.currentModule.summary;
+      this.summary = this.store.beforePaymentSession
+        ? this.store.beforePaymentSession.summary
+        : {
+            sender: this.store.sender,
+            invoice: this.store.invoice,
+            recipient: this.store.recipient,
+          };
       console.log(this.currentModule);
       this.translations = this.store.translations;
       this.directDownload = {
@@ -35,19 +42,21 @@ export class StampaAwbComponent {
           "\r\n"
         ),
       };
-      this.instructions = {
-        label: this.translations[this.currentModule.instructions.label],
-        text: this.translations[this.currentModule.instructions.text].split(
-          "\r\n"
-        ),
-      };
+      if (this.currentModule.hasOwnProperty("instructions")) {
+        this.instructions = {
+          label: this.translations[this.currentModule.instructions.label],
+          text: this.translations[this.currentModule.instructions.text].split(
+            "\r\n"
+          ),
+        };
+      }
       this.getShipments(
         this.store.outwardShipment.id,
         this.store.returnShipment.id
       );
       this.handleLocationFinder(
         this.store.beforePaymentSession
-          ? this.store.beforePaymentSession.sender
+          ? this.store.beforePaymentSession.summary.sender
           : this.store.sender
       ).subscribe((res: any) => {
         this.locationFinder = res.locations[0];
@@ -143,4 +152,6 @@ export class StampaAwbComponent {
   directDownload: any;
   instructions: any;
   isPaymentCompleted: boolean = false;
+  showSummary?: boolean;
+  summary: any;
 }

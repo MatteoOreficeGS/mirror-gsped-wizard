@@ -121,7 +121,11 @@ export class PaymentComponent implements OnInit {
         origin: this.store.origin,
         outwardShipmentID: this.store.outwardShipment.id,
         returnShipmentID: this.store.returnShipment.id,
-        sender: this.store.sender,
+        summary: {
+          sender: this.store.sender,
+          recipient: this.store.recipient,
+          invoice: this.store.invoice,
+        }
       },
     };
 

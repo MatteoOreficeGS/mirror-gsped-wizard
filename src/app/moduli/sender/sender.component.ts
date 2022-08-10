@@ -157,11 +157,10 @@ export class SenderComponent {
 
   handleGooglePlace(
     address: HTMLInputElement,
-    type: string,
     lang: string = this.langParam
   ) {
     this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = type);
+    this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
       this.predictionsAddress = response;
     });
@@ -169,7 +168,7 @@ export class SenderComponent {
 
   step: any;
   labels: any = {};
-  showPredictions: any = false;
+  showPredictions: boolean = false;
   autocomplete: string;
   currentModule: any = {};
   predictionsAddress: any = [];
@@ -200,7 +199,7 @@ export class SenderComponent {
   hidePredictions() {
     setTimeout(() => {
       this.showPredictions = false;
-    }, 100);
+    }, 400);
   }
 
   nextStep() {

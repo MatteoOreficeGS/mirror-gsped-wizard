@@ -56,13 +56,15 @@
             <div
               id="predictions"
               *ngIf="showPredictions"
-              class="bg-slate-200 z-50"
+              class="bg-red-200 z-50 absolute w-full"
             >
               <ng-container *ngFor="let prediction of predictionsAddress">
-                <a (click)="setAddress(prediction)">
+                <div
+                  (click)="setAddress(prediction)"
+                  class="hover:bg-red-300 cursor-pointer"
+                >
                   {{ prediction.toList }}
-                </a>
-                <br />
+                </div>
               </ng-container>
             </div>
           </div>

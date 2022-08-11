@@ -52,7 +52,10 @@ export class RecipientComponent {
         this.currentModule.data.rcpt_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
-      rcpt_email: [this.currentModule.data.rcpt_email, [ValidateEmail]],
+      rcpt_email: [
+        this.currentModule.data.rcpt_email,
+        [Validators.required, ValidateEmail],
+      ],
       rcpt_phone: [this.currentModule.data.rcpt_phone, ValidatePhone],
       rcpt_addr: [this.currentModule.data.rcpt_addr, Validators.required],
       rcpt_addr_secondary: "",
@@ -186,6 +189,8 @@ export class RecipientComponent {
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
   formRecipient: FormGroup;
+  showModal:boolean = false;
+      errors:any = {}
 
   setAddress(prediction: any) {
     this.formRecipient.controls["rcpt_addr"].setValue(
@@ -240,6 +245,12 @@ export class RecipientComponent {
           queryParamsHandling: "merge",
         }
       );
+    }else {
+      this.showModal = true;
+      this.errors = this.service.showModal(this.formRecipient);
     }
+  }
+  setCloseModal(event: boolean) {
+    this.showModal = event;
   }
 }

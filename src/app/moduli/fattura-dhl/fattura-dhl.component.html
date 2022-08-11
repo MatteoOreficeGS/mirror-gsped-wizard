@@ -1,3 +1,8 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
 <app-navbar> </app-navbar>
 <app-wizard>
   <form [formGroup]="formInvoice" (submit)="nextStep()">
@@ -53,23 +58,21 @@
         <div *ngFor="let module of invoiceModules">
           <div class="relative w-full mt-6 group mx-auto">
             <input
-              *ngIf="module.value !== 'indirizzo'"
               [formControlName]="module.value"
+              autocomplete="off"
               [type]="module.type"
               [required]="module.required"
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+              [ngClass]="
+              formInvoice.get(module.value)?.invalid &&
+              formInvoice.get(module.value)?.errors &&
+              (formInvoice.get(module.value)?.dirty ||
+                formInvoice.get(module.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+              placeholder=" "
             />
-
-            <div *ngIf="module.value === 'indirizzo'">
-              <input
-                autocomplete="off"
-                [formControlName]="module.value"
-                type="text"
-                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-                #address
-                name="address"
-              />
-            </div>
 
             <label
               class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
@@ -81,8 +84,16 @@
         </div>
       </div>
     </div>
+    <div class="text-center sm:text-left flex flex-row space-x-4">
+      <button
+      *ngIf="store.currentStep > 1 && !store.isLastModule"
+      type="button"
+      (click)="service.handlePreviousStep()"
+      class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+      Indietro
+    </button>
     <button
-      [disabled]="false"
       [ngClass]="
         formInvoice.valid
           ? 'bg-yellow-400 text-white '
@@ -92,5 +103,6 @@
     >
       Continua
     </button>
+  </div>
   </form>
 </app-wizard>

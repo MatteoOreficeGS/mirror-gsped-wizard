@@ -13,8 +13,8 @@ export class FatturaDHLComponent implements OnInit {
   constructor(
     public fb: FormBuilder,
     private router: Router,
-    private store: StoreService,
-    private status: StatusService
+    public store: StoreService,
+    public service: StatusService
   ) {
     this.selected = this.store.invoiceType ? this.store.invoiceType : "privato";
     this.setInvoiceModules(this.selected);
@@ -31,6 +31,8 @@ export class FatturaDHLComponent implements OnInit {
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentModule: any =
     "border-red-dhl text-red-dhl-dark w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
+  errors: any = {};
+  showModal: boolean = false;
 
   handleSetInvoiceModules(type: string) {
     if (
@@ -123,11 +125,11 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           nome: [
             this.store.isSenderPrefilled
-              ? this.status.getDifference(
+              ? this.service.getDifference(
                   this.store.recipient.rcpt_name,
                   this.store.recipientExtras.rcpt_surname
                 )
-              : this.status.getDifference(
+              : this.service.getDifference(
                   this.store.sender.sender_name,
                   this.store.senderExtras.sender_surname
                 ),
@@ -216,7 +218,7 @@ export class FatturaDHLComponent implements OnInit {
   handleGooglePlace(address: HTMLInputElement) {
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
-    this.status.googlePlace(address.value, "it").subscribe((response: any) => {
+    this.service.googlePlace(address.value, "it").subscribe((response: any) => {
       this.predictionsAddress = response;
     });
   }
@@ -234,20 +236,27 @@ export class FatturaDHLComponent implements OnInit {
   }
 
   nextStep() {
-    if (this.formInvoice.valid && this.formInvoice.controls["nome"] != null) {
-      this.formInvoice.controls["nome"].setValue(
-        this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
-      );
-      this.formInvoice.removeControl("cognome");
-    }
-
-    this.store.invoice = this.formInvoice.value;
-    this.store.invoiceType = this.selected;
-    this.router.navigate(
-      [this.store.modules[this.store.currentStep++].module],
-      {
-        queryParamsHandling: "merge",
+    if (this.formInvoice.valid) {
+      if (this.selected === "estero") {
+        this.formInvoice.controls["nome"].setValue(
+          this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
+        );
+        this.formInvoice.removeControl("cognome");
       }
-    );
+      this.store.invoice = this.formInvoice.value;
+      this.store.invoiceType = this.selected;
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    } else {
+      this.showModal = true;
+      this.errors = this.service.showModal(this.formInvoice);
+    }
+  }
+  setCloseModal(event: boolean) {
+    this.showModal = event;
   }
 }

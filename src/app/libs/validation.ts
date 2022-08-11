@@ -16,6 +16,9 @@ export function ValidateEmail(
 export function ValidatePhone(
   control: AbstractControl
 ): { [key: string]: any } | null {
+  if (control.value.length === 0) {
+    return null;
+  }
   const validRegex =
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/i;
 

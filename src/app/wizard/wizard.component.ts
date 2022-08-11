@@ -21,18 +21,6 @@ export class WizardComponent {
     this.isLastModule = this.store.isLastModule;
   }
 
-  handlePreviousStep() {
-    if (this.store.currentStep > 1) {
-      this.store.currentStep -= 1;
-      this.router.navigate(
-        [this.store.modules[this.store.currentStep - 1].module],
-        {
-          queryParamsHandling: "merge",
-        }
-      );
-    }
-  }
-
   isLastModule: boolean;
   currentStep: number;
   modules: any;

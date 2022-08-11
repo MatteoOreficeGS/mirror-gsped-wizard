@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { StoreService } from "./store.service";
 import { environment } from "./enviroment";
 import jwtDecode from "jwt-decode";
+import { ValidationErrors } from "@angular/forms";
 
 @Injectable({
   providedIn: "root",
@@ -121,5 +122,38 @@ export class StatusService {
         }
       });
     return res.reverse().join("");
+  }
+
+  showModal(form: any) {
+    let errors:any = {};
+      Object.keys(form.controls).forEach((key) => {
+        const controlErrors: ValidationErrors = form.get(key)?.errors || {
+          error: null,
+        };
+        if (controlErrors != null) {
+          Object.keys(controlErrors).forEach((keyError) => {
+            if (controlErrors[keyError]) {
+              errors[
+                this.store.translations[key]
+                  ? this.store.translations[key]
+                  : key
+              ] = keyError;
+            }
+          });
+        }
+      });
+    return errors;
+  }
+
+  handlePreviousStep() {
+    if (this.store.currentStep > 1) {
+      this.store.currentStep -= 1;
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep - 1].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
   }
 }

@@ -15,7 +15,7 @@ import { ValidateInsurance, ValidatePackage } from "../../libs/validation";
 export class ShipmentComponent implements OnInit {
   constructor(
     public fb: FormBuilder,
-    public status: StatusService,
+    public service: StatusService,
     public store: StoreService,
     public router: Router,
     public route: ActivatedRoute,
@@ -45,7 +45,7 @@ export class ShipmentComponent implements OnInit {
         colli: 1,
         peso: 0.5,
         volume: 0,
-        dimensions: []
+        dimensions: [],
       };
     }
 
@@ -54,24 +54,15 @@ export class ShipmentComponent implements OnInit {
     this.fieldsLabel = [
       {
         label: "altezza",
-        value: "altezza",
         placeholder: "cm",
-        min: 1,
-        max: 100,
       },
       {
         label: "lunghezza",
-        value: "lunghezza",
         placeholder: "cm",
-        min: 1,
-        max: 100,
       },
       {
         label: "larghezza",
-        value: "larghezza",
         placeholder: "cm",
-        min: 1,
-        max: 100,
       },
       { label: "peso", value: "peso", placeholder: "kg", min: 0.5, max: 10 },
     ];
@@ -108,23 +99,16 @@ export class ShipmentComponent implements OnInit {
   }
 
   showCourierSelection: boolean = false;
-  courierSelected = { name: "", gspedCourierCode: 104 };
-  courierSelectedLogoUrl = null;
   currentModule: any;
   couriers?: Array<any>;
   label: any;
   fieldsLabel: any;
-  services: any;
   pickupAvailability: string = "";
-  costExposure: any;
   packageNumber = 0;
-  varie_dettaglio?: any = {};
-  rateComparativeServices?: Array<string>;
   isLoading: boolean = false;
   showInput: boolean = true;
   bodyRateComparativa: any;
   daticolli: any = {};
-  dataRateComparative: any = {};
   translations: any;
   formShipment: FormGroup;
   isDocumentShipment: boolean;
@@ -135,7 +119,9 @@ export class ShipmentComponent implements OnInit {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
-  iva:number;
+  iva: number;
+  errors: any = {};
+  showModal: boolean = false;
 
   setDatiColli() {
     let dimensions = this.formShipment.value.dimensions.map(
@@ -168,106 +154,70 @@ export class ShipmentComponent implements OnInit {
   }
 
   confirmInsurance() {
-    // setting the insurance value at 100 if checkbox is checked at 0 if not
-    if (this.formShipment.value.outwardInsurance === true) {
-      this.formShipment.controls["outwardInsurance"].setValue(100);
-      this.store.outwardInsurance = 100;
-    } else if (this.formShipment.value.outwardInsurance === false) {
-      this.formShipment.controls["outwardInsurance"].setValue(0);
-    } else {
-      this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
-    }
-    if (this.formShipment.value.returnInsurance === true) {
-      this.store.returnInsurance = 100;
-    } else if (this.formShipment.value.returnInsurance === false) {
-      this.formShipment.controls["returnInsurance"].setValue(0);
-    } else {
-      this.store.returnInsurance = this.formShipment.value.returnInsurance;
-    }
-    if (this.formShipment.valid) {
-      if (this.currentModule.packagesDetails.enable) {
-        this.setDatiColli();
-      }
-      this.store.codiceSconto = this.formShipment.value.codiceSconto;
-      this.isLoading = true;
-
-      this.bodyRateComparativa = {
-        ...this.daticolli,
-        documenti: this.store.isDocumentShipment ? 1 : 0,
-        codice_sconto: this.formShipment.value.codiceSconto,
-        tipo_listino: "passivo",
-        client_id: this.store.configuration.client_id,
-      };
-
-      this.setShipmentPayload();
-      this.showInput = false;
-
-      // rateComparative di andata
-      const outwardBodyRateComparativa = {
-        ...this.bodyRateComparativa,
-        valore: this.store.outwardInsurance
-          ? this.store.outwardInsurance
-          : this.formShipment.value.outwardInsurance,
-        sender_cap: this.store.sender.sender_cap,
-        sender_addr: this.store.sender.sender_addr,
-        sender_city: this.store.sender.sender_city,
-        sender_country_code: this.store.sender.sender_country_code,
-        rcpt_cap: this.store.recipient.rcpt_cap,
-        rcpt_addr: this.store.recipient.rcpt_addr,
-        rcpt_city: this.store.recipient.rcpt_city,
-        rcpt_country_code: this.store.recipient.rcpt_country_code,
-      };
-      this.handleRateComparative(outwardBodyRateComparativa).subscribe(
-        // TODO aggiungere IVA
-        (res: any) => {
-          Object.keys(res.passivo).forEach((courier: any) => {
-            Object.keys(res.passivo[courier]).forEach((service: any) => {
-              this.outwardCostExposure.push({
-                courier: courier,
-                serviceName: service,
-                courierCode: parseInt(
-                  res.passivo[courier][service].codice_corriere
-                ),
-                serviceCode: parseInt(
-                  res.passivo[courier][service].codice_servizio
-                ),
-                data: res.passivo[courier][service],
-              });
-            });
-          });
-          this.outwardCostExposure = this.filterRateComparativeResults(
-            false, //is outward
-            this.currentModule.selectCourier.couriers.selectionMode,
-            this.outwardCostExposure
-          );
-          if (!this.store.hasReturnShipment) {
-            this.isLoading = false;
-          }
+    let packageErrors = {};
+    this.fieldsLabel.forEach((field: any) => {
+      this.dimensions.controls.forEach((control: any) => {
+        if (control.get(field.label)?.errors != null) {
+          packageErrors = control.get(field.label)?.errors;
         }
-      );
+      });
+    });
+    if (this.formShipment.valid) {
+      // setting the insurance value at 100 if checkbox is checked at 0 if not
+      if (this.formShipment.value.outwardInsurance === true) {
+        this.formShipment.controls["outwardInsurance"].setValue(100);
+        this.store.outwardInsurance = 100;
+      } else if (this.formShipment.value.outwardInsurance === false) {
+        this.formShipment.controls["outwardInsurance"].setValue(0);
+      } else {
+        this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
+      }
+      if (this.formShipment.value.returnInsurance === true) {
+        this.store.returnInsurance = 100;
+      } else if (this.formShipment.value.returnInsurance === false) {
+        this.formShipment.controls["returnInsurance"].setValue(0);
+      } else {
+        this.store.returnInsurance = this.formShipment.value.returnInsurance;
+      }
+      if (this.formShipment.valid) {
+        if (this.currentModule.packagesDetails.enable) {
+          this.setDatiColli();
+        }
+        this.store.codiceSconto = this.formShipment.value.codiceSconto;
+        this.isLoading = true;
 
-      // rateComparative di ritorno
-      if (this.store.hasReturnShipment) {
-        const returnBodyRateComparativa = {
-          ...this.bodyRateComparativa,
-          valore: this.store.returnInsurance
-            ? this.store.returnInsurance
-            : this.formShipment.value.returnInsurance,
-          //Inverto gli indirizzi di sender e recipient
-          sender_cap: this.store.recipient.rcpt_cap,
-          sender_addr: this.store.recipient.rcpt_addr,
-          sender_city: this.store.recipient.rcpt_city,
-          sender_country_code: this.store.recipient.rcpt_country_code,
-          rcpt_cap: this.store.sender.sender_cap,
-          rcpt_addr: this.store.sender.sender_addr,
-          rcpt_city: this.store.sender.sender_city,
-          rcpt_country_code: this.store.sender.sender_country_code,
+        this.bodyRateComparativa = {
+          ...this.daticolli,
+          documenti: this.store.isDocumentShipment ? 1 : 0,
+          codice_sconto: this.formShipment.value.codiceSconto,
+          tipo_listino: "passivo",
+          client_id: this.store.configuration.client_id,
         };
-        this.handleRateComparative(returnBodyRateComparativa).subscribe(
+
+        this.setShipmentPayload();
+        this.showInput = false;
+
+        // rateComparative di andata
+        const outwardBodyRateComparativa = {
+          ...this.bodyRateComparativa,
+          valore: this.store.outwardInsurance
+            ? this.store.outwardInsurance
+            : this.formShipment.value.outwardInsurance,
+          sender_cap: this.store.sender.sender_cap,
+          sender_addr: this.store.sender.sender_addr,
+          sender_city: this.store.sender.sender_city,
+          sender_country_code: this.store.sender.sender_country_code,
+          rcpt_cap: this.store.recipient.rcpt_cap,
+          rcpt_addr: this.store.recipient.rcpt_addr,
+          rcpt_city: this.store.recipient.rcpt_city,
+          rcpt_country_code: this.store.recipient.rcpt_country_code,
+        };
+        this.handleRateComparative(outwardBodyRateComparativa).subscribe(
+          // TODO aggiungere IVA
           (res: any) => {
             Object.keys(res.passivo).forEach((courier: any) => {
               Object.keys(res.passivo[courier]).forEach((service: any) => {
-                this.returnCostExposure.push({
+                this.outwardCostExposure.push({
                   courier: courier,
                   serviceName: service,
                   courierCode: parseInt(
@@ -280,16 +230,71 @@ export class ShipmentComponent implements OnInit {
                 });
               });
             });
-            this.returnCostExposure = this.filterRateComparativeResults(
-              true, //is return
-              this.currentModule.selectCourier.returnCouriers.selectionMode,
-              this.returnCostExposure
+            this.outwardCostExposure = this.filterRateComparativeResults(
+              false, //is outward
+              this.currentModule.selectCourier.couriers.selectionMode,
+              this.outwardCostExposure
             );
-            this.isLoading = false;
+            if (!this.store.hasReturnShipment) {
+              this.isLoading = false;
+            }
           }
         );
+
+        // rateComparative di ritorno
+        if (this.store.hasReturnShipment) {
+          const returnBodyRateComparativa = {
+            ...this.bodyRateComparativa,
+            valore: this.store.returnInsurance
+              ? this.store.returnInsurance
+              : this.formShipment.value.returnInsurance,
+            //Inverto gli indirizzi di sender e recipient
+            sender_cap: this.store.recipient.rcpt_cap,
+            sender_addr: this.store.recipient.rcpt_addr,
+            sender_city: this.store.recipient.rcpt_city,
+            sender_country_code: this.store.recipient.rcpt_country_code,
+            rcpt_cap: this.store.sender.sender_cap,
+            rcpt_addr: this.store.sender.sender_addr,
+            rcpt_city: this.store.sender.sender_city,
+            rcpt_country_code: this.store.sender.sender_country_code,
+          };
+          this.handleRateComparative(returnBodyRateComparativa).subscribe(
+            (res: any) => {
+              Object.keys(res.passivo).forEach((courier: any) => {
+                Object.keys(res.passivo[courier]).forEach((service: any) => {
+                  this.returnCostExposure.push({
+                    courier: courier,
+                    serviceName: service,
+                    courierCode: parseInt(
+                      res.passivo[courier][service].codice_corriere
+                    ),
+                    serviceCode: parseInt(
+                      res.passivo[courier][service].codice_servizio
+                    ),
+                    data: res.passivo[courier][service],
+                  });
+                });
+              });
+              this.returnCostExposure = this.filterRateComparativeResults(
+                true, //is return
+                this.currentModule.selectCourier.returnCouriers.selectionMode,
+                this.returnCostExposure
+              );
+              this.isLoading = false;
+            }
+          );
+        }
       }
+    } else {
+      this.showModal = true;
+      this.errors = {
+        ...this.service.showModal(this.formShipment),
+        ...packageErrors,
+      };
     }
+  }
+  setCloseModal(event: boolean) {
+    this.showModal = event;
   }
 
   setShipmentPayload() {
@@ -356,7 +361,7 @@ export class ShipmentComponent implements OnInit {
             }
           )[0];
 
-          this.status
+          this.service
             .pickupAvailability(configCouriers[0])
             .subscribe((res: any) => {
               console.log(res);
@@ -397,42 +402,10 @@ export class ShipmentComponent implements OnInit {
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
 
-    const newSender = {
-      sender_name:
-        this.store.sender.sender_name +
-        (this.store.sender.sender_surname == null
-          ? ""
-          : " " + this.store.sender.sender_surname),
-      sender_city: this.store.sender.sender_city,
-      sender_cap: this.store.sender.sender_cap,
-      sender_prov: this.store.sender.sender_prov,
-      sender_country_code: this.store.sender.sender_country_code,
-      sender_email: this.store.sender.sender_email,
-      sender_phone: this.store.sender.sender_phone,
-      sender_addr: this.store.sender.sender_addr,
-      sender_contact: this.store.sender.sender_contact,
-    };
-
-    const newRecipient = {
-      rcpt_name:
-        this.store.recipient.rcpt_name +
-        (this.store.recipient.rcpt_surname == null
-          ? ""
-          : " " + this.store.recipient.rcpt_surname),
-      rcpt_city: this.store.recipient.rcpt_city,
-      rcpt_cap: this.store.recipient.rcpt_cap,
-      rcpt_prov: this.store.recipient.rcpt_prov,
-      rcpt_country_code: this.store.recipient.rcpt_country_code,
-      rcpt_email: this.store.recipient.rcpt_email,
-      rcpt_phone: this.store.recipient.rcpt_phone,
-      rcpt_addr: this.store.recipient.rcpt_addr,
-      rcpt_contact: this.store.recipient.rcpt_contact,
-    };
-
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
-      ...newSender,
-      ...newRecipient,
+      ...this.store.sender,
+      ...this.store.recipient,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
@@ -441,7 +414,7 @@ export class ShipmentComponent implements OnInit {
         this.store.selectedProducts;
     }
 
-    this.status.handleShipment(outwardPayloadShipment).subscribe((res) => {
+    this.service.handleShipment(outwardPayloadShipment).subscribe((res) => {
       this.store.outwardShipment = res;
       if (!this.store.hasReturnShipment) {
         this.router.navigate(
@@ -455,20 +428,16 @@ export class ShipmentComponent implements OnInit {
 
     // inverto il mittente con il destinatario per la spedizione di ritorno
     if (this.store.hasReturnShipment) {
-      let returnPayloadShipment: any = this.store.payloadShipment;
-      returnPayloadShipment.corriere =
-        this.store.chosenCourier.return.courierCode;
-      returnPayloadShipment.servizio =
-        this.store.chosenCourier.return.serviceCode;
-
-      returnPayloadShipment = {
-        ...returnPayloadShipment,
-        ...this.status.invertAddressData({
-          ...newSender,
-          ...newRecipient,
+      const returnPayloadShipment = {
+        ...this.store.payloadShipment,
+        servizio: this.store.chosenCourier.return.serviceCode,
+        corriere: this.store.chosenCourier.return.courierCode,
+        ...this.service.invertAddressData({
+          ...this.store.sender,
+          ...this.store.recipient,
         }),
       };
-      this.status.handleShipment(returnPayloadShipment).subscribe((res) => {
+      this.service.handleShipment(returnPayloadShipment).subscribe((res) => {
         this.store.returnShipment = res;
         this.router.navigate(
           [this.store.modules[this.store.currentStep++].module],
@@ -484,6 +453,12 @@ export class ShipmentComponent implements OnInit {
     if (this.canContinue) {
       this.store.chosenCourier = this.chosenCourier;
       this.handleShipments();
+    } else {
+      this.showModal = true;
+      this.errors = {};
+      this.errors = {
+        selectCourier: "required",
+      };
     }
   }
 }

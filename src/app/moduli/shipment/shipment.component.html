@@ -1,3 +1,8 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
 <app-navbar></app-navbar>
 <app-wizard>
   <!-- Start Loading logo -->
@@ -68,20 +73,22 @@
                 class="justify-items-center w-full mb-1"
               >
                 <!-- {{ dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] | json }} -->
-                <div class="md:px-0 relative w-full mb-6 group mx-auto">
+                <div class="relative w-full mb-6 group mx-auto">
+                  <input
+                    autocomplete="off"
+                    formControlName="{{ field.label }}"
+                    [ngClass]="dimensions.controls[i].get(field.label)?.errors?.['packageInvalid'] && dimensions.controls[i].get(field.label)?.touched ? 
+                    'border-red-500' : 'border-gray-300'"
+                    type="text"
+                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+                    placeholder=" "
+                  />
                   <label
                     class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                   >
                     {{ translations[field.label] }}
                     <span class="text-red-400"> * </span>
                   </label>
-                  <input
-                    formControlName="{{ field.value }}"
-                    [ngClass]="dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] && dimensions.controls[i].get(field.value)?.touched ? 
-                    'border-red-500' : 'border-gray-300'"
-                    type="text"
-                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-                  />
                 </div>
               </div>
             </div>
@@ -103,12 +110,6 @@
           class="relative w-full mb-6 group mx-auto"
           *ngIf="currentModule.insurance.enable && !isDocumentShipment"
         >
-          <label
-            for="outwardInsurance"
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            {{ translations[currentModule.insurance.label] }} €
-          </label>
           <input
             [formControlName]="'outwardInsurance'"
             id="outwardInsurance"
@@ -123,7 +124,14 @@
                 : 'border-gray-300'
             "
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
           />
+          <label
+            for="outwardInsurance"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ translations[currentModule.insurance.label] }} €
+          </label>
         </div>
 
         <!-- assicurazione ritorno text -->
@@ -135,12 +143,6 @@
             !isDocumentShipment
           "
         >
-          <label
-            for="returnInsurance"
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            {{ translations[currentModule.returnLabel.insurance.label] }} €
-          </label>
           <input
             [formControlName]="'returnInsurance'"
             id="returnInsurance"
@@ -155,7 +157,14 @@
                 : 'border-gray-300'
             "
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
           />
+          <label
+            for="returnInsurance"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ translations[currentModule.returnLabel.insurance.label] }} €
+          </label>
         </div>
 
         <!-- assicurazione andata checkbox -->
@@ -208,12 +217,6 @@
 
       <p class="mb-6 font-medium">Inserisci eventuale codice sconto</p>
       <div class="relative w-full md:w-1/2 mb-6 group">
-        <label
-          for="codiceSconto"
-          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-        >
-          {{ translations["codiceSconto"] || "Codice sconto" }} €
-        </label>
         <input
           [formControlName]="'codiceSconto'"
           autocomplete="off"
@@ -221,11 +224,17 @@
           name="codiceSconto"
           type="text"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          placeholder=" "
         />
+        <label
+          for="codiceSconto"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          {{ translations["codiceSconto"] || "Codice sconto" }} €
+        </label>
       </div>
 
       <button
-        [disabled]="!formShipment.valid"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
         [ngClass]="
           formShipment.valid
@@ -422,19 +431,27 @@
           </div>
         </div>
       </section>
-      <button
-        type="button"
-        (click)="incrementStep()"
-        [disabled]="!canContinue"
-        [ngClass]="
-          canContinue
-            ? 'bg-yellow-400 text-white'
-            : 'bg-yellow-200 text-slate-200 cursor-not-allowed'
-        "
-        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
-      >
-        Continua
-      </button>
+      <div class="text-center sm:text-left flex flex-row space-x-4">
+        <button
+          *ngIf="store.currentStep > 1 && !store.isLastModule"
+          type="button"
+          (click)="service.handlePreviousStep()"
+          class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        >
+          Indietro
+        </button>
+        <button
+          (click)="incrementStep()"
+          [ngClass]="
+            canContinue
+              ? 'bg-yellow-400 text-white '
+              : 'bg-yellow-200 text-slate-200'
+          "
+          class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        >
+          Continua
+        </button>
+      </div>
     </ng-template>
   </form>
 </app-wizard>

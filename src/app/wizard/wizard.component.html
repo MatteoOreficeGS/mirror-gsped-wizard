@@ -1,4 +1,4 @@
-<div class="lg:mx-10">
+<div class="lg:mx-10 mb-8">
   <div class="h-full overflow-y-auto">
     <img
       *ngIf="bannerExtra"
@@ -40,15 +40,7 @@
     </div>
     <div class="min-h-[64%] p-2 pt-6 md:p-8 mx-auto border border-1 rounded-lg">
       <ng-content></ng-content>
-
-      <button
-        *ngIf="currentStep > 1 && !isLastModule"
-        type="button"
-        (click)="handlePreviousStep()"
-        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
-      >
-        Indietro
-      </button>
     </div>
   </div>
 </div>
+<app-footer></app-footer>

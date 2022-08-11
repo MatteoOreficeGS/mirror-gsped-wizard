@@ -1,5 +1,10 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -43,7 +48,10 @@ export class SenderComponent {
         this.currentModule.data.sender_country_code,
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
-      sender_email: [this.currentModule.data.sender_email, [ValidateEmail]],
+      sender_email: [
+        this.currentModule.data.sender_email,
+        [Validators.required, ValidateEmail],
+      ],
       sender_phone: [this.currentModule.data.sender_phone, [ValidatePhone]],
       sender_addr: [this.currentModule.data.sender_addr, Validators.required],
       sender_addr_secondary: "",
@@ -155,10 +163,7 @@ export class SenderComponent {
     });
   }
 
-  handleGooglePlace(
-    address: HTMLInputElement,
-    lang: string = this.langParam
-  ) {
+  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
@@ -176,6 +181,8 @@ export class SenderComponent {
   readonly?: boolean;
   formSender: FormGroup;
   langParam = "";
+  showModal: boolean = false;
+  errors: any = {};
 
   //Local Variable defined
   formattedaddress = " ";
@@ -233,6 +240,12 @@ export class SenderComponent {
           queryParamsHandling: "merge",
         }
       );
+    } else {
+      this.showModal = true;
+      this.errors = this.service.showModal(this.formSender);
     }
+  }
+  setCloseModal(event: boolean) {
+    this.showModal = event;
   }
 }

@@ -103,7 +103,7 @@ export class ShipmentComponent implements OnInit {
   couriers?: Array<any>;
   label: any;
   fieldsLabel: any;
-  pickupAvailability: string = "";
+  pickupAvailability: any = {};
   packageNumber = 0;
   isLoading: boolean = false;
   showInput: boolean = true;
@@ -217,6 +217,21 @@ export class ShipmentComponent implements OnInit {
           (res: any) => {
             Object.keys(res.passivo).forEach((courier: any) => {
               Object.keys(res.passivo[courier]).forEach((service: any) => {
+                this.service
+                  .pickupAvailability(
+                    res.passivo[courier][service].codice_corriere
+                  )
+                  .subscribe(
+                    (res: any) => {
+                      this.pickupAvailability[courier] =
+                        res.result === "OK"
+                          ? "oggi dalle 15:00"
+                          : "domani dalle 10";
+                    },
+                    (error: any) => {
+                      this.pickupAvailability[courier] = "domani dalle 10";
+                    }
+                  );
                 this.outwardCostExposure.push({
                   courier: courier,
                   serviceName: service,
@@ -360,12 +375,6 @@ export class ShipmentComponent implements OnInit {
               });
             }
           )[0];
-
-          this.service
-            .pickupAvailability(configCouriers[0])
-            .subscribe((res: any) => {
-              console.log(res);
-            });
         }
 
         response = response.filter(

@@ -33,9 +33,10 @@ export class StatusService {
     );
   }
 
-  pickupAvailability(corriere: any): Observable<any> {
+  pickupAvailability(corriere: any) {
+    console.log(corriere);
     const decoded: any = this.store.decodedToken;
-    const date = new Date(); /* .toLocaleString() */
+    const date = new Date();
     const headers = { "x-api-key": this.store.token };
     const body = {
       ...this.store.sender,
@@ -43,8 +44,6 @@ export class StatusService {
       corriere: corriere,
       client_id: this.store.configuration.client_id,
     };
-
-    console.log(body);
     return this.http.post(
       "https://api.gsped.it/" + decoded.instance + "/PickupAvailability",
       body,
@@ -125,23 +124,24 @@ export class StatusService {
   }
 
   showModal(form: any) {
-    let errors:any = {};
-      Object.keys(form.controls).forEach((key) => {
-        const controlErrors: ValidationErrors = form.get(key)?.errors || {
-          error: null,
-        };
-        if (controlErrors != null) {
-          Object.keys(controlErrors).forEach((keyError) => {
-            if (controlErrors[keyError]) {
-              errors[
-                this.store.translations[key]
-                  ? this.store.translations[key]
-                  : key
-              ] = keyError;
-            }
-          });
-        }
-      });
+    let errors: any = {};
+    Object.keys(form.controls).forEach((key) => {
+      const controlErrors: ValidationErrors = form.get(key)?.errors || {
+        error: null,
+      };
+      if (controlErrors != null) {
+        console.log(controlErrors);
+        Object.keys(controlErrors).forEach((keyError) => {
+          if (controlErrors[keyError]) {
+            errors[
+              this.store.translations[key] ? this.store.translations[key] : key
+            ] = this.store.translations[keyError]
+              ? this.store.translations[keyError]
+              : keyError + "XXX";
+          }
+        });
+      }
+    });
     return errors;
   }
 
@@ -157,3 +157,5 @@ export class StatusService {
     }
   }
 }
+
+// TODO colorare di rosso gli input che non superano il controllo

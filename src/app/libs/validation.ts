@@ -7,7 +7,7 @@ export function ValidateEmail(
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-z_A-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
   if (control.value && control.value.length > 0) {
     if (!control.value.match(validRegex)) {
-      return { emailInvalid: true };
+      return { invalidCharacter: true };
     }
   }
   return null;
@@ -23,7 +23,7 @@ export function ValidatePhone(
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/i;
 
   if (!control.value.match(validRegex)) {
-    return { phoneInvalid: true };
+    return { invalidCharacter: true };
   }
   return null;
 }
@@ -36,20 +36,20 @@ export function ValidatePackage(
   const max = 100;
   value = value.replaceAll(",", ".");
   if (value.length === 0) {
-    return { packageInvalid: "Field is required" };
+    return { packagesDetails: "required" };
   }
   if (String(value).split(".").length - 1 > 1) {
-    return { packageInvalid: "Invalid character" };
+    return { packagesDetails: "invalidCharacter" };
   }
   value = parseFloat(value);
   if (isNaN(value)) {
-    return { packageInvalid: "Invalid character" };
+    return { packagesDetails: "invalidCharacter" };
   }
   if (value < min) {
-    return { packageInvalid: "Too low value" };
+    return { packagesDetails: "tooLowValue" };
   }
   if (value > max) {
-    return { packageInvalid: "Too high value" };
+    return { packagesDetails: "tooHighValue" };
   }
   return null;
 }
@@ -68,17 +68,17 @@ export function ValidateInsurance(
   }
   value.replaceAll(",", ".");
   if (String(value).split(".").length - 1 > 1) {
-    return { InsuranceInvalid: "Invalid character" };
+    return { invalidCharacter: true };
   }
   value = parseFloat(value);
   if (isNaN(value)) {
-    return { InsuranceInvalid: "Invalid character" };
+    return { invalidCharacter: true };
   }
   if (value < min) {
-    return { InsuranceInvalid: "Too low value" };
+    return { tooLowValue: true };
   }
   if (value > max) {
-    return { InsuranceInvalid: "Too high value" };
+    return { tooHighValue: true };
   }
   return null;
 }

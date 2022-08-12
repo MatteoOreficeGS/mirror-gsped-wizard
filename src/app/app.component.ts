@@ -37,9 +37,7 @@ export class AppComponent {
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
               this.getConfiguration(res.token, jwt_decode(res.token)),
-              this.status.getTranslations(
-                params.lang ? params.lang : "it_IT",
-              )
+              this.status.getTranslations(params.lang ? params.lang : "it_IT")
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
@@ -90,7 +88,8 @@ export class AppComponent {
             console.log("session", resDisplay.session);
             this.store.displayPayment = resDisplay.monetaweb;
             this.store.beforePaymentSession = resDisplay.session;
-            this.store.outwardShipment.id = resDisplay.session.outwardShipmentID;
+            this.store.outwardShipment.id =
+              resDisplay.session.outwardShipmentID;
             this.store.returnShipment.id = resDisplay.session.returnShipmentID;
             this.getToken(resDisplay.session.origin).subscribe(
               (resToken: any) => {
@@ -103,7 +102,7 @@ export class AppComponent {
                     jwt_decode(resToken.token)
                   ),
                   this.status.getTranslations(
-                    params.lang ? params.lang : "it_IT",
+                    params.lang ? params.lang : "it_IT"
                   )
                 ).subscribe((res: any) => {
                   console.log("all response", res);
@@ -136,13 +135,16 @@ export class AppComponent {
                   this.store.currentStep = modules.length;
                   console.log("navigo a awb-printing");
                   this.store.isLastModule = true;
-                  this.router.navigate(["/" + modules[modules.length - 1].module], {
-                    // this.router.navigate(["/" + "fatturaDHL"], {
-                    queryParams: {
-                      lang: params.lang ? params.lang : "it_IT",
-                      uuid: params.uuid,
-                    },
-                  });
+                  this.router.navigate(
+                    ["/" + modules[modules.length - 1].module],
+                    {
+                      // this.router.navigate(["/" + "fatturaDHL"], {
+                      queryParams: {
+                        lang: params.lang ? params.lang : "it_IT",
+                        uuid: params.uuid,
+                      },
+                    }
+                  );
                 });
               },
               (error: any) => {

@@ -31,33 +31,47 @@ export class RecipientComponent {
       (module: { moduleName: string }) => module.moduleName === "recipient"
     )[0].moduleConfig;
     this.readonly = !this.currentModule.editable;
-
+    const autocomplete = this.currentModule.autocomplete;
     this.formRecipient = fb.group({
       rcpt_name: [
-        this.currentModule.data.rcpt_name.split(" ")[0],
+        autocomplete ? this.currentModule.data.rcpt_name.split(" ")[0] : "",
         Validators.required,
       ],
       rcpt_surname: [
-        this.currentModule.data.rcpt_name.split(" ").slice(1).join(" "),
+        autocomplete
+          ? this.currentModule.data.rcpt_name.split(" ").slice(1).join(" ")
+          : "",
         Validators.required,
       ],
-      rcpt_city: [this.currentModule.data.rcpt_city, Validators.required],
-      rcpt_contact: [this.currentModule.data.rcpt_contact],
-      rcpt_cap: [this.currentModule.data.rcpt_cap, Validators.required],
+      rcpt_city: [
+        autocomplete ? this.currentModule.data.rcpt_city : "",
+        Validators.required,
+      ],
+      rcpt_contact: [autocomplete ? this.currentModule.data.rcpt_contact : ""],
+      rcpt_cap: [
+        autocomplete ? this.currentModule.data.rcpt_cap : "",
+        Validators.required,
+      ],
       rcpt_prov: [
-        this.currentModule.data.rcpt_prov,
+        autocomplete ? this.currentModule.data.rcpt_prov : "",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_country_code: [
-        this.currentModule.data.rcpt_country_code,
+        autocomplete ? this.currentModule.data.rcpt_country_code : "",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_email: [
-        this.currentModule.data.rcpt_email,
+        autocomplete ? this.currentModule.data.rcpt_email : "",
         [Validators.required, ValidateEmail],
       ],
-      rcpt_phone: [this.currentModule.data.rcpt_phone, ValidatePhone],
-      rcpt_addr: [this.currentModule.data.rcpt_addr, Validators.required],
+      rcpt_phone: [
+        autocomplete ? this.currentModule.data.rcpt_phone : "",
+        [Validators.required, ValidatePhone],
+      ],
+      rcpt_addr: [
+        autocomplete ? this.currentModule.data.rcpt_addr : "",
+        Validators.required,
+      ],
       rcpt_addr_secondary: "",
     });
 
@@ -189,8 +203,8 @@ export class RecipientComponent {
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
   formRecipient: FormGroup;
-  showModal:boolean = false;
-      errors:any = {}
+  showModal: boolean = false;
+  errors: any = {};
 
   setAddress(prediction: any) {
     this.formRecipient.controls["rcpt_addr"].setValue(
@@ -245,7 +259,7 @@ export class RecipientComponent {
           queryParamsHandling: "merge",
         }
       );
-    }else {
+    } else {
       this.showModal = true;
       this.errors = this.service.showModal(this.formRecipient);
     }

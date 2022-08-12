@@ -28,32 +28,49 @@ export class SenderComponent {
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
     this.readonly = !this.currentModule.editable;
+    const autocomplete = this.currentModule.autocomplete;
     this.formSender = fb.group({
       sender_name: [
-        this.currentModule.data.sender_name.split(" ")[0],
+        autocomplete ? this.currentModule.data.sender_name : "".split(" ")[0],
         Validators.required,
       ],
       sender_surname: [
-        this.currentModule.data.sender_name.split(" ").slice(1).join(" "),
+        autocomplete
+          ? this.currentModule.data.sender_name
+          : "".split(" ").slice(1).join(" "),
         Validators.required,
       ],
-      sender_city: [this.currentModule.data.sender_city, Validators.required],
-      sender_contact: [this.currentModule.data.sender_contact],
-      sender_cap: [this.currentModule.data.sender_cap, Validators.required],
+      sender_city: [
+        autocomplete ? this.currentModule.data.sender_city : "",
+        Validators.required,
+      ],
+      sender_contact: [
+        autocomplete ? this.currentModule.data.sender_contact : "",
+      ],
+      sender_cap: [
+        autocomplete ? this.currentModule.data.sender_cap : "",
+        Validators.required,
+      ],
       sender_prov: [
-        this.currentModule.data.sender_prov,
+        autocomplete ? this.currentModule.data.sender_prov : "",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_country_code: [
-        this.currentModule.data.sender_country_code,
+        autocomplete ? this.currentModule.data.sender_country_code : "",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_email: [
-        this.currentModule.data.sender_email,
+        autocomplete ? this.currentModule.data.sender_email : "",
         [Validators.required, ValidateEmail],
       ],
-      sender_phone: [this.currentModule.data.sender_phone, [ValidatePhone]],
-      sender_addr: [this.currentModule.data.sender_addr, Validators.required],
+      sender_phone: [
+        autocomplete ? this.currentModule.data.sender_phone : "",
+        [Validators.required, ValidatePhone],
+      ],
+      sender_addr: [
+        autocomplete ? this.currentModule.data.sender_addr : "",
+        Validators.required,
+      ],
       sender_addr_secondary: "",
     });
 

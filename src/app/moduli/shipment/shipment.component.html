@@ -72,12 +72,11 @@
                 *ngFor="let field of fieldsLabel"
                 class="justify-items-center w-full mb-1"
               >
-                <!-- {{ dimensions.controls[i].get(field.value)?.errors?.['packageInvalid'] | json }} -->
                 <div class="relative w-full mb-6 group mx-auto">
                   <input
                     autocomplete="off"
                     formControlName="{{ field.label }}"
-                    [ngClass]="dimensions.controls[i].get(field.label)?.errors?.['packageInvalid'] && dimensions.controls[i].get(field.label)?.touched ? 
+                    [ngClass]="dimensions.controls[i].get(field.label)?.errors?.['packagesDetails'] && dimensions.controls[i].get(field.label)?.touched ? 
                     'border-red-500' : 'border-gray-300'"
                     type="text"
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
@@ -248,51 +247,6 @@
       </button>
     </ng-container>
     <ng-template #serviceChoice>
-      <!-- {{ isLoading }} -->
-      <!-- TODO da sistemare -->
-      <div *ngIf="pickupAvailability">
-        <label
-          *ngIf="pickupAvailability === 'KO'"
-          class="text-base font-medium text-red-400"
-        >
-          non disponibile per il ritiro in giornata
-        </label>
-        <label
-          *ngIf="pickupAvailability === 'OK'"
-          class="text-base font-medium text-green-400"
-        >
-          disponibile per il ritiro in giornata
-        </label>
-
-        <fieldset class="mt-4">
-          <div
-            class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10"
-          >
-            <div class="flex items-center" *ngIf="pickupAvailability === 'OK'">
-              <input
-                name="pickup-time"
-                type="radio"
-                class="focus:ring-red-dhl h-6 w-6 text-red-dhl-dark border-gray-300"
-              />
-              <label class="ml-3 block text-sm font-medium text-gray-700">
-                ritiro oggi alle 15:00
-              </label>
-            </div>
-
-            <div class="flex items-center">
-              <input
-                checked
-                name="pickup-time"
-                type="radio"
-                class="focus:ring-red-dhl h-6 w-6 text-red-dhl-dark border-gray-300"
-              />
-              <label class="ml-3 block text-sm font-medium text-gray-700">
-                ritiro domani alle 10:00
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
       <!-- andata -->
       <section
         class="bg-white dark:bg-gray-900"
@@ -358,6 +312,7 @@
                   >
                 </li>
               </ul>
+              <span>ritiro: {{ pickupAvailability[service.courier] }}</span>
             </div>
           </div>
         </div>
@@ -449,7 +404,7 @@
           "
           class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
         >
-          Continua
+          Avanti
         </button>
       </div>
     </ng-template>

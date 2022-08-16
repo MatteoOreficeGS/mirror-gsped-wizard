@@ -27,42 +27,47 @@
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentModule : otherModule"
           >
-            privato: codice fiscale italiano
+            {{ translations["lbl_invoice_private"] }}
           </div>
 
           <div
             (click)="handleSetInvoiceModules('piva')"
             [ngClass]="selected === 'piva' ? currentModule : otherModule"
           >
-            azienda: partita iva
+            {{ translations["lbl_invoice_company"] }}
           </div>
 
           <div
             (click)="handleSetInvoiceModules('estero')"
             [ngClass]="selected === 'estero' ? currentModule : otherModule"
           >
-            estero: indirizzo fatturazione
+            {{ translations["lbl_invoice_foreign"] }}
           </div>
         </nav>
       </div>
     </div>
 
     <div class="space-y-4 mt-4">
-      <h1>DATI FATTURAZIONE</h1>
-      <p>
-        Si prega di compilare i campi con attenzione. Tutti i campi
-        contrassegnati da un asterisco sono obbligatori o si compilano in
-        automatico.
-      </p>
-      <div class="md:grid md:grid-cols-2 md:gap-x-4 p-4 md:p-0">
-        <div *ngFor="let module of invoiceModules">
-          <div class="relative w-full mt-6 group mx-auto">
-            <input
-              [formControlName]="module.value"
-              autocomplete="off"
-              [type]="module.type"
-              [required]="module.required"
-              [ngClass]="
+      <h1>{{ translations["lbl_invoice_title"] }}</h1>
+      <p>{{ translations["lbl_invoice_text"] }}</p>
+      <div class="md:grid md:grid-cols-4 md:gap-x-4 p-4 md:p-0">
+        <div
+          *ngFor="let module of invoiceModules"
+          class="relative w-full mt-6 group mx-auto"
+          [ngClass]="
+            module.columnspan === 1
+              ? 'col-span-1'
+              : module.columnspan === 4
+              ? 'col-span-4'
+              : 'col-span-2'
+          "
+        >
+          <input
+            [formControlName]="module.value"
+            autocomplete="off"
+            [type]="module.type"
+            [required]="module.required"
+            [ngClass]="
               formInvoice.get(module.value)?.invalid &&
               formInvoice.get(module.value)?.errors &&
               (formInvoice.get(module.value)?.dirty ||
@@ -70,39 +75,38 @@
                 ? 'border-red-500'
                 : 'border-gray-300'
             "
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-              placeholder=" "
-            />
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
+          />
 
-            <label
-              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              {{ module.label }}
-              <span *ngIf="module.required" class="text-red-500">*</span>
-            </label>
-          </div>
+          <label
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ module.label }}
+            <span *ngIf="module.required" class="text-red-500">*</span>
+          </label>
         </div>
       </div>
     </div>
-    <div class="text-center sm:text-left flex flex-row space-x-4">
+    <div class="flex flex-row space-x-4 justify-center">
       <button
-      *ngIf="store.currentStep > 1 && !store.isLastModule"
-      type="button"
-      (click)="service.handlePreviousStep()"
-      class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
-      Indietro
-    </button>
-    <button
-      [ngClass]="
-        formInvoice.valid
-          ? 'bg-yellow-400 text-white '
-          : 'bg-yellow-200 text-slate-200'
-      "
-      class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
-    >
-      Avanti
-    </button>
-  </div>
+        {{ translations["lbl_btn_back"] }}
+      </button>
+      <button
+        [ngClass]="
+          formInvoice.valid
+            ? 'bg-yellow-400 text-white '
+            : 'bg-yellow-200 text-slate-200'
+        "
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_forward"] }}
+      </button>
+    </div>
   </form>
 </app-wizard>

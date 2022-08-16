@@ -130,7 +130,6 @@ export class StatusService {
         error: null,
       };
       if (controlErrors != null) {
-        console.log(controlErrors);
         Object.keys(controlErrors).forEach((keyError) => {
           if (controlErrors[keyError]) {
             errors[
@@ -145,15 +144,28 @@ export class StatusService {
     return errors;
   }
 
-  handlePreviousStep() {
+  handlePreviousStep(samePage: boolean = false) {
     if (this.store.currentStep > 1) {
-      this.store.currentStep -= 1;
-      this.router.navigate(
-        [this.store.modules[this.store.currentStep - 1].module],
-        {
-          queryParamsHandling: "merge",
-        }
-      );
+      if (samePage) {
+        this.router
+          .navigateByUrl("/", { skipLocationChange: true })
+          .then(() => {
+            this.router.navigate(
+              [this.store.modules[this.store.currentStep - 1].module],
+              {
+                queryParamsHandling: "merge",
+              }
+            );
+          });
+      } else {
+        this.store.currentStep -= 1;
+        this.router.navigate(
+          [this.store.modules[this.store.currentStep - 1].module],
+          {
+            queryParamsHandling: "merge",
+          }
+        );
+      }
     }
   }
 }

@@ -33,7 +33,7 @@
       <div *ngIf="currentModule?.packagesDetails.enable">
         <div class="flex w-full items-center">
           <p class="mb-6 font-medium w-full">
-            Inserisci i dati dei colli da rendere
+            {{ translations["lbl_return_packages"] }}
           </p>
           <div class="flex w-full justify-end space-x-2">
             <button
@@ -41,7 +41,7 @@
               class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
               (click)="removePackage()"
             >
-              Rimuovi collo
+              {{ translations["lbl_remove_package"] }}
             </button>
             <button
               [disabled]="
@@ -51,7 +51,7 @@
               class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
               (click)="addPackage()"
             >
-              Aggiungi collo
+              {{ translations["lbl_add_package"] }}
             </button>
           </div>
         </div>
@@ -214,7 +214,7 @@
         </div>
       </div>
 
-      <p class="mb-6 font-medium">Inserisci eventuale codice sconto</p>
+      <p class="mb-6 font-medium">{{ translations["lbl_coupon"] }}</p>
       <div class="relative w-full md:w-1/2 mb-6 group">
         <input
           [formControlName]="'codiceSconto'"
@@ -229,22 +229,31 @@
           for="codiceSconto"
           class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
-          {{ translations["codiceSconto"] || "Codice sconto" }} €
+          {{ translations["lbl_coupon"] }} €
         </label>
       </div>
 
-      <button
-        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
-        [ngClass]="
-          formShipment.valid
-            ? 'text-white bg-yellow-400 cursor-pointer'
-            : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
-        "
-        type="button"
-        (click)="confirmInsurance()"
-      >
-        Conferma dettagli
-      </button>
+      <div class="flex flex-row space-x-4 justify-center">
+        <button
+          *ngIf="store.currentStep > 1 && !store.isLastModule"
+          type="button"
+          (click)="service.handlePreviousStep()"
+          class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        >
+          {{ translations["lbl_btn_back"] }}</button
+        ><button
+          class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
+          [ngClass]="
+            formShipment.valid
+              ? 'text-white bg-yellow-400 cursor-pointer'
+              : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
+          "
+          type="button"
+          (click)="confirmInsurance()"
+        >
+          Conferma dettagli
+        </button>
+      </div>
     </ng-container>
     <ng-template #serviceChoice>
       <!-- andata -->
@@ -255,7 +264,7 @@
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
             <h1 class="text-xl font-semibold text-gray-900">
-              Seleziona il corriere di andata
+              {{ translations["lbl_choose_courier"] }}
             </h1>
           </div>
           <div
@@ -283,35 +292,41 @@
                 </span>
               </div>
 
-              <div class="flex justify-center items-baseline my-8">
-                <span class="mr-2 text-2xl font-extrabold">
-                  totale: €{{ service.data.totale }}
-                </span>
-              </div>
-              <ul role="list" class="mb-8 space-y-4 text-left list-disc">
-                <li class="flex items-center space-x-3">
-                  <span>varie: €{{ service.data.varie }}</span>
-                </li>
-                <li class="flex items-center space-x-3">
-                  <span>nolo: €{{ service.data.nolo }}</span>
-                </li>
-                <li
-                  class="flex items-center space-x-3"
-                  *ngFor="
-                    let varie_d of service.data.varie_dettaglio | keyvalue
-                  "
-                >
-                  <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
-                </li>
-                <li class="flex items-center space-x-3" *ngIf="iva">
-                  <span
-                    >netto IVA: €{{
-                      service.data.totale / ((iva + 100) / 100)
-                        | number: "0.2-2"
-                    }}</span
+              <ng-container *ngIf="store.hasPayment">
+                <div class="flex justify-center items-baseline my-8">
+                  <span class="mr-2 text-2xl font-extrabold">
+                    totale: €{{ service.data.totale }}
+                  </span>
+                </div>
+                <ul role="list" class="mb-8 space-y-4 text-left list-disc">
+                  <li class="flex items-center space-x-3">
+                    <span
+                      >{{ translations["lbl_ancillary_price"] }}: €{{
+                        service.data.varie
+                      }}</span
+                    >
+                  </li>
+                  <li class="flex items-center space-x-3">
+                    <span>nolo: €{{ service.data.nolo }}</span>
+                  </li>
+                  <li
+                    class="flex items-center space-x-3"
+                    *ngFor="
+                      let varie_d of service.data.varie_dettaglio | keyvalue
+                    "
                   >
-                </li>
-              </ul>
+                    <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                  </li>
+                  <li class="flex items-center space-x-3" *ngIf="iva">
+                    <span
+                      >netto IVA: €{{
+                        service.data.totale / ((iva + 100) / 100)
+                          | number: "0.2-2"
+                      }}</span
+                    >
+                  </li>
+                </ul>
+              </ng-container>
               <span>ritiro: {{ pickupAvailability[service.courier] }}</span>
             </div>
           </div>
@@ -325,7 +340,7 @@
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
             <h1 class="text-xl font-semibold text-gray-900">
-              Seleziona il corriere di ritorno
+              {{ translations["lbl_choose_return_courier"] }}
             </h1>
           </div>
           <div
@@ -352,48 +367,60 @@
                   {{ service.serviceName }}
                 </span>
               </div>
-
-              <div class="flex justify-center items-baseline my-8">
-                <span class="mr-2 text-2xl font-extrabold">
-                  totale: €{{ service.data.totale }}
-                </span>
-              </div>
-              <ul role="list" class="mb-8 space-y-4 text-left list-disc">
-                <li class="flex items-center space-x-3">
-                  <span>varie: €{{ service.data.varie }}</span>
-                </li>
-                <li class="flex items-center space-x-3">
-                  <span>nolo: €{{ service.data.nolo }}</span>
-                </li>
-                <li
-                  class="flex items-center space-x-3"
-                  *ngFor="
-                    let varie_d of service.data.varie_dettaglio | keyvalue
-                  "
-                >
-                  <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
-                </li>
-                <li class="flex items-center space-x-3" *ngIf="iva">
-                  <span
-                    >netto IVA: €{{
-                      service.data.totale / ((iva + 100) / 100)
-                        | number: "0.2-2"
-                    }}</span
+              <ng-container *ngIf="store.hasPayment">
+                <div class="flex justify-center items-baseline my-8">
+                  <span class="mr-2 text-2xl font-extrabold">
+                    {{ translations["lbl_total_price"] }}: €{{
+                      service.data.totale
+                    }}
+                  </span>
+                </div>
+                <ul role="list" class="mb-8 space-y-4 text-left list-disc">
+                  <li class="flex items-center space-x-3">
+                    <span
+                      >{{ translations["lbl_ancillary_price"] }}: €{{
+                        service.data.varie
+                      }}</span
+                    >
+                  </li>
+                  <li class="flex items-center space-x-3">
+                    <span
+                      >{{ translations["lbl_total_price"] }}: €{{
+                        service.data.nolo
+                      }}</span
+                    >
+                  </li>
+                  <li
+                    class="flex items-center space-x-3"
+                    *ngFor="
+                      let varie_d of service.data.varie_dettaglio | keyvalue
+                    "
                   >
-                </li>
-              </ul>
+                    <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                  </li>
+                  <li class="flex items-center space-x-3" *ngIf="iva">
+                    <span>
+                      {{ translations["lbl_total_price"] }}: €
+                      {{
+                        service.data.totale / ((iva + 100) / 100)
+                          | number: "0.2-2"
+                      }}
+                    </span>
+                  </li>
+                </ul>
+              </ng-container>
             </div>
           </div>
         </div>
       </section>
-      <div class="text-center sm:text-left flex flex-row space-x-4">
+      <div class="flex flex-row space-x-4 justify-center">
         <button
           *ngIf="store.currentStep > 1 && !store.isLastModule"
           type="button"
-          (click)="service.handlePreviousStep()"
+          (click)="service.handlePreviousStep(true)"
           class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
         >
-          Indietro
+          {{ translations["lbl_btn_back"] }}
         </button>
         <button
           (click)="incrementStep()"
@@ -404,7 +431,7 @@
           "
           class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
         >
-          Avanti
+          {{ translations["lbl_btn_forward"] }}
         </button>
       </div>
     </ng-template>

@@ -84,6 +84,19 @@ export class SenderComponent {
             this.formSender.controls["sender_surname"].setValue(
               store.sender[element].split(" ").slice(1).join(" ")
             );
+          } else if (
+            element === "sender_addr" &&
+            store.senderExtras["sender_addr_secondary"]
+          ) {
+            this.formSender.controls["sender_addr"].setValue(
+              service.getDifference(
+                store.sender[element],
+                store.senderExtras["sender_addr_secondary"]
+              )
+            );
+            this.formSender.controls["sender_addr_secondary"].setValue(
+              store.senderExtras["sender_addr_secondary"]
+            );
           } else {
             this.formSender.controls[element].setValue(store.sender[element]);
           }
@@ -92,60 +105,60 @@ export class SenderComponent {
     });
 
     this.autocomplete = this.currentModule.autocomplete;
-    this.labels = store.translations;
+    this.translations = store.translations;
     this.fields = [
       {
         value: "sender_name",
-        label: this.labels.nome,
+        label: this.translations.nome,
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "sender_surname",
-        label: this.labels.cognome,
+        label: this.translations.cognome,
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "sender_contact",
-        label: this.labels.sender_contact,
+        label: this.translations.sender_contact,
         type: "text",
         required: false,
         columnspan: 4,
       },
       {
         value: "sender_addr",
-        label: this.labels.sender_addr,
+        label: this.translations.sender_addr,
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "sender_addr_secondary",
-        label: this.labels.sender_addr_secondary,
+        label: this.translations.sender_addr_secondary,
         type: "text",
         required: false,
         columnspan: 2,
       },
       {
         value: "sender_city",
-        label: this.labels.sender_city,
+        label: this.translations.sender_city,
         type: "text",
         required: true,
         columnspan: 1,
       },
       {
         value: "sender_cap",
-        label: this.labels.sender_cap,
+        label: this.translations.sender_cap,
         type: "number",
         required: true,
         columnspan: 1,
       },
       {
         value: "sender_prov",
-        label: this.labels.sender_prov,
+        label: this.translations.sender_prov,
         type: "text",
         required: true,
         maxLenght: 2,
@@ -153,7 +166,7 @@ export class SenderComponent {
       },
       {
         value: "sender_country_code",
-        label: this.labels.sender_country_code,
+        label: this.translations.sender_country_code,
         type: "text",
         required: true,
         maxLenght: 2,
@@ -161,14 +174,14 @@ export class SenderComponent {
       },
       {
         value: "sender_email",
-        label: this.labels.sender_email,
+        label: this.translations.sender_email,
         type: "email",
         required: true,
         columnspan: 2,
       },
       {
         value: "sender_phone",
-        label: this.labels.sender_phone,
+        label: this.translations.sender_phone,
         type: "number",
         required: true,
         columnspan: 2,
@@ -189,7 +202,7 @@ export class SenderComponent {
   }
 
   step: any;
-  labels: any = {};
+  translations: any = {};
   showPredictions: boolean = false;
   autocomplete: string;
   currentModule: any = {};

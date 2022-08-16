@@ -61,11 +61,9 @@ export class AppComponent {
               this.store.hasPayment =
                 modules.filter((element: any) => element.module === "payment")
                   .length > 0;
-              console.log(this.store.hasPayment);
               this.store.modules = modules;
               this.store.translations = res[1];
               this.router.navigate(["/" + modules[0].module], {
-                // this.router.navigate(["/" + "fatturaDHL"], {
                 queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });
             });

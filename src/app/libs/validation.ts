@@ -7,7 +7,7 @@ export function ValidateEmail(
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-z_A-Z\-0-9]+\.)+[a-zA-Z]{1,}))$/;
   if (control.value && control.value.length > 0) {
     if (!control.value.match(validRegex)) {
-      return { invalidCharacter: true };
+      return { lbl_invalid_characters: true };
     }
   }
   return null;
@@ -23,7 +23,7 @@ export function ValidatePhone(
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/i;
 
   if (!control.value.match(validRegex)) {
-    return { invalidCharacter: true };
+    return { lbl_invalid_characters: true };
   }
   return null;
 }
@@ -34,22 +34,22 @@ export function ValidatePackage(
   let value = control.value;
   const min = 0;
   const max = 100;
-  value = value.replaceAll(",", ".");
+  // value = value.replaceAll(",", ".");
   if (value.length === 0) {
-    return { packagesDetails: "required" };
+    return { packagesDetails: "lbl_required" };
   }
   if (String(value).split(".").length - 1 > 1) {
-    return { packagesDetails: "invalidCharacter" };
+    return { packagesDetails: "lbl_invalid_characters" };
   }
   value = parseFloat(value);
   if (isNaN(value)) {
-    return { packagesDetails: "invalidCharacter" };
+    return { packagesDetails: "lbl_invalid_characters" };
   }
   if (value < min) {
-    return { packagesDetails: "tooLowValue" };
+    return { packagesDetails: "lbl_too_low_value" };
   }
   if (value > max) {
-    return { packagesDetails: "tooHighValue" };
+    return { packagesDetails: "lbl_too_high_value" };
   }
   return null;
 }
@@ -68,17 +68,17 @@ export function ValidateInsurance(
   }
   value.replaceAll(",", ".");
   if (String(value).split(".").length - 1 > 1) {
-    return { invalidCharacter: true };
+    return { lbl_invalid_characters: true };
   }
   value = parseFloat(value);
   if (isNaN(value)) {
-    return { invalidCharacter: true };
+    return { lbl_invalid_characters: true };
   }
   if (value < min) {
-    return { tooLowValue: true };
+    return { lbl_too_low_value: true };
   }
   if (value > max) {
-    return { tooHighValue: true };
+    return { lbl_too_high_value: true };
   }
   return null;
 }

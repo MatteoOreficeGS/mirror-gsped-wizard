@@ -85,6 +85,19 @@ export class RecipientComponent {
             this.formRecipient.controls["rcpt_surname"].setValue(
               store.recipient[element].split(" ").slice(1).join(" ")
             );
+          } else if (
+            element === "rcpt_addr" &&
+            store.recipientExtras["rcpt_addr_secondary"]
+          ) {
+            this.formRecipient.controls["rcpt_addr"].setValue(
+              service.getDifference(
+                store.recipient[element],
+                store.recipientExtras["rcpt_addr_secondary"]
+              )
+            );
+            this.formRecipient.controls["rcpt_addr_secondary"].setValue(
+              store.recipientExtras["rcpt_addr_secondary"]
+            );
           } else {
             this.formRecipient.controls[element].setValue(
               store.recipient[element]
@@ -97,61 +110,61 @@ export class RecipientComponent {
 
     this.autocomplete = this.currentModule.autocomplete;
 
-    this.labels = store.translations;
+    this.translations = store.translations;
 
     this.fields = [
       {
         value: "rcpt_name",
-        label: this.labels.nome,
+        label: this.translations.nome,
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "rcpt_surname",
-        label: this.labels.cognome,
+        label: this.translations.cognome,
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "rcpt_contact",
-        label: this.labels.rcpt_contact,
+        label: this.translations.rcpt_contact,
         type: "text",
         required: false,
         columnspan: 4,
       },
       {
         value: "rcpt_addr",
-        label: this.labels.rcpt_addr || "rcpt_addr",
+        label: this.translations.rcpt_addr || "rcpt_addr",
         type: "text",
         required: true,
         columnspan: 2,
       },
       {
         value: "rcpt_addr_secondary",
-        label: this.labels.rcpt_addr_secondary || "",
+        label: this.translations.rcpt_addr_secondary || "",
         type: "text",
         required: false,
         columnspan: 2,
       },
       {
         value: "rcpt_city",
-        label: this.labels.rcpt_city,
+        label: this.translations.rcpt_city,
         type: "text",
         required: true,
         columnspan: 1,
       },
       {
         value: "rcpt_cap",
-        label: this.labels.rcpt_cap,
+        label: this.translations.rcpt_cap,
         type: "number",
         required: true,
         columnspan: 1,
       },
       {
         value: "rcpt_prov",
-        label: this.labels.rcpt_prov,
+        label: this.translations.rcpt_prov,
         type: "text",
         required: true,
         maxlength: 2,
@@ -159,7 +172,7 @@ export class RecipientComponent {
       },
       {
         value: "rcpt_country_code",
-        label: this.labels.rcpt_country_code,
+        label: this.translations.rcpt_country_code,
         type: "text",
         required: true,
         maxlength: 2,
@@ -167,14 +180,14 @@ export class RecipientComponent {
       },
       {
         value: "rcpt_email",
-        label: this.labels.rcpt_email,
+        label: this.translations.rcpt_email,
         type: "email",
         required: true,
         columnspan: 2,
       },
       {
         value: "rcpt_phone",
-        label: this.labels.rcpt_phone,
+        label: this.translations.rcpt_phone,
         type: "number",
         required: true,
         columnspan: 2,
@@ -195,7 +208,7 @@ export class RecipientComponent {
   }
 
   langParam = "";
-  labels: any = {};
+  translations: any = {};
   showPredictions: boolean = false;
   autocomplete: boolean = false;
   readonly?: boolean;

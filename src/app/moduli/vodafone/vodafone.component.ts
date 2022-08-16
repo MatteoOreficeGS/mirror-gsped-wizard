@@ -1,7 +1,6 @@
-import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import {  Router } from "@angular/router";
 import { StatusService } from "../../status.service";
 import { StoreService } from "../../store.service";
 
@@ -15,8 +14,6 @@ export class VodafoneComponent implements OnInit {
     public service: StatusService,
     public store: StoreService,
     private router: Router,
-    private route: ActivatedRoute,
-    private http: HttpClient
   ) {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "vodafone"
@@ -26,11 +23,11 @@ export class VodafoneComponent implements OnInit {
       description: ["", [Validators.nullValidator]],
     });
     this.store.productDestination = this.currentModule.destination;
+    this.translations = this.store.translations;
     this.choices = this.currentModule.choices;
     this.selected = this.choices[0].choice;
     this.choiceText = this.choices[0].text;
     this.products = this.currentModule.productList;
-    console.log(this.choices);
   }
 
   ngOnInit(): void {}
@@ -45,6 +42,10 @@ export class VodafoneComponent implements OnInit {
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentProduct: any =
     "border-[#C7312A] text-[#C7312A] w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
+  translations: any = {};
+  selectProductNumber: number = 0;
+  showModal: boolean = false;
+  errors: any = {};
 
   handleSetProduct(type: any, index: number) {
     this.selected = type;
@@ -55,14 +56,23 @@ export class VodafoneComponent implements OnInit {
     let auxProduct = product;
     if (auxProduct.selected === true) {
       auxProduct.selected = false;
+      this.selectProductNumber--;
     } else {
+      this.selectProductNumber++;
       auxProduct.selected = true;
     }
     this.products[index] = auxProduct;
-    console.log(this.products);
   }
 
   nextStep() {
+    if (this.selectProductNumber <= 0) {
+      this.showModal = true;
+      this.errors = {};
+      this.errors = {
+        selectProduct: "required",
+      };
+      return;
+    }
     const selectedProducts = this.products.map((product: any) => {
       {
         return product.selected ? product.name : null;
@@ -80,5 +90,8 @@ export class VodafoneComponent implements OnInit {
         queryParamsHandling: "merge",
       }
     );
+  }
+  setCloseModal(event: boolean) {
+    this.showModal = event;
   }
 }

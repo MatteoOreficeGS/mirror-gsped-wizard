@@ -94,7 +94,6 @@
                 </td>
               </tr>
 
-              <!-- nel riepilogo dei dati di mittente e destinatario mettere i campi in questo ordine: nome, contatto,indirizzo linea1 indirizzo linea2 cap citta provincia nazione telefono mail per le indicazioni sul layout vedere il documento linkato qualche issue piu indietro -->
             </tbody>
           </table>
         </div>
@@ -187,7 +186,7 @@
   <form [formGroup]="formPayment" (submit)="redirectPayment()">
     <div class="grid lg:grid-cols-1 gap-x-4 relative mt-8 px-4 sm:px-6 lg:px-8">
       <ng-container *ngFor="let field of fields">
-        <div class="relative z-0 w-full mb-6 group mx-auto">
+        <div class="relative z-0 w-full md:w-[32rem] mb-6 group mx-auto">
           <input
             autocomplete="off"
             [formControlName]="field.value"
@@ -229,14 +228,14 @@
       </div>
     </div>
 
-    <div class="text-center sm:text-left flex flex-row space-x-4">
+    <div class="flex flex-row space-x-4 justify-center ">
       <button
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
         (click)="service.handlePreviousStep()"
         class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
-        Indietro
+        {{ translations["lbl_btn_back"] }}
       </button>
       <button
         [disabled]="isHandledPayment"
@@ -250,7 +249,7 @@
         "
         class="flex space-x-2 focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
-        <span>Vai al Pagamento</span>
+        <span>{{translations['lbl_btn_payment']}}</span>
         <mat-icon>open_in_new</mat-icon>
       </button>
     </div>

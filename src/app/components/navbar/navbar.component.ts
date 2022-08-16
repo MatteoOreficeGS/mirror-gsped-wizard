@@ -13,7 +13,6 @@ export class NavbarComponent {
   constructor(
     public store: StoreService,
     private router: Router,
-    private http: HttpClient,
     private status: StatusService
   ) {
     this.response = this.store.configuration;

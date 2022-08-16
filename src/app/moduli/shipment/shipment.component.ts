@@ -30,16 +30,30 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = this.currentModule.documentFlag;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
-      outwardInsurance: ["", [ValidateInsurance]],
-      codiceSconto: "",
-      returnInsurance: ["", [ValidateInsurance]],
+      outwardInsurance: [
+        this.store.outwardInsurance ? this.store.outwardInsurance : "",
+        [ValidateInsurance],
+      ],
+      codiceSconto: this.store.codiceSconto,
+      returnInsurance: [
+        this.store.returnInsurance ? this.store.returnInsurance : "",
+        [ValidateInsurance],
+      ],
     });
     this.iva = this.store.configuration.vatPercentage;
+    if (!this.store.hasPayment) {
+      this.confirmInsurance();
+    }
   }
 
   ngOnInit(): void {
     if (this.currentModule.packagesDetails.enable) {
-      this.addPackage();
+      if (this.store.packages.length > 0) {
+        this.packageNumber = this.store.packages.length;
+        this.addFilledPackages();
+      } else {
+        this.addPackage();
+      }
     } else {
       this.daticolli = {
         colli: 1,
@@ -72,12 +86,17 @@ export class ShipmentComponent implements OnInit {
     return this.formShipment.get("dimensions") as FormArray;
   }
 
-  newPackage(): FormGroup {
+  newPackage(
+    lunghezza = "",
+    larghezza = "",
+    altezza = "",
+    peso = ""
+  ): FormGroup {
     return this.fb.group({
-      lunghezza: ["", ValidatePackage],
-      larghezza: ["", ValidatePackage],
-      altezza: ["", ValidatePackage],
-      peso: ["", ValidatePackage],
+      lunghezza: ["" + lunghezza, ValidatePackage],
+      larghezza: ["" + larghezza, ValidatePackage],
+      altezza: ["" + altezza, ValidatePackage],
+      peso: ["" + peso, ValidatePackage],
     });
   }
 
@@ -96,6 +115,14 @@ export class ShipmentComponent implements OnInit {
       this.packageNumber--;
       this.dimensions.removeAt(-1);
     }
+  }
+
+  addFilledPackages() {
+    this.store.packages.forEach((pack: any) => {
+      this.dimensions.push(
+        this.newPackage(pack.lunghezza, pack.larghezza, pack.altezza, pack.peso)
+      );
+    });
   }
 
   showCourierSelection: boolean = false;
@@ -124,7 +151,7 @@ export class ShipmentComponent implements OnInit {
   showModal: boolean = false;
 
   setDatiColli() {
-    let dimensions = this.formShipment.value.dimensions.map(
+    const dimensions = this.formShipment.value.dimensions.map(
       (dimension: any) => {
         return {
           lunghezza: parseFloat(dimension.lunghezza.replaceAll(",", ".")),
@@ -151,17 +178,19 @@ export class ShipmentComponent implements OnInit {
       peso: pesoTot,
       volume: volumeTot,
     };
+    this.store.packages = dimensions;
   }
 
   confirmInsurance() {
     let packageErrors = {};
-    this.fieldsLabel.forEach((field: any) => {
-      this.dimensions.controls.forEach((control: any) => {
-        if (control.get(field.label)?.errors != null) {
-          packageErrors = control.get(field.label)?.errors;
-        }
+    this.fieldsLabel &&
+      this.fieldsLabel.forEach((field: any) => {
+        this.dimensions.controls.forEach((control: any) => {
+          if (control.get(field.label)?.errors != null) {
+            packageErrors = control.get(field.label)?.errors;
+          }
+        });
       });
-    });
     if (this.formShipment.valid) {
       // setting the insurance value at 100 if checkbox is checked at 0 if not
       if (this.formShipment.value.outwardInsurance === true) {
@@ -179,60 +208,125 @@ export class ShipmentComponent implements OnInit {
       } else {
         this.store.returnInsurance = this.formShipment.value.returnInsurance;
       }
-      if (this.formShipment.valid) {
-        if (this.currentModule.packagesDetails.enable) {
-          this.setDatiColli();
+      if (this.currentModule.packagesDetails.enable) {
+        this.setDatiColli();
+      }
+      if (
+        this.store.modules.filter((module: any) => {
+          return module.module === "vodafone";
+        }).length === 1
+      ) {
+        const packageDimension = 20;
+        const volume =
+          (packageDimension * packageDimension * packageDimension) / 1000000;
+        this.daticolli = {
+          colli: 1,
+          peso: 1,
+          volume: volume,
+          daticolli: {
+            peso: 1,
+            altezza: packageDimension,
+            larghezza: packageDimension,
+            lunghezza: packageDimension,
+            volume: volume,
+          },
+        };
+      }
+      this.store.codiceSconto = this.formShipment.value.codiceSconto;
+      this.isLoading = true;
+
+      this.bodyRateComparativa = {
+        ...this.daticolli,
+        documenti: this.store.isDocumentShipment ? 1 : 0,
+        codice_sconto: this.formShipment.value.codiceSconto,
+        tipo_listino: "passivo",
+        client_id: this.store.configuration.client_id,
+      };
+
+      this.setShipmentPayload();
+      this.showInput = false;
+
+      // rateComparative di andata
+      const outwardBodyRateComparativa = {
+        ...this.bodyRateComparativa,
+        valore: this.store.outwardInsurance
+          ? this.store.outwardInsurance
+          : this.formShipment.value.outwardInsurance,
+        sender_cap: this.store.sender.sender_cap,
+        sender_addr: this.store.sender.sender_addr,
+        sender_city: this.store.sender.sender_city,
+        sender_country_code: this.store.sender.sender_country_code,
+        rcpt_cap: this.store.recipient.rcpt_cap,
+        rcpt_addr: this.store.recipient.rcpt_addr,
+        rcpt_city: this.store.recipient.rcpt_city,
+        rcpt_country_code: this.store.recipient.rcpt_country_code,
+      };
+      this.handleRateComparative(outwardBodyRateComparativa).subscribe(
+        // TODO aggiungere IVA
+        (res: any) => {
+          Object.keys(res.passivo).forEach((courier: any) => {
+            Object.keys(res.passivo[courier]).forEach((service: any) => {
+              this.service
+                .pickupAvailability(
+                  res.passivo[courier][service].codice_corriere
+                )
+                .subscribe(
+                  (res: any) => {
+                    this.pickupAvailability[courier] =
+                      res.result === "OK"
+                        ? "oggi dalle 15:00"
+                        : "domani dalle 10";
+                  },
+                  (error: any) => {
+                    this.pickupAvailability[courier] = "domani dalle 10";
+                  }
+                );
+              this.outwardCostExposure.push({
+                courier: courier,
+                serviceName: service,
+                courierCode: parseInt(
+                  res.passivo[courier][service].codice_corriere
+                ),
+                serviceCode: parseInt(
+                  res.passivo[courier][service].codice_servizio
+                ),
+                data: res.passivo[courier][service],
+              });
+            });
+          });
+          this.outwardCostExposure = this.filterRateComparativeResults(
+            false, //is outward
+            this.currentModule.selectCourier.couriers.selectionMode,
+            this.outwardCostExposure
+          );
+          if (!this.store.hasReturnShipment) {
+            this.isLoading = false;
+          }
         }
-        this.store.codiceSconto = this.formShipment.value.codiceSconto;
-        this.isLoading = true;
+      );
 
-        this.bodyRateComparativa = {
-          ...this.daticolli,
-          documenti: this.store.isDocumentShipment ? 1 : 0,
-          codice_sconto: this.formShipment.value.codiceSconto,
-          tipo_listino: "passivo",
-          client_id: this.store.configuration.client_id,
-        };
-
-        this.setShipmentPayload();
-        this.showInput = false;
-
-        // rateComparative di andata
-        const outwardBodyRateComparativa = {
+      // rateComparative di ritorno
+      if (this.store.hasReturnShipment) {
+        const returnBodyRateComparativa = {
           ...this.bodyRateComparativa,
-          valore: this.store.outwardInsurance
-            ? this.store.outwardInsurance
-            : this.formShipment.value.outwardInsurance,
-          sender_cap: this.store.sender.sender_cap,
-          sender_addr: this.store.sender.sender_addr,
-          sender_city: this.store.sender.sender_city,
-          sender_country_code: this.store.sender.sender_country_code,
-          rcpt_cap: this.store.recipient.rcpt_cap,
-          rcpt_addr: this.store.recipient.rcpt_addr,
-          rcpt_city: this.store.recipient.rcpt_city,
-          rcpt_country_code: this.store.recipient.rcpt_country_code,
+          valore: this.store.returnInsurance
+            ? this.store.returnInsurance
+            : this.formShipment.value.returnInsurance,
+          //Inverto gli indirizzi di sender e recipient
+          sender_cap: this.store.recipient.rcpt_cap,
+          sender_addr: this.store.recipient.rcpt_addr,
+          sender_city: this.store.recipient.rcpt_city,
+          sender_country_code: this.store.recipient.rcpt_country_code,
+          rcpt_cap: this.store.sender.sender_cap,
+          rcpt_addr: this.store.sender.sender_addr,
+          rcpt_city: this.store.sender.sender_city,
+          rcpt_country_code: this.store.sender.sender_country_code,
         };
-        this.handleRateComparative(outwardBodyRateComparativa).subscribe(
-          // TODO aggiungere IVA
+        this.handleRateComparative(returnBodyRateComparativa).subscribe(
           (res: any) => {
             Object.keys(res.passivo).forEach((courier: any) => {
               Object.keys(res.passivo[courier]).forEach((service: any) => {
-                this.service
-                  .pickupAvailability(
-                    res.passivo[courier][service].codice_corriere
-                  )
-                  .subscribe(
-                    (res: any) => {
-                      this.pickupAvailability[courier] =
-                        res.result === "OK"
-                          ? "oggi dalle 15:00"
-                          : "domani dalle 10";
-                    },
-                    (error: any) => {
-                      this.pickupAvailability[courier] = "domani dalle 10";
-                    }
-                  );
-                this.outwardCostExposure.push({
+                this.returnCostExposure.push({
                   courier: courier,
                   serviceName: service,
                   courierCode: parseInt(
@@ -245,60 +339,14 @@ export class ShipmentComponent implements OnInit {
                 });
               });
             });
-            this.outwardCostExposure = this.filterRateComparativeResults(
-              false, //is outward
-              this.currentModule.selectCourier.couriers.selectionMode,
-              this.outwardCostExposure
+            this.returnCostExposure = this.filterRateComparativeResults(
+              true, //is return
+              this.currentModule.selectCourier.returnCouriers.selectionMode,
+              this.returnCostExposure
             );
-            if (!this.store.hasReturnShipment) {
-              this.isLoading = false;
-            }
+            this.isLoading = false;
           }
         );
-
-        // rateComparative di ritorno
-        if (this.store.hasReturnShipment) {
-          const returnBodyRateComparativa = {
-            ...this.bodyRateComparativa,
-            valore: this.store.returnInsurance
-              ? this.store.returnInsurance
-              : this.formShipment.value.returnInsurance,
-            //Inverto gli indirizzi di sender e recipient
-            sender_cap: this.store.recipient.rcpt_cap,
-            sender_addr: this.store.recipient.rcpt_addr,
-            sender_city: this.store.recipient.rcpt_city,
-            sender_country_code: this.store.recipient.rcpt_country_code,
-            rcpt_cap: this.store.sender.sender_cap,
-            rcpt_addr: this.store.sender.sender_addr,
-            rcpt_city: this.store.sender.sender_city,
-            rcpt_country_code: this.store.sender.sender_country_code,
-          };
-          this.handleRateComparative(returnBodyRateComparativa).subscribe(
-            (res: any) => {
-              Object.keys(res.passivo).forEach((courier: any) => {
-                Object.keys(res.passivo[courier]).forEach((service: any) => {
-                  this.returnCostExposure.push({
-                    courier: courier,
-                    serviceName: service,
-                    courierCode: parseInt(
-                      res.passivo[courier][service].codice_corriere
-                    ),
-                    serviceCode: parseInt(
-                      res.passivo[courier][service].codice_servizio
-                    ),
-                    data: res.passivo[courier][service],
-                  });
-                });
-              });
-              this.returnCostExposure = this.filterRateComparativeResults(
-                true, //is return
-                this.currentModule.selectCourier.returnCouriers.selectionMode,
-                this.returnCostExposure
-              );
-              this.isLoading = false;
-            }
-          );
-        }
       }
     } else {
       this.showModal = true;

@@ -18,6 +18,7 @@ export class FatturaDHLComponent implements OnInit {
   ) {
     this.selected = this.store.invoiceType ? this.store.invoiceType : "privato";
     this.setInvoiceModules(this.selected);
+    this.translations = this.store.translations;
   }
 
   ngOnInit(): void {}
@@ -33,6 +34,7 @@ export class FatturaDHLComponent implements OnInit {
     "border-red-dhl text-red-dhl-dark w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   errors: any = {};
   showModal: boolean = false;
+  translations: any = {};
 
   handleSetInvoiceModules(type: string) {
     if (
@@ -74,7 +76,7 @@ export class FatturaDHLComponent implements OnInit {
         this.invoiceModules = [
           {
             value: "codice_fiscale",
-            label: "codice fiscale",
+            label: this.translations["lbl_italian_tax_code"],
             type: "text",
             required: true,
           },
@@ -148,8 +150,12 @@ export class FatturaDHLComponent implements OnInit {
           ],
           indirizzo: [
             this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_addr
-              : this.store.sender.sender_addr,
+              ? this.service.getDifference(
+                this.store.recipient.rcpt_addr,
+                this.store.recipientExtras.rcpt_addr_secondary)
+              : this.service.getDifference(
+                this.store.sender.sender_addr,
+                this.store.senderExtras.sender_addr_secondary),
             Validators.required,
           ],
           nazione: [
@@ -190,26 +196,26 @@ export class FatturaDHLComponent implements OnInit {
           ],
         });
         this.invoiceModules = [
-          { value: "nome", label: "nome", type: "email", required: true },
-          { value: "cognome", label: "cognome", type: "text", required: true },
-          { value: "societa", label: "società", type: "text", required: false },
+          { value: "nome", label: "nome", type: "email", required: true, columnspan:2 },
+          { value: "cognome", label: "cognome", type: "text", required: true, columnspan:2 },
+          { value: "societa", label: "società", type: "text", required: false, columnspan:4 },
           {
             value: "indirizzo",
             label: "indirizzo",
             type: "text",
-            required: true,
+            required: true, columnspan:4,
           },
-          { value: "nazione", label: "nazione", type: "text", required: true },
-          { value: "cap", label: "CAP", type: "text", required: true },
-          { value: "citta", label: "Città", type: "text", required: true },
+          { value: "nazione", label: "nazione", type: "text", required: true, columnspan:1 },
+          { value: "cap", label: "CAP", type: "text", required: true, columnspan:1 },
+          { value: "citta", label: "Città", type: "text", required: true, columnspan:1 },
           {
             value: "provincia",
             label: "Provincia",
             type: "text",
-            required: true,
+            required: true, columnspan:1,
           },
-          { value: "email", label: "e-mail", type: "email", required: true },
-          { value: "phone", label: "phone", type: "text", required: true },
+          { value: "email", label: "e-mail", type: "email", required: true, columnspan:2 },
+          { value: "phone", label: "phone", type: "text", required: true, columnspan:2 },
         ];
         break;
     }

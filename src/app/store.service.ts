@@ -44,8 +44,8 @@ export class StoreService {
   outwardShipment: any = {};
   returnShipment: any = {};
   payloadShipment: any = {};
-  outwardInsurance: any;
-  returnInsurance: any;
+  outwardInsurance?: number;
+  returnInsurance?: number;
   totale: any;
   invoice: any;
   invoiceType: string = "privato";
@@ -56,4 +56,5 @@ export class StoreService {
   isLastModule: boolean = false;
   isSenderPrefilled?: boolean;
   beforePaymentSession: any;
+  packages:any = [];
 }

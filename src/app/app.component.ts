@@ -41,6 +41,7 @@ export class AppComponent {
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
+              this.isRecipientVisible();
               let modules = res[0].configuration.modules.map((module: any) => {
                 if (module.moduleConfig.hidden) {
                   if (module.moduleName === "sender") {
@@ -170,6 +171,25 @@ export class AppComponent {
     );
   }
 
+  isRecipientVisible() {
+    let result = true;
+    this.store.configuration.modules.forEach(
+      (element: {
+        moduleName: string;
+        moduleConfig: {
+          hidden: boolean;
+          data: { sender_name: string; sender_addr: string };
+        };
+      }) => {
+        if (element.moduleName === "sender") {
+          if (element.moduleConfig.hidden) {
+            result = false;
+          }
+        }
+      }
+    );
+    this.store.noteSenderOnSender = result;
+  }
   isSenderPrefilled() {
     let result = false;
     this.store.configuration.modules.forEach(

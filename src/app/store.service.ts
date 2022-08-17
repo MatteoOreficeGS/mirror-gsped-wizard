@@ -56,5 +56,6 @@ export class StoreService {
   isLastModule: boolean = false;
   isSenderPrefilled?: boolean;
   beforePaymentSession: any;
-  packages:any = [];
+  packages: any = [];
+  noteSenderOnSender?: boolean;
 }

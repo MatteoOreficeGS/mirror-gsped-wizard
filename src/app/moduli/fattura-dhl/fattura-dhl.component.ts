@@ -3,7 +3,11 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
+import {
+  ValidateEmail,
+  ValidateEsteroCountry,
+  ValidatePhone,
+} from "src/app/libs/validation";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -151,18 +155,20 @@ export class FatturaDHLComponent implements OnInit {
           indirizzo: [
             this.store.isSenderPrefilled
               ? this.service.getDifference(
-                this.store.recipient.rcpt_addr,
-                this.store.recipientExtras.rcpt_addr_secondary)
+                  this.store.recipient.rcpt_addr,
+                  this.store.recipientExtras.rcpt_addr_secondary
+                )
               : this.service.getDifference(
-                this.store.sender.sender_addr,
-                this.store.senderExtras.sender_addr_secondary),
+                  this.store.sender.sender_addr,
+                  this.store.senderExtras.sender_addr_secondary
+                ),
             Validators.required,
           ],
           nazione: [
             this.store.isSenderPrefilled
               ? this.store.recipient.rcpt_country_code
               : this.store.sender.sender_country_code,
-            Validators.required,
+            [Validators.required, ValidateEsteroCountry],
           ],
           cap: [
             this.store.isSenderPrefilled
@@ -186,36 +192,86 @@ export class FatturaDHLComponent implements OnInit {
             this.store.isSenderPrefilled
               ? this.store.recipient.rcpt_email
               : this.store.sender.sender_email,
-            ValidateEmail,
+            [Validators.required, ValidateEmail],
           ],
           phone: [
             this.store.isSenderPrefilled
               ? this.store.recipient.rcpt_phone
               : this.store.sender.sender_phone,
-            ValidatePhone,
+            [Validators.required, ValidatePhone],
           ],
         });
         this.invoiceModules = [
-          { value: "nome", label: "nome", type: "email", required: true, columnspan:2 },
-          { value: "cognome", label: "cognome", type: "text", required: true, columnspan:2 },
-          { value: "societa", label: "società", type: "text", required: false, columnspan:4 },
+          {
+            value: "nome",
+            label: "nome",
+            type: "email",
+            required: true,
+            columnspan: 2,
+          },
+          {
+            value: "cognome",
+            label: "cognome",
+            type: "text",
+            required: true,
+            columnspan: 2,
+          },
+          {
+            value: "societa",
+            label: "società",
+            type: "text",
+            required: false,
+            columnspan: 4,
+          },
           {
             value: "indirizzo",
             label: "indirizzo",
             type: "text",
-            required: true, columnspan:4,
+            required: true,
+            columnspan: 4,
           },
-          { value: "nazione", label: "nazione", type: "text", required: true, columnspan:1 },
-          { value: "cap", label: "CAP", type: "text", required: true, columnspan:1 },
-          { value: "citta", label: "Città", type: "text", required: true, columnspan:1 },
+          {
+            value: "cap",
+            label: "CAP",
+            type: "text",
+            required: true,
+            columnspan: 1,
+          },
+          {
+            value: "citta",
+            label: "Città",
+            type: "text",
+            required: true,
+            columnspan: 1,
+          },
           {
             value: "provincia",
             label: "Provincia",
             type: "text",
-            required: true, columnspan:1,
+            required: true,
+            columnspan: 1,
           },
-          { value: "email", label: "e-mail", type: "email", required: true, columnspan:2 },
-          { value: "phone", label: "phone", type: "text", required: true, columnspan:2 },
+          {
+            value: "nazione",
+            label: "nazione",
+            type: "text",
+            required: true,
+            columnspan: 1,
+          },
+          {
+            value: "email",
+            label: "e-mail",
+            type: "email",
+            required: true,
+            columnspan: 2,
+          },
+          {
+            value: "phone",
+            label: "phone",
+            type: "text",
+            required: true,
+            columnspan: 2,
+          },
         ];
         break;
     }

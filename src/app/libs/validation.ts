@@ -82,3 +82,19 @@ export function ValidateInsurance(
   }
   return null;
 }
+
+export function ValidateEsteroCountry(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  let value = control.value;
+  if (value.length > 2) {
+    return { lbl_too_high_value: true };
+  }
+  if (value.length < 2) {
+    return { lbl_too_low_value: true };
+  }
+  if (value.toLowerCase() === "it") {
+    return { lbl_contry_code_invalid: true };
+  }
+  return null;
+}

@@ -80,9 +80,11 @@
     </ng-container>
   </div>
 
-  <p *ngIf="!isPaymentCompleted">
-    {{ displayPayment.response.message }}
-  </p>
+  <div class="flex justify-center">
+    <p *ngIf="!isPaymentCompleted" class="font-semibold">
+      {{ displayPayment.response.message }}
+    </p>
+  </div>
 
   <!-- <p *ngIf="displayPayment; else endWithoutPayment">
     {{ displayPayment.response.message }}

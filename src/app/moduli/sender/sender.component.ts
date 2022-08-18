@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   ValidationErrors,
   Validators,
@@ -72,6 +73,10 @@ export class SenderComponent {
         Validators.required,
       ],
       sender_addr_secondary: "",
+      note_sender: [
+        this.store.senderExtras.note_sender,
+        Validators.maxLength(50),
+      ],
     });
 
     Object.keys(store.sender).forEach((element: any) => {
@@ -188,6 +193,16 @@ export class SenderComponent {
       },
     ];
 
+    if (this.store.noteSenderOnSender) {
+      this.fields.push({
+        value: "note_sender",
+        label: this.translations.note_sender,
+        type: "text",
+        required: false,
+        columnspan: 4,
+      });
+    }
+
     this.route.queryParams.subscribe((params: any) => {
       this.langParam = params.lang;
     });
@@ -250,7 +265,7 @@ export class SenderComponent {
       );
       this.store.senderExtras.sender_surname =
         this.formSender.value.sender_surname;
-      delete this.formSender.value.sender_surname;
+      this.formSender.removeControl('sender_surname');
 
       this.formSender.controls["sender_addr"].setValue(
         (
@@ -261,9 +276,14 @@ export class SenderComponent {
       );
       this.store.senderExtras.sender_addr_secondary =
         this.formSender.value.sender_addr_secondary;
-      delete this.formSender.value.sender_addr_secondary;
+        this.formSender.removeControl("sender_addr_secondary");
+      if (this.store.noteSenderOnSender) {
+        this.store.senderExtras.note_sender = this.formSender.value.note_sender;
+        this.formSender.removeControl("note_sender");
+      }
 
       this.store.sender = this.formSender.value;
+      console.log(this.store.sender);
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

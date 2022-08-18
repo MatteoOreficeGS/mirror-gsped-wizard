@@ -73,6 +73,10 @@ export class RecipientComponent {
         Validators.required,
       ],
       rcpt_addr_secondary: "",
+      note_sender: [
+        this.store.recipientExtras.note_sender,
+        Validators.maxLength(50),
+      ],
     });
 
     Object.keys(store.recipient).forEach((element: any) => {
@@ -194,6 +198,16 @@ export class RecipientComponent {
       },
     ];
 
+    if (!this.store.noteSenderOnSender) {
+      this.fields.push({
+        value: "note_sender",
+        label: this.translations.note_sender,
+        type: "text",
+        required: false,
+        columnspan: 4,
+      });
+    }
+
     this.route.queryParams.subscribe((params: any) => {
       this.langParam = params.lang;
     });
@@ -252,7 +266,7 @@ export class RecipientComponent {
       );
       this.store.recipientExtras.rcpt_surname =
         this.formRecipient.value.rcpt_surname;
-      delete this.formRecipient.value.rcpt_surname;
+      this.formRecipient.removeControl("rcpt_surname");
 
       this.formRecipient.controls["rcpt_addr"].setValue(
         (
@@ -263,7 +277,13 @@ export class RecipientComponent {
       );
       this.store.recipientExtras.rcpt_addr_secondary =
         this.formRecipient.value.rcpt_addr_secondary;
-      delete this.formRecipient.value.rcpt_addr_secondary;
+      this.formRecipient.removeControl("rcpt_addr_secondary");
+
+      if (!this.store.noteSenderOnSender) {
+        this.store.recipientExtras.note_sender =
+          this.formRecipient.value.note_sender;
+        this.formRecipient.removeControl("note_sender");
+      }
 
       this.store.recipient = this.formRecipient.value;
       this.router.navigate(

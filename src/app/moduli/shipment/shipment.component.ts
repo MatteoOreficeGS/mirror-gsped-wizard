@@ -151,6 +151,7 @@ export class ShipmentComponent implements OnInit {
   showModal: boolean = false;
 
   setDatiColli() {
+    console.log("alora");
     const dimensions = this.formShipment.value.dimensions.map(
       (dimension: any) => {
         return {
@@ -361,7 +362,12 @@ export class ShipmentComponent implements OnInit {
   }
 
   setShipmentPayload() {
+    const note_sender = this.store.noteSenderOnSender
+      ? this.store.senderExtras.note_sender
+      : this.store.recipientExtras.note_sender;
+
     this.store.payloadShipment = {
+      note_sender: note_sender,
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,

@@ -47,7 +47,7 @@ export class StoreService {
   outwardInsurance?: number;
   returnInsurance?: number;
   totale: any;
-  invoice: any;
+  invoice: any = {};
   invoiceType: string = "privato";
   chosenCourier: any;
   selectedProducts: any = null;

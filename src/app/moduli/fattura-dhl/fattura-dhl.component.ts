@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 import {
+  ValidateCF,
   ValidateEmail,
   ValidateEsteroCountry,
   ValidatePhone,
@@ -55,27 +56,33 @@ export class FatturaDHLComponent implements OnInit {
 
     switch (type) {
       case "privato":
-        if (!this.store.invoice) {
-          this.formInvoice = this.fb.group({
-            codice_fiscale: [
-              "",
-              [Validators.required, Validators.maxLength(16)],
-            ],
-            pec: ["", [ValidateEmail]],
-            sdi: ["0000000"],
-            type: type,
-          });
-        } else {
-          this.formInvoice = this.fb.group({
-            codice_fiscale: [
-              this.store.invoice.codice_fiscale,
-              [Validators.required, Validators.maxLength(16)],
-            ],
-            pec: [this.store.invoice.pec, [ValidateEmail]],
-            sdi: [this.store.invoice.sdi],
-            type: type,
-          });
-        }
+        this.formInvoice = this.fb.group({
+          codice_fiscale: [
+            this.store.invoice.codice_fiscale,
+            [Validators.required, ValidateCF],
+          ],
+          pec: [this.store.invoice.pec, [ValidateEmail]],
+          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000"],
+          nome: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_name
+            : this.store.sender.sender_name,
+          indirizzo: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_addr
+            : this.store.sender.sender_addr,
+          cap: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_cap
+            : this.store.sender.sender_cap,
+          citta: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_city
+            : this.store.sender.sender_city,
+          provicia: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_prov
+            : this.store.sender.sender_prov,
+          nazione: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_country_code
+            : this.store.sender.sender_country_code,
+          type: type,
+        });
 
         this.invoiceModules = [
           {
@@ -94,27 +101,33 @@ export class FatturaDHLComponent implements OnInit {
         ];
         break;
       case "piva":
-        if (!this.store.invoice) {
-          this.formInvoice = this.fb.group({
-            codice_fiscale: [
-              "",
-              [Validators.required, Validators.maxLength(11)],
-            ],
-            pec: ["", ValidateEmail],
-            sdi: ["", Validators.required],
-            type: type,
-          });
-        } else {
-          this.formInvoice = this.fb.group({
-            codice_fiscale: [
-              this.store.invoice.codice_fiscale,
-              [Validators.required, Validators.maxLength(16)],
-            ],
-            pec: [this.store.invoice.pec, [ValidateEmail]],
-            sdi: [this.store.invoice.sdi],
-            type: type,
-          });
-        }
+        this.formInvoice = this.fb.group({
+          codice_fiscale: [
+            this.store.invoice.codice_fiscale,
+            [Validators.required, ValidateCF],
+          ],
+          pec: [this.store.invoice.pec, [ValidateEmail]],
+          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000"],
+          nome: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_name
+            : this.store.sender.sender_name,
+          indirizzo: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_addr
+            : this.store.sender.sender_addr,
+          cap: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_cap
+            : this.store.sender.sender_cap,
+          citta: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_city
+            : this.store.sender.sender_city,
+          provicia: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_prov
+            : this.store.sender.sender_prov,
+          nazione: this.store.isSenderPrefilled
+            ? this.store.recipient.rcpt_country_code
+            : this.store.sender.sender_country_code,
+          type: type,
+        });
 
         this.invoiceModules = [
           {

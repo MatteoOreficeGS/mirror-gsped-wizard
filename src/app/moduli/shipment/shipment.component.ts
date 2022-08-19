@@ -28,6 +28,8 @@ export class ShipmentComponent implements OnInit {
     this.translations = store.translations;
     this.store.isDocumentShipment = this.currentModule.documentFlag;
     this.isDocumentShipment = this.currentModule.documentFlag;
+    this.pointPickup = this.currentModule.pickup.dropoff;
+    this.homePickup = this.currentModule.pickup.pickup;
     this.formShipment = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: [
@@ -149,6 +151,9 @@ export class ShipmentComponent implements OnInit {
   iva: number;
   errors: any = {};
   showModal: boolean = false;
+  homePickup: boolean;
+  pointPickup: boolean;
+  pickupMode: any = {};
 
   setDatiColli() {
     console.log("alora");
@@ -267,21 +272,6 @@ export class ShipmentComponent implements OnInit {
         (res: any) => {
           Object.keys(res.passivo).forEach((courier: any) => {
             Object.keys(res.passivo[courier]).forEach((service: any) => {
-              this.service
-                .pickupAvailability(
-                  res.passivo[courier][service].codice_corriere
-                )
-                .subscribe(
-                  (res: any) => {
-                    this.pickupAvailability[courier] =
-                      res.result === "OK"
-                        ? "oggi dalle 15:00"
-                        : "domani dalle 10";
-                  },
-                  (error: any) => {
-                    this.pickupAvailability[courier] = "domani dalle 10";
-                  }
-                );
               this.outwardCostExposure.push({
                 courier: courier,
                 serviceName: service,
@@ -295,6 +285,7 @@ export class ShipmentComponent implements OnInit {
               });
             });
           });
+          this.selectCourier("outward", this.outwardCostExposure[0]);
           this.outwardCostExposure = this.filterRateComparativeResults(
             false, //is outward
             this.currentModule.selectCourier.couriers.selectionMode,
@@ -340,6 +331,7 @@ export class ShipmentComponent implements OnInit {
                 });
               });
             });
+            this.selectCourier("return", this.returnCostExposure[0]);
             this.returnCostExposure = this.filterRateComparativeResults(
               true, //is return
               this.currentModule.selectCourier.returnCouriers.selectionMode,
@@ -376,6 +368,7 @@ export class ShipmentComponent implements OnInit {
   }
 
   selectCourier(type: string, service: any) {
+    this.clearPickupAviability();
     this.chosenCourier[type] = service;
     if (this.chosenCourier.outward.serviceName !== "") {
       if (!this.store.hasReturnShipment) {
@@ -384,6 +377,53 @@ export class ShipmentComponent implements OnInit {
         this.canContinue = true;
       }
     }
+  }
+
+  checkPickupAviability(courier: string) {
+    let sameDay = false;
+    if (this.currentModule.pickup.pickupSameDayCheck) {
+      this.service.pickupAvailability(courier).subscribe(
+        (res: any) => {
+          res.result === "OK" && ((sameDay = true), "oggi dalle 15:00");
+        },
+        (error: any) => {}
+      );
+    }
+    let yourDate = new Date();
+    const offset = yourDate.getTimezoneOffset();
+    if (sameDay) {
+      this.pickupAvailability[courier] = "oggi dalle 15:00 alle 18:00";
+      yourDate = new Date(yourDate.getTime() - offset * 60 * 1000);
+      this.pickupMode = {
+        date_req_ritiro:
+          yourDate.toISOString().split("T")[0] + " " + "15:00:00",
+        opening_time: "15:00:00",
+        closing_time: "18:00:00",
+      };
+    } else {
+      const isWeekend = yourDate.getDate() > 5 ? true : false;
+      let date_req_ritiro: any = yourDate.toISOString();
+      if (isWeekend) {
+        const newDate = new Date(
+          yourDate.setDate(yourDate.getDate() + (yourDate.getDate() % 7) + 1) *
+            1000
+        );
+        date_req_ritiro = newDate;
+      }
+      console.log("date_req_ritiro", date_req_ritiro);
+      this.pickupAvailability[courier] =
+        "il prossimo giorno lavorativo dalle 09:00 alle 18:00";
+      this.pickupMode = {
+        // date_req_ritiro: date_req_ritiro.toISOString().split("T")[0],
+        opening_time: "15:00:00",
+        closing_time: "18:00:00",
+      };
+    }
+  }
+
+  clearPickupAviability() {
+    this.pickupAvailability = {};
+    this.pickupMode = {};
   }
 
   handleRateComparative(body: any): Observable<any> {
@@ -456,11 +496,11 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleShipments() {
-    this.store.invoice &&
-      (this.store.payloadShipment.fattura_dhl = [this.store.invoice]),
-      (this.store.payloadShipment.documenti = this.store.isDocumentShipment
-        ? 1
-        : 0);
+    console.log(this.store.invoice);
+    console.log(this.store.chosenCourier["outward"].data);
+    this.store.payloadShipment.documenti = this.store.isDocumentShipment
+      ? 1
+      : 0;
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
     // this.store.payloadShipment.creazione_postuma = true;
     this.store.payloadShipment.valore = this.store.outwardInsurance;
@@ -469,9 +509,21 @@ export class ShipmentComponent implements OnInit {
       ...this.store.payloadShipment,
       ...this.store.sender,
       ...this.store.recipient,
+      ...this.pickupMode,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
+    if (this.store.invoice) {
+      const outwardInvoice = {
+        nolo: this.store.chosenCourier["outward"].data.nolo,
+        totale_fattura: this.store.chosenCourier["outward"].data.totale,
+        assicurazione: this.store.outwardInsurance,
+        valore: this.store.outwardInsurance,
+      };
+      outwardPayloadShipment.fattura_dhl = [
+        { ...this.store.invoice, ...outwardInvoice },
+      ];
+    }
     if (this.store.selectedProducts) {
       outwardPayloadShipment[this.store.productDestination] =
         this.store.selectedProducts;
@@ -500,6 +552,17 @@ export class ShipmentComponent implements OnInit {
           ...this.store.recipient,
         }),
       };
+      if (this.store.invoice) {
+        const returnInvoice = {
+          nolo: this.store.chosenCourier["return"].data.nolo,
+          totale_fattura: this.store.chosenCourier["return"].data.totale,
+          assicurazione: this.store.returnInsurance,
+          valore: this.store.returnInsurance,
+        };
+        returnPayloadShipment.fattura_dhl = [
+          { ...this.store.invoice, ...returnInvoice },
+        ];
+      }
       this.service.handleShipment(returnPayloadShipment).subscribe((res) => {
         this.store.returnShipment = res;
         this.router.navigate(

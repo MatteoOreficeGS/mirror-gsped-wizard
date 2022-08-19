@@ -98,3 +98,16 @@ export function ValidateEsteroCountry(
   }
   return null;
 }
+
+export function ValidateCF(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex =
+    /^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$/;
+  if (control.value && control.value.length > 0) {
+    if (!control.value.match(validRegex)) {
+      return { lbl_invalid_characters: true };
+    }
+  }
+  return null;
+}

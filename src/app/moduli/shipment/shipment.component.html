@@ -312,30 +312,6 @@
                     </li>
                   </ul>
                 </ng-container>
-                <div *ngIf="chosenCourier.outward.serviceName === service.serviceName">
-                  <div class="flex space-x-2" *ngIf="homePickup">
-                    <input
-                      type="radio"
-                      [name]="'ritiro' + service.serviceName"
-                      value="officePoint"
-                      [checked]="homePickup"
-                      (click)="clearPickupAviability()"
-                    />
-                    <span>ritiro presso office point</span>
-                  </div>
-                  <div class="flex space-x-2" *ngIf="pointPickup">
-                    <input
-                      (click)="checkPickupAviability(service.courierCode)"
-                      type="radio"
-                      [name]="'ritiro' + service.serviceName"
-                      value="home"
-                      [checked]="!homePickup"
-                    />ritiro a casa
-                    <span *ngIf="pickupAvailability[service.courierCode]">
-                      ritiro: {{ pickupAvailability[service.courierCode] }}
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -422,6 +398,34 @@
             </div>
           </div>
         </section>
+      </div>
+
+      <div class="mt-4" *ngIf="chosenCourier.outward.courierCode">
+        <div class="flex space-x-2" *ngIf="homePickup">
+          <input
+            class="text-red-dhl"
+            type="radio"
+            [name]="'ritiro'"
+            value="officePoint"
+            [checked]="homePickup"
+            (click)="clearPickupAviability()"
+          />
+          <span>ritiro presso office point</span>
+        </div>
+        <div class="flex space-x-2" *ngIf="pointPickup">
+          <input
+            class="text-red-dhl"
+            (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
+            type="radio"
+            [name]="'ritiro'"
+            value="home"
+            [checked]="!homePickup"
+          />
+          <span>ritiro a casa</span>
+          <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">
+            ritiro: {{ pickupAvailability[chosenCourier.outward.courierCode] }}
+          </span>
+        </div>
       </div>
 
       <div class="flex flex-row space-x-4 justify-center">

@@ -75,7 +75,7 @@ export class FatturaDHLComponent implements OnInit {
           citta: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_city
             : this.store.sender.sender_city,
-          provicia: this.store.isSenderPrefilled
+          provincia: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_prov
             : this.store.sender.sender_prov,
           nazione: this.store.isSenderPrefilled
@@ -120,7 +120,7 @@ export class FatturaDHLComponent implements OnInit {
           citta: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_city
             : this.store.sender.sender_city,
-          provicia: this.store.isSenderPrefilled
+          provincia: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_prov
             : this.store.sender.sender_prov,
           nazione: this.store.isSenderPrefilled
@@ -166,39 +166,49 @@ export class FatturaDHLComponent implements OnInit {
               : this.store.sender.sender_contact,
           ],
           indirizzo: [
-            this.store.isSenderPrefilled
-              ? this.service.getDifference(
-                  this.store.recipient.rcpt_addr,
-                  this.store.recipientExtras.rcpt_addr_secondary
-                )
-              : this.service.getDifference(
-                  this.store.sender.sender_addr,
-                  this.store.senderExtras.sender_addr_secondary
-                ),
+            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
+              ? this.store.isSenderPrefilled
+                ? this.service.getDifference(
+                    this.store.recipient.rcpt_addr,
+                    this.store.recipientExtras.rcpt_addr_secondary
+                  )
+                : this.service.getDifference(
+                    this.store.sender.sender_addr,
+                    this.store.senderExtras.sender_addr_secondary
+                  )
+              : "",
             Validators.required,
           ],
           nazione: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_country_code
-              : this.store.sender.sender_country_code,
+            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
+              ? this.store.isSenderPrefilled
+                ? this.store.recipient.rcpt_country_code
+                : this.store.sender.sender_country_code
+              : "",
             [Validators.required, ValidateEsteroCountry],
           ],
           cap: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_cap
-              : this.store.sender.sender_cap,
+            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
+              ? this.store.isSenderPrefilled
+                ? this.store.recipient.rcpt_cap
+                : this.store.sender.sender_cap
+              : "",
             Validators.required,
           ],
           citta: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_city
-              : this.store.sender.sender_city,
+            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
+              ? this.store.isSenderPrefilled
+                ? this.store.recipient.rcpt_city
+                : this.store.sender.sender_city
+              : "",
             Validators.required,
           ],
           provincia: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_prov
-              : this.store.sender.sender_prov,
+            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
+              ? this.store.isSenderPrefilled
+                ? this.store.recipient.rcpt_prov
+                : this.store.sender.sender_prov
+              : "",
             Validators.required,
           ],
           email: [

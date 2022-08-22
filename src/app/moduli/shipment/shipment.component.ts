@@ -381,32 +381,42 @@ export class ShipmentComponent implements OnInit {
 
   checkPickupAviability(courier: string) {
     let sameDay = false;
-    if (this.currentModule.pickup.pickupSameDayCheck) {
+    let now = new Date();
+    // const offset = now.getTimezoneOffset();
+    const currentHours = now.getHours();
+    console.log(now);
+    console.log(currentHours);
+    if (this.currentModule.pickup.pickupSameDayCheck && currentHours < 15) {
       this.service.pickupAvailability(courier).subscribe(
         (res: any) => {
-          res.result === "OK" && ((sameDay = true), "oggi dalle 15:00");
+          console.log(res);
+          if (res.result === "OK") {
+            this.pickupAvailability[courier] = "oggi dalle 15:00 alle 18:00";
+            this.pickupMode = {
+              date_req_ritiro:
+                now.toISOString().split("T")[0] + " " + "15:00:00",
+              opening_time: "15:00:00",
+              closing_time: "18:00:00",
+            };
+          }
         },
         (error: any) => {}
       );
-    }
-    let yourDate = new Date();
-    const offset = yourDate.getTimezoneOffset();
-    if (sameDay) {
-      this.pickupAvailability[courier] = "oggi dalle 15:00 alle 18:00";
-      yourDate = new Date(yourDate.getTime() - offset * 60 * 1000);
-      this.pickupMode = {
-        date_req_ritiro:
-          yourDate.toISOString().split("T")[0] + " " + "15:00:00",
-        opening_time: "15:00:00",
-        closing_time: "18:00:00",
-      };
     } else {
-      const isWeekend = yourDate.getDate() > 5 ? true : false;
-      let date_req_ritiro: any = yourDate.toISOString();
+      const isWeekend = now.getDay() > 5 ? true : false;
+      console.log(now.getDay());
+      let date_req_ritiro: any =
+        now.getFullYear() +
+        "-" +
+        ("00" + (now.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("00" + (now.getDate() + 1)).slice(-2) +
+        " " +
+        "09:00:00";
+      console.log(date_req_ritiro);
       if (isWeekend) {
         const newDate = new Date(
-          yourDate.setDate(yourDate.getDate() + (yourDate.getDate() % 7) + 1) *
-            1000
+          now.setDate(now.getDate() + (now.getDate() % 7) + 1) * 1000
         );
         date_req_ritiro = newDate;
       }
@@ -414,7 +424,7 @@ export class ShipmentComponent implements OnInit {
       this.pickupAvailability[courier] =
         "il prossimo giorno lavorativo dalle 09:00 alle 18:00";
       this.pickupMode = {
-        // date_req_ritiro: date_req_ritiro.toISOString().split("T")[0],
+        date_req_ritiro: date_req_ritiro,
         opening_time: "15:00:00",
         closing_time: "18:00:00",
       };
@@ -503,13 +513,13 @@ export class ShipmentComponent implements OnInit {
       : 0;
     this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
     // this.store.payloadShipment.creazione_postuma = true;
-    this.store.payloadShipment.valore = this.store.outwardInsurance;
 
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
       ...this.store.sender,
       ...this.store.recipient,
       ...this.pickupMode,
+      valore: this.store.outwardInsurance,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
@@ -545,6 +555,7 @@ export class ShipmentComponent implements OnInit {
     if (this.store.hasReturnShipment) {
       const returnPayloadShipment = {
         ...this.store.payloadShipment,
+        valore: this.store.returnInsurance,
         servizio: this.store.chosenCourier.return.serviceCode,
         corriere: this.store.chosenCourier.return.courierCode,
         ...this.service.invertAddressData({

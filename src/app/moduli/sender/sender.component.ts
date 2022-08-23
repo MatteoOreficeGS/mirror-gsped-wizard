@@ -265,7 +265,7 @@ export class SenderComponent {
       );
       this.store.senderExtras.sender_surname =
         this.formSender.value.sender_surname;
-      this.formSender.removeControl('sender_surname');
+      this.formSender.removeControl("sender_surname");
 
       this.formSender.controls["sender_addr"].setValue(
         (
@@ -276,11 +276,11 @@ export class SenderComponent {
       );
       this.store.senderExtras.sender_addr_secondary =
         this.formSender.value.sender_addr_secondary;
-        this.formSender.removeControl("sender_addr_secondary");
+      this.formSender.removeControl("sender_addr_secondary");
       if (this.store.noteSenderOnSender) {
         this.store.senderExtras.note_sender = this.formSender.value.note_sender;
-        this.formSender.removeControl("note_sender");
       }
+      this.formSender.removeControl("note_sender");
 
       this.store.sender = this.formSender.value;
       console.log(this.store.sender);

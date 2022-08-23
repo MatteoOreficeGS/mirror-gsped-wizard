@@ -21,9 +21,9 @@ export class FatturaDHLComponent implements OnInit {
     public store: StoreService,
     public service: StatusService
   ) {
+    this.translations = this.store.translations;
     this.selected = this.store.invoiceType ? this.store.invoiceType : "privato";
     this.setInvoiceModules(this.selected);
-    this.translations = this.store.translations;
   }
 
   ngOnInit(): void {}
@@ -87,7 +87,7 @@ export class FatturaDHLComponent implements OnInit {
         this.invoiceModules = [
           {
             value: "codice_fiscale",
-            label: this.translations["lbl_italian_tax_code"],
+            label: this.translations.lbl_italian_tax_code,
             type: "text",
             required: true,
           },

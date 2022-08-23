@@ -62,29 +62,41 @@
               : 'col-span-2'
           "
         >
-          <input
-            [formControlName]="module.value"
-            autocomplete="off"
-            [type]="module.type"
-            [required]="module.required"
-            [ngClass]="
-              formInvoice.get(module.value)?.invalid &&
-              formInvoice.get(module.value)?.errors &&
-              (formInvoice.get(module.value)?.dirty ||
-                formInvoice.get(module.value)?.touched)
-                ? 'border-red-500'
-                : 'border-gray-300'
-            "
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-            placeholder=" "
-          />
+          <ng-container *ngIf="module.value !== 'nazione'">
+            <input
+              [formControlName]="module.value"
+              autocomplete="off"
+              [type]="module.type"
+              [required]="module.required"
+              [ngClass]="
+                formInvoice.get(module.value)?.invalid &&
+                formInvoice.get(module.value)?.errors &&
+                (formInvoice.get(module.value)?.dirty ||
+                  formInvoice.get(module.value)?.touched)
+                  ? 'border-red-500'
+                  : 'border-gray-300'
+              "
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+              placeholder=" "
+            />
 
-          <label
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            <label
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              {{ module.label }}
+              <span *ngIf="module.required" class="text-red-500">*</span>
+            </label>
+          </ng-container>
+          <select
+            *ngIf="module.value === 'nazione'"
+            class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            [formControlName]="module.value"
           >
-            {{ module.label }}
-            <span *ngIf="module.required" class="text-red-500">*</span>
-          </label>
+            <option selected>Choose a country</option>
+            <ng-container *ngFor="let country of store.countries | keyvalue">
+              <option [value]="country.key">{{ country.value }}</option>
+            </ng-container>
+          </select>
         </div>
       </div>
     </div>

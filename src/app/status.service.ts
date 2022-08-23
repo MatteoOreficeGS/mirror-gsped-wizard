@@ -33,6 +33,15 @@ export class StatusService {
     );
   }
 
+  getCountries() {
+    const headers = { "x-api-key": this.store.token };
+    const decoded: any = jwtDecode(this.store.token);
+    return this.http.get(
+      environment.API_URL + decoded.instance + "/Countries",
+      { headers: headers }
+    );
+  }
+
   pickupAvailability(corriere: any) {
     console.log(corriere);
     const decoded: any = this.store.decodedToken;

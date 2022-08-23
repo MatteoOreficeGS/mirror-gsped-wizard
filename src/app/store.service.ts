@@ -10,6 +10,7 @@ export class StoreService {
   decodedToken: any;
   configuration: any;
   translations: any;
+  countries: any;
   codiceSconto: string = "";
   isDocumentShipment?: boolean;
   hasReturnShipment?: boolean;
@@ -58,4 +59,5 @@ export class StoreService {
   beforePaymentSession: any;
   packages: any = [];
   noteSenderOnSender?: boolean;
+  totalAmount?:number;
 }

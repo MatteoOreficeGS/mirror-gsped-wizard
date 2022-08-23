@@ -21,20 +21,25 @@ export class StampaAwbComponent {
 
     if (this.displayPayment.status === "canceled") {
       this.isPaymentCompleted = false;
+      this.retryPayment.monetaweb = this.store.beforePaymentSession.bodyPayment;
+      this.retryPayment.session = this.store.beforePaymentSession;
     } else {
+      if (this.store.beforePaymentSession) {
+        this.summary = this.store.beforePaymentSession.summary;
+        this.store.invoice = this.summary.invoice;
+        this.store.totalAmount = this.store.beforePaymentSession.totalAmount;
+      } else {
+        this.summary = {
+          sender: this.store.sender,
+          invoice: this.store.invoice,
+          recipient: this.store.recipient,
+        };
+      }
       this.isPaymentCompleted = true;
       this.currentModule = this.store.configuration.modules.filter(
         (module: any) => module.moduleName === "awb-printing"
       )[0].moduleConfig;
       this.showSummary = this.currentModule.summary;
-      this.summary = this.store.beforePaymentSession
-        ? this.store.beforePaymentSession.summary
-        : {
-            sender: this.store.sender,
-            invoice: this.store.invoice,
-            recipient: this.store.recipient,
-          };
-      console.log(this.currentModule);
       this.translations = this.store.translations;
       this.directDownload = {
         label: this.translations[this.currentModule.directDownload.label],
@@ -72,7 +77,6 @@ export class StampaAwbComponent {
   }
 
   getShipments(outwardShipmentID: any, returnShipmentID: any) {
-    console.log(outwardShipmentID, returnShipmentID);
     const headers = { "x-api-key": this.store.token };
     this.http
       .get(
@@ -140,6 +144,26 @@ export class StampaAwbComponent {
     });
   }
 
+  redirectPayment() {
+    this.isHandledPayment = true;
+    this.handlePayment(this.retryPayment).subscribe((res: any) => {
+      // TODO link "problemi col pagamento" tramite merchantOrderId
+      // this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
+      window.document.location.href =
+        res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid;
+    });
+  }
+
+  handlePayment(bodyPayment: any): Observable<any> {
+    return this.http.post(
+      environment.API_URL +
+        this.store.decodedToken.instance +
+        "/resoFacile/payment/process/monetaweb",
+      bodyPayment,
+      { headers: { "X-API-KEY": this.store.token } }
+    );
+  }
+
   result: any;
   b64pdf: any;
   pdfOutward: any;
@@ -154,4 +178,6 @@ export class StampaAwbComponent {
   isPaymentCompleted: boolean = false;
   showSummary?: boolean;
   summary: any;
+  retryPayment: any = {};
+  isHandledPayment: boolean = false;
 }

@@ -42,7 +42,7 @@ export class PaymentComponent implements OnInit {
       termsconditions: "",
     });
     this.translations = store.translations;
-    this.totalAmount = (
+    this.store.totalAmount = (
       this.store.chosenCourier.outward.data.totale +
       (this.store.chosenCourier.return.data
         ? this.store.chosenCourier.return.data.totale
@@ -95,7 +95,6 @@ export class PaymentComponent implements OnInit {
   recipient: any = {};
   termsConditions: any;
   termsPrivacy: any;
-  totalAmount?: number;
   showModal = false;
   errors: any = {};
 
@@ -151,6 +150,8 @@ export class PaymentComponent implements OnInit {
       }
 
       this.bodyPayment.monetaweb.items = items;
+      this.bodyPayment.session.totalAmount = this.store.totalAmount;
+      this.bodyPayment.session.bodyPayment = this.bodyPayment.monetaweb;
 
       this.handlePayment(this.bodyPayment).subscribe(
         (res) => {

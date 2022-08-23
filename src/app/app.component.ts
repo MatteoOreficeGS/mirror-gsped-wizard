@@ -37,7 +37,8 @@ export class AppComponent {
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
               this.getConfiguration(res.token, jwt_decode(res.token)),
-              this.status.getTranslations(params.lang ? params.lang : "it_IT")
+              this.status.getTranslations(params.lang ? params.lang : "it_IT"),
+              this.status.getCountries(),
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
@@ -64,6 +65,7 @@ export class AppComponent {
                   .length > 0;
               this.store.modules = modules;
               this.store.translations = res[1];
+              this.store.countries = res[2];
               this.router.navigate(["/" + modules[0].module], {
                 queryParams: { lang: params.lang ? params.lang : "it_IT" },
               });

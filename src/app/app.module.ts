@@ -25,6 +25,7 @@ import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component'
 import { VodafoneComponent } from './moduli/vodafone/vodafone.component';
 import { ModalComponent } from './modal/modal.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { SummaryComponent } from './components/summary/summary.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     VodafoneComponent,
     ModalComponent,
     LoaderComponent,
+    SummaryComponent,
   ],
   imports: [
     BrowserAnimationsModule,

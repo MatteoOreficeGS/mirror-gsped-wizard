@@ -61,7 +61,6 @@ export class ShipmentComponent implements OnInit {
         colli: 1,
         peso: 0.5,
         volume: 0,
-        dimensions: [],
       };
     }
 
@@ -156,7 +155,6 @@ export class ShipmentComponent implements OnInit {
   pickupMode: any = {};
 
   setDatiColli() {
-    console.log("alora");
     const dimensions = this.formShipment.value.dimensions.map(
       (dimension: any) => {
         return {
@@ -187,6 +185,27 @@ export class ShipmentComponent implements OnInit {
     this.store.packages = dimensions;
   }
 
+  // setting the insurance value at 100 if checkbox is checked at 0 if not
+  setInsurances() {
+    if (this.formShipment.value.outwardInsurance === true) {
+      this.formShipment.controls["outwardInsurance"].setValue(100);
+      this.store.outwardInsurance = 100;
+    } else if (this.formShipment.value.outwardInsurance === false) {
+      this.formShipment.controls["outwardInsurance"].setValue(0);
+      this.store.outwardInsurance = 0;
+    } else {
+      this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
+    }
+    if (this.formShipment.value.returnInsurance === true) {
+      this.store.returnInsurance = 100;
+    } else if (this.formShipment.value.returnInsurance === false) {
+      this.formShipment.controls["returnInsurance"].setValue(0);
+      this.store.returnInsurance = 0;
+    } else {
+      this.store.returnInsurance = this.formShipment.value.returnInsurance;
+    }
+  }
+
   confirmInsurance() {
     let packageErrors = {};
     this.fieldsLabel &&
@@ -198,22 +217,7 @@ export class ShipmentComponent implements OnInit {
         });
       });
     if (this.formShipment.valid) {
-      // setting the insurance value at 100 if checkbox is checked at 0 if not
-      if (this.formShipment.value.outwardInsurance === true) {
-        this.formShipment.controls["outwardInsurance"].setValue(100);
-        this.store.outwardInsurance = 100;
-      } else if (this.formShipment.value.outwardInsurance === false) {
-        this.formShipment.controls["outwardInsurance"].setValue(0);
-      } else {
-        this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
-      }
-      if (this.formShipment.value.returnInsurance === true) {
-        this.store.returnInsurance = 100;
-      } else if (this.formShipment.value.returnInsurance === false) {
-        this.formShipment.controls["returnInsurance"].setValue(0);
-      } else {
-        this.store.returnInsurance = this.formShipment.value.returnInsurance;
-      }
+      this.setInsurances();
       if (this.currentModule.packagesDetails.enable) {
         this.setDatiColli();
       }
@@ -354,15 +358,16 @@ export class ShipmentComponent implements OnInit {
   }
 
   setShipmentPayload() {
-    const note_sender = this.store.noteSenderOnSender
+    const noteSender = this.store.noteSenderOnSender
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
 
     this.store.payloadShipment = {
-      note_sender: note_sender,
+      note_sender: noteSender,
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,
+      documenti: this.store.isDocumentShipment ? 1 : 0,
       ...this.daticolli,
     };
   }
@@ -384,9 +389,14 @@ export class ShipmentComponent implements OnInit {
     let now = new Date();
     // const offset = now.getTimezoneOffset();
     const currentHours = now.getHours();
+    const isWeekend = now.getDay() >= 5 ? true : false;
     console.log(now);
     console.log(currentHours);
-    if (this.currentModule.pickup.pickupSameDayCheck && currentHours < 15) {
+    if (
+      this.currentModule.pickup.pickupSameDayCheck &&
+      currentHours < 15 &&
+      now.getDay() <= 5
+    ) {
       this.service.pickupAvailability(courier).subscribe(
         (res: any) => {
           console.log(res);
@@ -403,29 +413,26 @@ export class ShipmentComponent implements OnInit {
         (error: any) => {}
       );
     } else {
-      const isWeekend = now.getDay() > 5 ? true : false;
       console.log(now.getDay());
       let date_req_ritiro: any =
         now.getFullYear() +
         "-" +
         ("00" + (now.getMonth() + 1)).slice(-2) +
         "-" +
-        ("00" + (now.getDate() + 1)).slice(-2) +
+        (
+          "00" +
+          (isWeekend
+            ? now.getDate() + (7 - now.getDay() === 0 ? 7 : now.getDay()) + 1
+            : now.getDate() + 1)
+        ).slice(-2) +
         " " +
         "09:00:00";
-      console.log(date_req_ritiro);
-      if (isWeekend) {
-        const newDate = new Date(
-          now.setDate(now.getDate() + (now.getDate() % 7) + 1) * 1000
-        );
-        date_req_ritiro = newDate;
-      }
       console.log("date_req_ritiro", date_req_ritiro);
       this.pickupAvailability[courier] =
         "il prossimo giorno lavorativo dalle 09:00 alle 18:00";
       this.pickupMode = {
         date_req_ritiro: date_req_ritiro,
-        opening_time: "15:00:00",
+        opening_time: "09:00:00",
         closing_time: "18:00:00",
       };
     }
@@ -506,14 +513,6 @@ export class ShipmentComponent implements OnInit {
   }
 
   handleShipments() {
-    console.log(this.store.invoice);
-    console.log(this.store.chosenCourier["outward"].data);
-    this.store.payloadShipment.documenti = this.store.isDocumentShipment
-      ? 1
-      : 0;
-    this.store.payloadShipment.creazione_postuma = this.store.hasPayment;
-    // this.store.payloadShipment.creazione_postuma = true;
-
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
       ...this.store.sender,

@@ -1,32 +1,6 @@
 <app-navbar></app-navbar>
 <app-wizard>
-  <div
-    class="md:grid md:grid-cols-3 gap-y-4 space-y-4 md:space-y-0 mb-6"
-    *ngIf="showSummary"
-  >
-    <div>
-      <h1 class="uppercase text-xl mb-4">Mittente</h1>
-      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
-        <p *ngFor="let field of summary.sender | keyvalue">{{ field.value }}</p>
-      </div>
-    </div>
-    <div>
-      <h1 class="uppercase text-xl mb-4">Destinatario</h1>
-      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
-        <p *ngFor="let field of summary.recipient | keyvalue">
-          {{ field.value }}
-        </p>
-      </div>
-    </div>
-    <div *ngIf="summary.invoice">
-      <h1 class="uppercase text-xl mb-4">Fattura</h1>
-      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
-        <p *ngFor="let field of summary.invoice | keyvalue">
-          {{ field.value }}
-        </p>
-      </div>
-    </div>
-  </div>
+  <app-summary *ngIf="showSummary"></app-summary>
 
   <div
     class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
@@ -80,10 +54,23 @@
     </ng-container>
   </div>
 
-  <div class="flex justify-center">
-    <p *ngIf="!isPaymentCompleted" class="font-semibold">
+  <div class="grid justify-items-center" *ngIf="!isPaymentCompleted">
+    <p class="font-semibold">
       {{ displayPayment.response.message }}
     </p>
+    <button
+      (click)="redirectPayment()"
+      [disabled]="isHandledPayment"
+      [ngClass]="
+        isHandledPayment
+          ? 'bg-yellow-400 text-slate-200'
+          : 'bg-yellow-400 text-white '
+      "
+      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+    >
+      riprova pagamento
+      <app-loader *ngIf="isHandledPayment"></app-loader>
+    </button>
   </div>
 
   <!-- <p *ngIf="displayPayment; else endWithoutPayment">

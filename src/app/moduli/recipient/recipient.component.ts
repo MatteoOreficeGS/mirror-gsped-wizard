@@ -282,8 +282,8 @@ export class RecipientComponent {
       if (!this.store.noteSenderOnSender) {
         this.store.recipientExtras.note_sender =
           this.formRecipient.value.note_sender;
-        this.formRecipient.removeControl("note_sender");
       }
+      this.formRecipient.removeControl("note_sender");  
 
       this.store.recipient = this.formRecipient.value;
       this.router.navigate(

@@ -10,6 +10,9 @@ import { Observable } from "rxjs";
   templateUrl: "./stampa-awb.component.html",
 })
 export class StampaAwbComponent {
+
+  //TODO destinatario non compare in testindiamilanoneway
+
   constructor(
     private domSanitizer: DomSanitizer,
     private http: HttpClient,

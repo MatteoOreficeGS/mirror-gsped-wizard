@@ -8,9 +8,10 @@
         <p>{{ store.sender.sender_addr }}</p>
         <div class="flex space-x-3">
           <p>{{ store.sender.sender_cap }}</p>
+          <p>{{ store.sender.sender_city }}</p>
           <p>{{ store.sender.sender_prov }}</p>
-          <p>{{ store.sender.sender_country_code }}</p>
         </div>
+        <p>{{ this.store.countries[store.sender.sender_country_code] }}</p>
         <p>{{ store.sender.sender_email }}</p>
         <p>{{ store.sender.sender_phone }}</p>
       </div>
@@ -23,9 +24,10 @@
         <p>{{ store.recipient.rcpt_addr }}</p>
         <div class="flex space-x-3">
           <p>{{ store.recipient.rcpt_cap }}</p>
+          <p>{{ store.recipient.rcpt_city }}</p>
           <p>{{ store.recipient.rcpt_prov }}</p>
-          <p>{{ store.recipient.rcpt_country_code }}</p>
         </div>
+        <p>{{ this.store.countries[store.recipient.rcpt_country_code] }}</p>
         <p>{{ store.recipient.rcpt_email }}</p>
         <p>{{ store.recipient.rcpt_phone }}</p>
       </div>
@@ -41,8 +43,9 @@
         <div class="flex space-x-3">
           <p>{{ store.invoice.cap }}</p>
           <p>{{ store.invoice.provincia }}</p>
-          <p>{{ store.invoice.nazione }}</p>
+          <p>{{ store.invoice.citta }}</p>
         </div>
+        <p>{{ this.store.countries[store.invoice.nazione] }}</p>
       </div>
     </div>
   </div>

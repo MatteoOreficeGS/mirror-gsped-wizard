@@ -59,5 +59,8 @@ export class StoreService {
   beforePaymentSession: any;
   packages: any = [];
   noteSenderOnSender?: boolean;
-  totalAmount?:number;
+  totalAmount?: number;
+  goodType?: string;
+  isGoodDocument: number = 1;
+  isAskDocument: boolean = true;
 }

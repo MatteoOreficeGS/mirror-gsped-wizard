@@ -38,7 +38,7 @@ export class AppComponent {
             forkJoin(
               this.getConfiguration(res.token, jwt_decode(res.token)),
               this.status.getTranslations(params.lang ? params.lang : "it_IT"),
-              this.status.getCountries(),
+              this.status.getCountries()
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
@@ -86,7 +86,6 @@ export class AppComponent {
               params.uuid
           )
           .subscribe((resDisplay: any) => {
-            console.log("session", resDisplay.session);
             this.store.displayPayment = resDisplay.monetaweb;
             this.store.beforePaymentSession = resDisplay.session;
             this.store.outwardShipment.id =
@@ -104,9 +103,9 @@ export class AppComponent {
                   ),
                   this.status.getTranslations(
                     params.lang ? params.lang : "it_IT"
-                  )
+                  ),
+                  this.status.getCountries()
                 ).subscribe((res: any) => {
-                  console.log("all response", res);
                   this.store.configuration = res[0].configuration;
                   let modules = res[0].configuration.modules.map(
                     (module: any) => {
@@ -133,8 +132,8 @@ export class AppComponent {
                     ).length > 0;
                   this.store.modules = modules;
                   this.store.translations = res[1];
+                  this.store.countries = res[2];
                   this.store.currentStep = modules.length;
-                  console.log("navigo a awb-printing");
                   this.store.isLastModule = true;
                   this.router.navigate(
                     ["/" + modules[modules.length - 1].module],

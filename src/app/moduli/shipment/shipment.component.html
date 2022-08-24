@@ -13,6 +13,34 @@
 
   <form [formGroup]="formShipment">
     <ng-container *ngIf="showInput; else serviceChoice">
+      <div
+        *ngIf="currentModule.documentFlag === 'ask'"
+        class="flex flex-col md:flex-row space-x-0 md:space-x-4 md:space-y-0 space-y-2 py-2"
+      >
+        <div>{{ translations.lbl_ask_title }}</div>
+        <div>
+          <input
+            class="text-red-dhl focus:ring-red-dhl"
+            type="radio"
+            name="ask"
+            [value]="true"
+            (click)="setDocumentShipment()"
+            [defaultChecked]="store.isAskDocument"
+          />
+          {{ translations.lbl_ask_document }}
+        </div>
+        <div>
+          <input
+            class="text-red-dhl focus:ring-red-dhl"
+            type="radio"
+            name="ask"
+            [value]="false"
+            (click)="setGoodsShipment()"
+            [defaultChecked]="!store.isAskDocument"
+          />
+          {{ translations.lbl_ask_goods }}
+        </div>
+      </div>
       <div *ngIf="currentModule?.packagesDetails.enable">
         <div class="flex w-full items-center">
           <p class="mb-6 font-medium w-full">
@@ -27,6 +55,7 @@
               {{ translations["lbl_remove_package"] }}
             </button>
             <button
+              *ngIf="!store.isAskDocument"
               [disabled]="
                 packageNumber >
                 currentModule.packagesDetails.fixedpackagesNumber
@@ -48,7 +77,7 @@
             class="list-none md:list-decimal"
           >
             <div
-              class="sm:grid sm:grid-cols-2 md:grid-cols-4 w-full items-center w-full p-2 pt-6 gap-x-4"
+              class="sm:grid sm:grid-cols-2 md:grid-cols-4 w-full items-center w-full p-2 md:pt-6 gap-x-4"
               [formGroupName]="i"
             >
               <div
@@ -196,6 +225,35 @@
           </label>
         </div>
       </div>
+
+      <ng-container *ngIf="showGoods_type && formShipment.get('goodType')">
+        <p class="mb-6 font-medium">{{ translations["lbl_goods_type"] }}</p>
+        <div class="relative w-full md:w-1/2 mb-6 group">
+          <input
+            [formControlName]="'goodType'"
+            autocomplete="off"
+            id="goodType"
+            name="goodType"
+            type="text"
+            [ngClass]="
+              formShipment.get('goodType')?.invalid &&
+              formShipment.get('goodType')?.errors &&
+              (formShipment.get('goodType')?.dirty ||
+                formShipment.get('goodType')?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
+          />
+          <label
+            for="goodType"
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ translations["lbl_goods_type"] }}
+          </label>
+        </div>
+      </ng-container>
 
       <p class="mb-6 font-medium">{{ translations["lbl_coupon"] }}</p>
       <div class="relative w-full md:w-1/2 mb-6 group">
@@ -408,11 +466,11 @@
             class="text-red-dhl"
             type="radio"
             [name]="'ritiro'"
-            value="officePoint"
+            value="servicePoint"
             [checked]="homePickup"
             (click)="clearPickupAviability()"
           />
-          <span>ritiro presso office point</span>
+          <span>ritiro presso service point</span>
         </div>
         <div class="flex space-x-2" *ngIf="pointPickup">
           <input

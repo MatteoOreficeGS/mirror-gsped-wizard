@@ -1,6 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, FormArray } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  FormControl,
+} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
@@ -26,8 +32,10 @@ export class ShipmentComponent implements OnInit {
     )[0].moduleConfig;
     this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
     this.translations = store.translations;
-    this.store.isDocumentShipment = this.currentModule.documentFlag;
     this.isDocumentShipment = this.currentModule.documentFlag;
+    this.store.isDocumentShipment = this.store.isDocumentShipment
+      ? this.store.isDocumentShipment
+      : this.currentModule.documentFlag;
     this.pointPickup = this.currentModule.pickup.dropoff;
     this.homePickup = this.currentModule.pickup.pickup;
     this.formShipment = fb.group({
@@ -49,6 +57,9 @@ export class ShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.store.isAskDocument) {
+      this.setGoodsShipment();
+    }
     if (this.currentModule.packagesDetails.enable) {
       if (this.store.packages.length > 0) {
         this.packageNumber = this.store.packages.length;
@@ -104,7 +115,8 @@ export class ShipmentComponent implements OnInit {
   addPackage() {
     if (
       this.packageNumber <
-      this.currentModule.packagesDetails.fixedPackagesNumber
+        this.currentModule.packagesDetails.fixedPackagesNumber &&
+      this.packageNumber < this.isGoodDocument
     ) {
       this.packageNumber++;
       this.dimensions.push(this.newPackage());
@@ -124,6 +136,43 @@ export class ShipmentComponent implements OnInit {
         this.newPackage(pack.lunghezza, pack.larghezza, pack.altezza, pack.peso)
       );
     });
+  }
+
+  setDocumentShipment() {
+    this.formShipment.controls["outwardInsurance"].setValue(
+      this.store.outwardInsurance ? this.store.outwardInsurance : ""
+    );
+    this.formShipment.controls["returnInsurance"].setValue(
+      this.store.returnInsurance ? this.store.returnInsurance : ""
+    );
+    for (let index = this.packageNumber; index > 0; index--) {
+      this.removePackage();
+    }
+    this.showGoods_type = false;
+    this.isDocumentShipment = true;
+    this.store.isDocumentShipment = true;
+    this.isGoodDocument = 1;
+    this.formShipment.removeControl("goodType");
+    this.store.isAskDocument = true;
+  }
+
+  setGoodsShipment() {
+    this.formShipment.controls["outwardInsurance"].setValue(
+      this.store.outwardInsurance ? this.store.outwardInsurance : ""
+    );
+    this.formShipment.controls["returnInsurance"].setValue(
+      this.store.returnInsurance ? this.store.returnInsurance : ""
+    );
+    this.showGoods_type = true;
+    this.isDocumentShipment = false;
+    this.store.isDocumentShipment = false;
+    this.isGoodDocument =
+      this.currentModule.packagesDetails.fixedPackagesNumber;
+    this.formShipment.addControl(
+      "goodType",
+      new FormControl(this.store.goodType, Validators.required)
+    );
+    this.store.isAskDocument = false;
   }
 
   showCourierSelection: boolean = false;
@@ -153,6 +202,8 @@ export class ShipmentComponent implements OnInit {
   homePickup: boolean;
   pointPickup: boolean;
   pickupMode: any = {};
+  isGoodDocument: number = 1;
+  showGoods_type: boolean = false;
 
   setDatiColli() {
     const dimensions = this.formShipment.value.dimensions.map(
@@ -217,6 +268,8 @@ export class ShipmentComponent implements OnInit {
         });
       });
     if (this.formShipment.valid) {
+      this.store.goodType = this.formShipment.value.goodType;
+      this.store.isGoodDocument = this.isGoodDocument;
       this.setInsurances();
       if (this.currentModule.packagesDetails.enable) {
         this.setDatiColli();
@@ -370,6 +423,10 @@ export class ShipmentComponent implements OnInit {
       documenti: this.store.isDocumentShipment ? 1 : 0,
       ...this.daticolli,
     };
+
+    !this.isDocumentShipment
+      ? (this.store.payloadShipment.merce = this.formShipment.value.goodType)
+      : null;
   }
 
   selectCourier(type: string, service: any) {
@@ -454,6 +511,9 @@ export class ShipmentComponent implements OnInit {
   }
 
   filterRateComparativeResults(isReturn: boolean, mode: string, response: any) {
+    const sameDestination =
+      this.store.sender.sender_country_code ===
+      this.store.recipient.rcpt_country_code ? 1 : 0;
     switch (mode) {
       case "FIXED":
         let configCouriers: any;
@@ -469,7 +529,9 @@ export class ShipmentComponent implements OnInit {
             this.currentModule.selectCourier.returnCouriers.couriers.list.map(
               (courier: any) => {
                 return courier.services.list.map((service: any) => {
-                  return service.gspedServiceCode;
+                  // if (service.domestic === sameDestination) {
+                    return service.gspedServiceCode;
+                  // }
                 });
               }
             )[0];
@@ -482,7 +544,9 @@ export class ShipmentComponent implements OnInit {
           configServices = this.currentModule.selectCourier.couriers.list.map(
             (courier: any) => {
               return courier.services.list.map((service: any) => {
-                return service.gspedServiceCode;
+                //if (service.domestic === sameDestination) {
+                  return service.gspedServiceCode;
+                // }
               });
             }
           )[0];

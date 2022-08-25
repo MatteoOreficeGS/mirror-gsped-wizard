@@ -10,9 +10,7 @@ import { Observable } from "rxjs";
   templateUrl: "./stampa-awb.component.html",
 })
 export class StampaAwbComponent {
-
-  //TODO destinatario non compare in testindiamilanoneway
-
+  
   constructor(
     private domSanitizer: DomSanitizer,
     private http: HttpClient,
@@ -28,8 +26,9 @@ export class StampaAwbComponent {
       this.retryPayment.session = this.store.beforePaymentSession;
     } else {
       if (this.store.beforePaymentSession) {
-        this.summary = this.store.beforePaymentSession.summary;
-        this.store.invoice = this.summary.invoice;
+        this.store.invoice = this.store.beforePaymentSession.summary.invoice;
+        this.store.sender = this.store.beforePaymentSession.summary.sender;
+        this.store.recipient = this.store.beforePaymentSession.summary.recipient;
         this.store.totalAmount = this.store.beforePaymentSession.totalAmount;
       } else {
         this.summary = {

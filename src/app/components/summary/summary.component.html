@@ -1,7 +1,7 @@
 <div class="mb-4">
   <div class="md:grid md:grid-cols-3 gap-y-4 space-y-4 md:space-y-0 mb-6">
     <div>
-      <h1 class="uppercase text-xl mb-4">Mittente</h1>
+      <h1 class="uppercase text-xl mb-4">{{ store.translations.sender }}</h1>
       <div class="grid grid-cols-2 md:grid-cols-1 gap-x-4">
         <p>{{ store.sender.sender_name }}</p>
         <p>{{ store.sender.sender_society }}</p>
@@ -17,7 +17,9 @@
       </div>
     </div>
     <div>
-      <h1 class="uppercase text-xl mb-4">Destinatario</h1>
+      <h1 class="uppercase text-xl mb-4">
+        {{ store.translations.lbl_recipient }}
+      </h1>
       <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
         <p>{{ store.recipient.rcpt_name }}</p>
         <p>{{ store.recipient.rcpt_society }}</p>
@@ -33,7 +35,9 @@
       </div>
     </div>
     <div *ngIf="this.showInvoice">
-      <h1 class="uppercase text-xl mb-4">Fattura</h1>
+      <h1 class="uppercase text-xl mb-4">
+        {{ store.translations.lbl_invoice }}
+      </h1>
       <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
         <p>{{ store.invoice.nome }}</p>
         <p>{{ store.invoice.codice_fiscale }}</p>
@@ -51,7 +55,7 @@
   </div>
   <div class="flex justify-center">
     <p class="mt-4 text-xl" *ngIf="this.store.totalAmount">
-      Totale addebito: € {{ store.totalAmount }}
+      {{ store.translations.lbl_total_price }}: € {{ store.totalAmount }}
     </p>
   </div>
 </div>

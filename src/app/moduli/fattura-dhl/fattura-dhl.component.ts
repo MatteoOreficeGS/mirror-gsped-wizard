@@ -8,6 +8,7 @@ import {
   ValidateEmail,
   ValidateEsteroCountry,
   ValidatePhone,
+  ValidatePIva,
 } from "src/app/libs/validation";
 
 @Component({
@@ -21,6 +22,9 @@ export class FatturaDHLComponent implements OnInit {
     public store: StoreService,
     public service: StatusService
   ) {
+    this.currentModule = store.configuration.modules.filter(
+      (module: { moduleName: string }) => module.moduleName === "fatturaDHL"
+    )[0].moduleConfig;
     this.translations = this.store.translations;
     this.selected = this.store.invoiceType ? this.store.invoiceType : "privato";
     this.setInvoiceModules(this.selected);
@@ -28,14 +32,15 @@ export class FatturaDHLComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  currentModule: any = {};
   formInvoice: FormGroup = this.fb.group({});
   selected: string;
   invoiceModules: any;
   predictionsAddress: any;
   showPredictions: boolean = false;
-  otherModule: string =
+  otherType: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
-  currentModule: any =
+  currentType: any =
     "border-red-dhl text-red-dhl-dark w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   errors: any = {};
   showModal: boolean = false;
@@ -44,7 +49,7 @@ export class FatturaDHLComponent implements OnInit {
   handleSetInvoiceModules(type: string) {
     if (
       confirm(
-        "Sei sicuro di cambiare modulo? i dati fin'ora inseriti andranno persi"
+        "Sei sicuro di cambiare modulo? i dati fin'ora inseriti andranno persi" //TRADUZIONE
       )
     ) {
       this.setInvoiceModules(type);
@@ -104,7 +109,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: [
             this.store.invoice.codice_fiscale,
-            [Validators.required, ValidateCF],
+            [Validators.required, ValidatePIva],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
           sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000"],
@@ -132,7 +137,7 @@ export class FatturaDHLComponent implements OnInit {
         this.invoiceModules = [
           {
             value: "codice_fiscale",
-            label: "partita iva",
+            label: "partita iva", //TRADUZIONE
             type: "text",
             required: true,
           },
@@ -227,56 +232,56 @@ export class FatturaDHLComponent implements OnInit {
         this.invoiceModules = [
           {
             value: "nome",
-            label: "nome",
-            type: "email",
+            label: this.translations.nome,
+            type: "text",
             required: true,
             columnspan: 2,
           },
           {
             value: "cognome",
-            label: "cognome",
+            label: this.translations.cognome,
             type: "text",
             required: true,
             columnspan: 2,
           },
           {
             value: "societa",
-            label: "società",
+            label: "società", //TRADUZIONE
             type: "text",
             required: false,
             columnspan: 4,
           },
           {
             value: "indirizzo",
-            label: "indirizzo",
+            label: "indirizzo", //TRADUZIONE
             type: "text",
             required: true,
             columnspan: 4,
           },
           {
             value: "cap",
-            label: "CAP",
+            label: "CAP", //TRADUZIONE?
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
             value: "citta",
-            label: "Città",
+            label: "Città", //TRADUZIONE
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
             value: "provincia",
-            label: "Provincia",
+            label: "Provincia", //TRADUZIONE
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
             value: "nazione",
-            label: "nazione",
+            label: "nazione", //TRADUZIONE
             type: "text",
             required: true,
             columnspan: 1,
@@ -290,7 +295,7 @@ export class FatturaDHLComponent implements OnInit {
           },
           {
             value: "phone",
-            label: "phone",
+            label: "telefono", //TRADUZIONE
             type: "text",
             required: true,
             columnspan: 2,

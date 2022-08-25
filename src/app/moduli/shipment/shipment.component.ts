@@ -245,7 +245,9 @@ export class ShipmentComponent implements OnInit {
       this.formShipment.controls["outwardInsurance"].setValue(0);
       this.store.outwardInsurance = 0;
     } else {
-      this.store.outwardInsurance = this.formShipment.value.outwardInsurance;
+      this.store.outwardInsurance = parseFloat(
+        ("" + this.formShipment.value.outwardInsurance).replace(",", ".")
+      );
     }
     if (this.formShipment.value.returnInsurance === true) {
       this.store.returnInsurance = 100;
@@ -253,7 +255,9 @@ export class ShipmentComponent implements OnInit {
       this.formShipment.controls["returnInsurance"].setValue(0);
       this.store.returnInsurance = 0;
     } else {
-      this.store.returnInsurance = this.formShipment.value.returnInsurance;
+      this.store.returnInsurance = parseFloat(
+        ("" + this.formShipment.value.returnInsurance).replace(",", ".")
+      );
     }
   }
 
@@ -314,7 +318,9 @@ export class ShipmentComponent implements OnInit {
         ...this.bodyRateComparativa,
         valore: this.store.outwardInsurance
           ? this.store.outwardInsurance
-          : this.formShipment.value.outwardInsurance,
+          : parseFloat(
+              ("" + this.formShipment.value.outwardInsurance).replace(",", ".")
+            ),
         sender_cap: this.store.sender.sender_cap,
         sender_addr: this.store.sender.sender_addr,
         sender_city: this.store.sender.sender_city,
@@ -360,7 +366,9 @@ export class ShipmentComponent implements OnInit {
           ...this.bodyRateComparativa,
           valore: this.store.returnInsurance
             ? this.store.returnInsurance
-            : this.formShipment.value.returnInsurance,
+            : parseFloat(
+                ("" + this.formShipment.value.returnInsurance).replace(",", ".")
+              ),
           //Inverto gli indirizzi di sender e recipient
           sender_cap: this.store.recipient.rcpt_cap,
           sender_addr: this.store.recipient.rcpt_addr,
@@ -513,7 +521,9 @@ export class ShipmentComponent implements OnInit {
   filterRateComparativeResults(isReturn: boolean, mode: string, response: any) {
     const sameDestination =
       this.store.sender.sender_country_code ===
-      this.store.recipient.rcpt_country_code ? 1 : 0;
+      this.store.recipient.rcpt_country_code
+        ? 1
+        : 0;
     switch (mode) {
       case "FIXED":
         let configCouriers: any;
@@ -529,8 +539,8 @@ export class ShipmentComponent implements OnInit {
             this.currentModule.selectCourier.returnCouriers.couriers.list.map(
               (courier: any) => {
                 return courier.services.list.map((service: any) => {
-                  // if (service.domestic === sameDestination) {
-                    return service.gspedServiceCode;
+                  // if (service.domestic ? service.domestic : 1 === sameDestination) {
+                  return service.gspedServiceCode;
                   // }
                 });
               }
@@ -544,8 +554,8 @@ export class ShipmentComponent implements OnInit {
           configServices = this.currentModule.selectCourier.couriers.list.map(
             (courier: any) => {
               return courier.services.list.map((service: any) => {
-                //if (service.domestic === sameDestination) {
-                  return service.gspedServiceCode;
+                //if (service.domestic ? service.domestic : 1 === sameDestination) {
+                return service.gspedServiceCode;
                 // }
               });
             }
@@ -590,7 +600,12 @@ export class ShipmentComponent implements OnInit {
       const outwardInvoice = {
         nolo: this.store.chosenCourier["outward"].data.nolo,
         totale_fattura: this.store.chosenCourier["outward"].data.totale,
-        assicurazione: this.store.outwardInsurance,
+        assicurazione:
+          this.store.chosenCourier["outward"].data.varie_dettaglio[
+            this.store.isDocumentShipment
+              ? "IB-EXTENDED LIABILITY"
+              : "II-SHIPMENT INSURANCE"
+          ],
         valore: this.store.outwardInsurance,
       };
       outwardPayloadShipment.fattura_dhl = [
@@ -630,7 +645,12 @@ export class ShipmentComponent implements OnInit {
         const returnInvoice = {
           nolo: this.store.chosenCourier["return"].data.nolo,
           totale_fattura: this.store.chosenCourier["return"].data.totale,
-          assicurazione: this.store.returnInsurance,
+          assicurazione:
+            this.store.chosenCourier["return"].data.varie_dettaglio[
+              this.store.isDocumentShipment
+                ? "IB-EXTENDED LIABILITY"
+                : "II-SHIPMENT INSURANCE"
+            ],
           valore: this.store.returnInsurance,
         };
         returnPayloadShipment.fattura_dhl = [

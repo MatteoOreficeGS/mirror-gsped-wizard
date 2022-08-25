@@ -7,7 +7,9 @@ import { StoreService } from "src/app/store.service";
 })
 export class SummaryComponent {
   constructor(public store: StoreService) {
-    this.showInvoice = Object.keys(this.store.invoice).length > 0;
+    if (this.store.invoice) {
+      this.showInvoice = Object.keys(this.store.invoice).length > 0;
+    }
   }
-  showInvoice: boolean;
+  showInvoice: boolean = false;
 }

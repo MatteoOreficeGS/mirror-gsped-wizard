@@ -93,7 +93,7 @@ export function ValidateEsteroCountry(
   if (value.length < 2) {
     return { lbl_too_low_value: true };
   }
-  if ((value+"").toLowerCase() === "it") {
+  if ((value + "").toLowerCase() === "it") {
     return { lbl_contry_code_invalid: true };
   }
   return null;
@@ -104,6 +104,18 @@ export function ValidateCF(
 ): { [key: string]: any } | null {
   var validRegex =
     /^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]$/;
+  if (control.value && control.value.length > 0) {
+    if (!control.value.match(validRegex)) {
+      return { lbl_invalid_characters: true };
+    }
+  }
+  return null;
+}
+
+export function ValidatePIva(
+  control: AbstractControl
+): { [key: string]: any } | null {
+  var validRegex = /^[0-9]{11}$/;
   if (control.value && control.value.length > 0) {
     if (!control.value.match(validRegex)) {
       return { lbl_invalid_characters: true };

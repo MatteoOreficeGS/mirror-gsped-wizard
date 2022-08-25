@@ -14,32 +14,34 @@
         (change)="handleSetInvoiceModules(type.value)"
         #type
       >
-        <option value="privato" selected>privato</option>
-        <option value="piva">azienda</option>
-        <option value="estero">estero</option>
+        <option *ngIf="currentModule.private.enable" value="privato" selected>privato</option>
+        <option *ngIf="currentModule.company.enable" value="piva">azienda</option>
+        <option *ngIf="currentModule.foreign.enable" value="estero">estero</option>
       </select>
     </div>
     <div class="hidden sm:block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
-          <!-- Current: "border-red-dhl text-red-dhl-dark", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
           <div
+          *ngIf="currentModule.private.enable"
             (click)="handleSetInvoiceModules('privato')"
-            [ngClass]="selected === 'privato' ? currentModule : otherModule"
+            [ngClass]="selected === 'privato' ? currentType : otherType"
           >
             {{ translations["lbl_invoice_private"] }}
           </div>
 
           <div
+          *ngIf="currentModule.company.enable"
             (click)="handleSetInvoiceModules('piva')"
-            [ngClass]="selected === 'piva' ? currentModule : otherModule"
+            [ngClass]="selected === 'piva' ? currentType : otherType"
           >
             {{ translations["lbl_invoice_company"] }}
           </div>
 
           <div
+          *ngIf="currentModule.foreign.enable"
             (click)="handleSetInvoiceModules('estero')"
-            [ngClass]="selected === 'estero' ? currentModule : otherModule"
+            [ngClass]="selected === 'estero' ? currentType : otherType"
           >
             {{ translations["lbl_invoice_foreign"] }}
           </div>

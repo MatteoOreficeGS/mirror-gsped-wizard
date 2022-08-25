@@ -116,6 +116,7 @@
         "
       >
         <p class="col-span-full mb-6 font-medium">Inserisci le assicurazioni</p>
+        <!-- TRADUZIONE -->
         <!-- assicurazione andata text -->
         <div
           class="relative w-full mb-6 group mx-auto"
@@ -294,7 +295,7 @@
           type="button"
           (click)="confirmInsurance()"
         >
-          Conferma dettagli
+          {{ translations["lbl_btn_forward"] }}
         </button>
       </div>
     </ng-container>
@@ -340,7 +341,9 @@
                 <ng-container *ngIf="store.hasPayment">
                   <div class="flex justify-center items-baseline my-8">
                     <span class="mr-2 text-2xl font-extrabold">
-                      totale: €{{ service.data.totale }}
+                      {{ translations.lbl_total_price }}: €{{
+                        service.data.totale
+                      }}
                     </span>
                   </div>
                   <ul role="list" class="mb-8 space-y-1 text-left list-disc">
@@ -364,7 +367,7 @@
                     </li>
                     <li class="flex items-center space-x-3" *ngIf="iva">
                       <span
-                        >netto IVA: €{{
+                        >{{ translations.lbl_notax_price }}: €{{
                           service.data.totale / ((iva + 100) / 100)
                             | number: "0.2-2"
                         }}</span
@@ -415,7 +418,7 @@
                 <ng-container *ngIf="store.hasPayment">
                   <div class="flex justify-center items-baseline my-8">
                     <span class="mr-2 text-2xl font-extrabold">
-                      {{ translations["lbl_total_price"] }}: €{{
+                      {{ translations.lbl_total_price }}: €{{
                         service.data.totale
                       }}
                     </span>
@@ -429,11 +432,7 @@
                       >
                     </li>
                     <li class="flex items-center space-x-3">
-                      <span
-                        >{{ translations["lbl_total_price"] }}: €{{
-                          service.data.nolo
-                        }}</span
-                      >
+                      <span>{{ "nolo" }}: €{{ service.data.nolo }}</span>
                     </li>
                     <li
                       class="flex items-center space-x-3"
@@ -445,7 +444,7 @@
                     </li>
                     <li class="flex items-center space-x-3" *ngIf="iva">
                       <span>
-                        {{ translations["lbl_total_price"] }}: €
+                        {{ translations.lbl_notax_price }}: €
                         {{
                           service.data.totale / ((iva + 100) / 100)
                             | number: "0.2-2"

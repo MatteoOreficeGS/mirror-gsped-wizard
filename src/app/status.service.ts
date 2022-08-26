@@ -43,7 +43,6 @@ export class StatusService {
   }
 
   pickupAvailability(corriere: any) {
-    console.log(corriere);
     const decoded: any = this.store.decodedToken;
     const date = new Date();
     const headers = { "x-api-key": this.store.token };

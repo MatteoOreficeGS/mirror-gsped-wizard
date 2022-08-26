@@ -15,7 +15,15 @@
             autocomplete="off"
             [formControlName]="field.value"
             type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            [ngClass]="
+              formPayment.get(field.value)?.invalid &&
+              formPayment.get(field.value)?.errors &&
+              (formPayment.get(field.value)?.dirty ||
+                formPayment.get(field.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
             placeholder=" "
           />
           <label

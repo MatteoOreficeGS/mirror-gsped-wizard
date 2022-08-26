@@ -283,7 +283,6 @@ export class SenderComponent {
       this.formSender.removeControl("note_sender");
 
       this.store.sender = this.formSender.value;
-      console.log(this.store.sender);
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

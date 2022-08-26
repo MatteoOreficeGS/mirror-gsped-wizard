@@ -227,20 +227,22 @@
         </div>
       </div>
 
-      <ng-container *ngIf="showGoods_type && formShipment.get('goodType')">
+      <ng-container
+        *ngIf="showGoods_type && formShipment.get(translations.lbl_goods_type)"
+      >
         <p class="mb-6 font-medium">{{ translations["lbl_goods_type"] }}</p>
         <div class="relative w-full md:w-1/2 mb-6 group">
           <input
-            [formControlName]="'goodType'"
+            [formControlName]="translations.lbl_goods_type"
             autocomplete="off"
             id="goodType"
             name="goodType"
             type="text"
             [ngClass]="
-              formShipment.get('goodType')?.invalid &&
-              formShipment.get('goodType')?.errors &&
-              (formShipment.get('goodType')?.dirty ||
-                formShipment.get('goodType')?.touched)
+              formShipment.get(translations.lbl_goods_type)?.invalid &&
+              formShipment.get(translations.lbl_goods_type)?.errors &&
+              (formShipment.get(translations.lbl_goods_type)?.dirty ||
+                formShipment.get(translations.lbl_goods_type)?.touched)
                 ? 'border-red-500'
                 : 'border-gray-300'
             "
@@ -464,9 +466,10 @@
           <input
             class="text-red-dhl"
             type="radio"
-            [name]="'ritiro'"
-            value="servicePoint"
-            [checked]="homePickup"
+            [formControlName]="'ritiro'"
+            name="ritiro"
+            value='serive'
+            [checked]="true"
             (click)="clearPickupAviability()"
           />
           <span>ritiro presso service point</span>
@@ -476,9 +479,9 @@
             class="text-red-dhl"
             (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
             type="radio"
-            [name]="'ritiro'"
-            value="home"
-            [checked]="!homePickup"
+            [formControlName]="'ritiro'"
+            name="ritiro"
+            value='home'
           />
           <span>ritiro a casa</span>
           <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">

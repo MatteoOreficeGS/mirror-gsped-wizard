@@ -23,7 +23,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorPaymentComponent } from './error-payment/error-payment.component';
 import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
 import { VodafoneComponent } from './moduli/vodafone/vodafone.component';
-import { ModalComponent } from './modal/modal.component';
+import { ModalComponent } from './components/modal/modal.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
 

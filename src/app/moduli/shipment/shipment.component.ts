@@ -12,7 +12,11 @@ import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateInsurance, ValidatePackage } from "../../libs/validation";
+import {
+  ValidateInsurance,
+  ValidatePackageDimension,
+  ValidatePackageWeight,
+} from "../../libs/validation";
 
 @Component({
   selector: "app-shipment",
@@ -49,6 +53,7 @@ export class ShipmentComponent implements OnInit {
         this.store.returnInsurance ? this.store.returnInsurance : "",
         [ValidateInsurance],
       ],
+      ritiro: ["service"],
     });
     this.iva = this.store.configuration.vatPercentage;
     if (!this.store.hasPayment) {
@@ -105,10 +110,10 @@ export class ShipmentComponent implements OnInit {
     peso = ""
   ): FormGroup {
     return this.fb.group({
-      lunghezza: ["" + lunghezza, ValidatePackage],
-      larghezza: ["" + larghezza, ValidatePackage],
-      altezza: ["" + altezza, ValidatePackage],
-      peso: ["" + peso, ValidatePackage],
+      lunghezza: ["" + lunghezza, ValidatePackageDimension],
+      larghezza: ["" + larghezza, ValidatePackageDimension],
+      altezza: ["" + altezza, ValidatePackageDimension],
+      peso: ["" + peso, ValidatePackageWeight],
     });
   }
 
@@ -139,12 +144,8 @@ export class ShipmentComponent implements OnInit {
   }
 
   setDocumentShipment() {
-    this.formShipment.controls["outwardInsurance"].setValue(
-      this.store.outwardInsurance ? this.store.outwardInsurance : ""
-    );
-    this.formShipment.controls["returnInsurance"].setValue(
-      this.store.returnInsurance ? this.store.returnInsurance : ""
-    );
+    this.formShipment.controls["outwardInsurance"].setValue("");
+    this.formShipment.controls["returnInsurance"].setValue("");
     for (let index = this.packageNumber; index > 0; index--) {
       this.removePackage();
     }
@@ -152,24 +153,20 @@ export class ShipmentComponent implements OnInit {
     this.isDocumentShipment = true;
     this.store.isDocumentShipment = true;
     this.isGoodDocument = 1;
-    this.formShipment.removeControl("goodType");
+    this.formShipment.removeControl(this.translations.lbl_goods_type);
     this.store.isAskDocument = true;
   }
 
   setGoodsShipment() {
-    this.formShipment.controls["outwardInsurance"].setValue(
-      this.store.outwardInsurance ? this.store.outwardInsurance : ""
-    );
-    this.formShipment.controls["returnInsurance"].setValue(
-      this.store.returnInsurance ? this.store.returnInsurance : ""
-    );
+    this.formShipment.controls["outwardInsurance"].setValue("");
+    this.formShipment.controls["returnInsurance"].setValue("");
     this.showGoods_type = true;
     this.isDocumentShipment = false;
     this.store.isDocumentShipment = false;
     this.isGoodDocument =
       this.currentModule.packagesDetails.fixedPackagesNumber;
     this.formShipment.addControl(
-      "goodType",
+      this.translations.lbl_goods_type,
       new FormControl(this.store.goodType, Validators.required)
     );
     this.store.isAskDocument = false;
@@ -206,34 +203,50 @@ export class ShipmentComponent implements OnInit {
   showGoods_type: boolean = false;
 
   setDatiColli() {
-    const dimensions = this.formShipment.value.dimensions.map(
-      (dimension: any) => {
-        return {
-          lunghezza: parseFloat(dimension.lunghezza.replaceAll(",", ".")),
-          larghezza: parseFloat(dimension.larghezza.replaceAll(",", ".")),
-          altezza: parseFloat(dimension.altezza.replaceAll(",", ".")),
-          peso: parseFloat(dimension.peso.replaceAll(",", ".")),
-        };
-      }
-    );
+    if (this.currentModule.packagesDetails.enable) {
+      const dimensions = this.formShipment.value.dimensions.map(
+        (dimension: any) => {
+          return {
+            lunghezza: parseFloat(
+              (dimension.lunghezza ? dimension.lunghezza : "1").replaceAll(
+                ",",
+                "."
+              )
+            ),
+            larghezza: parseFloat(
+              (dimension.larghezza ? dimension.larghezza : "1").replaceAll(
+                ",",
+                "."
+              )
+            ),
+            altezza: parseFloat(
+              (dimension.altezza ? dimension.altezza : "1").replaceAll(",", ".")
+            ),
+            peso: parseFloat(
+              (dimension.peso ? dimension.peso : "1").replaceAll(",", ".")
+            ),
+          };
+        }
+      );
 
-    const pesoTot = dimensions
-      .map((value: { peso: any }) => value.peso)
-      .reduce((a: any, b: any) => a + b, 0);
-    const volumeTot = dimensions
-      .map(
-        (value: { altezza: any; larghezza: any; lunghezza: any }) =>
-          (value.lunghezza * value.larghezza * value.altezza) / 1000000
-      )
-      .reduce((a: any, b: any) => a + b, 0);
+      const pesoTot = dimensions
+        .map((value: { peso: any }) => value.peso)
+        .reduce((a: any, b: any) => a + b, 0);
+      const volumeTot = dimensions
+        .map(
+          (value: { altezza: any; larghezza: any; lunghezza: any }) =>
+            (value.lunghezza * value.larghezza * value.altezza) / 1000000
+        )
+        .reduce((a: any, b: any) => a + b, 0);
 
-    this.daticolli = {
-      colli: dimensions.length,
-      daticolli: dimensions,
-      peso: pesoTot,
-      volume: volumeTot,
-    };
-    this.store.packages = dimensions;
+      this.daticolli = {
+        colli: dimensions.length,
+        daticolli: dimensions,
+        peso: pesoTot,
+        volume: volumeTot,
+      };
+      this.store.packages = dimensions;
+    }
   }
 
   // setting the insurance value at 100 if checkbox is checked at 0 if not
@@ -241,7 +254,10 @@ export class ShipmentComponent implements OnInit {
     if (this.formShipment.value.outwardInsurance === true) {
       this.formShipment.controls["outwardInsurance"].setValue(100);
       this.store.outwardInsurance = 100;
-    } else if (this.formShipment.value.outwardInsurance === false) {
+    } else if (
+      this.formShipment.value.outwardInsurance === false ||
+      this.formShipment.value.outwardInsurance === ""
+    ) {
       this.formShipment.controls["outwardInsurance"].setValue(0);
       this.store.outwardInsurance = 0;
     } else {
@@ -249,35 +265,44 @@ export class ShipmentComponent implements OnInit {
         ("" + this.formShipment.value.outwardInsurance).replace(",", ".")
       );
     }
-    if (this.formShipment.value.returnInsurance === true) {
-      this.store.returnInsurance = 100;
-    } else if (this.formShipment.value.returnInsurance === false) {
-      this.formShipment.controls["returnInsurance"].setValue(0);
-      this.store.returnInsurance = 0;
-    } else {
-      this.store.returnInsurance = parseFloat(
-        ("" + this.formShipment.value.returnInsurance).replace(",", ".")
-      );
+    if (this.store.hasReturnShipment) {
+      if (this.formShipment.value.returnInsurance === true) {
+        this.store.returnInsurance = 100;
+      } else if (
+        this.formShipment.value.returnInsurance === false ||
+        this.formShipment.value.returnInsurance === ""
+      ) {
+        this.formShipment.controls["returnInsurance"].setValue(0);
+        this.store.returnInsurance = 0;
+      } else {
+        this.store.returnInsurance = parseFloat(
+          ("" + this.formShipment.value.returnInsurance).replace(",", ".")
+        );
+      }
     }
   }
 
   confirmInsurance() {
-    let packageErrors = {};
+    let packageErrors: any = {};
     this.fieldsLabel &&
       this.fieldsLabel.forEach((field: any) => {
-        this.dimensions.controls.forEach((control: any) => {
+        this.dimensions.controls.forEach((control: any, index: number) => {
           if (control.get(field.label)?.errors != null) {
-            packageErrors = control.get(field.label)?.errors;
+            packageErrors[
+              this.translations[field.label] + "(" + (index + 1) + ")"
+            ] =
+              this.translations[
+                control.get(field.label)?.errors.packagesDetails
+              ];
           }
         });
       });
     if (this.formShipment.valid) {
-      this.store.goodType = this.formShipment.value.goodType;
+      this.store.goodType =
+        this.formShipment.value[this.translations.lbl_goods_type];
       this.store.isGoodDocument = this.isGoodDocument;
       this.setInsurances();
-      if (this.currentModule.packagesDetails.enable) {
-        this.setDatiColli();
-      }
+      this.setDatiColli();
       if (
         this.store.modules.filter((module: any) => {
           return module.module === "vodafone";
@@ -301,7 +326,6 @@ export class ShipmentComponent implements OnInit {
       }
       this.store.codiceSconto = this.formShipment.value.codiceSconto;
       this.isLoading = true;
-
       this.bodyRateComparativa = {
         ...this.daticolli,
         documenti: this.store.isDocumentShipment ? 1 : 0,
@@ -357,6 +381,13 @@ export class ShipmentComponent implements OnInit {
           if (!this.store.hasReturnShipment) {
             this.isLoading = false;
           }
+        },
+        (error) => {
+          this.showModal = true;
+          this.errors = {};
+          this.errors = {
+            errore: "errore temporaneo, riprova più tardi",
+          };
         }
       );
 
@@ -403,6 +434,13 @@ export class ShipmentComponent implements OnInit {
               this.returnCostExposure
             );
             this.isLoading = false;
+          },
+          (error) => {
+            this.showModal = true;
+            this.errors = {};
+            this.errors = {
+              errore: "errore temporaneo, riprova più tardi",
+            };
           }
         );
       }
@@ -422,7 +460,6 @@ export class ShipmentComponent implements OnInit {
     const noteSender = this.store.noteSenderOnSender
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
-
     this.store.payloadShipment = {
       note_sender: noteSender,
       creazione_postuma: this.store.hasPayment,
@@ -433,7 +470,8 @@ export class ShipmentComponent implements OnInit {
     };
 
     !this.isDocumentShipment
-      ? (this.store.payloadShipment.merce = this.formShipment.value.goodType)
+      ? (this.store.payloadShipment.merce =
+          this.formShipment.value[this.translations.lbl_goods_type])
       : null;
   }
 
@@ -450,17 +488,15 @@ export class ShipmentComponent implements OnInit {
   }
 
   checkPickupAviability(courier: string) {
-    let sameDay = false;
     let now = new Date();
-    // const offset = now.getTimezoneOffset();
     const currentHours = now.getHours();
-    const isWeekend = now.getDay() >= 5 ? true : false;
-    console.log(now);
-    console.log(currentHours);
+    const weekDay = now.getDay();
+    const isWeekend = weekDay >= 5 || weekDay === 0;
+    let dayToAdd = 1;
     if (
       this.currentModule.pickup.pickupSameDayCheck &&
       currentHours < 15 &&
-      now.getDay() <= 5
+      weekDay <= 5
     ) {
       this.service.pickupAvailability(courier).subscribe(
         (res: any) => {
@@ -478,25 +514,16 @@ export class ShipmentComponent implements OnInit {
         (error: any) => {}
       );
     } else {
-      console.log(now.getDay());
-      let date_req_ritiro: any =
-        now.getFullYear() +
-        "-" +
-        ("00" + (now.getMonth() + 1)).slice(-2) +
-        "-" +
-        (
-          "00" +
-          (isWeekend
-            ? now.getDate() + (7 - now.getDay() === 0 ? 7 : now.getDay()) + 1
-            : now.getDate() + 1)
-        ).slice(-2) +
-        " " +
-        "09:00:00";
-      console.log("date_req_ritiro", date_req_ritiro);
+      // giorno lavorativo successivo
+      if (isWeekend) {
+        dayToAdd = 8 - (weekDay === 0 ? 7 : weekDay);
+      }
+      const date_req_ritiro = new Date(now.setDate(now.getDate() + dayToAdd));
       this.pickupAvailability[courier] =
         "il prossimo giorno lavorativo dalle 09:00 alle 18:00";
       this.pickupMode = {
-        date_req_ritiro: date_req_ritiro,
+        date_req_ritiro:
+          date_req_ritiro.toISOString().split("T")[0] + " " + "09:00:00",
         opening_time: "09:00:00",
         closing_time: "18:00:00",
       };
@@ -506,10 +533,14 @@ export class ShipmentComponent implements OnInit {
   clearPickupAviability() {
     this.pickupAvailability = {};
     this.pickupMode = {};
+    this.homePickup = true
+    this.formShipment.controls['ritiro'].reset();
   }
 
   handleRateComparative(body: any): Observable<any> {
-    body.daticolli = JSON.stringify(body.daticolli);
+    if (this.currentModule.packagesDetails.enable) {
+      body.daticolli = JSON.stringify(body.daticolli);
+    }
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     return this.http.get(
@@ -617,56 +648,73 @@ export class ShipmentComponent implements OnInit {
         this.store.selectedProducts;
     }
 
-    this.service.handleShipment(outwardPayloadShipment).subscribe((res) => {
-      this.store.outwardShipment = res;
-      if (!this.store.hasReturnShipment) {
-        this.router.navigate(
-          [this.store.modules[this.store.currentStep++].module],
-          {
-            queryParamsHandling: "merge",
+    this.service.handleShipment(outwardPayloadShipment).subscribe(
+      (res) => {
+        this.store.outwardShipment = res;
+        if (!this.store.hasReturnShipment) {
+          this.router.navigate(
+            [this.store.modules[this.store.currentStep++].module],
+            {
+              queryParamsHandling: "merge",
+            }
+          );
+        } else {
+          // inverto il mittente con il destinatario per la spedizione di ritorno
+          const returnPayloadShipment = {
+            ...this.store.payloadShipment,
+            valore: this.store.returnInsurance,
+            servizio: this.store.chosenCourier.return.serviceCode,
+            corriere: this.store.chosenCourier.return.courierCode,
+            ...this.service.invertAddressData({
+              ...this.store.sender,
+              ...this.store.recipient,
+            }),
+          };
+          if (this.store.invoice) {
+            const returnInvoice = {
+              nolo: this.store.chosenCourier["return"].data.nolo,
+              totale_fattura: this.store.chosenCourier["return"].data.totale,
+              assicurazione:
+                this.store.chosenCourier["return"].data.varie_dettaglio[
+                  this.store.isDocumentShipment
+                    ? "IB-EXTENDED LIABILITY"
+                    : "II-SHIPMENT INSURANCE"
+                ],
+              valore: this.store.returnInsurance,
+            };
+            returnPayloadShipment.fattura_dhl = [
+              { ...this.store.invoice, ...returnInvoice },
+            ];
           }
-        );
-      }
-    });
-
-    // inverto il mittente con il destinatario per la spedizione di ritorno
-    if (this.store.hasReturnShipment) {
-      const returnPayloadShipment = {
-        ...this.store.payloadShipment,
-        valore: this.store.returnInsurance,
-        servizio: this.store.chosenCourier.return.serviceCode,
-        corriere: this.store.chosenCourier.return.courierCode,
-        ...this.service.invertAddressData({
-          ...this.store.sender,
-          ...this.store.recipient,
-        }),
-      };
-      if (this.store.invoice) {
-        const returnInvoice = {
-          nolo: this.store.chosenCourier["return"].data.nolo,
-          totale_fattura: this.store.chosenCourier["return"].data.totale,
-          assicurazione:
-            this.store.chosenCourier["return"].data.varie_dettaglio[
-              this.store.isDocumentShipment
-                ? "IB-EXTENDED LIABILITY"
-                : "II-SHIPMENT INSURANCE"
-            ],
-          valore: this.store.returnInsurance,
+          this.service.handleShipment(returnPayloadShipment).subscribe(
+            (res) => {
+              this.store.returnShipment = res;
+              this.router.navigate(
+                [this.store.modules[this.store.currentStep++].module],
+                {
+                  queryParamsHandling: "merge",
+                }
+              );
+            },
+            (error) => {
+              this.showModal = true;
+              this.errors = {};
+              this.errors = {
+                errore: "errore temporaneo, riprova più tardi",
+              };
+              // alert("errore temporaneo, riprova più tardi");
+            }
+          );
+        }
+      },
+      (error) => {
+        this.showModal = true;
+        this.errors = {};
+        this.errors = {
+          errore: "errore temporaneo, riprova più tardi",
         };
-        returnPayloadShipment.fattura_dhl = [
-          { ...this.store.invoice, ...returnInvoice },
-        ];
       }
-      this.service.handleShipment(returnPayloadShipment).subscribe((res) => {
-        this.store.returnShipment = res;
-        this.router.navigate(
-          [this.store.modules[this.store.currentStep++].module],
-          {
-            queryParamsHandling: "merge",
-          }
-        );
-      });
-    }
+    );
   }
 
   incrementStep() {

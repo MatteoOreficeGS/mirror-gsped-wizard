@@ -18,7 +18,6 @@ export class VodafoneComponent implements OnInit {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "vodafone"
     )[0].moduleConfig;
-    console.log(this.currentModule);
     this.formVodafone = fb.group({
       description: ["", [Validators.nullValidator]],
     });

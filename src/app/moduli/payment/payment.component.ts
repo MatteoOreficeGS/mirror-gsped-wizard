@@ -22,18 +22,17 @@ export class PaymentComponent implements OnInit {
     public router: Router,
     public fb: FormBuilder
   ) {
-    console.log(this.selectedProvider);
     this.formPayment = fb.group({
-      cardHolderName: this.store.isSenderPrefilled
+      cc_cardholder_name: this.store.isSenderPrefilled
         ? this.store.recipient.rcpt_name
         : this.store.sender.sender_name,
-      cardHolderEmail: [
+      cc_cardholder_email: [
         this.store.isSenderPrefilled
           ? this.store.recipient.rcpt_email
           : this.store.sender.sender_email,
         ValidateEmail,
       ],
-      cardHolderPhone: [
+      cc_cardholder_phone: [
         this.store.isSenderPrefilled
           ? this.store.recipient.rcpt_phone
           : this.store.sender.sender_phone,
@@ -52,17 +51,17 @@ export class PaymentComponent implements OnInit {
     this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
     this.fields = [
       {
-        value: "cardHolderName",
+        value: "cc_cardholder_name",
         label: this.translations.cc_cardholder_name,
         type: "text",
       },
       {
-        value: "cardHolderEmail",
+        value: "cc_cardholder_email",
         label: this.translations.cc_cardholder_email,
         type: "email",
       },
       {
-        value: "cardHolderPhone",
+        value: "cc_cardholder_phone",
         label: this.translations.cc_cardholder_phone,
         type: "text",
       },
@@ -74,7 +73,6 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.response = this.store.configuration;
-    console.log(this.response);
     this.currentModule = this.response.modules.filter(
       (el: { moduleName: string }) => el.moduleName === "payment"
     )[0].moduleConfig;
@@ -86,7 +84,6 @@ export class PaymentComponent implements OnInit {
   response: any = {};
   currentModule: any;
   providers: Array<string> = [];
-  selectedProvider: string = "";
   isHandledPayment: boolean = false;
   isPaymentHanldeCompleted: any = false;
   translations: any = {};
@@ -162,7 +159,11 @@ export class PaymentComponent implements OnInit {
             res.monetaweb.paymentid;
         },
         (error) => {
-          alert(JSON.stringify(error, null, 4));
+          this.showModal = true;
+          this.errors = {};
+          this.errors = {
+            "pagamento": "errore temporaneo, riprova più tardi",
+          };
         }
       );
     } else {

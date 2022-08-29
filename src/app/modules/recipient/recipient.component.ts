@@ -147,7 +147,7 @@ export class RecipientComponent {
       },
       {
         value: "rcpt_addr_secondary",
-        label: this.translations.rcpt_addr_secondary || "",
+        label: this.translations.rcpt_addr + " 2",
         type: "text",
         required: false,
         columnspan: 2,

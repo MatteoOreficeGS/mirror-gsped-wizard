@@ -9,11 +9,11 @@ import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { WizardComponent } from "./wizard/wizard.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { FooterComponent } from "./components/footer/footer.component";
-import { SenderComponent } from "./moduli/sender/sender.component";
-import { RecipientComponent } from "./moduli/recipient/recipient.component";
-import { ShipmentComponent } from "./moduli/shipment/shipment.component";
-import { PaymentComponent } from "./moduli/payment/payment.component";
-import { StampaAwbComponent } from "./moduli/stampa-awb/stampa-awb.component";
+import { SenderComponent } from "./modules/sender/sender.component";
+import { RecipientComponent } from "./modules/recipient/recipient.component";
+import { ShipmentDataComponent } from "./modules/shipment-data/shipment-data.component";
+import { PaymentComponent } from "./modules/payment/payment.component";
+import { StampaAwbComponent } from "./modules/stampa-awb/stampa-awb.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ErrorPageComponent } from "./error-page/error-page.component";
@@ -21,11 +21,12 @@ import { StartComponent } from "./start/start.component";
 import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorPaymentComponent } from './error-payment/error-payment.component';
-import { FatturaDHLComponent } from './moduli/fattura-dhl/fattura-dhl.component';
-import { VodafoneComponent } from './moduli/vodafone/vodafone.component';
+import { FatturaDHLComponent } from './modules/fattura-dhl/fattura-dhl.component';
+import { VodafoneComponent } from './modules/vodafone/vodafone.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
+import { CourierSelectionComponent } from "./modules/courier-selection/courier-selection.component";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,7 @@ import { SummaryComponent } from './components/summary/summary.component';
     FooterComponent,
     SenderComponent,
     RecipientComponent,
-    ShipmentComponent,
+    ShipmentDataComponent,
     PaymentComponent,
     StampaAwbComponent,
     NavbarComponent,
@@ -47,6 +48,7 @@ import { SummaryComponent } from './components/summary/summary.component';
     ModalComponent,
     LoaderComponent,
     SummaryComponent,
+    CourierSelectionComponent
   ],
   imports: [
     BrowserAnimationsModule,

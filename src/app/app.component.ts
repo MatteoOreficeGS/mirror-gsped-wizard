@@ -40,10 +40,10 @@ export class AppComponent {
               this.status.getTranslations(params.lang ? params.lang : "it_IT"),
               this.status.getCountries()
             ).subscribe((res: any) => {
-              this.store.configuration = res[0].configuration;
+              // this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
               this.isRecipientVisible();
-              let modules = res[0].configuration.modules.map((module: any) => {
+              let modules = this.store.configuration.modules.map((module: any) => {
                 if (module.moduleConfig.hidden) {
                   if (module.moduleName === "sender") {
                     this.store.sender = module.moduleConfig.data;

@@ -142,7 +142,7 @@ export class SenderComponent {
       },
       {
         value: "sender_addr_secondary",
-        label: this.translations.sender_addr_secondary,
+        label: this.translations.sender_addr + " 2",
         type: "text",
         required: false,
         columnspan: 2,

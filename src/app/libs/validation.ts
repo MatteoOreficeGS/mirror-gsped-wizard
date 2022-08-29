@@ -100,6 +100,20 @@ export function ValidateCF(
   if (control.value && control.value.length > 0) {
     if (!control.value.match(validRegex)) {
       return { lbl_invalid_characters: true };
+    } else {
+      var i, s, set1, set2, setpari, setdisp;
+      const cf = control.value.toUpperCase();
+      set1 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      set2 = "ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      setpari = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      setdisp = "BAKPLCQDREVOSFTGUHMINJWZYX";
+      s = 0;
+      for (i = 1; i <= 13; i += 2)
+        s += setpari.indexOf(set2.charAt(set1.indexOf(cf.charAt(i))));
+      for (i = 0; i <= 14; i += 2)
+        s += setdisp.indexOf(set2.charAt(set1.indexOf(cf.charAt(i))));
+      if (s % 26 != cf.charCodeAt(15) - "A".charCodeAt(0))
+        return { lbl_invalid_characters: true };
     }
   }
   return null;
@@ -113,42 +127,37 @@ export function ValidatePIva(
     if (!control.value.match(validRegex)) {
       return { lbl_invalid_characters: true };
     } else {
-      var s = 0;
-      for (let i = 0; i <= 9; i += 2) {
-        s += ("" + control.value).charCodeAt(i) - "0".charCodeAt(0);
+      const controlDigit = control.value.slice(-1)[0];
+      const validationDigit = control.value.slice(0, -1);
+      let sumEven = 0;
+      let sumOdd = 0;
+
+      for (let i = 1; i < 11; i += 2) {
+        let tmpSum = validationDigit[i] * 2;
+        if (tmpSum > 9) {
+          tmpSum =
+            parseInt(("" + tmpSum).slice(0, 1)) +
+            parseInt(("" + tmpSum).slice(1));
+        }
+        sumEven += tmpSum;
       }
-      for (let i = 1; i <= 9; i += 2) {
-        var c = 2 * (("" + control.value).charCodeAt(i) - "0".charCodeAt(0));
-        if (c > 9) c = c - 9;
-        s += c;
+
+      for (let i = 0; i < 10; i += 2) {
+        sumOdd += parseInt(validationDigit[i]);
       }
-      var controllo = (10 - (s % 10)) % 10;
-      if (
-        controllo ===
-        ("" + control.value).charCodeAt(10) - "0".charCodeAt(0)
-      ) {
+      const res = parseInt(("" + (sumOdd + sumEven)).slice(-1));
+      let output: any;
+      if (res === 0) {
+        output = 0;
+      } else {
+        output = 10 - res;
+      }
+      if (parseInt(output) !== parseInt(controlDigit)) {
         return { lbl_invalid_characters: true };
       }
     }
   }
   return null;
-
-  /* if (pi == '') return 'Non hai inserito alcun valore';
-  else if (!/^[0-9]{11}$/.test(pi)) return 'La partita IVA deve contenere 11 cifre.';
-  else {
-    var s = 0;
-    for (i=0; i<=9; i+=2) {
-      s += pi.charCodeAt(i) - '0'.charCodeAt(0);
-    }
-    for (i=1; i<=9; i+=2 ){
-      var c = 2*(pi.charCodeAt(i) - '0'.charCodeAt(0));
-      if (c > 9) c = c - 9;
-      s += c;
-    }
-    var controllo = (10 - s%10)%10;
-    if (controllo != pi.charCodeAt(10) - '0'.charCodeAt(0)) return 'La partita IVA sembra corretta';
-    else return '';
-  } */
 }
 
 function ValidatePackage(value: any, min: number, max: number) {

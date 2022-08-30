@@ -7,10 +7,10 @@ import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
 @Component({
-  selector: "app-courier-selection",
-  templateUrl: "./courier-selection.component.html",
+  selector: "app-select-courier",
+  templateUrl: "./select-courier.component.html",
 })
-export class CourierSelectionComponent {
+export class SelectCourierComponent {
   constructor(
     public service: StatusService,
     public store: StoreService,
@@ -18,24 +18,32 @@ export class CourierSelectionComponent {
     public route: ActivatedRoute,
     public http: HttpClient
   ) {
-    console.log(this.router.url);
     this.currentModule = this.store.configuration.modules.filter(
-      (module: any) => module.moduleName === "courier-selection"
+      (module: any) => module.moduleName === "select-courier"
     )[0].moduleConfig;
-    this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
     this.translations = store.translations;
-    this.isDocumentShipment = this.currentModule.documentFlag;
-    this.store.isDocumentShipment = this.store.isDocumentShipment
-      ? this.store.isDocumentShipment
-      : this.currentModule.documentFlag;
+    this.isDocumentShipment = this.store.isDocumentShipment;
     this.pointPickup = this.currentModule.pickup.dropoff;
     this.homePickup = this.currentModule.pickup.pickup;
     this.iva = this.store.configuration.vatPercentage;
     this.couriers = this.currentModule.selectCourier.couriers.list;
-    
+    this.store.outwardCostExposure ? this.store.outwardCostExposure = this.filterRateComparativeResults(
+      false,
+      this.currentModule.selectCourier.couriers.selectionMode,
+      this.store.outwardCostExposure
+    ) : "a";
+    this.selectCourier("outward", this.store.outwardCostExposure[0]);
+    if (this.store.hasReturnShipment) {
+      this.store.outwardCostExposure ? this.store.outwardCostExposure = this.filterRateComparativeResults(
+        true,
+        this.currentModule.selectCourier.returnCouriers.couriers.selectionMode,
+        this.store.returnCostExposure
+      ) : "r";
+      this.selectCourier("return", this.store.returnCostExposure[0]);
+    }
   }
 
-  showCourierSelection: boolean = false;
+  showSelectCourier: boolean = false;
   currentModule: any;
   couriers?: Array<any>;
   fieldsLabel: any;
@@ -46,7 +54,7 @@ export class CourierSelectionComponent {
   bodyRateComparativa: any;
   daticolli: any = {};
   translations: any;
-  isDocumentShipment: boolean;
+  isDocumentShipment?: boolean;
   outwardCostExposure: any = [];
   returnCostExposure: any = [];
   chosenCourier: any = {
@@ -67,23 +75,72 @@ export class CourierSelectionComponent {
     this.showModal = event;
   }
 
-  setShipmentPayload() {
-    const noteSender = this.store.noteSenderOnSender
-      ? this.store.senderExtras.note_sender
-      : this.store.recipientExtras.note_sender;
-    this.store.payloadShipment = {
-      note_sender: noteSender,
-      creazione_postuma: this.store.hasPayment,
-      client_id: this.store.configuration.client_id,
-      origine: this.store.sender.sender_country_code,
-      documenti: this.store.isDocumentShipment ? 1 : 0,
-      ...this.daticolli,
-    };
+  filterRateComparativeResults(isReturn: boolean, mode: string, response: any) {
+    const sameDestination =
+      this.store.sender.sender_country_code ===
+      this.store.recipient.rcpt_country_code
+        ? 1
+        : 0;
+    switch (mode) {
+      case "FIXED":
+        let configCouriers: any;
+        let configServices: any;
+        if (isReturn) {
+          configCouriers =
+            this.currentModule.selectCourier.returnCouriers.couriers.list.map(
+              (courier: any) => {
+                return courier.gspedCourierCode;
+              }
+            );
+          configServices =
+            this.currentModule.selectCourier.returnCouriers.couriers.list.map(
+              (courier: any) => {
+                return courier.services.list.map((service: any) => {
+                  // if (service.domestic ? service.domestic : 1 === sameDestination) {
+                  return service.gspedServiceCode;
+                  // }
+                });
+              }
+            )[0];
+        } else {
+          configCouriers = this.currentModule.selectCourier.couriers.list.map(
+            (courier: any) => {
+              return courier.gspedCourierCode;
+            }
+          );
+          configServices = this.currentModule.selectCourier.couriers.list.map(
+            (courier: any) => {
+              return courier.services.list.map((service: any) => {
+                //if (service.domestic ? service.domestic : 1 === sameDestination) {
+                return service.gspedServiceCode;
+                // }
+              });
+            }
+          )[0];
+        }
 
-    // !this.isDocumentShipment
-    //   ? (this.store.payloadShipment.merce =
-    //       this.formShipmentData.value[this.translations.lbl_goods_type])
-    //   : null;
+        response = response.filter(
+          (element: any) =>
+            configCouriers.includes(element.courierCode) &&
+            configServices.includes(element.serviceCode)
+        );
+        return response;
+
+      case "AUTOMATIC":
+        // filtrare per il corriere piu economico
+        let maxPrice = 10000;
+        response.forEach((element: any) => {
+          if (element.data.totale < maxPrice) {
+            maxPrice = element.data.totale;
+            response = [element];
+          }
+        });
+        return response;
+
+      case "DYNAMIC":
+      default:
+        return response;
+    }
   }
 
   selectCourier(type: string, service: any) {
@@ -216,74 +273,6 @@ export class CourierSelectionComponent {
       environment.API_URL + decoded.instance + "/RateComparativa",
       { headers: headers, params: body }
     );
-  }
-
-  filterRateComparativeResults(isReturn: boolean, mode: string, response: any) {
-    const sameDestination =
-      this.store.sender.sender_country_code ===
-      this.store.recipient.rcpt_country_code
-        ? 1
-        : 0;
-    switch (mode) {
-      case "FIXED":
-        let configCouriers: any;
-        let configServices: any;
-        if (isReturn) {
-          configCouriers =
-            this.currentModule.selectCourier.returnCouriers.couriers.list.map(
-              (courier: any) => {
-                return courier.gspedCourierCode;
-              }
-            );
-          configServices =
-            this.currentModule.selectCourier.returnCouriers.couriers.list.map(
-              (courier: any) => {
-                return courier.services.list.map((service: any) => {
-                  // if (service.domestic ? service.domestic : 1 === sameDestination) {
-                  return service.gspedServiceCode;
-                  // }
-                });
-              }
-            )[0];
-        } else {
-          configCouriers = this.currentModule.selectCourier.couriers.list.map(
-            (courier: any) => {
-              return courier.gspedCourierCode;
-            }
-          );
-          configServices = this.currentModule.selectCourier.couriers.list.map(
-            (courier: any) => {
-              return courier.services.list.map((service: any) => {
-                //if (service.domestic ? service.domestic : 1 === sameDestination) {
-                return service.gspedServiceCode;
-                // }
-              });
-            }
-          )[0];
-        }
-
-        response = response.filter(
-          (element: any) =>
-            configCouriers.includes(element.courierCode) &&
-            configServices.includes(element.serviceCode)
-        );
-        return response;
-
-      case "AUTOMATIC":
-        // filtrare per il corriere piu economico
-        let maxPrice = 10000;
-        response.forEach((element: any) => {
-          if (element.data.totale < maxPrice) {
-            maxPrice = element.data.totale;
-            response = [element];
-          }
-        });
-        return response;
-
-      case "DYNAMIC":
-      default:
-        return response;
-    }
   }
 
   handleShipments() {

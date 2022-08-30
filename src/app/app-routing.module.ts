@@ -10,14 +10,14 @@ import { StartComponent } from "./start/start.component";
 import { ErrorPaymentComponent } from "./error-payment/error-payment.component";
 import { FatturaDHLComponent } from "./modules/fattura-dhl/fattura-dhl.component";
 import { VodafoneComponent } from "./modules/vodafone/vodafone.component";
-import { CourierSelectionComponent } from "./modules/courier-selection/courier-selection.component";
+import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 
 const routes: Routes = [
   { path: "sender", component: SenderComponent },
   { path: "recipient", component: RecipientComponent },
   { path: "vodafone", component: VodafoneComponent },
   { path: "shipment-data", component: ShipmentDataComponent },
-  { path: "courier-selection", component: CourierSelectionComponent },
+  { path: "select-courier", component: SelectCourierComponent },
   { path: "payment", component: PaymentComponent },
   {
     path: "awb-printing",

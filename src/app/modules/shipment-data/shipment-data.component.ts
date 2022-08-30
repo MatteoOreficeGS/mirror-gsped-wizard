@@ -41,6 +41,8 @@ export class ShipmentDataComponent implements OnInit {
     this.store.isDocumentShipment = this.store.isDocumentShipment
       ? this.store.isDocumentShipment
       : this.currentModule.documentFlag;
+    this.store.outwardCostExposure = [];
+    this.store.returnCostExposure = [];
     this.formShipmentData = fb.group({
       dimensions: this.fb.array([]),
       outwardInsurance: [
@@ -179,8 +181,6 @@ export class ShipmentDataComponent implements OnInit {
   translations: any;
   formShipmentData: FormGroup;
   isDocumentShipment: boolean;
-  outwardCostExposure: any = [];
-  returnCostExposure: any = [];
   chosenCourier: any = {
     outward: { serviceName: "" },
     return: { serviceName: "" },
@@ -271,6 +271,25 @@ export class ShipmentDataComponent implements OnInit {
     }
   }
 
+  setShipmentPayload() {
+    const noteSender = this.store.noteSenderOnSender
+      ? this.store.senderExtras.note_sender
+      : this.store.recipientExtras.note_sender;
+    this.store.payloadShipment = {
+      note_sender: noteSender,
+      creazione_postuma: this.store.hasPayment,
+      client_id: this.store.configuration.client_id,
+      origine: this.store.sender.sender_country_code,
+      documenti: this.store.isDocumentShipment ? 1 : 0,
+      ...this.daticolli,
+    };
+
+    !this.isDocumentShipment
+      ? (this.store.payloadShipment.merce =
+          this.formShipmentData.value[this.translations.lbl_goods_type])
+      : null;
+  }
+
   confirmInsurance() {
     let packageErrors: any = {};
     this.fieldsLabel &&
@@ -292,6 +311,7 @@ export class ShipmentDataComponent implements OnInit {
       this.store.isGoodDocument = this.isGoodDocument;
       this.setInsurances();
       this.setDatiColli();
+      this.setShipmentPayload();
       if (
         this.store.modules.filter((module: any) => {
           return module.module === "vodafone";
@@ -347,7 +367,7 @@ export class ShipmentDataComponent implements OnInit {
         (res: any) => {
           Object.keys(res.passivo).forEach((courier: any) => {
             Object.keys(res.passivo[courier]).forEach((service: any) => {
-              this.outwardCostExposure.push({
+              this.store.outwardCostExposure.push({
                 courier: courier,
                 serviceName: service,
                 courierCode: parseInt(
@@ -401,7 +421,7 @@ export class ShipmentDataComponent implements OnInit {
           (res: any) => {
             Object.keys(res.passivo).forEach((courier: any) => {
               Object.keys(res.passivo[courier]).forEach((service: any) => {
-                this.returnCostExposure.push({
+                this.store.returnCostExposure.push({
                   courier: courier,
                   serviceName: service,
                   courierCode: parseInt(

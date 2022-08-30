@@ -26,7 +26,7 @@ import { VodafoneComponent } from './modules/vodafone/vodafone.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
-import { CourierSelectionComponent } from "./modules/courier-selection/courier-selection.component";
+import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 
 @NgModule({
   declarations: [
@@ -48,7 +48,7 @@ import { CourierSelectionComponent } from "./modules/courier-selection/courier-s
     ModalComponent,
     LoaderComponent,
     SummaryComponent,
-    CourierSelectionComponent
+    SelectCourierComponent
   ],
   imports: [
     BrowserAnimationsModule,

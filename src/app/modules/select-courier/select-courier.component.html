@@ -10,13 +10,12 @@
     <app-loader></app-loader>
   </div>
   <!-- End Loading logo -->
-
-  <ng-template>
+  <ng-container>
     <div [ngClass]="store.hasReturnShipment ? 'md:grid md:grid-cols-2' : ''">
       <!-- andata -->
       <section
         class="bg-white dark:bg-gray-900"
-        *ngIf="outwardCostExposure.length"
+        *ngIf="store.outwardCostExposure.length"
       >
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
@@ -28,7 +27,7 @@
             class="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0"
           >
             <div
-              *ngFor="let service of outwardCostExposure; let i = index"
+              *ngFor="let service of store.outwardCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
               <div class="md:flex items-center space-x-2">
@@ -94,7 +93,7 @@
       <!-- ritorno -->
       <section
         class="bg-white dark:bg-gray-900 mt-4 md:mt-0"
-        *ngIf="returnCostExposure.length"
+        *ngIf="store.returnCostExposure.length"
       >
         <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
           <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
@@ -106,7 +105,7 @@
             class="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0"
           >
             <div
-              *ngFor="let service of returnCostExposure; let i = index"
+              *ngFor="let service of store.returnCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
               <div class="md:flex items-center space-x-2">
@@ -202,7 +201,7 @@
       <button
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
-        (click)="service.handlePreviousStep(true)"
+        (click)="service.handlePreviousStep()"
         class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_back"] }}
@@ -219,5 +218,5 @@
         {{ translations["lbl_btn_forward"] }}
       </button>
     </div>
-  </ng-template>
+  </ng-container>
 </app-wizard>

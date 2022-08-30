@@ -8,7 +8,7 @@ export class StoreService {
   origin?: string;
   token: any;
   decodedToken: any;
-  configuration: any;
+  configuration: any = {};
   translations: any;
   countries: any;
   codiceSconto: string = "";
@@ -42,6 +42,8 @@ export class StoreService {
     // rcpt_contact: "Societa' SPA",
   };
   recipientExtras: any = {};
+  outwardCostExposure: any = [];
+  returnCostExposure: any = [];
   outwardShipment: any = {};
   returnShipment: any = {};
   payloadShipment: any = {};

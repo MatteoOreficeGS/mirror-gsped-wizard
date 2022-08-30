@@ -165,69 +165,14 @@ export class FatturaDHLComponent implements OnInit {
               : this.store.senderExtras.sender_surname,
             Validators.required,
           ],
-          societa: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_contact
-              : this.store.sender.sender_contact,
-          ],
-          indirizzo: [
-            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
-              ? this.store.isSenderPrefilled
-                ? this.service.getDifference(
-                    this.store.recipient.rcpt_addr,
-                    this.store.recipientExtras.rcpt_addr_secondary
-                  )
-                : this.service.getDifference(
-                    this.store.sender.sender_addr,
-                    this.store.senderExtras.sender_addr_secondary
-                  )
-              : "",
-            Validators.required,
-          ],
-          nazione: [
-            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
-              ? this.store.isSenderPrefilled
-                ? this.store.recipient.rcpt_country_code
-                : this.store.sender.sender_country_code
-              : "",
-            [Validators.required, ValidateEsteroCountry],
-          ],
-          cap: [
-            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
-              ? this.store.isSenderPrefilled
-                ? this.store.recipient.rcpt_cap
-                : this.store.sender.sender_cap
-              : "",
-            Validators.required,
-          ],
-          citta: [
-            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
-              ? this.store.isSenderPrefilled
-                ? this.store.recipient.rcpt_city
-                : this.store.sender.sender_city
-              : "",
-            Validators.required,
-          ],
-          provincia: [
-            (this.store.sender.sender_country_code + "").toLowerCase() !== "it"
-              ? this.store.isSenderPrefilled
-                ? this.store.recipient.rcpt_prov
-                : this.store.sender.sender_prov
-              : "",
-            Validators.required,
-          ],
-          email: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_email
-              : this.store.sender.sender_email,
-            [Validators.required, ValidateEmail],
-          ],
-          phone: [
-            this.store.isSenderPrefilled
-              ? this.store.recipient.rcpt_phone
-              : this.store.sender.sender_phone,
-            [Validators.required, ValidatePhone],
-          ],
+          societa: "",
+          indirizzo: ["", Validators.required],
+          nazione: ["", [Validators.required, ValidateEsteroCountry]],
+          cap: ["", Validators.required],
+          citta: ["", Validators.required],
+          provincia: ["", Validators.required],
+          email: ["", [Validators.required, ValidateEmail]],
+          phone: ["", [Validators.required, ValidatePhone]],
         });
         this.invoiceModules = [
           {

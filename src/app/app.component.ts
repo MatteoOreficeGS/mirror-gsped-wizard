@@ -43,22 +43,40 @@ export class AppComponent {
               this.store.configuration = res[0].configuration;
               this.isSenderPrefilled();
               this.isRecipientVisible();
-              let modules = res[0].configuration.modules.map((module: any) => {
-                if (module.moduleConfig.hidden) {
-                  if (module.moduleName === "sender") {
-                    this.store.sender = module.moduleConfig.data;
+              if (params.origin === "testorticolario") {
+                this.store.configuration.modules[4].moduleName = "select-courier"
+              }
+              if (params.origin === "testvodafone") {
+                this.store.configuration.modules[4].moduleName = "select-courier"
+              }
+              let modules = this.store.configuration.modules.map(
+                (module: any) => {
+                  if (module.moduleConfig.hidden) {
+                    if (module.moduleName === "sender") {
+                      this.store.sender = module.moduleConfig.data;
+                    }
+                    if (module.moduleName === "recipient") {
+                      this.store.recipient = module.moduleConfig.data;
+                    }
+                    if (module.moduleName === "shipment-data") {
+                      this.store.payloadShipment = {
+                        colli: 1,
+                        peso: 1,
+                        volume: 0,
+                      };
+                    }
+                    if (module.moduleName === "select-courier") {
+                      // da creare la spedizione in qualche punto
+                    }
+                    return null;
+                  } else {
+                    return {
+                      module: module.moduleName,
+                      label: module.moduleConfig.label,
+                    };
                   }
-                  if (module.moduleName === "recipient") {
-                    this.store.recipient = module.moduleConfig.data;
-                  }
-                  return null;
-                } else {
-                  return {
-                    module: module.moduleName,
-                    label: module.moduleConfig.label,
-                  };
                 }
-              });
+              );
               modules = modules.filter((module: any) => module);
               this.store.hasPayment =
                 modules.filter((element: any) => element.module === "payment")

@@ -177,5 +177,3 @@ export class StatusService {
     }
   }
 }
-
-// TODO colorare di rosso gli input che non superano il controllo

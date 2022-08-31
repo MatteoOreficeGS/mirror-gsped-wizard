@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import {  Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { StatusService } from "../../status.service";
 import { StoreService } from "../../store.service";
 
@@ -13,7 +13,7 @@ export class VodafoneComponent implements OnInit {
     public fb: FormBuilder,
     public service: StatusService,
     public store: StoreService,
-    private router: Router,
+    private router: Router
   ) {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "vodafone"
@@ -63,6 +63,35 @@ export class VodafoneComponent implements OnInit {
     this.products[index] = auxProduct;
   }
 
+  setShipmentPayload() {
+    const noteSender = this.store.noteSenderOnSender
+      ? this.store.senderExtras.note_sender
+      : this.store.recipientExtras.note_sender;
+
+    const packageDimension = 20;
+    const volume =
+      (packageDimension * packageDimension * packageDimension) / 1000000;
+
+    this.store.payloadShipment = {
+      note_sender: noteSender,
+      creazione_postuma: this.store.hasPayment,
+      client_id: this.store.configuration.client_id,
+      origine: this.store.sender.sender_country_code,
+      documenti: this.store.isDocumentShipment ? 1 : 0,
+
+      colli: 1,
+      peso: 1,
+      volume: volume,
+      daticolli: {
+        peso: 1,
+        altezza: packageDimension,
+        larghezza: packageDimension,
+        lunghezza: packageDimension,
+        volume: volume,
+      },
+    };
+  }
+
   nextStep() {
     if (this.selectProductNumber <= 0) {
       this.showModal = true;
@@ -83,12 +112,21 @@ export class VodafoneComponent implements OnInit {
       // Nuove direttive da configurazione
     }
     this.store.isLastModule = true;
-    this.router.navigate(
-      [this.store.modules[this.store.currentStep++].module],
-      {
-        queryParamsHandling: "merge",
-      }
-    );
+    if (this.store.currentStep === this.store.stepForShipment) {
+      this.store.outwardCostExposure[0] = {
+        courierCode: 104,
+        serviceCode: 0,
+      };
+      this.setShipmentPayload();
+      this.service.createShipment();
+    } else {
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
   }
   setCloseModal(event: boolean) {
     this.showModal = event;

@@ -149,7 +149,7 @@ export class StatusService {
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
-    if (this.store.invoice) {
+    if (this.store.hasInvoice) {
       const outwardInvoice = {
         nolo: this.store.chosenCourier["outward"].data.nolo,
         totale_fattura: this.store.chosenCourier["outward"].data.totale,
@@ -192,7 +192,7 @@ export class StatusService {
               ...this.store.recipient,
             }),
           };
-          if (this.store.invoice) {
+          if (this.store.hasInvoice) {
             const returnInvoice = {
               nolo: this.store.chosenCourier["return"].data.nolo,
               totale_fattura: this.store.chosenCourier["return"].data.totale,

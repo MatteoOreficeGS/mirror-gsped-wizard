@@ -62,13 +62,13 @@ export class SelectCourierComponent {
           colli: 1,
           peso: 1,
           volume: volume,
-          daticolli: {
+          daticolli: [{
             peso: 1,
             altezza: packageDimension,
             larghezza: packageDimension,
             lunghezza: packageDimension,
             volume: volume,
-          },
+          }],
         };
       }
 
@@ -402,6 +402,9 @@ export class SelectCourierComponent {
   }
 
   handleRateComparative(body: any): Observable<any> {
+    if (body.daticolli) {
+      body.daticolli = JSON.stringify(body.daticolli);
+    }
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     return this.http.get(

@@ -15,6 +15,8 @@ export class StoreService {
   isDocumentShipment?: boolean;
   hasReturnShipment?: boolean;
   hasPayment?: boolean;
+  hasInvoice?:boolean;
+  hasShipmentData?: boolean;
   modules?: any;
   sender: any = {
     // ESEMPIO

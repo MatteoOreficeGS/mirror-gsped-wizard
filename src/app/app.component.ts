@@ -60,16 +60,6 @@ export class AppComponent {
                     if (module.moduleName === "recipient") {
                       this.store.recipient = module.moduleConfig.data;
                     }
-                    if (module.moduleName === "shipment-data") {
-                      this.store.payloadShipment = {
-                        colli: 1,
-                        peso: 1,
-                        volume: 0,
-                      };
-                    }
-                    if (module.moduleName === "select-courier") {
-                      // da creare la spedizione in qualche punto
-                    }
                     return null;
                   } else {
                     return {
@@ -85,6 +75,8 @@ export class AppComponent {
                 return module.module;
               });
               this.store.hasPayment = modulesNames.indexOf("payment") !== -1;
+              this.store.hasShipmentData = modulesNames.indexOf("shipment-data") !== -1;
+              this.store.hasInvoice = modulesNames.indexOf("fatturaDHL") !== -1;
               this.store.stepForShipment =
                 modulesNames.indexOf("select-courier");
               if (this.store.stepForShipment === -1) {

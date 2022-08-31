@@ -32,14 +32,139 @@ export class SelectCourierComponent {
       this.currentModule.selectCourier.couriers.selectionMode,
       this.store.outwardCostExposure
     );
-    this.selectCourier("outward", this.store.outwardCostExposure[0]);
-    if (this.store.hasReturnShipment) {
-      this.store.outwardCostExposure = this.filterRateComparativeResults(
-        true,
-        this.currentModule.selectCourier.returnCouriers.couriers.selectionMode,
-        this.store.returnCostExposure
+    if (this.store.hasShipmentData) {
+      this.selectCourier("outward", this.store.outwardCostExposure[0]);
+      if (this.store.hasReturnShipment) {
+        this.store.outwardCostExposure = this.filterRateComparativeResults(
+          true,
+          this.currentModule.selectCourier.returnCouriers.couriers
+            .selectionMode,
+          this.store.returnCostExposure
+        );
+        this.selectCourier("return", this.store.returnCostExposure[0]);
+      }
+    } else {
+      let packageErrors: any = {};
+      this.daticolli = {
+        peso: 0.5,
+        volume: 0,
+        colli: 1,
+      };
+      if (
+        this.store.modules.filter((module: any) => {
+          return module.module === "vodafone";
+        }).length === 1
+      ) {
+        const packageDimension = 20;
+        const volume =
+          (packageDimension * packageDimension * packageDimension) / 1000000;
+        this.daticolli = {
+          colli: 1,
+          peso: 1,
+          volume: volume,
+          daticolli: {
+            peso: 1,
+            altezza: packageDimension,
+            larghezza: packageDimension,
+            lunghezza: packageDimension,
+            volume: volume,
+          },
+        };
+      }
+
+      this.setShipmentPayload();
+
+      const bodyRateComparativa = {
+        ...this.daticolli,
+        documenti: this.store.isDocumentShipment ? 1 : 0,
+        tipo_listino: "passivo",
+        client_id: this.store.configuration.client_id,
+      };
+
+      // rateComparative di andata
+      const outwardBodyRateComparativa = {
+        ...bodyRateComparativa,
+        sender_cap: this.store.sender.sender_cap,
+        sender_addr: this.store.sender.sender_addr,
+        sender_city: this.store.sender.sender_city,
+        sender_country_code: this.store.sender.sender_country_code,
+        rcpt_cap: this.store.recipient.rcpt_cap,
+        rcpt_addr: this.store.recipient.rcpt_addr,
+        rcpt_city: this.store.recipient.rcpt_city,
+        rcpt_country_code: this.store.recipient.rcpt_country_code,
+      };
+      this.handleRateComparative(outwardBodyRateComparativa).subscribe(
+        (res: any) => {
+          Object.keys(res.passivo).forEach((courier: any) => {
+            Object.keys(res.passivo[courier]).forEach((service: any) => {
+              this.store.outwardCostExposure.push({
+                courier: courier,
+                serviceName: service,
+                courierCode: parseInt(
+                  res.passivo[courier][service].codice_corriere
+                ),
+                serviceCode: parseInt(
+                  res.passivo[courier][service].codice_servizio
+                ),
+                data: res.passivo[courier][service],
+              });
+            });
+          });
+
+          this.selectCourier("outward", this.store.outwardCostExposure[0]);
+          if (this.store.hasReturnShipment) {
+            const returnBodyRateComparativa = {
+              ...bodyRateComparativa,
+              //Inverto gli indirizzi di sender e recipient
+              sender_cap: this.store.recipient.rcpt_cap,
+              sender_addr: this.store.recipient.rcpt_addr,
+              sender_city: this.store.recipient.rcpt_city,
+              sender_country_code: this.store.recipient.rcpt_country_code,
+              rcpt_cap: this.store.sender.sender_cap,
+              rcpt_addr: this.store.sender.sender_addr,
+              rcpt_city: this.store.sender.sender_city,
+              rcpt_country_code: this.store.sender.sender_country_code,
+            };
+            this.handleRateComparative(returnBodyRateComparativa).subscribe(
+              (res: any) => {
+                Object.keys(res.passivo).forEach((courier: any) => {
+                  Object.keys(res.passivo[courier]).forEach((service: any) => {
+                    this.store.returnCostExposure.push({
+                      courier: courier,
+                      serviceName: service,
+                      courierCode: parseInt(
+                        res.passivo[courier][service].codice_corriere
+                      ),
+                      serviceCode: parseInt(
+                        res.passivo[courier][service].codice_servizio
+                      ),
+                      data: res.passivo[courier][service],
+                    });
+                  });
+                });
+                this.selectCourier("return", this.store.returnCostExposure[0]);
+              },
+              (error) => {
+                this.showModal = true;
+                this.errors = {};
+                this.errors = {
+                  errore: "errore temporaneo, riprova più tardi",
+                };
+              }
+            );
+          } else {
+          }
+        },
+        (error) => {
+          this.showModal = true;
+          this.errors = {};
+          this.errors = {
+            errore: "errore temporaneo, riprova più tardi",
+          };
+        }
       );
-      this.selectCourier("return", this.store.returnCostExposure[0]);
+
+      // rateComparative di ritorno
     }
   }
 
@@ -241,7 +366,6 @@ export class SelectCourierComponent {
   clearPickupAviability() {
     this.pickupAvailability = {};
     this.pickupMode = {};
-    this.homePickup = true;
   }
 
   getEaster(year: number) {
@@ -263,10 +387,21 @@ export class SelectCourierComponent {
     return [month, day];
   }
 
+  setShipmentPayload() {
+    const noteSender = this.store.noteSenderOnSender
+      ? this.store.senderExtras.note_sender
+      : this.store.recipientExtras.note_sender;
+    this.store.payloadShipment = {
+      note_sender: noteSender,
+      creazione_postuma: this.store.hasPayment,
+      client_id: this.store.configuration.client_id,
+      origine: this.store.sender.sender_country_code,
+      documenti: this.store.isDocumentShipment ? 1 : 0,
+      ...this.daticolli,
+    };
+  }
+
   handleRateComparative(body: any): Observable<any> {
-    if (this.currentModule.packagesDetails.enable) {
-      body.daticolli = JSON.stringify(body.daticolli);
-    }
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     return this.http.get(
@@ -297,9 +432,11 @@ export class SelectCourierComponent {
           ],
         valore: this.store.outwardInsurance,
       };
-      outwardPayloadShipment.fattura_dhl = [
-        { ...this.store.invoice, ...outwardInvoice },
-      ];
+      if (this.store.hasInvoice) {
+        outwardPayloadShipment.fattura_dhl = [
+          { ...this.store.invoice, ...outwardInvoice },
+        ];
+      }
     }
     if (this.store.selectedProducts) {
       outwardPayloadShipment[this.store.productDestination] =
@@ -340,9 +477,11 @@ export class SelectCourierComponent {
                 ],
               valore: this.store.returnInsurance,
             };
-            returnPayloadShipment.fattura_dhl = [
-              { ...this.store.invoice, ...returnInvoice },
-            ];
+            if (this.store.hasInvoice) {
+              returnPayloadShipment.fattura_dhl = [
+                { ...this.store.invoice, ...returnInvoice },
+              ];
+            }
           }
           this.service.handleShipment(returnPayloadShipment).subscribe(
             (res) => {

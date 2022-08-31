@@ -56,9 +56,6 @@ export class ShipmentDataComponent implements OnInit {
       ],
       ritiro: ["service"],
     });
-    if (!this.store.hasPayment) {
-      this.confirmInsurance();
-    }
   }
 
   ngOnInit(): void {
@@ -384,6 +381,56 @@ export class ShipmentDataComponent implements OnInit {
           if (!this.store.hasReturnShipment) {
             this.isLoading = false;
             this.incrementStep();
+          } else {
+            const returnBodyRateComparativa = {
+              ...this.bodyRateComparativa,
+              valore: this.store.returnInsurance
+                ? this.store.returnInsurance
+                : parseFloat(
+                    ("" + this.formShipmentData.value.returnInsurance).replace(
+                      ",",
+                      "."
+                    )
+                  ),
+              //Inverto gli indirizzi di sender e recipient
+              sender_cap: this.store.recipient.rcpt_cap,
+              sender_addr: this.store.recipient.rcpt_addr,
+              sender_city: this.store.recipient.rcpt_city,
+              sender_country_code: this.store.recipient.rcpt_country_code,
+              rcpt_cap: this.store.sender.sender_cap,
+              rcpt_addr: this.store.sender.sender_addr,
+              rcpt_city: this.store.sender.sender_city,
+              rcpt_country_code: this.store.sender.sender_country_code,
+            };
+            this.handleRateComparative(returnBodyRateComparativa).subscribe(
+              (res: any) => {
+                Object.keys(res.passivo).forEach((courier: any) => {
+                  Object.keys(res.passivo[courier]).forEach((service: any) => {
+                    this.store.returnCostExposure.push({
+                      courier: courier,
+                      serviceName: service,
+                      courierCode: parseInt(
+                        res.passivo[courier][service].codice_corriere
+                      ),
+                      serviceCode: parseInt(
+                        res.passivo[courier][service].codice_servizio
+                      ),
+                      data: res.passivo[courier][service],
+                    });
+                  });
+                });
+                this.isLoading = false;
+
+                this.incrementStep();
+              },
+              (error) => {
+                this.showModal = true;
+                this.errors = {};
+                this.errors = {
+                  errore: "errore temporaneo, riprova più tardi",
+                };
+              }
+            );
           }
         },
         (error) => {
@@ -396,57 +443,6 @@ export class ShipmentDataComponent implements OnInit {
       );
 
       // rateComparative di ritorno
-      if (this.store.hasReturnShipment) {
-        const returnBodyRateComparativa = {
-          ...this.bodyRateComparativa,
-          valore: this.store.returnInsurance
-            ? this.store.returnInsurance
-            : parseFloat(
-                ("" + this.formShipmentData.value.returnInsurance).replace(
-                  ",",
-                  "."
-                )
-              ),
-          //Inverto gli indirizzi di sender e recipient
-          sender_cap: this.store.recipient.rcpt_cap,
-          sender_addr: this.store.recipient.rcpt_addr,
-          sender_city: this.store.recipient.rcpt_city,
-          sender_country_code: this.store.recipient.rcpt_country_code,
-          rcpt_cap: this.store.sender.sender_cap,
-          rcpt_addr: this.store.sender.sender_addr,
-          rcpt_city: this.store.sender.sender_city,
-          rcpt_country_code: this.store.sender.sender_country_code,
-        };
-        this.handleRateComparative(returnBodyRateComparativa).subscribe(
-          (res: any) => {
-            Object.keys(res.passivo).forEach((courier: any) => {
-              Object.keys(res.passivo[courier]).forEach((service: any) => {
-                this.store.returnCostExposure.push({
-                  courier: courier,
-                  serviceName: service,
-                  courierCode: parseInt(
-                    res.passivo[courier][service].codice_corriere
-                  ),
-                  serviceCode: parseInt(
-                    res.passivo[courier][service].codice_servizio
-                  ),
-                  data: res.passivo[courier][service],
-                });
-              });
-            });
-            this.isLoading = false;
-
-            this.incrementStep();
-          },
-          (error) => {
-            this.showModal = true;
-            this.errors = {};
-            this.errors = {
-              errore: "errore temporaneo, riprova più tardi",
-            };
-          }
-        );
-      }
     } else {
       this.showModal = true;
       this.errors = {
@@ -472,11 +468,16 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   incrementStep() {
-    this.router.navigate(
-      [this.store.modules[this.store.currentStep++].module],
-      {
-        queryParamsHandling: "merge",
-      }
-    );
+    console.log(this.store.currentStep, this.store.stepForShipment);
+    if (this.store.currentStep === this.store.stepForShipment) {
+      this.service.createShipment();
+    } else {
+      this.router.navigate(
+        [this.store.modules[this.store.currentStep++].module],
+        {
+          queryParamsHandling: "merge",
+        }
+      );
+    }
   }
 }

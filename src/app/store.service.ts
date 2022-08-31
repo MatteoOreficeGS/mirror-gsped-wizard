@@ -52,7 +52,7 @@ export class StoreService {
   totale: any;
   invoice: any = {};
   invoiceType: string = "privato";
-  chosenCourier: any;
+  chosenCourier: any = { outward: {}, return: {} };
   selectedProducts: any = null;
   productDestination: any;
   displayPayment: any;
@@ -65,4 +65,5 @@ export class StoreService {
   goodType?: string;
   isGoodDocument: number = 1;
   isAskDocument: boolean = true;
+  stepForShipment: number = 0;
 }

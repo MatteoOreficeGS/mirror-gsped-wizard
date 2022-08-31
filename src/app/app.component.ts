@@ -44,10 +44,12 @@ export class AppComponent {
               this.isSenderPrefilled();
               this.isRecipientVisible();
               if (params.origin === "testorticolario") {
-                this.store.configuration.modules[4].moduleName = "select-courier"
+                this.store.configuration.modules[4].moduleName =
+                  "select-courier";
               }
               if (params.origin === "testvodafone") {
-                this.store.configuration.modules[4].moduleName = "select-courier"
+                this.store.configuration.modules[4].moduleName =
+                  "select-courier";
               }
               let modules = this.store.configuration.modules.map(
                 (module: any) => {
@@ -78,9 +80,24 @@ export class AppComponent {
                 }
               );
               modules = modules.filter((module: any) => module);
-              this.store.hasPayment =
-                modules.filter((element: any) => element.module === "payment")
-                  .length > 0;
+
+              const modulesNames = modules.map((module: any) => {
+                return module.module;
+              });
+              this.store.hasPayment = modulesNames.indexOf("payment") !== -1;
+              this.store.stepForShipment =
+                modulesNames.indexOf("select-courier");
+              if (this.store.stepForShipment === -1) {
+                if (this.store.hasPayment) {
+                  this.store.stepForShipment =
+                    modulesNames.indexOf("payment") - 1;
+                } else {
+                  this.store.stepForShipment =
+                    modulesNames.indexOf("awb-printing") - 1;
+                }
+              }
+              
+              this.store.stepForShipment += 1;
               this.store.modules = modules;
               this.store.translations = res[1];
               this.store.countries = res[2];

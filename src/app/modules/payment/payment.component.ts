@@ -43,7 +43,7 @@ export class PaymentComponent implements OnInit {
     this.translations = store.translations;
     this.store.totalAmount = (
       this.store.chosenCourier.outward.data.totale +
-      (this.store.chosenCourier.return.data
+      (this.store.hasReturnShipment
         ? this.store.chosenCourier.return.data.totale
         : 0)
     ).toFixed(2);
@@ -96,6 +96,7 @@ export class PaymentComponent implements OnInit {
   errors: any = {};
 
   redirectPayment() {
+    console.log(this.formPayment.value);
     if (this.formPayment.value.termsconditions && this.formPayment.valid) {
       this.isHandledPayment = true;
       const decodedToken: any = this.store.decodedToken;
@@ -107,9 +108,9 @@ export class PaymentComponent implements OnInit {
           recoveryUrl: environment.CURRENT_URL + "/error-payment",
           language: "it",
           description: "reso bla bla bla per bla bla ecc ecc",
-          cardHolderName: this.formPayment.value.cardHolderName,
-          cardHolderEmail: this.formPayment.value.cardHolderEmail,
-          cardHolderPhone: this.formPayment.value.cardHolderPhone,
+          cardHolderName: this.formPayment.value.cc_cardholder_name,
+          cardHolderEmail: this.formPayment.value.cc_cardholder_email,
+          cardHolderPhone: this.formPayment.value.cc_cardholder_phone,
           customField: "reso bla bla bla per bla bla ecc ecc",
         },
         session: {
@@ -162,7 +163,7 @@ export class PaymentComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            "pagamento": "errore temporaneo, riprova più tardi",
+            pagamento: "errore temporaneo, riprova più tardi",
           };
         }
       );

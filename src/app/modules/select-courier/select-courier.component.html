@@ -171,7 +171,7 @@
     </div>
 
     <div class="mt-4" *ngIf="chosenCourier.outward.courierCode">
-      <div class="flex space-x-2" *ngIf="homePickup">
+      <div class="flex space-x-2" *ngIf="pointPickup">
         <input
           class="text-red-dhl"
           type="radio"
@@ -182,7 +182,7 @@
         />
         <span>ritiro presso service point</span>
       </div>
-      <div class="flex space-x-2" *ngIf="pointPickup">
+      <div class="flex space-x-2" *ngIf="homePickup">
         <input
           class="text-red-dhl"
           (click)="checkPickupAviability(chosenCourier.outward.courierCode)"

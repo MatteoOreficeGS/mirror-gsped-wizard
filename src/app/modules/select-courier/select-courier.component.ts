@@ -27,18 +27,18 @@ export class SelectCourierComponent {
     this.homePickup = this.currentModule.pickup.pickup;
     this.iva = this.store.configuration.vatPercentage;
     this.couriers = this.currentModule.selectCourier.couriers.list;
-    this.store.outwardCostExposure ? this.store.outwardCostExposure = this.filterRateComparativeResults(
+    this.store.outwardCostExposure = this.filterRateComparativeResults(
       false,
       this.currentModule.selectCourier.couriers.selectionMode,
       this.store.outwardCostExposure
-    ) : "a";
+    );
     this.selectCourier("outward", this.store.outwardCostExposure[0]);
     if (this.store.hasReturnShipment) {
-      this.store.outwardCostExposure ? this.store.outwardCostExposure = this.filterRateComparativeResults(
+      this.store.outwardCostExposure = this.filterRateComparativeResults(
         true,
         this.currentModule.selectCourier.returnCouriers.couriers.selectionMode,
         this.store.returnCostExposure
-      ) : "r";
+      );
       this.selectCourier("return", this.store.returnCostExposure[0]);
     }
   }

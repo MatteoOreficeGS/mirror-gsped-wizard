@@ -131,6 +131,114 @@ export class StatusService {
     return res.reverse().join("");
   }
 
+  selectCourier() {
+    return this.store.outwardCostExposure[0];
+  }
+
+  createShipment() {
+    this.store.chosenCourier["outward"] = this.store.outwardCostExposure[0];
+    this.store.chosenCourier["return"] = this.store.returnCostExposure[0];
+    console.log(this.store.currentStep);
+    console.log(this.store);
+    const outwardPayloadShipment = {
+      ...this.store.payloadShipment,
+      ...this.store.sender,
+      ...this.store.recipient,
+      // ...this.pickupMode,
+      valore: this.store.outwardInsurance,
+      corriere: this.store.chosenCourier.outward.courierCode,
+      servizio: this.store.chosenCourier.outward.serviceCode,
+    };
+    if (this.store.invoice) {
+      const outwardInvoice = {
+        nolo: this.store.chosenCourier["outward"].data.nolo,
+        totale_fattura: this.store.chosenCourier["outward"].data.totale,
+        assicurazione:
+          this.store.chosenCourier["outward"].data.varie_dettaglio[
+            this.store.isDocumentShipment
+              ? "IB-EXTENDED LIABILITY"
+              : "II-SHIPMENT INSURANCE"
+          ],
+        valore: this.store.outwardInsurance,
+      };
+      outwardPayloadShipment.fattura_dhl = [
+        { ...this.store.invoice, ...outwardInvoice },
+      ];
+    }
+    if (this.store.selectedProducts) {
+      outwardPayloadShipment[this.store.productDestination] =
+        this.store.selectedProducts;
+    }
+
+    this.handleShipment(outwardPayloadShipment).subscribe(
+      (res) => {
+        this.store.outwardShipment = res;
+        if (!this.store.hasReturnShipment) {
+          this.router.navigate(
+            [this.store.modules[this.store.currentStep++].module],
+            {
+              queryParamsHandling: "merge",
+            }
+          );
+        } else {
+          // inverto il mittente con il destinatario per la spedizione di ritorno
+          const returnPayloadShipment = {
+            ...this.store.payloadShipment,
+            valore: this.store.returnInsurance,
+            servizio: this.store.chosenCourier.return.serviceCode,
+            corriere: this.store.chosenCourier.return.courierCode,
+            ...this.invertAddressData({
+              ...this.store.sender,
+              ...this.store.recipient,
+            }),
+          };
+          if (this.store.invoice) {
+            const returnInvoice = {
+              nolo: this.store.chosenCourier["return"].data.nolo,
+              totale_fattura: this.store.chosenCourier["return"].data.totale,
+              assicurazione:
+                this.store.chosenCourier["return"].data.varie_dettaglio[
+                  this.store.isDocumentShipment
+                    ? "IB-EXTENDED LIABILITY"
+                    : "II-SHIPMENT INSURANCE"
+                ],
+              valore: this.store.returnInsurance,
+            };
+            returnPayloadShipment.fattura_dhl = [
+              { ...this.store.invoice, ...returnInvoice },
+            ];
+          }
+          this.handleShipment(returnPayloadShipment).subscribe(
+            (res) => {
+              this.store.returnShipment = res;
+              this.router.navigate(
+                [this.store.modules[this.store.currentStep++].module],
+                {
+                  queryParamsHandling: "merge",
+                }
+              );
+            },
+            (error) => {
+              // this.showModal = true;
+              // this.errors = {};
+              // this.errors = {
+              //   errore: "errore temporaneo, riprova più tardi",
+              // };
+              // alert("errore temporaneo, riprova più tardi");
+            }
+          );
+        }
+      },
+      (error) => {
+        // this.showModal = true;
+        // this.errors = {};
+        // this.errors = {
+        //   errore: "errore temporaneo, riprova più tardi",
+        // };
+      }
+    );
+  }
+
   showModal(form: any) {
     let errors: any = {};
     Object.keys(form.controls).forEach((key) => {

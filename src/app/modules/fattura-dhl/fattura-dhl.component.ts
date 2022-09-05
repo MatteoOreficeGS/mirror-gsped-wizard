@@ -277,8 +277,14 @@ export class FatturaDHLComponent implements OnInit {
           this.formInvoice.value.nome + " " + this.formInvoice.value.cognome
         );
         this.formInvoice.removeControl("cognome");
+        this.store.invoice = this.formInvoice.value;
       }
-      this.store.invoice = this.formInvoice.value;
+      else {
+        this.store.invoice = this.formInvoice.value;
+        this.store.invoice["email"] = this.store.isSenderPrefilled
+          ? this.store.recipient.rcpt_email
+          : this.store.sender.sender_email;
+      }
       this.store.invoiceType = this.selected;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],

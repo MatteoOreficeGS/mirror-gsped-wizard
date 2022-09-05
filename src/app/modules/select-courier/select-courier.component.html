@@ -59,26 +59,48 @@
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
                   <li class="flex items-center space-x-3">
+                    <span>
+                      {{ translations.lbl_nolo }}: €
+                      <ng-container
+                        *ngIf="service.data.varie_dettaglio.sconto_con_tax"
+                      >
+                        {{
+                          service.data.nolo +
+                            service.data.varie_dettaglio.sconto_con_tax
+                            | number: "0.2-2"
+                        }}
+                        (<span class="line-through">{{
+                          service.data.nolo
+                        }}</span
+                        >)
+                      </ng-container>
+                      <ng-container
+                        *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
+                      >
+                        {{ service.data.nolo }}
+                      </ng-container>
+                    </span>
+                  </li>
+                  <li class="flex items-center space-x-3">
                     <span
                       >{{ translations["lbl_ancillary_price"] }}: €{{
                         service.data.varie
                       }}</span
                     >
                   </li>
-                  <li class="flex items-center space-x-3">
-                    <span>nolo: €{{ service.data.nolo }}</span>
-                  </li>
                   <li
-                    class="flex items-center space-x-3"
+                    class="flex items-center space-x-3 text-sm ml-4"
                     *ngFor="
                       let varie_d of service.data.varie_dettaglio | keyvalue
                     "
                   >
-                    <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                    <span *ngIf="varie_d.key !== 'sconto_con_tax'"
+                      >{{ varie_d.key }}: €{{ varie_d.value }}</span
+                    >
                   </li>
                   <li class="flex items-center space-x-3" *ngIf="iva">
                     <span
-                      >{{ translations.lbl_notax_price }}: €{{
+                      >{{ translations.lbl_net_price }}: €{{
                         service.data.totale / ((iva + 100) / 100)
                           | number: "0.2-2"
                       }}</span
@@ -136,31 +158,52 @@
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
                   <li class="flex items-center space-x-3">
+                    <span>
+                      {{ translations.lbl_nolo }}: €
+                      <ng-container
+                        *ngIf="service.data.varie_dettaglio.sconto_con_tax"
+                      >
+                        {{
+                          service.data.nolo +
+                            service.data.varie_dettaglio.sconto_con_tax
+                            | number: "0.2-2"
+                        }}
+                        (<span class="line-through">{{
+                          service.data.nolo
+                        }}</span
+                        >)
+                      </ng-container>
+                      <ng-container
+                        *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
+                      >
+                        {{ service.data.nolo }}
+                      </ng-container>
+                    </span>
+                  </li>
+                  <li class="flex items-center space-x-3">
                     <span
                       >{{ translations["lbl_ancillary_price"] }}: €{{
                         service.data.varie
                       }}</span
                     >
                   </li>
-                  <li class="flex items-center space-x-3">
-                    <span>{{ "nolo" }}: €{{ service.data.nolo }}</span>
-                  </li>
                   <li
-                    class="flex items-center space-x-3"
+                    class="flex items-center space-x-3 text-sm ml-4"
                     *ngFor="
                       let varie_d of service.data.varie_dettaglio | keyvalue
                     "
                   >
-                    <span>{{ varie_d.key }}: €{{ varie_d.value }}</span>
+                    <span *ngIf="varie_d.key !== 'sconto_con_tax'"
+                      >{{ varie_d.key }}: €{{ varie_d.value }}</span
+                    >
                   </li>
                   <li class="flex items-center space-x-3" *ngIf="iva">
-                    <span>
-                      {{ translations.lbl_notax_price }}: €
-                      {{
+                    <span
+                      >{{ translations.lbl_net_price }}: €{{
                         service.data.totale / ((iva + 100) / 100)
                           | number: "0.2-2"
-                      }}
-                    </span>
+                      }}</span
+                    >
                   </li>
                 </ul>
               </ng-container>
@@ -170,17 +213,20 @@
       </section>
     </div>
 
-    <div class="mt-4" *ngIf="chosenCourier.outward.courierCode">
+    <div
+      class="grid justify-items-center mt-4"
+      *ngIf="chosenCourier.outward.courierCode"
+    >
       <div class="flex space-x-2" *ngIf="pointPickup">
         <input
           class="text-red-dhl"
           type="radio"
           name="ritiro"
-          value="serive"
+          value="service"
           [checked]="true"
           (click)="clearPickupAviability()"
         />
-        <span>ritiro presso service point</span>
+        <span>{{ translations.lbl_dropoff_service_point }}</span>
       </div>
       <div class="flex space-x-2" *ngIf="homePickup">
         <input
@@ -190,9 +236,9 @@
           name="ritiro"
           value="home"
         />
-        <span>ritiro a casa</span>
+        <span>{{ translations.lbl_home_pickup }}</span>
         <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">
-          ritiro: {{ pickupAvailability[chosenCourier.outward.courierCode] }}
+          {{ pickupAvailability[chosenCourier.outward.courierCode] }}
         </span>
       </div>
     </div>

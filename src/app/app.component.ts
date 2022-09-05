@@ -36,7 +36,7 @@ export class AppComponent {
             store.token = res.token;
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
-              this.getConfiguration(res.token, jwt_decode(res.token)),
+              this.getConfiguration(),
               this.status.getTranslations(params.lang ? params.lang : "it_IT"),
               this.status.getCountries()
             ).subscribe((res: any) => {
@@ -101,12 +101,16 @@ export class AppComponent {
             });
           }
         );
-      } else if (params.uuid /* && router.url */) {
+      } else if (
+        params.uuid &&
+        params.instance &&
+        router.url.includes("monetaweb")
+      ) {
         this.http
           .get(
             environment.API_URL +
-              "testbed/" + //TODO da verificare
-              "resoFacile/payment/display/monetaweb?uuid=" +
+              params.instance +
+              "/resoFacile/payment/display/monetaweb?uuid=" +
               params.uuid
           )
           .subscribe((resDisplay: any) => {
@@ -121,10 +125,7 @@ export class AppComponent {
                 store.token = resToken.token;
                 store.decodedToken = jwt_decode(resToken.token);
                 forkJoin(
-                  this.getConfiguration(
-                    resToken.token,
-                    jwt_decode(resToken.token)
-                  ),
+                  this.getConfiguration(),
                   this.status.getTranslations(
                     params.lang ? params.lang : "it_IT"
                   ),
@@ -186,13 +187,14 @@ export class AppComponent {
     return this.http.get(environment.API_URL + "Token?origin=" + origin);
   }
 
-  getConfiguration(token: any, decoded: any, resource = environment.FLOW) {
+  getConfiguration(resource = environment.FLOW) {
+    const decoded: any = this.store.decodedToken;
     return this.http.get(
       environment.API_URL +
         decoded.instance +
         "/ResourceConfiguration?resource=" +
         resource,
-      { headers: { "X-API-KEY": token } }
+      { headers: { "X-API-KEY": this.store.token } }
     );
   }
 

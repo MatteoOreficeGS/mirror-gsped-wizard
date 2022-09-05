@@ -24,6 +24,7 @@
         >
           <input
             [readonly]="readonly"
+            [readonly]="field.readonly"
             [maxlength]="field.maxLenght"
             [ngClass]="readonly ? 'cursor-not-allowed' : ''"
             [ngClass]="
@@ -106,6 +107,7 @@
           *ngIf="field.value === 'sender_country_code'"
           class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
           [formControlName]="field.value"
+          [attr.disabled]="field.readonly ? 'disabled' : null"
         >
           <option selected>Choose a country</option>
           <ng-container *ngFor="let country of store.countries | keyvalue">

@@ -32,18 +32,27 @@ export class SelectCourierComponent {
       this.currentModule.selectCourier.couriers.selectionMode,
       this.store.outwardCostExposure
     );
+    this.store.returnCostExposure = this.filterRateComparativeResults(
+      true,
+      this.currentModule.selectCourier.returnCouriers.selectionMode,
+      this.store.returnCostExposure
+    );
+    console.log(this.store.outwardCostExposure);
+    console.log(this.store.returnCostExposure);
+
     if (this.store.hasShipmentData) {
       this.selectCourier("outward", this.store.outwardCostExposure[0]);
       if (this.store.hasReturnShipment) {
-        this.store.outwardCostExposure = this.filterRateComparativeResults(
+        this.store.returnCostExposure = this.filterRateComparativeResults(
           true,
-          this.currentModule.selectCourier.returnCouriers.couriers
-            .selectionMode,
+          this.currentModule.selectCourier.returnCouriers.selectionMode,
           this.store.returnCostExposure
         );
         this.selectCourier("return", this.store.returnCostExposure[0]);
       }
     } else {
+      console.log("la configurazione non ha i dati della shipment");
+
       let packageErrors: any = {};
       this.daticolli = {
         peso: 0.5,
@@ -62,13 +71,15 @@ export class SelectCourierComponent {
           colli: 1,
           peso: 1,
           volume: volume,
-          daticolli: [{
-            peso: 1,
-            altezza: packageDimension,
-            larghezza: packageDimension,
-            lunghezza: packageDimension,
-            volume: volume,
-          }],
+          daticolli: [
+            {
+              peso: 1,
+              altezza: packageDimension,
+              larghezza: packageDimension,
+              lunghezza: packageDimension,
+              volume: volume,
+            },
+          ],
         };
       }
 
@@ -111,6 +122,12 @@ export class SelectCourierComponent {
             });
           });
 
+          this.store.outwardCostExposure = this.filterRateComparativeResults(
+            false,
+            this.currentModule.selectCourier.couriers.selectionMode,
+            this.store.outwardCostExposure
+          );
+
           this.selectCourier("outward", this.store.outwardCostExposure[0]);
           if (this.store.hasReturnShipment) {
             const returnBodyRateComparativa = {
@@ -142,6 +159,13 @@ export class SelectCourierComponent {
                     });
                   });
                 });
+                this.store.returnCostExposure =
+                  this.filterRateComparativeResults(
+                    true,
+                    this.currentModule.selectCourier.returnCouriers
+                      .selectionMode,
+                    this.store.returnCostExposure
+                  );
                 this.selectCourier("return", this.store.returnCostExposure[0]);
               },
               (error) => {

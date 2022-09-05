@@ -153,6 +153,7 @@ export class SenderComponent {
         type: "text",
         required: true,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "sender_cap",
@@ -160,6 +161,7 @@ export class SenderComponent {
         type: "number",
         required: true,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "sender_prov",
@@ -167,6 +169,7 @@ export class SenderComponent {
         type: "text",
         required: true,
         maxLenght: 2,
+        autocompleteLock: true,
         columnspan: 1,
       },
       {
@@ -175,6 +178,7 @@ export class SenderComponent {
         type: "text",
         required: true,
         maxLenght: 2,
+        autocompleteLock: true,
         columnspan: 1,
       },
       {
@@ -245,10 +249,22 @@ export class SenderComponent {
     this.formSender.controls["sender_country_code"].setValue(
       prediction.country
     );
+    this.fields = this.fields.map((field: any) => {
+      if (field.autocompleteLock) {
+        field.readonly = true;
+      }
+      return field;
+    });
+    console.log(this.fields);
     this.showPredictions = false;
   }
 
   hidePredictions() {
+    this.fields = this.fields.map((field: any) => {
+      field.readonly = false;
+      return field;
+    });
+    console.log(this.fields);
     setTimeout(() => {
       this.showPredictions = false;
     }, 400);

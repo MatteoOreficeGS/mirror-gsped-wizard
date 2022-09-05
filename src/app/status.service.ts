@@ -1,10 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { StoreService } from "./store.service";
 import { environment } from "./enviroment";
-import jwtDecode from "jwt-decode";
 import { ValidationErrors } from "@angular/forms";
 
 @Injectable({
@@ -14,13 +13,12 @@ export class StatusService {
   constructor(
     public http: HttpClient,
     private router: Router,
-    private route: ActivatedRoute,
     private store: StoreService
   ) {}
 
   getTranslations(lang: string, resource = environment.FLOW): Observable<any> {
     const headers = { "x-api-key": this.store.token };
-    const decoded: any = jwtDecode(this.store.token);
+    const decoded: any = this.store.decodedToken;
     return this.http.get(
       environment.API_URL +
         decoded.instance +
@@ -35,7 +33,7 @@ export class StatusService {
 
   getCountries() {
     const headers = { "x-api-key": this.store.token };
-    const decoded: any = jwtDecode(this.store.token);
+    const decoded: any = this.store.decodedToken;
     return this.http.get(
       environment.API_URL + decoded.instance + "/Countries",
       { headers: headers }
@@ -53,7 +51,7 @@ export class StatusService {
       client_id: this.store.configuration.client_id,
     };
     return this.http.post(
-      "https://api.gsped.it/" + decoded.instance + "/PickupAvailability",
+      environment.API_URL + decoded.instance + "/PickupAvailability",
       body,
       { headers: headers }
     );
@@ -63,7 +61,7 @@ export class StatusService {
     const decoded: any = this.store.decodedToken;
     const headers = { "x-api-key": this.store.token };
     return this.http.post(
-      "https://api.gsped.it/" + decoded.instance + "/Shipment",
+      environment.API_URL + decoded.instance + "/Shipment",
       payload,
       { headers: headers }
     );
@@ -73,7 +71,7 @@ export class StatusService {
     if (address.length >= 10) {
       const decoded: any = this.store.decodedToken;
       return this.http.get(
-        "https://api.gsped.it/" +
+        environment.API_URL +
           decoded.instance +
           "/AddressAutocomplete?input=" +
           address +

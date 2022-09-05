@@ -10,7 +10,6 @@ import { Observable } from "rxjs";
   templateUrl: "./stampa-awb.component.html",
 })
 export class StampaAwbComponent {
-  
   constructor(
     private domSanitizer: DomSanitizer,
     private http: HttpClient,
@@ -28,7 +27,8 @@ export class StampaAwbComponent {
       if (this.store.beforePaymentSession) {
         this.store.invoice = this.store.beforePaymentSession.summary.invoice;
         this.store.sender = this.store.beforePaymentSession.summary.sender;
-        this.store.recipient = this.store.beforePaymentSession.summary.recipient;
+        this.store.recipient =
+          this.store.beforePaymentSession.summary.recipient;
         this.store.totalAmount = this.store.beforePaymentSession.totalAmount;
       } else {
         this.summary = {
@@ -57,10 +57,6 @@ export class StampaAwbComponent {
           ),
         };
       }
-      this.getShipments(
-        this.store.outwardShipment.id,
-        this.store.returnShipment.id
-      );
       this.handleLocationFinder(
         this.store.beforePaymentSession
           ? this.store.beforePaymentSession.summary.sender
@@ -75,43 +71,6 @@ export class StampaAwbComponent {
       ).subscribe((res: any) => {
         this.labelLink = res.link;
       });
-    }
-  }
-
-  getShipments(outwardShipmentID: any, returnShipmentID: any) {
-    const headers = { "x-api-key": this.store.token };
-    this.http
-      .get(
-        environment.API_URL +
-          "testbed" + //TODO da cambiare col token
-          "/shipment?id=" +
-          // this.store.outwardShipmentID ? this.store.outwardShipmentID : this.store.outwardShipment.id,
-          outwardShipmentID,
-        { headers: headers }
-      )
-      .subscribe((response: any) => {
-        this.result = response;
-        this.b64pdf = this.result.label_pdf[0];
-        this.pdfOutward = this.domSanitizer.bypassSecurityTrustUrl(
-          "data:application/octet-stream;base64," + this.b64pdf
-        );
-      });
-    if (returnShipmentID) {
-      this.http
-        .get(
-          environment.API_URL +
-            "testbed" + //TODO da cambiare col token
-            "/shipment?id=" +
-            returnShipmentID,
-          { headers: headers }
-        )
-        .subscribe((response: any) => {
-          this.result = response;
-          this.b64pdf = this.result.label_pdf[0];
-          this.pdfReturn = this.domSanitizer.bypassSecurityTrustUrl(
-            "data:application/octet-stream;base64," + this.b64pdf
-          );
-        });
     }
   }
 
@@ -139,11 +98,15 @@ export class StampaAwbComponent {
     outwardShipmentID: number,
     returnShipmentID: number = 0
   ): Observable<any> {
+    const decoded: any = this.store.decodedToken;
     const params = { andata: outwardShipmentID, ritorno: returnShipmentID };
-    return this.http.get("https://api.gsped.it/testbed/EtichetteResoFacile", {
-      headers: { "X-API-KEY": this.store.token },
-      params: params,
-    });
+    return this.http.get(
+      environment.API_URL + decoded.instance + "/EtichetteResoFacile",
+      {
+        headers: { "X-API-KEY": this.store.token },
+        params: params,
+      }
+    );
   }
 
   redirectPayment() {

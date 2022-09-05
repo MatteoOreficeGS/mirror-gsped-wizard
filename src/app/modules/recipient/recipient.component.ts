@@ -158,6 +158,7 @@ export class RecipientComponent {
         type: "text",
         required: true,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "rcpt_cap",
@@ -165,6 +166,7 @@ export class RecipientComponent {
         type: "number",
         required: true,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "rcpt_prov",
@@ -173,6 +175,7 @@ export class RecipientComponent {
         required: true,
         maxlength: 2,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "rcpt_country_code",
@@ -181,6 +184,7 @@ export class RecipientComponent {
         required: true,
         maxlength: 2,
         columnspan: 1,
+        autocompleteLock: true,
       },
       {
         value: "rcpt_email",
@@ -246,10 +250,20 @@ export class RecipientComponent {
     this.formRecipient.controls["rcpt_country_code"].setValue(
       prediction.country
     );
+    this.fields = this.fields.map((field: any) => {
+      if (field.autocompleteLock) {
+        field.readonly = true;
+      }
+      return field;
+    });
     this.showPredictions = false;
   }
 
   hidePredictions() {
+    this.fields = this.fields.map((field: any) => {
+      field.readonly = false;
+      return field;
+    });
     setTimeout(() => {
       this.showPredictions = false;
     }, 400);
@@ -283,7 +297,7 @@ export class RecipientComponent {
         this.store.recipientExtras.note_sender =
           this.formRecipient.value.note_sender;
       }
-      this.formRecipient.removeControl("note_sender");  
+      this.formRecipient.removeControl("note_sender");
 
       this.store.recipient = this.formRecipient.value;
       this.router.navigate(

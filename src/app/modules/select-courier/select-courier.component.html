@@ -23,7 +23,7 @@
               {{ translations["lbl_choose_courier"] }}
             </h1>
           </div>
-          <div class="flex justify-around">
+          <div class="flex justify-around space-x-2">
             <div
               *ngFor="let service of store.outwardCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
@@ -51,7 +51,7 @@
                 <div class="flex justify-center items-baseline my-8">
                   <span class="mr-2 text-2xl font-extrabold">
                     {{ translations.lbl_total_price }}: €
-                    {{ service.data.totale }}
+                    {{ service.data.totale | number: "0.2-2" }}
                   </span>
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
@@ -74,14 +74,14 @@
                       <ng-container
                         *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
                       >
-                        {{ service.data.nolo }}
+                        {{ service.data.nolo | number: "0.2-2" }}
                       </ng-container>
                     </span>
                   </li>
                   <li class="flex items-center space-x-3">
                     <span
                       >{{ translations["lbl_ancillary_price"] }}: €
-                      {{ service.data.varie }}</span
+                      {{ service.data.varie | number: "0.2-2" }}</span
                     >
                   </li>
                   <li
@@ -123,7 +123,7 @@
               {{ translations["lbl_choose_return_courier"] }}
             </h1>
           </div>
-          <div class="flex justify-around">
+          <div class="flex justify-around space-x-2">
             <div
               *ngFor="let service of store.returnCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
@@ -150,7 +150,7 @@
                 <div class="flex justify-center items-baseline my-8">
                   <span class="mr-2 text-2xl font-extrabold">
                     {{ translations.lbl_total_price }}: €
-                    {{ service.data.totale }}
+                    {{ service.data.totale | number: "0.2-2" }}
                   </span>
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
@@ -166,21 +166,21 @@
                             | number: "0.2-2"
                         }}
                         (<span class="line-through">{{
-                          service.data.nolo
+                          service.data.nolo | number: "0.2-2"
                         }}</span
                         >)
                       </ng-container>
                       <ng-container
                         *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
                       >
-                        {{ service.data.nolo }}
+                        {{ service.data.nolo | number: "0.2-2" }}
                       </ng-container>
                     </span>
                   </li>
                   <li class="flex items-center space-x-3">
                     <span
                       >{{ translations["lbl_ancillary_price"] }}: €
-                      {{ service.data.varie }}</span
+                      {{ service.data.varie | number: "0.2-2" }}</span
                     >
                   </li>
                   <li

@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 import { environment } from "src/app/enviroment";
 import { StoreService } from "src/app/store.service";
 import { Observable } from "rxjs";
+import { StatusService } from "src/app/status.service";
 
 @Component({
   selector: "app-stampa-awb",
@@ -11,8 +12,10 @@ import { Observable } from "rxjs";
 export class StampaAwbComponent {
   constructor(
     private http: HttpClient,
-    private store: StoreService
+    private store: StoreService,
+    private service: StatusService
   ) {
+    if (this.service.checkConfiguration()) { return; };
     this.displayPayment = this.store.displayPayment
       ? this.store.displayPayment
       : {};
@@ -54,13 +57,14 @@ export class StampaAwbComponent {
             "\r\n"
           ),
         };
+        // TODO da cancellare quando saranno pronte tutte le configurazioni
         const origin = this.store.beforePaymentSession.origin;
-        console.log(origin);
         if (origin.includes("oneway")) {
           this.instructions.text = this.translations["txt_instructions_oneway"].split(
             "\r\n"
           )
         }
+        // fine cancellazione
       }
       this.handleLocationFinder(
         this.store.beforePaymentSession

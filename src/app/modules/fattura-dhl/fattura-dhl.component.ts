@@ -22,6 +22,7 @@ export class FatturaDHLComponent implements OnInit {
     public store: StoreService,
     public service: StatusService
   ) {
+    if (this.service.checkConfiguration()) { return; };
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "fatturaDHL"
     )[0].moduleConfig;
@@ -34,7 +35,7 @@ export class FatturaDHLComponent implements OnInit {
 
   currentModule: any = {};
   formInvoice: FormGroup = this.fb.group({});
-  selected: string;
+  selected!: string;
   invoiceModules: any;
   predictionsAddress: any;
   showPredictions: boolean = false;

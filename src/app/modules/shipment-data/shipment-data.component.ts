@@ -31,7 +31,7 @@ export class ShipmentDataComponent implements OnInit {
     public route: ActivatedRoute,
     public http: HttpClient
   ) {
-    console.log(this.router.url);
+    if (this.service.checkConfiguration()) { return; };
     this.currentModule = this.store.configuration.modules.filter(
       (module: any) => module.moduleName === "shipment-data"
     )[0].moduleConfig;
@@ -176,8 +176,8 @@ export class ShipmentDataComponent implements OnInit {
   bodyRateComparativa: any;
   daticolli: any = {};
   translations: any;
-  formShipmentData: FormGroup;
-  isDocumentShipment: boolean;
+  formShipmentData!: FormGroup;
+  isDocumentShipment!: boolean;
   chosenCourier: any = {
     outward: { serviceName: "" },
     return: { serviceName: "" },
@@ -468,7 +468,6 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   incrementStep() {
-    console.log(this.store.currentStep, this.store.stepForShipment);
     if (this.store.currentStep === this.store.stepForShipment) {
       this.service.createShipment();
     } else {

@@ -1,7 +1,5 @@
-import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
-import { environment } from "src/app/enviroment";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
@@ -13,7 +11,7 @@ export class NavbarComponent {
   constructor(
     public store: StoreService,
     private router: Router,
-    private status: StatusService
+    private service: StatusService
   ) {
     this.response = this.store.configuration;
     this.customerLogo = this.store.configuration.hasOwnProperty("customerLogo")
@@ -23,14 +21,14 @@ export class NavbarComponent {
     this.lenguages = this.response.i18n.length > 1 ? this.response.i18n : [];
   }
 
-  customerLogo: string;
+  customerLogo?: string;
   response: any = {};
   currentUrl = "";
   theme = "";
   lenguages: Array<string> = [];
 
   handleSetTranslations(lang: string) {
-    this.status.getTranslations(lang).subscribe((res: any) => {
+    this.service.getTranslations(lang).subscribe((res: any) => {
       this.store.translations = res;
       this.router.navigateByUrl("/", { skipLocationChange: true }).then(() => {
         this.router.navigate(

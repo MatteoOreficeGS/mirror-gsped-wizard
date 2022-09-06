@@ -22,6 +22,7 @@ export class PaymentComponent implements OnInit {
     public router: Router,
     public fb: FormBuilder
   ) {
+    if (this.service.checkConfiguration()) { return; };
     this.formPayment = fb.group({
       cc_cardholder_name: this.store.isSenderPrefilled
         ? this.store.recipient.rcpt_name
@@ -79,7 +80,7 @@ export class PaymentComponent implements OnInit {
     this.providers = this.currentModule.provider;
   }
 
-  formPayment: FormGroup;
+  formPayment!: FormGroup;
   bodyPayment: any = {};
   response: any = {};
   currentModule: any;
@@ -96,7 +97,6 @@ export class PaymentComponent implements OnInit {
   errors: any = {};
 
   redirectPayment() {
-    console.log(this.formPayment.value);
     if (this.formPayment.value.termsconditions && this.formPayment.valid) {
       this.isHandledPayment = true;
       const decodedToken: any = this.store.decodedToken;

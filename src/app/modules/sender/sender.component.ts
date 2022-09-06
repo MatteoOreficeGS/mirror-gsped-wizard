@@ -1,15 +1,10 @@
 import { Component } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
+import { environment } from "src/app/enviroment";
 
 @Component({
   selector: "app-sender",
@@ -25,6 +20,8 @@ export class SenderComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    if (this.service.checkConfiguration()) { return; };
+    this.service.checkConfiguration()
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
@@ -223,12 +220,12 @@ export class SenderComponent {
   step: any;
   translations: any = {};
   showPredictions: boolean = false;
-  autocomplete: string;
+  autocomplete: string = "";
   currentModule: any = {};
   predictionsAddress: any = [];
   fields: Array<any> = [];
   readonly?: boolean;
-  formSender: FormGroup;
+  formSender!: FormGroup;
   langParam = "";
   showModal: boolean = false;
   errors: any = {};
@@ -255,7 +252,6 @@ export class SenderComponent {
       }
       return field;
     });
-    console.log(this.fields);
     this.showPredictions = false;
   }
 
@@ -264,7 +260,6 @@ export class SenderComponent {
       field.readonly = false;
       return field;
     });
-    console.log(this.fields);
     setTimeout(() => {
       this.showPredictions = false;
     }, 400);

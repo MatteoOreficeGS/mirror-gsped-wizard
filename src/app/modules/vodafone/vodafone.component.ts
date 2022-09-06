@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "../../status.service";
@@ -8,13 +8,14 @@ import { StoreService } from "../../store.service";
   selector: "app-vodafone",
   templateUrl: "./vodafone.component.html",
 })
-export class VodafoneComponent implements OnInit {
+export class VodafoneComponent {
   constructor(
     public fb: FormBuilder,
     public service: StatusService,
     public store: StoreService,
     private router: Router
   ) {
+    if (this.service.checkConfiguration()) { return; };
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "vodafone"
     )[0].moduleConfig;
@@ -29,14 +30,12 @@ export class VodafoneComponent implements OnInit {
     this.products = this.currentModule.productList;
   }
 
-  ngOnInit(): void {}
-
   currentModule: any = {};
   products: any = {};
   selected: any;
-  formVodafone: FormGroup;
+  formVodafone!: FormGroup;
   choices: any;
-  choiceText: string;
+  choiceText!: string;
   otherProducts: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentProduct: any =

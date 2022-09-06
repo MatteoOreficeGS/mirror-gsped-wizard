@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { environment } from "src/app/enviroment";
 import { StoreService } from "src/app/store.service";
-import { DomSanitizer } from "@angular/platform-browser";
 import { Observable } from "rxjs";
 
 @Component({
@@ -11,7 +10,6 @@ import { Observable } from "rxjs";
 })
 export class StampaAwbComponent {
   constructor(
-    private domSanitizer: DomSanitizer,
     private http: HttpClient,
     private store: StoreService
   ) {
@@ -56,6 +54,13 @@ export class StampaAwbComponent {
             "\r\n"
           ),
         };
+        const origin = this.store.beforePaymentSession.origin;
+        console.log(origin);
+        if (origin.includes("oneway")) {
+          this.instructions.text = this.translations["txt_instructions_oneway"].split(
+            "\r\n"
+          )
+        }
       }
       this.handleLocationFinder(
         this.store.beforePaymentSession

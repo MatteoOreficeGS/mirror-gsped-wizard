@@ -1,17 +1,12 @@
 <app-navbar></app-navbar>
 <app-wizard>
   <app-summary *ngIf="showSummary"></app-summary>
-
   <div
     class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
     *ngIf="isPaymentCompleted"
   >
     <div *ngIf="currentModule.directDownload.enable">
       <h1>{{ directDownload.label }}</h1>
-      <!-- <a target="_blank" [href]="labelLink">
-        {{ directDownload.text }}
-      </a> -->
-
       <p *ngFor="let text of directDownload.text; let i = index">
         <a
           *ngIf="i === 4; else elseBlock"
@@ -42,9 +37,9 @@
           class="underline text-red-dhl"
           [href]="
             'https://www.google.com/maps/search/?api=1&query=' +
-            locationFinder.place.geo.latitude +
+            locationFinder?.place.geo.latitude +
             ',' +
-            locationFinder.place.geo.longitude
+            locationFinder?.place.geo.longitude
           "
         >
           {{ locationFinder?.location.keyword }}
@@ -92,34 +87,4 @@
       <app-loader *ngIf="isHandledPayment"></app-loader>
     </button>
   </div>
-
-  <!-- <p *ngIf="displayPayment; else endWithoutPayment">
-    {{ displayPayment.response.message }}
-  </p>
-
-  <ng-template #endWithoutPayment> <p>Fine</p> </ng-template> -->
-
-  <!-- <div *ngIf="pdfOutward">
-    <a
-      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
-      download="outward_label.pdf"
-      [href]="pdfOutward"
-      title="Download pdf document"
-    >
-      scarica etichetta di andata
-    </a>
-  </div>
-
-  <div *ngIf="pdfReturn">
-    <a
-      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
-      download="return_label.pdf"
-      [href]="pdfReturn"
-      title="Download pdf document"
-    >
-      scarica etichetta di ritorno
-    </a>
-  </div> -->
 </app-wizard>
-
-<!-- http://localhost:4200/awb-printing?lang=it_IT&uuid=81d2224f55c4a8020a -->

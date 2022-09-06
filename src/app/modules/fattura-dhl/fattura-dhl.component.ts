@@ -67,7 +67,7 @@ export class FatturaDHLComponent implements OnInit {
             [Validators.required, ValidateCF],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
-          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000"],
+          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000", [Validators.maxLength(10)]],
           nome: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_name
             : this.store.sender.sender_name,
@@ -112,7 +112,7 @@ export class FatturaDHLComponent implements OnInit {
             [Validators.required, ValidatePIva],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
-          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000"],
+          sdi: [this.store.invoice.sdi ? this.store.invoice.sdi : "0000000", [Validators.maxLength(10)]],
           nome: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_name
             : this.store.sender.sender_name,
@@ -278,9 +278,10 @@ export class FatturaDHLComponent implements OnInit {
         );
         this.formInvoice.removeControl("cognome");
         this.store.invoice = this.formInvoice.value;
-      }
-      else {
+      } else {
         this.store.invoice = this.formInvoice.value;
+        this.store.invoice["codice_fiscale"] =
+          this.formInvoice.value.codice_fiscale.toUpperCase();
         this.store.invoice["email"] = this.store.isSenderPrefilled
           ? this.store.recipient.rcpt_email
           : this.store.sender.sender_email;

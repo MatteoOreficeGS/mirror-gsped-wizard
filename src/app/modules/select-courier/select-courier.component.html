@@ -23,9 +23,7 @@
               {{ translations["lbl_choose_courier"] }}
             </h1>
           </div>
-          <div
-            class="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0"
-          >
+          <div class="flex justify-around">
             <div
               *ngFor="let service of store.outwardCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
@@ -52,9 +50,8 @@
               <ng-container *ngIf="store.hasPayment">
                 <div class="flex justify-center items-baseline my-8">
                   <span class="mr-2 text-2xl font-extrabold">
-                    {{ translations.lbl_total_price }}: €{{
-                      service.data.totale
-                    }}
+                    {{ translations.lbl_total_price }}: €
+                    {{ service.data.totale }}
                   </span>
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
@@ -83,9 +80,8 @@
                   </li>
                   <li class="flex items-center space-x-3">
                     <span
-                      >{{ translations["lbl_ancillary_price"] }}: €{{
-                        service.data.varie
-                      }}</span
+                      >{{ translations["lbl_ancillary_price"] }}: €
+                      {{ service.data.varie }}</span
                     >
                   </li>
                   <li
@@ -94,13 +90,17 @@
                       let varie_d of service.data.varie_dettaglio | keyvalue
                     "
                   >
-                    <span *ngIf="varie_d.key !== 'sconto_con_tax'"
-                      >{{ varie_d.key }}: €{{ varie_d.value }}</span
-                    >
+                    <span *ngIf="varie_d.key !== 'sconto_con_tax'">
+                      {{ varie_d.key }}: € {{ varie_d.value }}
+                    </span>
+                    <span *ngIf="varie_d.key === 'sconto_con_tax'">
+                      {{ translations.lbl_discount }}: € {{ varie_d.value }}
+                    </span>
                   </li>
                   <li class="flex items-center space-x-3" *ngIf="iva">
                     <span
-                      >{{ translations.lbl_net_price }}: €{{
+                      >{{ translations.lbl_net_price }}: €
+                      {{
                         service.data.totale / ((iva + 100) / 100)
                           | number: "0.2-2"
                       }}</span
@@ -123,9 +123,7 @@
               {{ translations["lbl_choose_return_courier"] }}
             </h1>
           </div>
-          <div
-            class="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0"
-          >
+          <div class="flex justify-around">
             <div
               *ngFor="let service of store.returnCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
@@ -151,9 +149,8 @@
               <ng-container *ngIf="store.hasPayment">
                 <div class="flex justify-center items-baseline my-8">
                   <span class="mr-2 text-2xl font-extrabold">
-                    {{ translations.lbl_total_price }}: €{{
-                      service.data.totale
-                    }}
+                    {{ translations.lbl_total_price }}: €
+                    {{ service.data.totale }}
                   </span>
                 </div>
                 <ul role="list" class="mb-8 space-y-1 text-left list-disc">
@@ -182,9 +179,8 @@
                   </li>
                   <li class="flex items-center space-x-3">
                     <span
-                      >{{ translations["lbl_ancillary_price"] }}: €{{
-                        service.data.varie
-                      }}</span
+                      >{{ translations["lbl_ancillary_price"] }}: €
+                      {{ service.data.varie }}</span
                     >
                   </li>
                   <li
@@ -194,12 +190,17 @@
                     "
                   >
                     <span *ngIf="varie_d.key !== 'sconto_con_tax'"
-                      >{{ varie_d.key }}: €{{ varie_d.value }}</span
+                      >{{ varie_d.key }}: € {{ varie_d.value }}</span
+                    >
+                    <span *ngIf="varie_d.key === 'sconto_con_tax'"
+                      >{{ translations.lbl_discount }}: €
+                      {{ varie_d.value }}</span
                     >
                   </li>
                   <li class="flex items-center space-x-3" *ngIf="iva">
                     <span
-                      >{{ translations.lbl_net_price }}: €{{
+                      >{{ translations.lbl_net_price }}: €
+                      {{
                         service.data.totale / ((iva + 100) / 100)
                           | number: "0.2-2"
                       }}</span

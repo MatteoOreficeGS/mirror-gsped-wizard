@@ -14,16 +14,22 @@
         (change)="handleSetInvoiceModules(type.value)"
         #type
       >
-        <option *ngIf="currentModule.private.enable" value="privato" selected>privato</option>
-        <option *ngIf="currentModule.company.enable" value="piva">azienda</option>
-        <option *ngIf="currentModule.foreign.enable" value="estero">estero</option>
+        <option *ngIf="currentModule.private.enable" value="privato" selected>
+          privato
+        </option>
+        <option *ngIf="currentModule.company.enable" value="piva">
+          azienda
+        </option>
+        <option *ngIf="currentModule.foreign.enable" value="estero">
+          estero
+        </option>
       </select>
     </div>
     <div class="hidden sm:block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
           <div
-          *ngIf="currentModule.private.enable"
+            *ngIf="currentModule.private.enable"
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentType : otherType"
           >
@@ -31,7 +37,7 @@
           </div>
 
           <div
-          *ngIf="currentModule.company.enable"
+            *ngIf="currentModule.company.enable"
             (click)="handleSetInvoiceModules('piva')"
             [ngClass]="selected === 'piva' ? currentType : otherType"
           >
@@ -39,7 +45,7 @@
           </div>
 
           <div
-          *ngIf="currentModule.foreign.enable"
+            *ngIf="currentModule.foreign.enable"
             (click)="handleSetInvoiceModules('estero')"
             [ngClass]="selected === 'estero' ? currentType : otherType"
           >
@@ -70,15 +76,15 @@
               autocomplete="off"
               [type]="module.type"
               [required]="module.required"
-              [ngClass]="
-                formInvoice.get(module.value)?.invalid &&
-                formInvoice.get(module.value)?.errors &&
-                (formInvoice.get(module.value)?.dirty ||
-                  formInvoice.get(module.value)?.touched)
-                  ? 'border-red-500'
-                  : 'border-gray-300'
-              "
-              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+              [ngClass]="{
+                uppercase: module.value === 'codice_fiscale',
+                'border-red-500':
+                  formInvoice.get(module.value)?.invalid &&
+                  formInvoice.get(module.value)?.errors &&
+                  (formInvoice.get(module.value)?.dirty ||
+                    formInvoice.get(module.value)?.touched)
+              }"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer border-gray-300"
               placeholder=" "
             />
 

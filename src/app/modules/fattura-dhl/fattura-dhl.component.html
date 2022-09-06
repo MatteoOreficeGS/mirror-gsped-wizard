@@ -15,13 +15,13 @@
         #type
       >
         <option *ngIf="currentModule.private.enable" value="privato" selected>
-          privato
+          {{ translations["lbl_invoice_private"] }}
         </option>
         <option *ngIf="currentModule.company.enable" value="piva">
-          azienda
+          {{ translations["lbl_invoice_company"] }}
         </option>
         <option *ngIf="currentModule.foreign.enable" value="estero">
-          estero
+          {{ translations["lbl_invoice_foreign"] }}
         </option>
       </select>
     </div>
@@ -58,7 +58,7 @@
     <div class="space-y-4 mt-4">
       <h1>{{ translations["lbl_invoice_title"] }}</h1>
       <p>{{ translations["lbl_invoice_text"] }}</p>
-      <div class="md:grid md:grid-cols-4 md:gap-x-4 p-4 md:p-0">
+      <div class="md:grid md:grid-cols-4 md:gap-x-4">
         <div
           *ngFor="let module of invoiceModules"
           class="relative w-full mt-6 group mx-auto"

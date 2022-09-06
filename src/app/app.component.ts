@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, HostListener } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { forkJoin, Observable } from "rxjs";
 import { StatusService } from "./status.service";
@@ -12,11 +12,6 @@ import { environment } from "./enviroment";
   templateUrl: "./app.component.html",
 })
 export class AppComponent {
-  /* @HostListener("window:beforeunload", ["$event"])
-  treno($event: { returnValue: string }) {
-    if (true) $event.returnValue = "Your data will be lost!";
-  } */
-
   constructor(
     public status: StatusService,
     public store: StoreService,
@@ -24,15 +19,22 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
-    /*     window.addEventListener("beforeunload", (event) => {
+    window.addEventListener("beforeunload", (event) => {
       event.preventDefault();
       return event;
-    }); */
+    });
+
+    history.pushState(null, "", location.href);
+    window.onpopstate = function () {
+      history.go(1);
+    };
+
     this.route.queryParams.subscribe((params: any) => {
       if (params.origin && !params.uuid) {
         this.getToken(params.origin).subscribe(
           (res: any) => {
             store.origin = params.origin;
+            sessionStorage.setItem("origin", params.origin);
             store.token = res.token;
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
@@ -81,12 +83,7 @@ export class AppComponent {
                     modulesNames.indexOf("awb-printing") - 1;
                 }
               }
-
               this.store.stepForShipment += 1;
-
-              console.log(this.store.stepForShipment);
-              console.log(modulesNames[this.store.stepForShipment]);
-
               this.store.modules = modules;
               this.store.translations = res[1];
               this.store.countries = res[2];

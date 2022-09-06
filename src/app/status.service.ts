@@ -136,8 +136,6 @@ export class StatusService {
   createShipment() {
     this.store.chosenCourier["outward"] = this.store.outwardCostExposure[0];
     this.store.chosenCourier["return"] = this.store.returnCostExposure[0];
-    console.log(this.store.currentStep);
-    console.log(this.store);
     const outwardPayloadShipment = {
       ...this.store.payloadShipment,
       ...this.store.sender,
@@ -281,5 +279,16 @@ export class StatusService {
         );
       }
     }
+  }
+
+  checkConfiguration() {
+    if (!(Object.keys(this.store.configuration).length > 0)) {
+      window.document.location.href =
+        environment.CURRENT_URL +
+        "/?origin=" +
+        sessionStorage.getItem("origin");
+      return true;
+    }
+    return false;
   }
 }

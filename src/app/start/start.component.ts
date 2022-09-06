@@ -7,9 +7,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class StartComponent {
   constructor(private router: Router, private route: ActivatedRoute) {
-    // if (window.location.href.split("?").length < 2 || false) {
-    //   window.location.href = "http://localhost:4200/?origin=moldavia";
-    // }
     this.route.queryParams.subscribe((params: any) => {
       if (!(params.origin || params.uuid)) {
         this.router.navigate(["/error-page"], {

@@ -13,8 +13,13 @@
         name="tabs"
         class="block w-full focus:ring-red-dhl focus:border-red-dhl border-gray-300 rounded-md"
       >
-        <option>My Account</option>
-        <option>Company</option>
+        <option
+          *ngFor="let choice of choices; let i = index"
+          [value]="choice.choice"
+          (click)="handleSetProduct(choice.choice, i)"
+        >
+          {{ choice.choice }}
+        </option>
       </select>
     </div>
     <div class="hidden sm:block">

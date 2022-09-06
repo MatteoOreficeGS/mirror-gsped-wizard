@@ -26,6 +26,7 @@ export class RecipientComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    if (this.service.checkConfiguration()) { return; };
     //set current module
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "recipient"
@@ -233,7 +234,7 @@ export class RecipientComponent {
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
-  formRecipient: FormGroup;
+  formRecipient!: FormGroup;
   showModal: boolean = false;
   errors: any = {};
 

@@ -18,6 +18,7 @@ export class SelectCourierComponent {
     public route: ActivatedRoute,
     public http: HttpClient
   ) {
+    if (this.service.checkConfiguration()) { return; };
     this.currentModule = this.store.configuration.modules.filter(
       (module: any) => module.moduleName === "select-courier"
     )[0].moduleConfig;
@@ -37,9 +38,6 @@ export class SelectCourierComponent {
       this.currentModule.selectCourier.returnCouriers.selectionMode,
       this.store.returnCostExposure
     );
-    console.log(this.store.outwardCostExposure);
-    console.log(this.store.returnCostExposure);
-
     if (this.store.hasShipmentData) {
       this.selectCourier("outward", this.store.outwardCostExposure[0]);
       if (this.store.hasReturnShipment) {
@@ -51,8 +49,6 @@ export class SelectCourierComponent {
         this.selectCourier("return", this.store.returnCostExposure[0]);
       }
     } else {
-      console.log("la configurazione non ha i dati della shipment");
-
       let packageErrors: any = {};
       this.daticolli = {
         peso: 0.5,
@@ -211,11 +207,11 @@ export class SelectCourierComponent {
     return: { serviceName: "" },
   };
   canContinue: boolean = false;
-  iva: number;
+  iva!: number;
   errors: any = {};
   showModal: boolean = false;
-  homePickup: boolean;
-  pointPickup: boolean;
+  homePickup!: boolean;
+  pointPickup!: boolean;
   pickupMode: any = {};
   isGoodDocument: number = 1;
   showGoods_type: boolean = false;
@@ -323,7 +319,6 @@ export class SelectCourierComponent {
     const easter = this.getEaster(now.getFullYear());
     festivities.push(easter);
     festivities.push([easter[0], easter[1] + 1]);
-    console.log(festivities);
     const currentDay = [now.getMonth(), now.getDate()];
 
     if (
@@ -337,7 +332,6 @@ export class SelectCourierComponent {
     ) {
       this.service.pickupAvailability(courier).subscribe(
         (res: any) => {
-          console.log(res);
           if (res.result === "OK") {
             this.pickupAvailability[courier] = "oggi dalle 15:00 alle 18:00";
             this.pickupMode = {
@@ -374,8 +368,6 @@ export class SelectCourierComponent {
           }
         }
       } while (!isBusinessDay);
-      console.log(nextWorkingDay);
-
       this.pickupAvailability[courier] =
         "il prossimo giorno lavorativo dalle 09:00 alle 18:00";
       this.pickupMode = {

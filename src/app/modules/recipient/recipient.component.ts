@@ -26,7 +26,9 @@ export class RecipientComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    if (this.service.checkConfiguration()) { return; };
+    if (this.service.checkConfiguration()) {
+      return;
+    }
     //set current module
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "recipient"
@@ -270,37 +272,41 @@ export class RecipientComponent {
     }, 400);
   }
 
+  saveData() {
+    this.formRecipient.controls["rcpt_name"].setValue(
+      (
+        this.formRecipient.value.rcpt_name +
+        " " +
+        this.formRecipient.value.rcpt_surname
+      ).slice(0, 50)
+    );
+    this.store.recipientExtras.rcpt_surname =
+      this.formRecipient.value.rcpt_surname;
+    this.formRecipient.removeControl("rcpt_surname");
+
+    this.formRecipient.controls["rcpt_addr"].setValue(
+      (
+        this.formRecipient.value.rcpt_addr +
+        " " +
+        this.formRecipient.value.rcpt_addr_secondary
+      ).slice(0, 50)
+    );
+    this.store.recipientExtras.rcpt_addr_secondary =
+      this.formRecipient.value.rcpt_addr_secondary;
+    this.formRecipient.removeControl("rcpt_addr_secondary");
+
+    if (!this.store.noteSenderOnSender) {
+      this.store.recipientExtras.note_sender =
+        this.formRecipient.value.note_sender;
+    }
+    this.formRecipient.removeControl("note_sender");
+
+    this.store.recipient = this.formRecipient.value;
+  }
+
   nextStep() {
     if (this.formRecipient.valid) {
-      this.formRecipient.controls["rcpt_name"].setValue(
-        (
-          this.formRecipient.value.rcpt_name +
-          " " +
-          this.formRecipient.value.rcpt_surname
-        ).slice(0, 50)
-      );
-      this.store.recipientExtras.rcpt_surname =
-        this.formRecipient.value.rcpt_surname;
-      this.formRecipient.removeControl("rcpt_surname");
-
-      this.formRecipient.controls["rcpt_addr"].setValue(
-        (
-          this.formRecipient.value.rcpt_addr +
-          " " +
-          this.formRecipient.value.rcpt_addr_secondary
-        ).slice(0, 50)
-      );
-      this.store.recipientExtras.rcpt_addr_secondary =
-        this.formRecipient.value.rcpt_addr_secondary;
-      this.formRecipient.removeControl("rcpt_addr_secondary");
-
-      if (!this.store.noteSenderOnSender) {
-        this.store.recipientExtras.note_sender =
-          this.formRecipient.value.note_sender;
-      }
-      this.formRecipient.removeControl("note_sender");
-
-      this.store.recipient = this.formRecipient.value;
+      this.saveData();
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

@@ -6,26 +6,35 @@
 <app-navbar> </app-navbar>
 <app-wizard>
   <form [formGroup]="formInvoice" (submit)="nextStep()">
-    <div class="sm:hidden">
-      <select
-        id="tabs"
-        name="tabs"
-        class="block w-full focus:ring-red-dhl focus:border-red-dhl border-gray-300 rounded-md"
-        (change)="handleSetInvoiceModules(type.value)"
-        #type
-      >
-        <option *ngIf="currentModule.private.enable" value="privato" selected>
-          {{ translations["lbl_invoice_private"] }}
-        </option>
-        <option *ngIf="currentModule.company.enable" value="piva">
-          {{ translations["lbl_invoice_company"] }}
-        </option>
-        <option *ngIf="currentModule.foreign.enable" value="estero">
-          {{ translations["lbl_invoice_foreign"] }}
-        </option>
-      </select>
+    <div class="md:hidden">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <div
+            *ngIf="currentModule.private.enable"
+            (click)="handleSetInvoiceModules('privato')"
+            [ngClass]="selected === 'privato' ? currentType : otherType"
+          >
+            {{ translations["lbl_invoice_private"].split(' ', 1) }}
+          </div>
+          <div
+            *ngIf="currentModule.company.enable"
+            (click)="handleSetInvoiceModules('piva')"
+            [ngClass]="selected === 'piva' ? currentType : otherType"
+          >
+            {{ translations["lbl_invoice_company"].split(' ', 1) }}
+          </div>
+
+          <div
+            *ngIf="currentModule.foreign.enable"
+            (click)="handleSetInvoiceModules('estero')"
+            [ngClass]="selected === 'estero' ? currentType : otherType"
+          >
+            {{ translations["lbl_invoice_foreign"].split(' ', 1) }}
+          </div>
+        </nav>
+      </div>
     </div>
-    <div class="hidden sm:block">
+    <div class="hidden md:block">
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex" aria-label="Tabs">
           <div

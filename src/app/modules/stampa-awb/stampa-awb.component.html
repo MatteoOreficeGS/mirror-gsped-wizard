@@ -21,7 +21,7 @@
     </div>
     <ng-container *ngIf="instructions">
       <div>
-        <h1>{{ instructions.label }}</h1>
+        <h1 class="font-semibold">{{ instructions.label }}</h1>
         <p *ngFor="let text of instructions.text; let i = index">
           {{ text }}
           <ng-template #elseBlock>{{ text }}</ng-template>

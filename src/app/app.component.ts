@@ -19,10 +19,10 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
-    window.addEventListener("beforeunload", (event) => {
+    /* window.addEventListener("beforeunload", (event) => {
       event.preventDefault();
       return event;
-    });
+    }); */
 
     history.pushState(null, "", location.href);
     window.onpopstate = function () {

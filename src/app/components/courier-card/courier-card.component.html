@@ -1,0 +1,70 @@
+<ng-container>
+  <div class="md:flex items-center space-x-2">
+    <input
+      class="focus:ring-red-500 h-6 w-6 text-red-600 border-gray-300"
+      type="radio"
+      [checked]="i === 0 ? true : false"
+      [value]="service.serviceName"
+      [name]="type"
+      (click)="this.selectCourierEvent.emit({type, service})"
+    />
+    <span class="text-2xl font-semibold">
+      {{ service.courier }}
+    </span>
+    <span class="font-normal text-gray-500 sm:text-lg dark:text-gray-400">
+      {{ service.serviceName }}
+    </span>
+  </div>
+
+  <ng-container *ngIf="store.hasPayment">
+    <div class="flex justify-center items-baseline my-8">
+      <span class="mr-2 text-2xl font-extrabold">
+        {{ store.translations.lbl_total_price }}: €
+        {{ service.data.totale | number: "0.2-2" }}
+      </span>
+    </div>
+    <ul role="list" class="mb-8 space-y-1 text-left list-disc">
+      <li class="flex items-center space-x-3">
+        <span>
+          {{ store.translations.lbl_nolo }}: €
+          <ng-container *ngIf="service.data.varie_dettaglio.sconto_con_tax">
+            {{
+              service.data.nolo + service.data.varie_dettaglio.sconto_con_tax
+                | number: "0.2-2"
+            }}
+            (<span class="line-through">{{ service.data.nolo }}</span
+            >)
+          </ng-container>
+          <ng-container *ngIf="!service.data.varie_dettaglio.sconto_con_tax">
+            {{ service.data.nolo | number: "0.2-2" }}
+          </ng-container>
+        </span>
+      </li>
+      <li class="flex items-center space-x-3">
+        <span
+          >{{ store.translations["lbl_ancillary_price"] }}: €
+          {{ service.data.varie | number: "0.2-2" }}</span
+        >
+      </li>
+      <li
+        class="flex items-center space-x-3 text-sm ml-4"
+        *ngFor="let varie_d of service.data.varie_dettaglio | keyvalue"
+      >
+        <span *ngIf="varie_d.key !== 'sconto_con_tax'">
+          {{ varie_d.key }}: € {{ getFloat(varie_d.value)  }}
+        </span>
+        <span *ngIf="varie_d.key === 'sconto_con_tax'">
+          {{ store.translations.lbl_discount }}: € {{ getFloat(varie_d.value) }}
+        </span>
+      </li>
+      <li class="flex items-center space-x-3" *ngIf="iva">
+        <span
+          >{{ store.translations.lbl_net_price }}: €
+          {{
+            service.data.totale / ((iva + 100) / 100) | number: "0.2-2"
+          }}</span
+        >
+      </li>
+    </ul>
+  </ng-container>
+</ng-container>

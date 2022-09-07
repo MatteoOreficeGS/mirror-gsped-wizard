@@ -300,6 +300,10 @@ export class SelectCourierComponent {
     }
   }
 
+  selectCourierEvent(event:any) {
+    this.selectCourier(event.type, event.service);
+  }
+
   checkPickupAviability(courier: string) {
     let now = new Date();
     const currentHours = now.getHours();

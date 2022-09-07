@@ -28,86 +28,13 @@
               *ngFor="let service of store.outwardCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
-              <div class="md:flex items-center space-x-2">
-                <input
-                  class="focus:ring-red-500 h-6 w-6 text-red-600 border-gray-300"
-                  type="radio"
-                  [checked]="i === 0 ? true : false"
-                  [value]="service.serviceName"
-                  name="outward"
-                  (click)="selectCourier('outward', service)"
-                />
-                <span class="text-2xl font-semibold">
-                  {{ service.courier }}
-                </span>
-                <span
-                  class="font-normal text-gray-500 sm:text-lg dark:text-gray-400"
-                >
-                  {{ service.serviceName }}
-                </span>
-              </div>
-
-              <ng-container *ngIf="store.hasPayment">
-                <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-2xl font-extrabold">
-                    {{ translations.lbl_total_price }}: €
-                    {{ service.data.totale | number: "0.2-2" }}
-                  </span>
-                </div>
-                <ul role="list" class="mb-8 space-y-1 text-left list-disc">
-                  <li class="flex items-center space-x-3">
-                    <span>
-                      {{ translations.lbl_nolo }}: €
-                      <ng-container
-                        *ngIf="service.data.varie_dettaglio.sconto_con_tax"
-                      >
-                        {{
-                          service.data.nolo +
-                            service.data.varie_dettaglio.sconto_con_tax
-                            | number: "0.2-2"
-                        }}
-                        (<span class="line-through">{{
-                          service.data.nolo
-                        }}</span
-                        >)
-                      </ng-container>
-                      <ng-container
-                        *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
-                      >
-                        {{ service.data.nolo | number: "0.2-2" }}
-                      </ng-container>
-                    </span>
-                  </li>
-                  <li class="flex items-center space-x-3">
-                    <span
-                      >{{ translations["lbl_ancillary_price"] }}: €
-                      {{ service.data.varie | number: "0.2-2" }}</span
-                    >
-                  </li>
-                  <li
-                    class="flex items-center space-x-3 text-sm ml-4"
-                    *ngFor="
-                      let varie_d of service.data.varie_dettaglio | keyvalue
-                    "
-                  >
-                    <span *ngIf="varie_d.key !== 'sconto_con_tax'">
-                      {{ varie_d.key }}: € {{ varie_d.value }}
-                    </span>
-                    <span *ngIf="varie_d.key === 'sconto_con_tax'">
-                      {{ translations.lbl_discount }}: € {{ varie_d.value }}
-                    </span>
-                  </li>
-                  <li class="flex items-center space-x-3" *ngIf="iva">
-                    <span
-                      >{{ translations.lbl_net_price }}: €
-                      {{
-                        service.data.totale / ((iva + 100) / 100)
-                          | number: "0.2-2"
-                      }}</span
-                    >
-                  </li>
-                </ul>
-              </ng-container>
+              <app-courier-card
+                [service]="service"
+                [i]="i"
+                [iva]="iva"
+                [type]="'outward'"
+                (selectCourierEvent)="selectCourierEvent($event)"
+              ></app-courier-card>
             </div>
           </div>
         </div>
@@ -128,86 +55,13 @@
               *ngFor="let service of store.returnCostExposure; let i = index"
               class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
-              <div class="md:flex items-center space-x-2">
-                <input
-                  class="focus:ring-red-500 h-6 w-6 text-red-600 border-gray-300"
-                  type="radio"
-                  [checked]="i === 0 ? true : false"
-                  [value]="service.serviceName"
-                  name="retrun"
-                  (click)="selectCourier('return', service)"
-                />
-                <span class="text-2xl font-semibold">
-                  {{ service.courier }}
-                </span>
-                <span
-                  class="font-normal text-gray-500 sm:text-lg dark:text-gray-400"
-                >
-                  {{ service.serviceName }}
-                </span>
-              </div>
-              <ng-container *ngIf="store.hasPayment">
-                <div class="flex justify-center items-baseline my-8">
-                  <span class="mr-2 text-2xl font-extrabold">
-                    {{ translations.lbl_total_price }}: €
-                    {{ service.data.totale | number: "0.2-2" }}
-                  </span>
-                </div>
-                <ul role="list" class="mb-8 space-y-1 text-left list-disc">
-                  <li class="flex items-center space-x-3">
-                    <span>
-                      {{ translations.lbl_nolo }}: €
-                      <ng-container
-                        *ngIf="service.data.varie_dettaglio.sconto_con_tax"
-                      >
-                        {{
-                          service.data.nolo +
-                            service.data.varie_dettaglio.sconto_con_tax
-                            | number: "0.2-2"
-                        }}
-                        (<span class="line-through">{{
-                          service.data.nolo | number: "0.2-2"
-                        }}</span
-                        >)
-                      </ng-container>
-                      <ng-container
-                        *ngIf="!service.data.varie_dettaglio.sconto_con_tax"
-                      >
-                        {{ service.data.nolo | number: "0.2-2" }}
-                      </ng-container>
-                    </span>
-                  </li>
-                  <li class="flex items-center space-x-3">
-                    <span
-                      >{{ translations["lbl_ancillary_price"] }}: €
-                      {{ service.data.varie | number: "0.2-2" }}</span
-                    >
-                  </li>
-                  <li
-                    class="flex items-center space-x-3 text-sm ml-4"
-                    *ngFor="
-                      let varie_d of service.data.varie_dettaglio | keyvalue
-                    "
-                  >
-                    <span *ngIf="varie_d.key !== 'sconto_con_tax'"
-                      >{{ varie_d.key }}: € {{ varie_d.value }}</span
-                    >
-                    <span *ngIf="varie_d.key === 'sconto_con_tax'"
-                      >{{ translations.lbl_discount }}: €
-                      {{ varie_d.value }}</span
-                    >
-                  </li>
-                  <li class="flex items-center space-x-3" *ngIf="iva">
-                    <span
-                      >{{ translations.lbl_net_price }}: €
-                      {{
-                        service.data.totale / ((iva + 100) / 100)
-                          | number: "0.2-2"
-                      }}</span
-                    >
-                  </li>
-                </ul>
-              </ng-container>
+              <app-courier-card
+                [service]="service"
+                [i]="i"
+                [iva]="iva"
+                [type]="'return'"
+                (selectCourierEvent)="selectCourierEvent($event)"
+              ></app-courier-card>
             </div>
           </div>
         </div>
@@ -220,7 +74,7 @@
     >
       <div class="flex space-x-2" *ngIf="pointPickup">
         <input
-          class="text-red-dhl"
+          class="text-red-dhl focus:ring-red-500"
           type="radio"
           name="ritiro"
           value="service"
@@ -231,7 +85,7 @@
       </div>
       <div class="flex space-x-2" *ngIf="homePickup">
         <input
-          class="text-red-dhl"
+          class="text-red-dhl focus:ring-red-500"
           (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
           type="radio"
           name="ritiro"

@@ -27,6 +27,7 @@ import { ModalComponent } from './components/modal/modal.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
+import { CourierCardComponent } from './components/courier-card/courier-card.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { SelectCourierComponent } from "./modules/select-courier/select-courier.
     ModalComponent,
     LoaderComponent,
     SummaryComponent,
-    SelectCourierComponent
+    SelectCourierComponent,
+    CourierCardComponent
   ],
   imports: [
     BrowserAnimationsModule,

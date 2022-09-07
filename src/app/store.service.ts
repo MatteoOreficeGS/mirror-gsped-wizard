@@ -65,7 +65,6 @@ export class StoreService {
   noteSenderOnSender?: boolean;
   totalAmount?: number;
   goodType?: string;
-  isGoodDocument: number = 1;
-  isAskDocument: boolean = true;
+  isAskDocument: boolean = false;
   stepForShipment: number = 0;
 }

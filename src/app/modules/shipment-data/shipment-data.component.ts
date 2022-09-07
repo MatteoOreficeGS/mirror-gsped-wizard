@@ -31,13 +31,20 @@ export class ShipmentDataComponent implements OnInit {
     public route: ActivatedRoute,
     public http: HttpClient
   ) {
-    if (this.service.checkConfiguration()) { return; };
+    if (this.service.checkConfiguration()) {
+      return;
+    }
     this.currentModule = this.store.configuration.modules.filter(
       (module: any) => module.moduleName === "shipment-data"
     )[0].moduleConfig;
     this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
     this.translations = store.translations;
-    this.isDocumentShipment = this.currentModule.documentFlag;
+    if (this.currentModule.documentFlag === "ask") {
+      this.isDocumentShipment = false
+    }
+    else {
+      this.currentModule = this.currentModule.documentFlag
+    }
     this.store.isDocumentShipment = this.store.isDocumentShipment
       ? this.store.isDocumentShipment
       : this.currentModule.documentFlag;
@@ -54,13 +61,17 @@ export class ShipmentDataComponent implements OnInit {
         this.store.returnInsurance ? this.store.returnInsurance : "",
         [ValidateInsurance],
       ],
+      [this.translations.lbl_goods_type]: [
+        this.store.goodType,
+        Validators.required,
+      ],
       ritiro: ["service"],
     });
   }
 
   ngOnInit(): void {
-    if (!this.store.isAskDocument) {
-      this.setGoodsShipment();
+    if (this.store.isAskDocument) {
+      this.setDocumentShipment();
     }
     if (this.currentModule.packagesDetails.enable) {
       if (this.store.packages.length > 0) {
@@ -116,8 +127,7 @@ export class ShipmentDataComponent implements OnInit {
   addPackage() {
     if (
       this.packageNumber <
-        this.currentModule.packagesDetails.fixedPackagesNumber &&
-      this.packageNumber < this.isGoodDocument
+      this.currentModule.packagesDetails.fixedPackagesNumber
     ) {
       this.packageNumber++;
       this.dimensions.push(this.newPackage());
@@ -125,7 +135,7 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   removePackage() {
-    if (this.packageNumber > 1) {
+    if (this.packageNumber > 1 || !this.currentModule.packagesDetails.enable) {
       this.packageNumber--;
       this.dimensions.removeAt(-1);
     }
@@ -142,25 +152,32 @@ export class ShipmentDataComponent implements OnInit {
   setDocumentShipment() {
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
+    this.currentModule.packagesDetails.enable = false;
     for (let index = this.packageNumber; index > 0; index--) {
       this.removePackage();
     }
     this.showGoods_type = false;
     this.isDocumentShipment = true;
     this.store.isDocumentShipment = true;
-    this.isGoodDocument = 1;
     this.formShipmentData.removeControl(this.translations.lbl_goods_type);
+    this.daticolli = {
+      colli: 1,
+      peso: 0.5,
+      volume: 0,
+    };
     this.store.isAskDocument = true;
   }
 
   setGoodsShipment() {
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
+    this.currentModule.packagesDetails.enable = true;
+    if (this.packageNumber === 0) {
+      this.addPackage();
+    }
     this.showGoods_type = true;
     this.isDocumentShipment = false;
     this.store.isDocumentShipment = false;
-    this.isGoodDocument =
-      this.currentModule.packagesDetails.fixedPackagesNumber;
     this.formShipmentData.addControl(
       this.translations.lbl_goods_type,
       new FormControl(this.store.goodType, Validators.required)
@@ -185,8 +202,7 @@ export class ShipmentDataComponent implements OnInit {
   canContinue: boolean = false;
   errors: any = {};
   showModal: boolean = false;
-  isGoodDocument: number = 1;
-  showGoods_type: boolean = false;
+  showGoods_type: boolean = true;
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable) {
@@ -305,7 +321,6 @@ export class ShipmentDataComponent implements OnInit {
     if (this.formShipmentData.valid) {
       this.store.goodType =
         this.formShipmentData.value[this.translations.lbl_goods_type];
-      this.store.isGoodDocument = this.isGoodDocument;
       this.setInsurances();
       this.setDatiColli();
       this.setShipmentPayload();

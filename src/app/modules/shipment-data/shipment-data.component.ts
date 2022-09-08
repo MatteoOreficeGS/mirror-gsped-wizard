@@ -41,12 +41,11 @@ export class ShipmentDataComponent implements OnInit {
     this.translations = store.translations;
     if (this.currentModule.documentFlag === "ask") {
       this.isDocumentShipment = false;
+      this.store.isDocumentShipment = false;
     } else {
       this.isDocumentShipment = this.currentModule.documentFlag;
+      this.store.isDocumentShipment = this.currentModule.documentFlag;
     }
-    this.store.isDocumentShipment = this.store.isDocumentShipment
-      ? this.store.isDocumentShipment
-      : this.currentModule.documentFlag;
     this.store.outwardCostExposure = [];
     this.store.returnCostExposure = [];
     this.formShipmentData = fb.group({
@@ -69,7 +68,6 @@ export class ShipmentDataComponent implements OnInit {
     if (this.isDocumentShipment) {
       this.currentModule.packagesDetails.enable = false;
       this.showGoods_type = false;
-      this.isDocumentShipment = true;
       this.store.isDocumentShipment = true;
       this.formShipmentData.removeControl(this.translations.lbl_goods_type);
     }

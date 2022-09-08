@@ -16,6 +16,7 @@ export class StampaAwbComponent {
     private service: StatusService
   ) {
     if (this.service.checkConfiguration()) { return; };
+    this.translations = this.store.translations;
     this.displayPayment = this.store.displayPayment
       ? this.store.displayPayment
       : {};
@@ -43,7 +44,6 @@ export class StampaAwbComponent {
         (module: any) => module.moduleName === "awb-printing"
       )[0].moduleConfig;
       this.showSummary = this.currentModule.summary;
-      this.translations = this.store.translations;
       this.directDownload = {
         label: this.translations[this.currentModule.directDownload.label],
         text: this.translations[this.currentModule.directDownload.text].split(

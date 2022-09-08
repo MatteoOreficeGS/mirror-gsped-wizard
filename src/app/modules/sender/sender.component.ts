@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
-import { environment } from "src/app/enviroment";
 
 @Component({
   selector: "app-sender",

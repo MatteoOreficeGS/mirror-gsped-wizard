@@ -23,10 +23,10 @@
               {{ translations["lbl_choose_courier"] }}
             </h1>
           </div>
-          <div class="flex justify-around space-x-2">
+          <div class="flex flex-col md:flex-row justify-around space-y-2 md:space-x-0 md:space-x-2">
             <div
               *ngFor="let service of store.outwardCostExposure; let i = index"
-              class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
+              class="flex flex-col p-6 mx-auto md:mx-0 max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
               <app-courier-card
                 [service]="service"
@@ -50,10 +50,10 @@
               {{ translations["lbl_choose_return_courier"] }}
             </h1>
           </div>
-          <div class="flex justify-around space-x-2">
+          <div class="flex flex-col md:flex-row justify-around space-y-2 md:space-x-0 md:space-x-2">
             <div
               *ngFor="let service of store.returnCostExposure; let i = index"
-              class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
+              class="flex flex-col p-6 mx-auto md:mx-0 max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
             >
               <app-courier-card
                 [service]="service"
@@ -78,7 +78,7 @@
           type="radio"
           name="ritiro"
           value="service"
-          [checked]="true"
+          [checked]="isPointChecked"
           (click)="clearPickupAviability()"
         />
         <span>{{ translations.lbl_dropoff_service_point }}</span>
@@ -89,6 +89,7 @@
           (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
           type="radio"
           name="ritiro"
+          [checked]="!isPointChecked"
           value="home"
         />
         <span>{{ translations.lbl_home_pickup }}</span>

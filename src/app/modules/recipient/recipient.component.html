@@ -107,6 +107,9 @@
           [formControlName]="field.value"
           [attr.disabled]="field.readonly ? 'disabled' : null"
         >
+          <option value="none" selected>
+            {{ translations.lbl_choose_country }}
+          </option>
           <ng-container *ngFor="let country of store.countries | keyvalue">
             <option [value]="country.key">{{ country.value }}</option>
           </ng-container>

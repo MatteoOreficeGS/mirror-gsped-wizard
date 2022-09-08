@@ -14,14 +14,14 @@
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_private"].split(' ', 1) }}
+            {{ translations["lbl_invoice_private"].split(" ", 1) }}
           </div>
           <div
             *ngIf="currentModule.company.enable"
             (click)="handleSetInvoiceModules('piva')"
             [ngClass]="selected === 'piva' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_company"].split(' ', 1) }}
+            {{ translations["lbl_invoice_company"].split(" ", 1) }}
           </div>
 
           <div
@@ -29,7 +29,7 @@
             (click)="handleSetInvoiceModules('estero')"
             [ngClass]="selected === 'estero' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_foreign"].split(' ', 1) }}
+            {{ translations["lbl_invoice_foreign"].split(" ", 1) }}
           </div>
         </nav>
       </div>
@@ -109,7 +109,9 @@
             class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             [formControlName]="module.value"
           >
-            <option value="KOKO" selected>Choose a country</option>
+            <option value="none" selected>
+              {{ translations.lbl_choose_country }}
+            </option>
             <ng-container *ngFor="let country of store.countries | keyvalue">
               <option [value]="country.key">{{ country.value }}</option>
             </ng-container>

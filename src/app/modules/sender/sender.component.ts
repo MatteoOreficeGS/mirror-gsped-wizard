@@ -53,7 +53,7 @@ export class SenderComponent {
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_country_code: [
-        autocomplete ? this.currentModule.data.sender_country_code : "",
+        autocomplete ? this.currentModule.data.sender_country_code : "none",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_email: [

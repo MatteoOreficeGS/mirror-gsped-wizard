@@ -172,7 +172,7 @@ export class FatturaDHLComponent implements OnInit {
           ],
           lbl_company: "",
           lbl_address: ["", Validators.required],
-          lbl_country: ["KOKO", [Validators.required, ValidateEsteroCountry]],
+          lbl_country: ["none", [Validators.required, ValidateEsteroCountry]],
           lbl_zipcode: ["", Validators.required],
           lbl_city: ["", Validators.required],
           lbl_prov: ["", Validators.required],

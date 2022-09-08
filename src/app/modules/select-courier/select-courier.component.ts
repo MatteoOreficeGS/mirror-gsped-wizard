@@ -18,7 +18,9 @@ export class SelectCourierComponent {
     public route: ActivatedRoute,
     public http: HttpClient
   ) {
-    if (this.service.checkConfiguration()) { return; };
+    if (this.service.checkConfiguration()) {
+      return;
+    }
     this.currentModule = this.store.configuration.modules.filter(
       (module: any) => module.moduleName === "select-courier"
     )[0].moduleConfig;
@@ -241,9 +243,12 @@ export class SelectCourierComponent {
             this.currentModule.selectCourier.returnCouriers.couriers.list.map(
               (courier: any) => {
                 return courier.services.list.map((service: any) => {
-                  // if (service.domestic ? service.domestic : 1 === sameDestination) {
-                  return service.gspedServiceCode;
-                  // }
+                  if (!service.hasOwnProperty("domestic")) {
+                    service.domestic = 1;
+                  }
+                  if (service.domestic === sameDestination) {
+                    return service.gspedServiceCode;
+                  }
                 });
               }
             )[0];
@@ -256,9 +261,12 @@ export class SelectCourierComponent {
           configServices = this.currentModule.selectCourier.couriers.list.map(
             (courier: any) => {
               return courier.services.list.map((service: any) => {
-                //if (service.domestic ? service.domestic : 1 === sameDestination) {
-                return service.gspedServiceCode;
-                // }
+                if (!service.hasOwnProperty("domestic")) {
+                  service.domestic = 1;
+                }
+                if (service.domestic === sameDestination) {
+                  return service.gspedServiceCode;
+                }
               });
             }
           )[0];
@@ -300,7 +308,7 @@ export class SelectCourierComponent {
     }
   }
 
-  selectCourierEvent(event:any) {
+  selectCourierEvent(event: any) {
     this.selectCourier(event.type, event.service);
   }
 

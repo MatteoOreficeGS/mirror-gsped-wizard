@@ -40,10 +40,9 @@ export class ShipmentDataComponent implements OnInit {
     this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
     this.translations = store.translations;
     if (this.currentModule.documentFlag === "ask") {
-      this.isDocumentShipment = false
-    }
-    else {
-      this.currentModule = this.currentModule.documentFlag
+      this.isDocumentShipment = false;
+    } else {
+      this.isDocumentShipment = this.currentModule.documentFlag;
     }
     this.store.isDocumentShipment = this.store.isDocumentShipment
       ? this.store.isDocumentShipment
@@ -67,6 +66,13 @@ export class ShipmentDataComponent implements OnInit {
       ],
       ritiro: ["service"],
     });
+    if (this.isDocumentShipment) {
+      this.currentModule.packagesDetails.enable = false;
+      this.showGoods_type = false;
+      this.isDocumentShipment = true;
+      this.store.isDocumentShipment = true;
+      this.formShipmentData.removeControl(this.translations.lbl_goods_type);
+    }
   }
 
   ngOnInit(): void {

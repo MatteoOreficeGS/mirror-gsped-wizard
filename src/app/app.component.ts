@@ -30,7 +30,8 @@ export class AppComponent {
     };
 
     this.route.queryParams.subscribe((params: any) => {
-      if (params.origin && !params.uuid) {
+      if (params.origin && !params.uuid ) {
+        /* && !params.action */
         this.getToken(params.origin).subscribe(
           (res: any) => {
             store.origin = params.origin;
@@ -102,7 +103,8 @@ export class AppComponent {
         params.uuid &&
         params.instance &&
         router.url.includes("monetaweb")
-      ) {
+        ) {
+        /* && !params.action */
         this.http
           .get(
             environment.API_URL +
@@ -177,6 +179,11 @@ export class AppComponent {
             );
           });
       }
+     /*  else if (params.origin && params.action && params.action === "retrievedoc") {
+        this.router.navigate(["/error-payment"], {
+          queryParams: { lang: params.lang ? params.lang : "it_IT" },
+        });
+      } */
     });
   }
 

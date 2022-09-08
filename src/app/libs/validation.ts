@@ -92,7 +92,7 @@ export function ValidateEsteroCountry(
     return { lbl_too_low_value: true };
   }
   if ((value + "").toLowerCase() === "it") {
-    return { lbl_contry_code_invalid: true };
+    return { lbl_country_code_invalid: true };
   }
   return null;
 }

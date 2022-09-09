@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { environment } from "../enviroment";
 import { StatusService } from "../status.service";
@@ -26,4 +26,5 @@ export class WizardComponent {
   modules: any;
   translations: any = {};
   bannerExtra: any;
+  @Input() showSteps = true
 }

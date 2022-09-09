@@ -30,8 +30,7 @@ export class AppComponent {
     };
 
     this.route.queryParams.subscribe((params: any) => {
-      if (params.origin && !params.uuid ) {
-        /* && !params.action */
+      if (params.origin && !params.uuid && !params.action) {
         this.getToken(params.origin).subscribe(
           (res: any) => {
             store.origin = params.origin;
@@ -102,9 +101,9 @@ export class AppComponent {
       } else if (
         params.uuid &&
         params.instance &&
-        router.url.includes("monetaweb")
-        ) {
-        /* && !params.action */
+        router.url.includes("monetaweb") &&
+        !params.action
+      ) {
         this.http
           .get(
             environment.API_URL +
@@ -178,12 +177,29 @@ export class AppComponent {
               }
             );
           });
-      }
-     /*  else if (params.origin && params.action && params.action === "retrievedoc") {
-        this.router.navigate(["/error-payment"], {
-          queryParams: { lang: params.lang ? params.lang : "it_IT" },
+      } else if (
+        params.origin &&
+        params.action &&
+        params.action === "retrievedoc"
+      ) {
+        this.getToken(params.origin).subscribe((res: any) => {
+          store.origin = params.origin;
+          sessionStorage.setItem("origin", params.origin);
+          sessionStorage.setItem("action", params.action);
+          store.token = res.token;
+          store.decodedToken = jwt_decode(res.token);
+          forkJoin(
+            this.getConfiguration(),
+            this.status.getTranslations(params.lang ? params.lang : "it_IT"),
+          ).subscribe((res: any) => {
+            this.store.configuration = res[0].configuration;
+            this.store.translations = res[1];
+            this.router.navigate(["/document-recovery"], {
+              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+            });
+          });
         });
-      } */
+      }
     });
   }
 

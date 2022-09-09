@@ -282,11 +282,22 @@ export class StatusService {
   }
 
   checkConfiguration() {
+    console.log(
+      environment.CURRENT_URL +
+        "/?origin=" +
+        sessionStorage.getItem("origin") +
+        sessionStorage.getItem("action")
+        ? "&action=" + sessionStorage.getItem("action")
+        : ""
+    );
     if (!(Object.keys(this.store.configuration).length > 0)) {
       window.document.location.href =
         environment.CURRENT_URL +
         "/?origin=" +
-        sessionStorage.getItem("origin");
+        sessionStorage.getItem("origin") +
+        sessionStorage.getItem("action")
+          ? "&action=" + sessionStorage.getItem("action")
+          : "";
       return true;
     }
     return false;

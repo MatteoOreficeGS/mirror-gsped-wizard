@@ -28,6 +28,7 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 import { CourierCardComponent } from './components/courier-card/courier-card.component';
+import { DocumentRecoveryComponent } from './document-recovery/document-recovery.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { CourierCardComponent } from './components/courier-card/courier-card.com
     LoaderComponent,
     SummaryComponent,
     SelectCourierComponent,
-    CourierCardComponent
+    CourierCardComponent,
+    DocumentRecoveryComponent
   ],
   imports: [
     BrowserAnimationsModule,

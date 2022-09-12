@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 
@@ -11,7 +11,8 @@ export class NavbarComponent {
   constructor(
     public store: StoreService,
     private router: Router,
-    private service: StatusService
+    private service: StatusService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.response = this.store.configuration;
     this.customerLogo = this.store.configuration.hasOwnProperty("customerLogo")
@@ -28,6 +29,20 @@ export class NavbarComponent {
   lenguages: Array<string> = [];
 
   handleSetTranslations(lang: string) {
+    if (this.store.action) {
+      this.service
+        .getTranslations(lang, this.store.action)
+        .subscribe((res: any) => {
+          this.store.translations = res;
+          this.router.navigate([], {
+            relativeTo: this.activatedRoute,
+            queryParams: { lang: lang },
+            queryParamsHandling: "merge", // remove to replace all query params by provided
+          });
+        });
+      return;
+    }
+
     this.service.getTranslations(lang).subscribe((res: any) => {
       this.store.translations = res;
       this.router.navigateByUrl("/", { skipLocationChange: true }).then(() => {

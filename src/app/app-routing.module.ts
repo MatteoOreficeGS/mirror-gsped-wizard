@@ -11,10 +11,12 @@ import { ErrorPaymentComponent } from "./error-payment/error-payment.component";
 import { FatturaDHLComponent } from "./modules/fattura-dhl/fattura-dhl.component";
 import { VodafoneComponent } from "./modules/vodafone/vodafone.component";
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
+import { DocumentRecoveryComponent } from "./document-recovery/document-recovery.component";
 
 const routes: Routes = [
   { path: "sender", component: SenderComponent },
   { path: "recipient", component: RecipientComponent },
+  { path: "fatturaDHL", component: FatturaDHLComponent },
   { path: "vodafone", component: VodafoneComponent },
   { path: "shipment-data", component: ShipmentDataComponent },
   { path: "select-courier", component: SelectCourierComponent },
@@ -24,7 +26,7 @@ const routes: Routes = [
     component: StampaAwbComponent,
     children: [{ path: "monetaweb", component: StampaAwbComponent }],
   },
-  { path: "fatturaDHL", component: FatturaDHLComponent },
+  { path: "document-recovery", component: DocumentRecoveryComponent },
   {
     path: "error-payment",
     children: [{ path: "monetaweb", component: ErrorPaymentComponent }],

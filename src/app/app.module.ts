@@ -5,7 +5,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { WizardComponent } from "./wizard/wizard.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { FooterComponent } from "./components/footer/footer.component";
@@ -28,11 +27,11 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { SummaryComponent } from './components/summary/summary.component';
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 import { CourierCardComponent } from './components/courier-card/courier-card.component';
+import { DocumentRecoveryComponent } from './document-recovery/document-recovery.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SidebarComponent,
     WizardComponent,
     FooterComponent,
     SenderComponent,
@@ -50,7 +49,8 @@ import { CourierCardComponent } from './components/courier-card/courier-card.com
     LoaderComponent,
     SummaryComponent,
     SelectCourierComponent,
-    CourierCardComponent
+    CourierCardComponent,
+    DocumentRecoveryComponent
   ],
   imports: [
     BrowserAnimationsModule,

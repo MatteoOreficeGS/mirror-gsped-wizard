@@ -67,4 +67,5 @@ export class StoreService {
   goodType?: string;
   isAskDocument: boolean = false;
   stepForShipment: number = 0;
+  action?:string;
 }

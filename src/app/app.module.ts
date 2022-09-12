@@ -5,7 +5,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { WizardComponent } from "./wizard/wizard.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { FooterComponent } from "./components/footer/footer.component";
@@ -33,7 +32,6 @@ import { DocumentRecoveryComponent } from './document-recovery/document-recovery
 @NgModule({
   declarations: [
     AppComponent,
-    SidebarComponent,
     WizardComponent,
     FooterComponent,
     SenderComponent,

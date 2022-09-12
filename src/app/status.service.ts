@@ -248,7 +248,7 @@ export class StatusService {
               this.store.translations[key] ? this.store.translations[key] : key
             ] = this.store.translations[keyError]
               ? this.store.translations[keyError]
-              : keyError + "XXX";
+              : keyError;
           }
         });
       }
@@ -282,22 +282,12 @@ export class StatusService {
   }
 
   checkConfiguration() {
-    console.log(
-      environment.CURRENT_URL +
-        "/?origin=" +
-        sessionStorage.getItem("origin") +
-        sessionStorage.getItem("action")
-        ? "&action=" + sessionStorage.getItem("action")
-        : ""
-    );
+    let startUrl =
+      environment.CURRENT_URL + "/?origin=" + sessionStorage.getItem("origin");
+    if (sessionStorage.getItem("action"))
+      startUrl += "&action=" + sessionStorage.getItem("action");
     if (!(Object.keys(this.store.configuration).length > 0)) {
-      window.document.location.href =
-        environment.CURRENT_URL +
-        "/?origin=" +
-        sessionStorage.getItem("origin") +
-        sessionStorage.getItem("action")
-          ? "&action=" + sessionStorage.getItem("action")
-          : "";
+      window.document.location.href = startUrl;
       return true;
     }
     return false;

@@ -1,9 +1,12 @@
 <app-navbar></app-navbar>
 <app-wizard [showSteps]="false">
   <form>
-    <h1 class="my-4">Recupero documenti</h1>
-    <div class="lg:grid lg:grid-cols-4 gap-x-4 gap-y-6">
+    <h1 class="my-4 text-lg">{{ store.translations[labels.label] }}</h1>
+    <div class="grid grid-cols-4 gap-x-4 md:gap-y-8 space-y-2 lg:space-y-0">
       <ng-container *ngFor="let field of fields">
+        <div class="col-span-full">
+          <p class="mb-2 font-medium">{{ store.translations[field.label] }}</p>
+        </div>
         <div class="relative w-full group mx-auto col-span-full md:col-span-2">
           <input
             autocomplete="off"
@@ -12,34 +15,32 @@
             placeholder=" "
             #input
           />
-          <label
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            {{ field.label }}
-          </label>
         </div>
-
         <button
           [ngClass]="
             true ? 'bg-yellow-400 text-white ' : 'bg-yellow-200 text-slate-200'
           "
           type="button"
           (click)="recoverDocument(field.type, input.value)"
-          class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer h-10 w-36 mt-4 lg:mt-0 mx-auto"
+          class="focus:ring-1 focus:ring-red-dhl focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer h-10 w-auto mt-4 lg:mt-0 mx-auto bg-yellow-400 text-white col-span-full md:col-span-1"
         >
-          {{
-            store.translations.lbl_btn_forward
-              ? store.translations.lbl_btn_forward
-              : "avanti"
-          }}
+          {{ store.translations.retrieve_doc_main_text }}
         </button>
         <a
           *ngIf="showLink[field.type].length > 0"
           [href]="showLink[field.type]"
-          class="ml-4 col-span-full md:col-span-1 underline text-red-dhl mx-auto"
+          class="col-span-full md:col-span-1 underline text-red-dhl mx-auto"
+          target="_blank"
         >
-          link recupero
+          {{ store.translations.retrieve_doc_document_link }}
+          <mat-icon>open_in_new</mat-icon>
         </a>
+        <p
+          *ngIf="showError[field.type].length > 0"
+          class="col-span-full md:col-span-1 mx-auto inline-block text-red-500 text-sm"
+        >
+          {{ this.store.translations[showError[field.type]] }}
+        </p>
       </ng-container>
     </div>
   </form>

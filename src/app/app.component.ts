@@ -19,11 +19,8 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
-    /* window.addEventListener("beforeunload", (event) => {
-      event.preventDefault();
-      return event;
-    }); */
 
+    // block history navigation
     history.pushState(null, "", location.href);
     window.onpopstate = function () {
       history.go(1);
@@ -186,11 +183,15 @@ export class AppComponent {
           store.origin = params.origin;
           sessionStorage.setItem("origin", params.origin);
           sessionStorage.setItem("action", params.action);
+          this.store.action = params.action;
           store.token = res.token;
           store.decodedToken = jwt_decode(res.token);
           forkJoin(
             this.getConfiguration(),
-            this.status.getTranslations(params.lang ? params.lang : "it_IT"),
+            this.status.getTranslations(
+              params.lang ? params.lang : "it_IT",
+              this.store.action
+            )
           ).subscribe((res: any) => {
             this.store.configuration = res[0].configuration;
             this.store.translations = res[1];

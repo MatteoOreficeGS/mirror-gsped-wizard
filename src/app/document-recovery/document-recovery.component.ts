@@ -17,40 +17,47 @@ export class DocumentRecoveryComponent {
     if (this.service.checkConfiguration()) {
       return;
     }
+    this.labels = this.store.configuration.staticPages.filter(
+      (staticPage: { pageName: string | undefined }) =>
+        staticPage.pageName === this.store.action
+    )[0];
     this.fields = [
       {
-        label: "cerca spedizione",
+        label: this.labels.retrieve_by_awb_number_label,
         type: "nspedizione",
       },
       {
-        label: "cerca transazione",
+        label: this.labels.retrieve_by_payment_reference_label,
         type: "transazione",
       },
     ];
   }
   fields: any;
   showLink: any = { nspedizione: "", transazione: "" };
+  showError: any = { nspedizione: "", transazione: "" };
+  labels: any;
 
   recoverDocument(type: string, value: any) {
-    console.log(this.showLink);
+    if (value.length === 0) {
+      return;
+    }
+    this.showLink[type] = "";
+    this.showError[type] = "";
     const headers = { "x-api-key": this.store.token };
     const params = { tipo: type, valore: value };
     this.http
       .get(
-        // console.log(
         environment.API_URL +
           this.store.decodedToken.instance +
-          "/RecuperaEtichetteResoFacile",
+          "/RecuperoEtichetteResoFacile",
         { headers: headers, params: params }
       )
       .subscribe(
         (res: any) => {
-          console.log(res);
           this.showLink[type] = res.link;
         },
         (error: any) => {
-          console.log(error);
-          this.showLink[type] = "link di recupero";
+          this.showError[type] = "retrieve_doc_not_found";
         }
       );
   }

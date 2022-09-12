@@ -29,21 +29,24 @@
           {{ store.translations.lbl_nolo }}: €
           <ng-container *ngIf="service.data.varie_dettaglio.sconto_con_tax">
             {{
-              service.data.nolo + service.data.varie_dettaglio.sconto_con_tax
-                | number: "0.2-2"
+              separateVAT(
+                service.data.nolo + service.data.varie_dettaglio.sconto_con_tax
+              ) | number: "0.2-2"
             }}
-            (<span class="line-through">{{ service.data.nolo }}</span
+            (<span class="line-through">{{
+              separateVAT(service.data.nolo) | number: "0.2-2"
+            }}</span
             >)
           </ng-container>
           <ng-container *ngIf="!service.data.varie_dettaglio.sconto_con_tax">
-            {{ service.data.nolo | number: "0.2-2" }}
+            {{ separateVAT(service.data.nolo) | number: "0.2-2" }}
           </ng-container>
         </span>
       </li>
       <li class="flex items-center space-x-3">
         <span
           >{{ store.translations["lbl_ancillary_price"] }}: €
-          {{ service.data.varie | number: "0.2-2" }}</span
+          {{ separateVAT(service.data.varie) | number: "0.2-2" }}</span
         >
       </li>
       <li
@@ -51,18 +54,17 @@
         *ngFor="let varie_d of service.data.varie_dettaglio | keyvalue"
       >
         <span *ngIf="varie_d.key !== 'sconto_con_tax'">
-          {{ varie_d.key }}: € {{ getFloat(varie_d.value)  }}
+          {{ varie_d.key }}: € {{ getFloat(separateVAT(varie_d.value)) }}
         </span>
         <span *ngIf="varie_d.key === 'sconto_con_tax'">
-          {{ store.translations.lbl_discount }}: € {{ getFloat(varie_d.value) }}
+          {{ store.translations.lbl_discount }}: €
+          {{ getFloat(separateVAT(varie_d.value)) }}
         </span>
       </li>
       <li class="flex items-center space-x-3" *ngIf="iva">
         <span
           >{{ store.translations.lbl_net_price }}: €
-          {{
-            service.data.totale / ((iva + 100) / 100) | number: "0.2-2"
-          }}</span
+          {{ separateVAT(service.data.totale) | number: "0.2-2" }}</span
         >
       </li>
     </ul>

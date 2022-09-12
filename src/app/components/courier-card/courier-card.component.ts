@@ -17,5 +17,8 @@ export class CourierCardComponent {
   getFloat(number: any) {
     return Number.parseFloat(number).toFixed(2);
   }
- // @Output() closeModal2 = new EventEmitter();
+
+  separateVAT(number: any) {
+    return number / ((this.iva + 100) / 100)
+  }
 }

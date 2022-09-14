@@ -107,11 +107,11 @@ export class PaymentComponent implements OnInit {
           displayUrl: environment.CURRENT_URL + "/",
           recoveryUrl: environment.CURRENT_URL + "/error-payment",
           language: "it",
-          description: "reso bla bla bla per bla bla ecc ecc",
+          description: environment.PAYMENT_DESCRIPTION,
           cardHolderName: this.formPayment.value.cc_cardholder_name,
           cardHolderEmail: this.formPayment.value.cc_cardholder_email,
           cardHolderPhone: this.formPayment.value.cc_cardholder_phone,
-          customField: "reso bla bla bla per bla bla ecc ecc",
+          customField: "",
         },
         session: {
           origin: this.store.origin,

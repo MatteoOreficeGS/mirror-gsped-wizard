@@ -1,9 +1,8 @@
 export const environment = {
   PRODUCTION: false,
   API_URL: "https://api.gsped.it/",
-  // development
   CURRENT_URL: window.document.location.origin,
-  // production
-  // CURRENT_URL: "http://localhost:4200/",
   FLOW: "resi",
+  DHL_API_Key: "Vg9TTemSNaXE4G6PwAfhbwCeK0x0vswz",
+  PAYMENT_DESCRIPTION: "Reso facile"
 };

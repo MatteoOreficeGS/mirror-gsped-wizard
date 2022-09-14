@@ -21,7 +21,7 @@ export class StampaAwbComponent {
       ? this.store.displayPayment
       : {};
 
-    if (this.displayPayment.status === "canceled") {
+      if (this.displayPayment.status === "canceled" || this.displayPayment.status === "failed") {
       this.isPaymentCompleted = false;
       this.retryPayment.monetaweb = this.store.beforePaymentSession.bodyPayment;
       this.retryPayment.session = this.store.beforePaymentSession;
@@ -97,7 +97,7 @@ export class StampaAwbComponent {
     return this.http.get(
       "https://api.dhl.com/location-finder/v1/find-by-address",
       {
-        headers: { "DHL-API-Key": "Vg9TTemSNaXE4G6PwAfhbwCeK0x0vswz" },
+        headers: { "DHL-API-Key": environment.DHL_API_Key },
         params: params,
       }
     );
@@ -121,7 +121,7 @@ export class StampaAwbComponent {
   redirectPayment() {
     this.isHandledPayment = true;
     this.handlePayment(this.retryPayment).subscribe((res: any) => {
-      // TODO link "problemi col pagamento" tramite merchantOrderId
+      // link "problemi col pagamento" tramite merchantOrderId
       // this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
       window.document.location.href =
         res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid;

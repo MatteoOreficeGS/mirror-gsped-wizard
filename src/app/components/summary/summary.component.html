@@ -39,17 +39,17 @@
         {{ store.translations.lbl_invoice }}
       </h1>
       <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
-        <p>{{ store.invoice.Nome }}</p>
+        <p>{{ store.invoice.nome }}</p>
         <p>{{ store.invoice.codice_fiscale }}</p>
         <p>{{ store.invoice.pec }}</p>
         <p>{{ store.invoice.sdi }}</p>
-        <p>{{ store.invoice.Indirizzo }}</p>
+        <p>{{ store.invoice.address }}</p>
         <div class="flex space-x-3">
-          <p>{{ store.invoice["CAP"] }}</p>
-          <p>{{ store.invoice.Provincia }}</p>
-          <p>{{ store.invoice["Città"] }}</p>
+          <p>{{ store.invoice.zipcode }}</p>
+          <p>{{ store.invoice.prov }}</p>
+          <p>{{ store.invoice.city }}</p>
         </div>
-        <p>{{ this.store.countries[store.invoice.Nazione] }}</p>
+        <p>{{ this.store.countries[store.invoice.country] }}</p>
       </div>
     </div>
   </div>

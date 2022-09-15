@@ -456,11 +456,11 @@ export class SelectCourierComponent {
         nolo: this.store.chosenCourier["outward"].data.nolo,
         totale_fattura: this.store.chosenCourier["outward"].data.totale,
         assicurazione:
-          this.store.chosenCourier["outward"].data.varie_dettaglio[
+          this.separateVAT(this.store.chosenCourier["outward"].data.varie_dettaglio[
             this.store.isDocumentShipment
               ? "IB-EXTENDED LIABILITY"
               : "II-SHIPMENT INSURANCE"
-          ],
+          ]),
         valore: this.store.outwardInsurance,
       };
       if (this.store.hasInvoice) {
@@ -501,11 +501,11 @@ export class SelectCourierComponent {
               nolo: this.store.chosenCourier["return"].data.nolo,
               totale_fattura: this.store.chosenCourier["return"].data.totale,
               assicurazione:
-                this.store.chosenCourier["return"].data.varie_dettaglio[
+                this.separateVAT(this.store.chosenCourier["return"].data.varie_dettaglio[
                   this.store.isDocumentShipment
                     ? "IB-EXTENDED LIABILITY"
                     : "II-SHIPMENT INSURANCE"
-                ],
+                ]),
               valore: this.store.returnInsurance,
             };
             if (this.store.hasInvoice) {
@@ -543,6 +543,10 @@ export class SelectCourierComponent {
         };
       }
     );
+  }
+
+  separateVAT(number: any) {
+    return number / ((this.iva + 100) / 100)
   }
 
   toLowerKeys(obj: any) {

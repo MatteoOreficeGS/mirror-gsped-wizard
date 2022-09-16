@@ -10,7 +10,6 @@ export class SummaryComponent {
     if (this.store.invoice) {
       this.showInvoice = Object.keys(this.store.invoice).length > 0;
     }
-    console.log(this.store.invoice);
   }
   showInvoice: boolean = false;
 }

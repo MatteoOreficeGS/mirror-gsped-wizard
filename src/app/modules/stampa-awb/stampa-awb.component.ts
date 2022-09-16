@@ -57,14 +57,6 @@ export class StampaAwbComponent {
             "\r\n"
           ),
         };
-        // TODO da cancellare quando saranno pronte tutte le configurazioni
-        const origin = this.store.beforePaymentSession.origin;
-        if (origin.includes("oneway")) {
-          this.instructions.text = this.translations["txt_instructions_oneway"].split(
-            "\r\n"
-          )
-        }
-        // fine cancellazione
       }
       this.handleLocationFinder(
         this.store.beforePaymentSession

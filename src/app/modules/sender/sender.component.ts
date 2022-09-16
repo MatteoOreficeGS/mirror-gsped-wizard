@@ -157,7 +157,6 @@ export class SenderComponent {
         type: "number",
         required: true,
         columnspan: 1,
-        autocompleteLock: true,
       },
       {
         value: "sender_prov",

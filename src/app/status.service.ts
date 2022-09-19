@@ -284,8 +284,6 @@ export class StatusService {
   checkConfiguration() {
     let startUrl =
       environment.CURRENT_URL + "/?origin=" + sessionStorage.getItem("origin");
-    if (sessionStorage.getItem("action"))
-      startUrl += "&action=" + sessionStorage.getItem("action");
     if (!(Object.keys(this.store.configuration).length > 0)) {
       window.document.location.href = startUrl;
       return true;

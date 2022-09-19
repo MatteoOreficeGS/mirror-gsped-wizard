@@ -19,7 +19,6 @@ export class AppComponent {
     public http: HttpClient,
     public router: Router
   ) {
-
     // block history navigation
     history.pushState(null, "", location.href);
     window.onpopstate = function () {
@@ -191,10 +190,11 @@ export class AppComponent {
             this.status.getTranslations(
               params.lang ? params.lang : "it_IT",
               this.store.action
-            )
+            ),
+            this.status.getTranslations(params.lang ? params.lang : "it_IT")
           ).subscribe((res: any) => {
             this.store.configuration = res[0].configuration;
-            this.store.translations = res[1];
+            this.store.translations = { ...res[1], ...res[2] };
             this.router.navigate(["/document-recovery"], {
               queryParams: { lang: params.lang ? params.lang : "it_IT" },
             });

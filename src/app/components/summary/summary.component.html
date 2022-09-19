@@ -1,6 +1,10 @@
 <div class="mb-4">
-  <div class="md:grid md:grid-cols-3 gap-y-4 space-y-4 md:space-y-0 mb-6">
-    <div>
+  <div
+    class="md:flex justify-around space-y-4 md:space-y-0 space-x-0 md:space-x-4 mb-4"
+  >
+    <div
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1 class="uppercase text-xl mb-4">{{ store.translations.sender }}</h1>
       <div class="grid grid-cols-2 md:grid-cols-1 gap-x-4">
         <p>{{ store.sender.sender_name }}</p>
@@ -16,11 +20,13 @@
         <p>{{ store.sender.sender_phone }}</p>
       </div>
     </div>
-    <div>
+    <div
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1 class="uppercase text-xl mb-4">
         {{ store.translations.lbl_recipient }}
       </h1>
-      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
+      <div class="grid grid-cols-2 md:grid-cols-1 gap-x-4">
         <p>{{ store.recipient.rcpt_name }}</p>
         <p>{{ store.recipient.rcpt_society }}</p>
         <p>{{ store.recipient.rcpt_addr }}</p>
@@ -34,7 +40,10 @@
         <p>{{ store.recipient.rcpt_phone }}</p>
       </div>
     </div>
-    <div *ngIf="this.showInvoice">
+    <div
+      *ngIf="this.showInvoice"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1 class="uppercase text-xl mb-4">
         {{ store.translations.lbl_invoice }}
       </h1>
@@ -53,8 +62,11 @@
       </div>
     </div>
   </div>
-  <div class="flex justify-center">
-    <p class="mt-4 text-xl" *ngIf="this.store.totalAmount">
+  <div
+    *ngIf="this.store.totalAmount"
+    class="flex justify-center block py-4 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+  >
+    <p class="text-xl">
       {{ store.translations.lbl_total_price }}: € {{ store.totalAmount }}
     </p>
   </div>

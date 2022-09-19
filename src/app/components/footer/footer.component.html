@@ -3,10 +3,10 @@
     <div class="grid md:grid-cols-2">
       <div class="flex flex-col text-center">
         <h5 class="text-2xl font-bold">
-          {{ store.translations.title_label }}
+          {{ store.translations[labels.title_label] }}
         </h5>
         <p class="text-sm mb-4">
-          {{ store.translations.body_label }}
+          {{ store.translations[labels.body_label] }}
         </p>
       </div>
       <div class="mb-6 text-center">
@@ -17,7 +17,7 @@
           <li *ngFor="let link of labels?.links">
             <a
               [href]="link.label !== 'retrieve_doc' ? link.url : linkToRetrive"
-              class="mr-4 hover:underline md:mr-6"
+              class="hover:underline"
               >{{ store.translations[link.label] }}</a
             >
           </li>
@@ -30,9 +30,8 @@
     class="text-gray-700 text-center p-4"
     style="background-color: rgba(0, 0, 0, 0.2)"
   >
-    © 2022 |
     <div class="text-gray-800">
-      DHL Express (Italy) S.r.l. | All rights reserved
+      {{ store.translations[labels.credits_label] }}
     </div>
   </div>
 </footer>

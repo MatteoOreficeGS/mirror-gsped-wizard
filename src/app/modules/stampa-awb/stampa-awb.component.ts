@@ -43,7 +43,6 @@ export class StampaAwbComponent {
       this.currentModule = this.store.configuration.modules.filter(
         (module: any) => module.moduleName === "awb-printing"
       )[0].moduleConfig;
-      this.showSummary = this.currentModule.summary;
       this.directDownload = {
         label: this.translations[this.currentModule.directDownload.label],
         text: this.translations[this.currentModule.directDownload.text].split(
@@ -142,7 +141,6 @@ export class StampaAwbComponent {
   directDownload: any;
   instructions: any;
   isPaymentCompleted: boolean = false;
-  showSummary?: boolean;
   summary: any;
   retryPayment: any = {};
   isHandledPayment: boolean = false;

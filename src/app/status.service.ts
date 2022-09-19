@@ -140,7 +140,6 @@ export class StatusService {
       ...this.store.payloadShipment,
       ...this.store.sender,
       ...this.store.recipient,
-      // ...this.pickupMode,
       valore: this.store.outwardInsurance,
       corriere: this.store.chosenCourier.outward.courierCode,
       servizio: this.store.chosenCourier.outward.serviceCode,
@@ -214,24 +213,11 @@ export class StatusService {
                 }
               );
             },
-            (error) => {
-              // this.showModal = true;
-              // this.errors = {};
-              // this.errors = {
-              //   errore: "errore temporaneo, riprova più tardi",
-              // };
-              // alert("errore temporaneo, riprova più tardi");
-            }
+            (error) => {}
           );
         }
       },
-      (error) => {
-        // this.showModal = true;
-        // this.errors = {};
-        // this.errors = {
-        //   errore: "errore temporaneo, riprova più tardi",
-        // };
-      }
+      (error) => {}
     );
   }
 

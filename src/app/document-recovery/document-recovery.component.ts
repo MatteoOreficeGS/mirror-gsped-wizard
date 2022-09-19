@@ -31,7 +31,7 @@ export class DocumentRecoveryComponent {
         type: "transazione",
       },
       {
-        label: this.labels.retrieve_by_invoice_number_label, // ??? label
+        label: this.labels.retrieve_by_invoice_number_label,
         type: "nfattura",
       },
     ];

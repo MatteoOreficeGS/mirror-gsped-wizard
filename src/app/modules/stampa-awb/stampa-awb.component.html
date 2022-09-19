@@ -2,10 +2,13 @@
 <app-wizard>
   <app-summary *ngIf="currentModule.summary"></app-summary>
   <div
-    class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
+    class="grid lg:grid-cols-2 gap-4"
     *ngIf="isPaymentCompleted"
   >
-    <div *ngIf="currentModule.directDownload.enable">
+    <div
+      *ngIf="currentModule.directDownload?.enable"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1>{{ directDownload.label }}</h1>
       <p *ngFor="let text of directDownload.text; let i = index">
         <a
@@ -19,13 +22,19 @@
         <ng-template #elseBlock>{{ text }}</ng-template>
       </p>
     </div>
-    <div *ngIf="instructions">
+    <div
+      *ngIf="instructions"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1 class="font-semibold">{{ instructions.label }}</h1>
       <p *ngFor="let text of instructions.text; let i = index">
         {{ text }}
       </p>
     </div>
-    <div *ngIf="currentModule.servicePoint.enable">
+    <div
+      *ngIf="currentModule.servicePoint?.enable"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
       <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
       <p>
         {{ translations[currentModule.servicePoint.text] }}

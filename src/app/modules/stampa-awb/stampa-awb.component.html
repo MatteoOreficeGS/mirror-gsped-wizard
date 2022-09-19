@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <app-wizard>
-  <app-summary *ngIf="showSummary"></app-summary>
+  <app-summary *ngIf="currentModule.summary"></app-summary>
   <div
     class="lg:grid lg:grid-cols-2 space-y-6 lg:space-y-0"
     *ngIf="isPaymentCompleted"
@@ -14,57 +14,54 @@
           target="_blank"
           class="underline text-red-dhl"
         >
-          {{ text }}</a
-        >
+          {{ text }}
+        </a>
         <ng-template #elseBlock>{{ text }}</ng-template>
       </p>
     </div>
-    <ng-container *ngIf="instructions">
-      <div>
-        <h1 class="font-semibold">{{ instructions.label }}</h1>
-        <p *ngFor="let text of instructions.text; let i = index">
-          {{ text }}
-          <ng-template #elseBlock>{{ text }}</ng-template>
-        </p>
+    <div *ngIf="instructions">
+      <h1 class="font-semibold">{{ instructions.label }}</h1>
+      <p *ngFor="let text of instructions.text; let i = index">
+        {{ text }}
+      </p>
+    </div>
+    <div *ngIf="currentModule.servicePoint.enable">
+      <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
+      <p>
+        {{ translations[currentModule.servicePoint.text] }}
+      </p>
+      <a
+        target="_blank"
+        class="underline text-red-dhl"
+        [href]="
+          'https://www.google.com/maps/search/?api=1&query=' +
+          locationFinder?.place.geo.latitude +
+          ',' +
+          locationFinder?.place.geo.longitude
+        "
+      >
+        {{ locationFinder?.location.keyword }}
+        {{ locationFinder?.name }}
+        {{ locationFinder?.place.address.streetAddress }}
+        {{ locationFinder?.place.address.postalCode }}
+        {{ locationFinder?.place.address.addressLocality }}
+      </a>
+      <div class="grid grid-cols-2 mt-2">
+        <ng-container *ngFor="let opening of locationFinder?.openingHours">
+          <span>
+            {{ opening.dayOfWeek.split("/")[3] }}
+          </span>
+          <span>{{ opening.opens }} - {{ opening.closes }}</span>
+        </ng-container>
       </div>
-      <div *ngIf="currentModule.servicePoint.enable">
-        <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
-        <p>
-          {{ translations[currentModule.servicePoint.text] }}
-        </p>
-        <a
-          target="_blank"
-          class="underline text-red-dhl"
-          [href]="
-            'https://www.google.com/maps/search/?api=1&query=' +
-            locationFinder?.place.geo.latitude +
-            ',' +
-            locationFinder?.place.geo.longitude
-          "
-        >
-          {{ locationFinder?.location.keyword }}
-          {{ locationFinder?.name }}
-          {{ locationFinder?.place.address.streetAddress }}
-          {{ locationFinder?.place.address.postalCode }}
-          {{ locationFinder?.place.address.addressLocality }}
-        </a>
-        <div class="grid grid-cols-2 mt-2">
-          <ng-container *ngFor="let opening of locationFinder?.openingHours">
-            <span>
-              {{ opening.dayOfWeek.split("/")[3] }}
-            </span>
-            <span>{{ opening.opens }} - {{ opening.closes }}</span>
-          </ng-container>
-        </div>
-        <a
-          target="_blank"
-          class="underline text-red-dhl"
-          href="https://locator.dhl.com"
-        >
-          {{ translations.lbl_locator }}
-        </a>
-      </div>
-    </ng-container>
+      <a
+        target="_blank"
+        class="underline text-red-dhl"
+        href="https://locator.dhl.com"
+      >
+        {{ translations.lbl_locator }}
+      </a>
+    </div>
   </div>
 
   <div class="grid justify-items-center" *ngIf="!isPaymentCompleted">

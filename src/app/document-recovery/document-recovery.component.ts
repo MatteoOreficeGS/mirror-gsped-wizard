@@ -30,11 +30,15 @@ export class DocumentRecoveryComponent {
         label: this.labels.retrieve_by_payment_reference_label,
         type: "transazione",
       },
+      {
+        label: this.labels.retrieve_by_invoice_number_label, // ??? label
+        type: "nfattura",
+      },
     ];
   }
   fields: any;
-  showLink: any = { nspedizione: "", transazione: "" };
-  showError: any = { nspedizione: "", transazione: "" };
+  showLink: any = { nspedizione: "", transazione: "", nfattura: "" };
+  showError: any = { nspedizione: "", transazione: "" , nfattura: ""};
   labels: any;
 
   recoverDocument(type: string, value: any) {

@@ -169,7 +169,6 @@ export class RecipientComponent {
         type: "number",
         required: true,
         columnspan: 1,
-        autocompleteLock: true,
       },
       {
         value: "rcpt_prov",

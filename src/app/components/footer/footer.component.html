@@ -2,12 +2,11 @@
   <div class="w-full p-6">
     <div class="grid md:grid-cols-2">
       <div class="flex flex-col text-center">
-        <h5 class="text-2xl font-bold">Deutsche POST DHL</h5>
+        <h5 class="text-2xl font-bold">
+          {{ store.translations.title_label }}
+        </h5>
         <p class="text-sm mb-4">
-          DHL customer support 199.199.345<br />
-          Maximum cost of 14.49 euro cents per minute for calls from the fixed
-          network and 48.8 euro cents per minute for calls from the mobile
-          network, with a connection charge of 15.75 cents EUR
+          {{ store.translations.body_label }}
         </p>
       </div>
       <div class="mb-6 text-center">
@@ -15,22 +14,12 @@
         <ul
           class="flex flex-col space-y-1 text-sm text-black dark:text-gray-400 sm:mt-0"
         >
-          <!-- <li>
-            <button onclick="location.href = 'http:\/\/localhost:4200/?origin=testmoldavia';" class="mr-4 hover:underline md:mr-6">
-              RELOAD your DOCUMENTS here
-            </button>
-          </li> -->
-          <li>
-            <a href="#" class="mr-4 hover:underline md:mr-6">LEGAL NOTICE</a>
-          </li>
-          <li>
-            <a href="#" class="mr-4 hover:underline md:mr-6">TERMS OF USE</a>
-          </li>
-          <li>
-            <a href="#" class="mr-4 hover:underline md:mr-6">PRIVACY NOTICE</a>
-          </li>
-          <li>
-            <a href="#" class="hover:underline">Contact</a>
+          <li *ngFor="let link of labels?.links">
+            <a
+              [href]="link.label !== 'retrieve_doc' ? link.url : linkToRetrive"
+              class="mr-4 hover:underline md:mr-6"
+              >{{ store.translations[link.label] }}</a
+            >
           </li>
         </ul>
       </div>

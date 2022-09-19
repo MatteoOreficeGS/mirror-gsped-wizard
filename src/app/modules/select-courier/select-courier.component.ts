@@ -530,7 +530,6 @@ export class SelectCourierComponent {
               this.errors = {
                 errore: "errore temporaneo, riprova più tardi",
               };
-              // alert("errore temporaneo, riprova più tardi");
             }
           );
         }

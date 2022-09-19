@@ -157,7 +157,6 @@ export class AppComponent {
                   this.router.navigate(
                     ["/" + modules[modules.length - 1].module],
                     {
-                      // this.router.navigate(["/" + "fatturaDHL"], {
                       queryParams: {
                         lang: params.lang ? params.lang : "it_IT",
                         uuid: params.uuid,

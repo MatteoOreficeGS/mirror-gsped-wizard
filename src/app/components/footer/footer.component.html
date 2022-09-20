@@ -18,6 +18,7 @@
             <a
               [href]="link.label !== 'retrieve_doc' ? link.url : linkToRetrive"
               class="hover:underline"
+              [ngClass]="link.bold ? 'font-semibold' : ''"
               >{{ store.translations[link.label] }}</a
             >
           </li>

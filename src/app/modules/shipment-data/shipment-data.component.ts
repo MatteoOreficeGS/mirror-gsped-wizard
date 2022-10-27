@@ -207,6 +207,11 @@ export class ShipmentDataComponent implements OnInit {
   errors: any = {};
   showModal: boolean = false;
   showGoods_type: boolean = true;
+  riferimentoOrdine: string = [this.store.origin, new Date().getTime()].join(
+    "-"
+  );
+  documentFilesNumber: any = [];
+  documentsFilesUploaded: any = [];
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable) {
@@ -293,6 +298,8 @@ export class ShipmentDataComponent implements OnInit {
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
     this.store.payloadShipment = {
+      ddt_alpha: this.riferimentoOrdine,
+      trade_documents: this.documentsFilesUploaded,
       note_sender: noteSender,
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,
@@ -307,7 +314,123 @@ export class ShipmentDataComponent implements OnInit {
       : null;
   }
 
+  addDocumentFilesNumber(i: number) {
+    if (i === 1) {
+      this.documentFilesNumber.push(0);
+      this.documentsFilesUploaded.push({ nome: null, contenuto: null });
+    } else {
+      this.documentsFilesUploaded.pop();
+      this.documentFilesNumber.pop();
+    }
+  }
+
+  setFilesError(errorMessage: string, index: number) {
+    this.showModal = true;
+    this.errors = {
+      errore: errorMessage,
+    };
+    this.documentsFilesUploaded[index].contenuto = "";
+    return;
+  }
+
+  onFileTypeChanged(event: any, i: number) {
+    const extension =
+      this.documentsFilesUploaded[i].nome?.match(/\.[0-9a-z]+$/i);
+
+    this.documentsFilesUploaded[i].nome =
+      [event.target.value, this.riferimentoOrdine, i + 1].join("_") +
+      (extension ? extension[0] : "");
+  }
+
+  onFileChanged(event: any, i: number) {
+    if (event.target.files && event.target.files.length) {
+      const file = event.target.files[0];
+
+      const maxFileDimension = 5242880;
+
+      const acceptedExtensions = [
+        { mime: "application/pdf", extension: "pdf" },
+        { mime: "text/plain", extension: "txt" },
+        { mime: "image/png", extension: "png" },
+        { mime: "image/jpg", extension: "jpg" },
+        { mime: "image/gif", extension: "gif" },
+        { mime: "image/bmp", extension: "bmp" },
+        { mime: "image/tiff", extension: "tif" },
+        { mime: "application/rtf", extension: "rtf" },
+        { mime: "application/msword", extension: "doc" },
+        { mime: "application/vnd.ms-excel", extension: "xlsx" },
+        {
+          mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          extension: "docx",
+        },
+        {
+          mime: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          extension: "xlsx",
+        },
+      ];
+
+      if (file.size > maxFileDimension) {
+        this.setFilesError(
+          file.name + ": troppo grande, dimensione massima 5MB per file",
+          i
+        );
+        event.target.value = "";
+        return;
+      }
+      const acceptedExtension = acceptedExtensions.find(
+        (element) => element.mime === file.type
+      );
+
+      if (!acceptedExtension) {
+        this.setFilesError(file.name + ": estensione non valida", i);
+        event.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.documentsFilesUploaded[i].contenuto = reader.result;
+        const extension =
+          this.documentsFilesUploaded[i].nome?.match(/\.[0-9a-z]+$/i);
+        if (extension) {
+          this.documentsFilesUploaded[i].nome = this.documentsFilesUploaded[
+            i
+          ].nome?.replace(extension[0], "." + acceptedExtension.extension);
+        } else {
+          this.documentsFilesUploaded[i].nome +=
+            "." + acceptedExtension.extension;
+        }
+      };
+    }
+  }
+
+  validateDocumentsFile(documentsFiles: any) {
+    let result = [true, ""];
+    documentsFiles.forEach((documentsFile: any, i: number) => {
+      if (
+        documentsFile.nome === null ||
+        /null\.[0-9a-z]+$/g.test(documentsFile.nome)
+      ) {
+        result = [false, `documento ${i + 1}: nessun tipo selezionato`];
+      } else if (
+        documentsFile.contenuto === null ||
+        documentsFile.contenuto === ""
+      ) {
+        result = [false, `documento ${i + 1}: nessun file selezionato`];
+      }
+    });
+    return result;
+  }
+
   confirmInsurance() {
+    const [valid, error] = this.validateDocumentsFile(
+      this.documentsFilesUploaded
+    );
+    if (!valid) {
+      this.errors = { errore: error };
+      this.showModal = true;
+      return;
+    }
     let packageErrors: any = {};
     this.fieldsLabel &&
       this.fieldsLabel.forEach((field: any) => {

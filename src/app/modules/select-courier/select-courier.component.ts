@@ -418,6 +418,7 @@ export class SelectCourierComponent {
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
     this.store.payloadShipment = {
+      ...this.store.payloadShipment,
       note_sender: noteSender,
       creazione_postuma: this.store.hasPayment,
       client_id: this.store.configuration.client_id,

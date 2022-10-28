@@ -1,7 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { environment } from "src/app/enviroment";
 import { StoreService } from "../store.service";
 
 @Component({

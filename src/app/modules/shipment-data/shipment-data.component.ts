@@ -108,6 +108,10 @@ export class ShipmentDataComponent implements OnInit {
       },
       { label: "peso", value: "peso", placeholder: "kg", min: 0.5, max: 10 },
     ];
+
+    if (Object.values(this.store.documentsFilesUploadedData).length > 0) {
+      this.documentsFilesUploaded = this.store.documentsFilesUploaded;
+    }
   }
 
   get dimensions(): FormArray {
@@ -210,8 +214,8 @@ export class ShipmentDataComponent implements OnInit {
   riferimentoOrdine: string = [this.store.origin, new Date().getTime()].join(
     "-"
   );
-  documentFilesNumber: any = [];
   documentsFilesUploaded: any = [];
+  documentsFilesUploadedData: any = [];
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable) {
@@ -316,11 +320,14 @@ export class ShipmentDataComponent implements OnInit {
 
   addDocumentFilesNumber(i: number) {
     if (i === 1) {
-      this.documentFilesNumber.push(0);
       this.documentsFilesUploaded.push({ nome: null, contenuto: null });
+      this.store.documentsFilesUploadedData.push({
+        name: null,
+        selected: null,
+      });
     } else {
       this.documentsFilesUploaded.pop();
-      this.documentFilesNumber.pop();
+      this.store.documentsFilesUploadedData.pop();
     }
   }
 
@@ -340,6 +347,7 @@ export class ShipmentDataComponent implements OnInit {
     this.documentsFilesUploaded[i].nome =
       [event.target.value, this.riferimentoOrdine, i + 1].join("_") +
       (extension ? extension[0] : "");
+    this.store.documentsFilesUploadedData[i].selected = event.target.value;
   }
 
   onFileChanged(event: any, i: number) {
@@ -386,10 +394,15 @@ export class ShipmentDataComponent implements OnInit {
         event.target.value = "";
         return;
       }
+
+      this.store.documentsFilesUploadedData[i].name =
+        event.target.value.replace(/C:\\fakepath\\/, "");
+
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        this.documentsFilesUploaded[i].contenuto = reader.result;
+        const contentB64 = String(reader.result).replace(/^.*?(;base64,)/, "");
+        this.documentsFilesUploaded[i].contenuto = contentB64;
         const extension =
           this.documentsFilesUploaded[i].nome?.match(/\.[0-9a-z]+$/i);
         if (extension) {
@@ -431,6 +444,7 @@ export class ShipmentDataComponent implements OnInit {
       this.showModal = true;
       return;
     }
+    this.store.documentsFilesUploaded = this.documentsFilesUploaded;
     let packageErrors: any = {};
     this.fieldsLabel &&
       this.fieldsLabel.forEach((field: any) => {

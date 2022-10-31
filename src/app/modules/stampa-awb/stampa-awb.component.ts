@@ -134,7 +134,7 @@ export class StampaAwbComponent {
   pdfOutward: any;
   pdfReturn: any;
   displayPayment: any;
-  currentModule: any;
+  currentModule: any = {};
   translations: any;
   locationFinder: any;
   labelLink?: string;

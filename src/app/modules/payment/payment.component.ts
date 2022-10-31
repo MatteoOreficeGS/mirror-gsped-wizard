@@ -105,7 +105,7 @@ export class PaymentComponent implements OnInit {
           origine: "resoFacile",
           utenti_id: decodedToken.user_id,
           displayUrl: environment.CURRENT_URL + "/",
-          recoveryUrl: environment.CURRENT_URL + "/error-payment",
+          recoveryUrl: environment.CURRENT_URL + "/",
           language: "it",
           description: environment.PAYMENT_DESCRIPTION,
           cardHolderName: this.formPayment.value.cc_cardholder_name,
@@ -146,6 +146,14 @@ export class PaymentComponent implements OnInit {
           clienti_id: this.store.returnShipment.client_id,
         });
       }
+
+      items = items.map(item => {
+        const itemAux:any = {...item};
+        if (itemAux.codiceSconto.length < 3) {
+          delete itemAux.codiceSconto
+        }
+        return itemAux;
+      })
 
       this.bodyPayment.monetaweb.items = items;
       this.bodyPayment.session.totalAmount = this.store.totalAmount;

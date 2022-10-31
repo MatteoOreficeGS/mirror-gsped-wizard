@@ -69,7 +69,6 @@ export class ShipmentDataComponent implements OnInit {
       ritiro: ["service"],
     });
     if (this.isDocumentShipment) {
-      this.currentModule.packagesDetails.enable = false;
       this.showGoods_type = false;
       this.store.isDocumentShipment = true;
       this.formShipmentData.removeControl(this.translations.lbl_goods_type);
@@ -80,7 +79,7 @@ export class ShipmentDataComponent implements OnInit {
     if (this.store.isAskDocument) {
       this.setDocumentShipment();
     }
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       if (this.store.packages.length > 0) {
         this.packageNumber = this.store.packages.length;
         this.addFilledPackages();
@@ -89,7 +88,7 @@ export class ShipmentDataComponent implements OnInit {
       }
     } else {
       this.daticolli = {
-        colli: 1,
+        colli: this.store.documentsNumber,
         peso: 0.5,
         volume: 0,
       };
@@ -146,7 +145,7 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   removePackage() {
-    if (this.packageNumber > 1 || !this.currentModule.packagesDetails.enable) {
+    if (this.packageNumber > 1 || this.isDocumentShipment) {
       this.packageNumber--;
       this.dimensions.removeAt(-1);
     }
@@ -161,18 +160,17 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   setDocumentShipment() {
+    this.isDocumentShipment = true;
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
-    this.currentModule.packagesDetails.enable = false;
     for (let index = this.packageNumber; index > 0; index--) {
       this.removePackage();
     }
     this.showGoods_type = false;
-    this.isDocumentShipment = true;
     this.store.isDocumentShipment = true;
     this.formShipmentData.removeControl(this.translations.lbl_goods_type);
     this.daticolli = {
-      colli: 1,
+      colli: this.store.documentsNumber,
       peso: 0.5,
       volume: 0,
     };
@@ -182,7 +180,6 @@ export class ShipmentDataComponent implements OnInit {
   setGoodsShipment() {
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
-    this.currentModule.packagesDetails.enable = true;
     if (this.packageNumber === 0) {
       this.addPackage();
     }
@@ -222,7 +219,7 @@ export class ShipmentDataComponent implements OnInit {
   documentsFilesUploadedData: any = [];
 
   setDatiColli() {
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       const dimensions = this.formShipmentData.value.dimensions.map(
         (dimension: any) => {
           return {
@@ -303,6 +300,11 @@ export class ShipmentDataComponent implements OnInit {
 
   setDocumentsUploaded() {
     this.store.documentsFilesUploaded = this.documentsFilesUploaded;
+  }
+
+  setDocumentNumber(add: number) {
+    this.store.documentsNumber = this.store.documentsNumber + add;
+    this.daticolli.colli = this.store.documentsNumber;
   }
 
   setShipmentPayload() {
@@ -626,7 +628,7 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   handleRateComparative(body: any): Observable<any> {
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       body.daticolli = JSON.stringify(body.daticolli);
     }
     const decoded: any = this.store.decodedToken;

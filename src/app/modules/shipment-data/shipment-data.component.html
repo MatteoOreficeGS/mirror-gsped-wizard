@@ -12,6 +12,8 @@
   <!-- End Loading logo -->
   <form [formGroup]="formShipmentData" (submit)="confirmInsurance()">
     <div *ngIf="isInternationalShipment">
+      <!-- TRADUZIONE -->
+      <div>Carico Documenti</div>
       <div
         class="flex w-full justify-between md:justify-end space-x-2 mb-2 md:mb-0"
       >
@@ -38,10 +40,8 @@
               ? "Carica Documenti"
               : "Aggiungi Documento"
           }}
-          <!-- TRADUZIONE -->
         </button>
       </div>
-      <div>Carico Documenti</div>
       <!-- TRADUZIONE -->
       <div class="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-0">
         <ng-container
@@ -122,7 +122,41 @@
         {{ translations.lbl_ask_document }}
       </div>
     </div>
-    <div *ngIf="currentModule?.packagesDetails.enable">
+    <div
+      class="flex w-full items-center mb-6"
+      *ngIf="isDocumentShipment && currentModule.packagesDetails.enable"
+    >
+      <p class="font-medium w-full">
+        Inserisci il numero dei documenti:
+        {{ store.documentsNumber }}
+        <!-- TRADUZIONE -->
+      </p>
+      <div class="flex w-80 space-x-2">
+        <div class="mx-auto md:mx-0 space-x-4">
+          <button
+            [disabled]="store.documentsNumber <= 1"
+            (click)="setDocumentNumber(-1)"
+            type="button"
+            class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+          >
+            -
+          </button>
+          <button
+            (click)="setDocumentNumber(1)"
+            [disabled]="
+              store.documentsNumber >=
+              currentModule.packagesDetails.fixedPackagesNumber
+            "
+            type="button"
+            class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currentModule?.packagesDetails.enable && !isDocumentShipment">
       <div class="flex w-full items-center">
         <p class="mb-6 font-medium w-full">
           {{ translations["lbl_return_packages"] }}

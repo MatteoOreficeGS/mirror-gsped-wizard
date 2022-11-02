@@ -1,12 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   Validators,
 } from "@angular/forms";
-import { ActivatedRoute, Router, Routes } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
 import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
@@ -60,7 +59,13 @@ export class RecipientComponent {
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_country_code: [
-        autocomplete ? this.currentModule.data.rcpt_country_code : "",
+        this.forcedCountry !== "none"
+          ? this.forcedCountry
+          : autocomplete
+          ? this.currentModule.data.rcpt_country_code
+            ? this.currentModule.data.rcpt_country_code
+            : "none"
+          : "none",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       rcpt_email: [
@@ -223,7 +228,13 @@ export class RecipientComponent {
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
-      this.predictionsAddress = response;
+      let filterd = response;
+      if (this.forcedCountry !== "none") {
+        filterd = response.filter(
+          (address: any) => address.country === this.forcedCountry
+        );
+      }
+      this.predictionsAddress = filterd;
     });
   }
 
@@ -236,6 +247,7 @@ export class RecipientComponent {
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
   formRecipient!: FormGroup;
+  forcedCountry: string = "none";
   showModal: boolean = false;
   errors: any = {};
 
@@ -249,9 +261,10 @@ export class RecipientComponent {
     this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
     this.formRecipient.controls["rcpt_city"].setValue(prediction.city);
     this.formRecipient.controls["rcpt_prov"].setValue(prediction.district);
-    this.formRecipient.controls["rcpt_country_code"].setValue(
-      prediction.country
-    );
+    this.forcedCountry === "none" &&
+      this.formRecipient.controls["rcpt_country_code"].setValue(
+        prediction.country
+      );
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

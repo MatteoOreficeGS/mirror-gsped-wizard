@@ -19,8 +19,10 @@ export class SenderComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    if (this.service.checkConfiguration()) { return; };
-    this.service.checkConfiguration()
+    if (this.service.checkConfiguration()) {
+      return;
+    }
+    // this.forcedCountry = "AT";
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
@@ -53,7 +55,13 @@ export class SenderComponent {
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_country_code: [
-        autocomplete ? this.currentModule.data.sender_country_code : "none",
+        this.forcedCountry !== "none"
+          ? this.forcedCountry
+          : autocomplete
+          ? this.currentModule.data.sender_country_code
+            ? this.currentModule.data.sender_country_code
+            : "none"
+          : "none",
         [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
       ],
       sender_email: [
@@ -211,7 +219,13 @@ export class SenderComponent {
     this.predictionsAddress = [];
     this.showPredictions === false && (this.showPredictions = true);
     this.service.googlePlace(address.value, lang).subscribe((response: any) => {
-      this.predictionsAddress = response;
+      let filterd = response;
+      if (this.forcedCountry !== "none") {
+        filterd = response.filter(
+          (address: any) => address.country === this.forcedCountry
+        );
+      }
+      this.predictionsAddress = filterd;
     });
   }
 
@@ -225,6 +239,7 @@ export class SenderComponent {
   readonly?: boolean;
   formSender!: FormGroup;
   langParam = "";
+  forcedCountry: string = "none";
   showModal: boolean = false;
   errors: any = {};
 
@@ -241,9 +256,10 @@ export class SenderComponent {
     this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
     this.formSender.controls["sender_city"].setValue(prediction.city);
     this.formSender.controls["sender_prov"].setValue(prediction.district);
-    this.formSender.controls["sender_country_code"].setValue(
-      prediction.country
-    );
+    this.forcedCountry === "none" &&
+      this.formSender.controls["sender_country_code"].setValue(
+        prediction.country
+      );
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

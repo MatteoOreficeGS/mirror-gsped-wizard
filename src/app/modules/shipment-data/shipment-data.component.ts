@@ -34,6 +34,9 @@ export class ShipmentDataComponent implements OnInit {
     if (this.service.checkConfiguration()) {
       return;
     }
+    this.isInternationalShipment =
+      this.store.sender.sender_country_code !==
+      this.store.recipient.rcpt_country_code;
     this.currentModule = this.store.configuration.modules.filter(
       (module: any) => module.moduleName === "shipment-data"
     )[0].moduleConfig;
@@ -66,7 +69,6 @@ export class ShipmentDataComponent implements OnInit {
       ritiro: ["service"],
     });
     if (this.isDocumentShipment) {
-      this.currentModule.packagesDetails.enable = false;
       this.showGoods_type = false;
       this.store.isDocumentShipment = true;
       this.formShipmentData.removeControl(this.translations.lbl_goods_type);
@@ -77,7 +79,7 @@ export class ShipmentDataComponent implements OnInit {
     if (this.store.isAskDocument) {
       this.setDocumentShipment();
     }
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       if (this.store.packages.length > 0) {
         this.packageNumber = this.store.packages.length;
         this.addFilledPackages();
@@ -86,7 +88,7 @@ export class ShipmentDataComponent implements OnInit {
       }
     } else {
       this.daticolli = {
-        colli: 1,
+        colli: this.store.documentsNumber,
         peso: 0.5,
         volume: 0,
       };
@@ -143,7 +145,7 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   removePackage() {
-    if (this.packageNumber > 1 || !this.currentModule.packagesDetails.enable) {
+    if (this.packageNumber > 1 || this.isDocumentShipment) {
       this.packageNumber--;
       this.dimensions.removeAt(-1);
     }
@@ -158,18 +160,17 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   setDocumentShipment() {
+    this.isDocumentShipment = true;
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
-    this.currentModule.packagesDetails.enable = false;
     for (let index = this.packageNumber; index > 0; index--) {
       this.removePackage();
     }
     this.showGoods_type = false;
-    this.isDocumentShipment = true;
     this.store.isDocumentShipment = true;
     this.formShipmentData.removeControl(this.translations.lbl_goods_type);
     this.daticolli = {
-      colli: 1,
+      colli: this.store.documentsNumber,
       peso: 0.5,
       volume: 0,
     };
@@ -179,7 +180,6 @@ export class ShipmentDataComponent implements OnInit {
   setGoodsShipment() {
     this.formShipmentData.controls["outwardInsurance"].setValue("");
     this.formShipmentData.controls["returnInsurance"].setValue("");
-    this.currentModule.packagesDetails.enable = true;
     if (this.packageNumber === 0) {
       this.addPackage();
     }
@@ -211,6 +211,7 @@ export class ShipmentDataComponent implements OnInit {
   errors: any = {};
   showModal: boolean = false;
   showGoods_type: boolean = true;
+  isInternationalShipment?: boolean;
   riferimentoOrdine: string = [this.store.origin, new Date().getTime()].join(
     "-"
   );
@@ -218,7 +219,7 @@ export class ShipmentDataComponent implements OnInit {
   documentsFilesUploadedData: any = [];
 
   setDatiColli() {
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       const dimensions = this.formShipmentData.value.dimensions.map(
         (dimension: any) => {
           return {
@@ -297,6 +298,15 @@ export class ShipmentDataComponent implements OnInit {
     }
   }
 
+  setDocumentsUploaded() {
+    this.store.documentsFilesUploaded = this.documentsFilesUploaded;
+  }
+
+  setDocumentNumber(add: number) {
+    this.store.documentsNumber = this.store.documentsNumber + add;
+    this.daticolli.colli = this.store.documentsNumber;
+  }
+
   setShipmentPayload() {
     const noteSender = this.store.noteSenderOnSender
       ? this.store.senderExtras.note_sender
@@ -319,15 +329,17 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   addDocumentFilesNumber(i: number) {
-    if (i === 1) {
-      this.documentsFilesUploaded.push({ nome: null, contenuto: null });
-      this.store.documentsFilesUploadedData.push({
-        name: null,
-        selected: null,
-      });
-    } else {
-      this.documentsFilesUploaded.pop();
-      this.store.documentsFilesUploadedData.pop();
+    if (this.isInternationalShipment) {
+      if (i === 1) {
+        this.documentsFilesUploaded.push({ nome: null, contenuto: null });
+        this.store.documentsFilesUploadedData.push({
+          name: null,
+          selected: null,
+        });
+      } else {
+        this.documentsFilesUploaded.pop();
+        this.store.documentsFilesUploadedData.pop();
+      }
     }
   }
 
@@ -342,7 +354,7 @@ export class ShipmentDataComponent implements OnInit {
 
   onFileTypeChanged(event: any, i: number) {
     const extension =
-      this.documentsFilesUploaded[i].nome?.match(/\.[0-9a-z]+$/i);
+      this.documentsFilesUploaded[i]?.nome?.match(/\.[0-9a-z]+$/i);
 
     this.documentsFilesUploaded[i].nome =
       [event.target.value, this.riferimentoOrdine, i + 1].join("_") +
@@ -419,6 +431,10 @@ export class ShipmentDataComponent implements OnInit {
 
   validateDocumentsFile(documentsFiles: any) {
     let result = [true, ""];
+    if (!this.isInternationalShipment) {
+      this.documentsFilesUploaded = [];
+      return result;
+    }
     documentsFiles.forEach((documentsFile: any, i: number) => {
       if (
         documentsFile.nome === null ||
@@ -612,7 +628,7 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   handleRateComparative(body: any): Observable<any> {
-    if (this.currentModule.packagesDetails.enable) {
+    if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       body.daticolli = JSON.stringify(body.daticolli);
     }
     const decoded: any = this.store.decodedToken;

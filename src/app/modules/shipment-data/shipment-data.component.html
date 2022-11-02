@@ -11,8 +11,12 @@
   </div>
   <!-- End Loading logo -->
   <form [formGroup]="formShipmentData" (submit)="confirmInsurance()">
-    <div>
-      <div class="flex w-full justify-end space-x-2">
+    <div *ngIf="isInternationalShipment">
+      <!-- TRADUZIONE -->
+      <div>Carico Documenti</div>
+      <div
+        class="flex w-full justify-between md:justify-end space-x-2 mb-2 md:mb-0"
+      >
         <button
           type="button"
           *ngIf="store.documentsFilesUploadedData.length > 0"
@@ -20,6 +24,7 @@
           (click)="addDocumentFilesNumber(-1)"
         >
           {{ "Rimuovi documento" }}
+          <!-- TRADUZIONE -->
         </button>
         <button
           type="button"
@@ -32,44 +37,51 @@
         >
           {{
             store.documentsFilesUploadedData.length === 0
-              ? "Carica Documento"
+              ? "Carica Documenti"
               : "Aggiungi Documento"
           }}
         </button>
       </div>
-      <div>Carico Documenti</div>
-      <div class="grid md:grid-cols-2 md:gap-x-4 gap-y-4 md:gap-y-0">
+      <!-- TRADUZIONE -->
+      <div class="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-0">
         <ng-container
-          *ngFor="let _ of store.documentsFilesUploadedData; let i = index"
+          *ngFor="
+            let documentsFiles of store.documentsFilesUploadedData;
+            let i = index
+          "
         >
           <div>
             <select
               (change)="onFileTypeChanged($event, i)"
               *ngIf="true"
-              class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             >
               <option [value]="null" selected disabled>
                 Seleziona tipo di documento
+                <!-- TRADUZIONE -->
               </option>
               <ng-container
                 *ngFor="
                   let option of currentModule.tradeDocuments.documentTypes
                 "
               >
-                <option [selected]="_.selected === option" [value]="option">
-                  {{ option }}
+                <option
+                  [selected]="documentsFiles.selected === option"
+                  [value]="option"
+                >
+                  {{ store.translations[option] }}
                 </option>
               </ng-container>
             </select>
           </div>
-          <div class="mt-4">
+          <div class="my-4">
             <label
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               for="file_input"
             >
-              Seleziona un documento
+              Seleziona un documento: {{ documentsFiles.name }}
+              <!-- TRADUZIONE -->
             </label>
-            {{ _.name }}
             <input
               class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               aria-describedby="file_input_help"
@@ -110,7 +122,38 @@
         {{ translations.lbl_ask_document }}
       </div>
     </div>
-    <div *ngIf="currentModule?.packagesDetails.enable">
+
+    <div
+      *ngIf="isDocumentShipment && currentModule.packagesDetails.enable"
+      class="flex flex-row space-x-4 py-2"
+    >
+      <div>
+        Inserisci il numero dei documenti:
+        {{ store.documentsNumber }}
+        <!-- TRADUZIONE -->
+      </div>
+      <button
+        [disabled]="store.documentsNumber <= 1"
+        (click)="setDocumentNumber(-1)"
+        type="button"
+        class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+      >
+        -
+      </button>
+      <button
+        (click)="setDocumentNumber(1)"
+        [disabled]="
+          store.documentsNumber >=
+          currentModule.packagesDetails.fixedPackagesNumber
+        "
+        type="button"
+        class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+      >
+        +
+      </button>
+    </div>
+
+    <div *ngIf="currentModule?.packagesDetails.enable && !isDocumentShipment">
       <div class="flex w-full items-center">
         <p class="mb-6 font-medium w-full">
           {{ translations["lbl_return_packages"] }}
@@ -355,7 +398,12 @@
       <button
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
-        (click)="setDatiColli(); setInsurances(); service.handlePreviousStep()"
+        (click)="
+          setDocumentsUploaded();
+          setDatiColli();
+          setInsurances();
+          service.handlePreviousStep()
+        "
         class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_back"] }}</button

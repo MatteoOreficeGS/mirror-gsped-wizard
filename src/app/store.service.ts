@@ -68,6 +68,7 @@ export class StoreService {
   isAskDocument: boolean = false;
   stepForShipment: number = 0;
   action?: string;
+  documentsNumber: number = 1;
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
 }

@@ -12,8 +12,7 @@
   <!-- End Loading logo -->
   <form [formGroup]="formShipmentData" (submit)="confirmInsurance()">
     <div *ngIf="isInternationalShipment">
-      <!-- TRADUZIONE -->
-      <div>Carico Documenti</div>
+      <div>{{ store.translations.carico_documenti }}</div>
       <div
         class="flex w-full justify-between md:justify-end space-x-2 mb-2 md:mb-0"
       >
@@ -23,13 +22,12 @@
           class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
           (click)="addDocumentFilesNumber(-1)"
         >
-          {{ "Rimuovi documento" }}
-          <!-- TRADUZIONE -->
+          {{ store.translations.rimuovi_documento }}
         </button>
         <button
           type="button"
           [disabled]="
-            store.documentsFilesUploadedData.length >
+            store.documentsFilesUploadedData.length >=
             currentModule.tradeDocuments.maxDocuments
           "
           class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
@@ -37,12 +35,11 @@
         >
           {{
             store.documentsFilesUploadedData.length === 0
-              ? "Carica Documenti"
-              : "Aggiungi Documento"
+              ? store.translations.carica_documenti
+              : store.translations.aggiungi_documento
           }}
         </button>
       </div>
-      <!-- TRADUZIONE -->
       <div class="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-0">
         <ng-container
           *ngFor="
@@ -57,8 +54,7 @@
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             >
               <option [value]="null" selected disabled>
-                Seleziona tipo di documento
-                <!-- TRADUZIONE -->
+                {{ store.translations.seleziona_tipo_di_documento }}
               </option>
               <ng-container
                 *ngFor="
@@ -79,8 +75,8 @@
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               for="file_input"
             >
-              Seleziona un documento: {{ documentsFiles.name }}
-              <!-- TRADUZIONE -->
+              {{ store.translations.seleziona_un_documento }}:
+              {{ documentsFiles.name }}
             </label>
             <input
               class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -128,9 +124,8 @@
       class="flex flex-row space-x-4 py-2"
     >
       <div>
-        Inserisci il numero dei documenti:
+        {{ store.translations.inserisci_num_documenti }}
         {{ store.documentsNumber }}
-        <!-- TRADUZIONE -->
       </div>
       <button
         [disabled]="store.documentsNumber <= 1"

@@ -346,7 +346,7 @@ export class ShipmentDataComponent implements OnInit {
   setFilesError(errorMessage: string, index: number) {
     this.showModal = true;
     this.errors = {
-      errore: errorMessage,
+      error: errorMessage,
     };
     this.documentsFilesUploaded[index].contenuto = "";
     return;
@@ -391,7 +391,7 @@ export class ShipmentDataComponent implements OnInit {
 
       if (file.size > maxFileDimension) {
         this.setFilesError(
-          file.name + ": troppo grande, dimensione massima 5MB per file",
+          file.name + ", " + "troppo grande, dimensione massima 5MB per file",  /* TRADUZIONE lbl_file_too_large */
           i
         );
         event.target.value = "";
@@ -402,7 +402,7 @@ export class ShipmentDataComponent implements OnInit {
       );
 
       if (!acceptedExtension) {
-        this.setFilesError(file.name + ": estensione non valida", i);
+        this.setFilesError(file.name + ", " + "estensione non valida", i);  /* TRADUZIONE lbl_invalid_extension */
         event.target.value = "";
         return;
       }
@@ -440,12 +440,12 @@ export class ShipmentDataComponent implements OnInit {
         documentsFile.nome === null ||
         /null\.[0-9a-z]+$/g.test(documentsFile.nome)
       ) {
-        result = [false, `documento ${i + 1}: nessun tipo selezionato`];
+        result = [false, `documento ${i + 1}, nessun tipo selezionato`];  /* TRADUZIONE lbl_document lbl_no_doc_type_selected */
       } else if (
         documentsFile.contenuto === null ||
         documentsFile.contenuto === ""
       ) {
-        result = [false, `documento ${i + 1}: nessun file selezionato`];
+        result = [false, `documento ${i + 1}, nessun file selezionato`];  /* TRADUZIONE lbl_document lbl_no_file_selected */
       }
     });
     return result;
@@ -456,7 +456,7 @@ export class ShipmentDataComponent implements OnInit {
       this.documentsFilesUploaded
     );
     if (!valid) {
-      this.errors = { errore: error };
+      this.errors = { error: error };
       this.showModal = true;
       return;
     }
@@ -599,7 +599,7 @@ export class ShipmentDataComponent implements OnInit {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  errore: "errore temporaneo, riprova più tardi",
+                  error: "errore temporaneo, riprova più tardi",
                 };
               }
             );
@@ -609,7 +609,7 @@ export class ShipmentDataComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            errore: "errore temporaneo, riprova più tardi",
+            error: "errore temporaneo, riprova più tardi",
           };
         }
       );

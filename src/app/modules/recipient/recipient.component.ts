@@ -1,10 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -32,6 +28,7 @@ export class RecipientComponent {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "recipient"
     )[0].moduleConfig;
+    this.forcedCountry = this.currentModule.forcedCountry || "none";
     this.readonly = !this.currentModule.editable;
     const autocomplete = this.currentModule.autocomplete;
     this.formRecipient = fb.group({

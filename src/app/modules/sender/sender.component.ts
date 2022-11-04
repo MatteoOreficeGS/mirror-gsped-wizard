@@ -22,10 +22,10 @@ export class SenderComponent {
     if (this.service.checkConfiguration()) {
       return;
     }
-    // this.forcedCountry = "AT";
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "sender"
     )[0].moduleConfig;
+    this.forcedCountry = this.currentModule.forcedCountry || "none";
     this.readonly = !this.currentModule.editable;
     const autocomplete = this.currentModule.autocomplete;
     this.formSender = fb.group({

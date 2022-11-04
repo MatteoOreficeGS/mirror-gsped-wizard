@@ -7,7 +7,6 @@ import { PaymentComponent } from "./modules/payment/payment.component";
 import { StampaAwbComponent } from "./modules/stampa-awb/stampa-awb.component";
 import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
-import { ErrorPaymentComponent } from "./error-payment/error-payment.component";
 import { FatturaDHLComponent } from "./modules/fattura-dhl/fattura-dhl.component";
 import { VodafoneComponent } from "./modules/vodafone/vodafone.component";
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
@@ -27,10 +26,6 @@ const routes: Routes = [
     children: [{ path: "monetaweb", component: StampaAwbComponent }],
   },
   { path: "document-recovery", component: DocumentRecoveryComponent },
-  {
-    path: "error-payment",
-    children: [{ path: "monetaweb", component: ErrorPaymentComponent }],
-  },
   { path: "", component: StartComponent, children: [{ path: "monetaweb", component: StartComponent }], },
   { path: "**", component: ErrorPageComponent },
 ];

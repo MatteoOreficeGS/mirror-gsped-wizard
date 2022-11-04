@@ -57,7 +57,7 @@ export class ShipmentDataComponent implements OnInit {
         this.store.outwardInsurance ? this.store.outwardInsurance : "",
         [ValidateInsurance],
       ],
-      codiceSconto: this.store.codiceSconto,
+      codiceSconto: [this.store.codiceSconto, Validators.minLength(3)],
       returnInsurance: [
         this.store.returnInsurance ? this.store.returnInsurance : "",
         [ValidateInsurance],
@@ -88,7 +88,7 @@ export class ShipmentDataComponent implements OnInit {
       }
     } else {
       this.daticolli = {
-        colli: this.store.documentsNumber,
+        colli: 1,
         peso: 0.5,
         volume: 0,
       };
@@ -170,7 +170,7 @@ export class ShipmentDataComponent implements OnInit {
     this.store.isDocumentShipment = true;
     this.formShipmentData.removeControl(this.translations.lbl_goods_type);
     this.daticolli = {
-      colli: this.store.documentsNumber,
+      colli: 1,
       peso: 0.5,
       volume: 0,
     };
@@ -304,7 +304,6 @@ export class ShipmentDataComponent implements OnInit {
 
   setDocumentNumber(add: number) {
     this.store.documentsNumber = this.store.documentsNumber + add;
-    this.daticolli.colli = this.store.documentsNumber;
   }
 
   setShipmentPayload() {
@@ -391,7 +390,9 @@ export class ShipmentDataComponent implements OnInit {
 
       if (file.size > maxFileDimension) {
         this.setFilesError(
-          file.name + ", " + this.store.translations.lbl_file_too_large,
+          file.name +
+            ", " +
+            "troppo grande, dimensione massima 5MB per file" /* TRADUZIONE lbl_file_too_large */,
           i
         );
         event.target.value = "";
@@ -403,9 +404,9 @@ export class ShipmentDataComponent implements OnInit {
 
       if (!acceptedExtension) {
         this.setFilesError(
-          file.name + ", " + this.store.translations.lbl_invalid_extension,
+          file.name + ", " + "estensione non valida",
           i
-        );
+        ); /* TRADUZIONE lbl_invalid_extension */
         event.target.value = "";
         return;
       }
@@ -445,20 +446,16 @@ export class ShipmentDataComponent implements OnInit {
       ) {
         result = [
           false,
-          `${this.store.translations.lbl_document} ${i + 1}, ${
-            this.store.translations.lbl_no_doc_type_selected
-          }`,
-        ];
+          `documento ${i + 1}, nessun tipo selezionato`,
+        ]; /* TRADUZIONE lbl_document lbl_no_doc_type_selected */
       } else if (
         documentsFile.contenuto === null ||
         documentsFile.contenuto === ""
       ) {
         result = [
           false,
-          `${this.store.translations.lbl_document} ${i + 1}, ${
-            this.store.translations.lbl_no_file_selected
-          }`,
-        ];
+          `documento ${i + 1}, nessun file selezionato`,
+        ]; /* TRADUZIONE lbl_document lbl_no_file_selected */
       }
     });
     return result;

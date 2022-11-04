@@ -19,7 +19,6 @@ import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
 import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorPaymentComponent } from './error-payment/error-payment.component';
 import { FatturaDHLComponent } from './modules/fattura-dhl/fattura-dhl.component';
 import { VodafoneComponent } from './modules/vodafone/vodafone.component';
 import { ModalComponent } from './components/modal/modal.component';
@@ -42,7 +41,6 @@ import { DocumentRecoveryComponent } from './document-recovery/document-recovery
     NavbarComponent,
     ErrorPageComponent,
     StartComponent,
-    ErrorPaymentComponent,
     FatturaDHLComponent,
     VodafoneComponent,
     ModalComponent,

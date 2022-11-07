@@ -12,16 +12,21 @@ import { StatusService } from "src/app/status.service";
 export class StampaAwbComponent {
   constructor(
     private http: HttpClient,
-    private store: StoreService,
+    public store: StoreService,
     private service: StatusService
   ) {
-    if (this.service.checkConfiguration()) { return; };
+    if (this.service.checkConfiguration()) {
+      return;
+    }
     this.translations = this.store.translations;
     this.displayPayment = this.store.displayPayment
       ? this.store.displayPayment
       : {};
 
-      if (this.displayPayment.status === "canceled" || this.displayPayment.status === "failed") {
+    if (
+      this.displayPayment.status === "canceled" ||
+      this.displayPayment.status === "failed"
+    ) {
       this.isPaymentCompleted = false;
       this.retryPayment.monetaweb = this.store.beforePaymentSession.bodyPayment;
       this.retryPayment.session = this.store.beforePaymentSession;
@@ -57,13 +62,15 @@ export class StampaAwbComponent {
           ),
         };
       }
-      this.handleLocationFinder(
-        this.store.beforePaymentSession
-          ? this.store.beforePaymentSession.summary.sender
-          : this.store.sender
-      ).subscribe((res: any) => {
-        this.locationFinder = res.locations[0];
-      });
+      if (!this.store.isHomePickup) {
+        this.handleLocationFinder(
+          this.store.beforePaymentSession
+            ? this.store.beforePaymentSession.summary.sender
+            : this.store.sender
+        ).subscribe((res: any) => {
+          this.locationFinder = res.locations[0];
+        });
+      }
 
       this.handleLinkLabels(
         this.store.outwardShipment.id,

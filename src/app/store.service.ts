@@ -71,4 +71,5 @@ export class StoreService {
   documentsNumber: number = 1;
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
+  isHomePickup: boolean = false;
 }

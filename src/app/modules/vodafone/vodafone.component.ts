@@ -35,15 +35,15 @@ export class VodafoneComponent {
     this.choices = this.currentModule.choices;
     this.selected = this.choices[0].choice;
     this.choiceText = this.choices[0].text;
-    this.handleSetProduct(this.selected, 0);
     this.products = this.currentModule.productList;
     // dovrebbe essere nello stesso modulo
     this.currentModule.pickup = {
       dropoff: true,
       showServicePoints: true,
-      pickup: false,
+      pickup: true,
       pickupSameDayCheck: true,
     };
+    this.handleSetProduct(this.selected, 0);
     this.courier =
       courierModule.selectCourier.couriers.list[0].gspedCourierCode;
     this.serviceCourier =

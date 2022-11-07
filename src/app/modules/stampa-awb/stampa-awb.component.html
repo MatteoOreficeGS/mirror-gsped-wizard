@@ -1,10 +1,7 @@
 <app-navbar></app-navbar>
 <app-wizard>
   <app-summary *ngIf="currentModule.summary"></app-summary>
-  <div
-    class="grid lg:grid-cols-2 gap-4"
-    *ngIf="isPaymentCompleted"
-  >
+  <div class="grid lg:grid-cols-2 gap-4" *ngIf="isPaymentCompleted">
     <div
       *ngIf="currentModule.directDownload?.enable"
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
@@ -32,7 +29,7 @@
       </p>
     </div>
     <div
-      *ngIf="currentModule.servicePoint?.enable"
+      *ngIf="currentModule.servicePoint?.enable && !this.store.isHomePickup"
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
       <h1>{{ translations[currentModule.servicePoint.label] }}</h1>

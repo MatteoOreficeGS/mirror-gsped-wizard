@@ -390,9 +390,7 @@ export class ShipmentDataComponent implements OnInit {
 
       if (file.size > maxFileDimension) {
         this.setFilesError(
-          file.name +
-            ", " +
-            "troppo grande, dimensione massima 5MB per file" /* TRADUZIONE lbl_file_too_large */,
+          file.name + ", " + this.store.translations.lbl_file_too_large,
           i
         );
         event.target.value = "";
@@ -404,9 +402,9 @@ export class ShipmentDataComponent implements OnInit {
 
       if (!acceptedExtension) {
         this.setFilesError(
-          file.name + ", " + "estensione non valida",
+          file.name + ", " + this.store.translations.lbl_invalid_extension,
           i
-        ); /* TRADUZIONE lbl_invalid_extension */
+        );
         event.target.value = "";
         return;
       }
@@ -446,16 +444,20 @@ export class ShipmentDataComponent implements OnInit {
       ) {
         result = [
           false,
-          `documento ${i + 1}, nessun tipo selezionato`,
-        ]; /* TRADUZIONE lbl_document lbl_no_doc_type_selected */
+          `${this.store.translations.lbl_document} ${i + 1}, ${
+            this.store.translations.lbl_no_doc_type_selected
+          }`,
+        ];
       } else if (
         documentsFile.contenuto === null ||
         documentsFile.contenuto === ""
       ) {
         result = [
           false,
-          `documento ${i + 1}, nessun file selezionato`,
-        ]; /* TRADUZIONE lbl_document lbl_no_file_selected */
+          `${this.store.translations.lbl_document} ${i + 1}, ${
+            this.store.translations.lbl_no_file_selected
+          }`,
+        ];
       }
     });
     return result;

@@ -21,7 +21,7 @@ export class VodafoneComponent {
     this.currentModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "vodafone"
     )[0].moduleConfig;
-    
+
     // dovrebbe essere nello stesso modulo
     const courierModule = store.configuration.modules.filter(
       (module: { moduleName: string }) => module.moduleName === "select-courier"
@@ -56,6 +56,7 @@ export class VodafoneComponent {
   formVodafone!: FormGroup;
   choices: any;
   choiceText!: string;
+  choiceLink?: string;
   otherProducts: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentProduct: any =
@@ -80,10 +81,12 @@ export class VodafoneComponent {
     if (type === "RITIRO A DOMICILIO") {
       this.loadingPickup = true;
       this.store.isHomePickup = true;
+      this.choiceLink = "";
       this.checkPickupAviability(this.courier || 104);
-    } else {
+    } else if (type === "CONSEGNA AL SERVICE POINT") {
       this.store.isHomePickup = false;
       this.clearPickupAviability();
+      this.choiceLink = this.choices[index].link;
     }
   }
 

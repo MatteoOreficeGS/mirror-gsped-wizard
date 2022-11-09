@@ -80,11 +80,11 @@ export class VodafoneComponent {
     this.choiceText = this.choices[index].text;
     if (type === "RITIRO A DOMICILIO") {
       this.loadingPickup = true;
-      this.store.isHomePickup = true;
+      this.store.isHomePickup.enable = true;
       this.choiceLink = "";
       this.checkPickupAviability(this.courier || 104);
     } else if (type === "CONSEGNA AL SERVICE POINT") {
-      this.store.isHomePickup = false;
+      this.store.isHomePickup.enable = false;
       this.clearPickupAviability();
       this.choiceLink = this.choices[index].link;
     }

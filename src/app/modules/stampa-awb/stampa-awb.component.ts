@@ -62,7 +62,7 @@ export class StampaAwbComponent {
           ),
         };
       }
-      if (!this.store.isHomePickup) {
+      if (!this.store.isHomePickup.enable) {
         this.handleLocationFinder(
           this.store.beforePaymentSession
             ? this.store.beforePaymentSession.summary.sender

@@ -34,7 +34,9 @@
       </p>
     </div>
     <div
-      *ngIf="currentModule.servicePoint?.enable && !this.store.isHomePickup"
+      *ngIf="
+        currentModule.servicePoint?.enable && !this.store.isHomePickup.enable
+      "
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
       <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
@@ -72,6 +74,19 @@
       >
         {{ translations.lbl_locator }}
       </a>
+    </div>
+    <div
+      *ngIf="this.store.isHomePickup.enable"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1>Ritiro a domicilio</h1>
+      <div>
+        <ul>
+          <li>num_spedizione: {{ store.outwardShipment.num_spedizione }}</li>
+          <li>numero_ritiro: {{ store.outwardShipment.numero_ritiro }}</li>
+          <li>date_req_ritiro: {{ store.outwardShipment.date_req_ritiro }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 

@@ -1,6 +1,11 @@
 <app-navbar></app-navbar>
 <app-wizard>
-  <app-summary *ngIf="currentModule.summary"></app-summary>
+  <app-summary
+    *ngIf="currentModule.summary"
+    [senderHidden]="currentModule.senderHidden"
+    [recipientHidden]="currentModule.recipientHidden"
+    [invoiceHidden]="currentModule.invoiceHidden"
+  ></app-summary>
   <div class="grid lg:grid-cols-2 gap-4" *ngIf="isPaymentCompleted">
     <div
       *ngIf="currentModule.directDownload?.enable"

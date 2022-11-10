@@ -11,7 +11,13 @@
   </div>
   <!-- End Loading logo -->
   <form [formGroup]="formShipmentData" (submit)="confirmInsurance()">
-    <div *ngIf="isInternationalShipment && currentModule.tradeDocuments">
+    <div
+      *ngIf="
+        isInternationalShipment &&
+        currentModule.tradeDocuments &&
+        !isDocumentShipment
+      "
+    >
       <div>{{ store.translations.carico_documenti }}</div>
       <div
         class="flex w-full justify-between md:justify-end space-x-2 mb-2 md:mb-0"

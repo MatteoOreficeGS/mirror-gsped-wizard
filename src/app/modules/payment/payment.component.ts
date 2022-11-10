@@ -117,6 +117,7 @@ export class PaymentComponent implements OnInit {
           origin: this.store.origin,
           outwardShipmentID: this.store.outwardShipment.id,
           returnShipmentID: this.store.returnShipment.id,
+          isHomePickup: {...this.store.isHomePickup},
           summary: {
             sender: this.store.sender,
             recipient: this.store.recipient,

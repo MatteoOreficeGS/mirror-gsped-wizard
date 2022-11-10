@@ -314,6 +314,7 @@ export class SelectCourierComponent {
   }
 
   checkPickupAviability(courier: string) {
+    this.store.isHomePickup.enable = true;
     this.isPointChecked = false;
     let now = new Date();
     const currentHours = now.getHours();
@@ -395,6 +396,7 @@ export class SelectCourierComponent {
   }
 
   clearPickupAviability() {
+    this.store.isHomePickup.enable = false;
     this.pickupAvailability = {};
     this.pickupMode = {};
     this.isPointChecked = true;
@@ -456,12 +458,13 @@ export class SelectCourierComponent {
       const outwardInvoice = {
         nolo: this.store.chosenCourier["outward"].data.nolo,
         totale_fattura: this.store.chosenCourier["outward"].data.totale,
-        assicurazione:
-          this.separateVAT(this.store.chosenCourier["outward"].data.varie_dettaglio[
+        assicurazione: this.separateVAT(
+          this.store.chosenCourier["outward"].data.varie_dettaglio[
             this.store.isDocumentShipment
               ? "IB-EXTENDED LIABILITY"
               : "II-SHIPMENT INSURANCE"
-          ]),
+          ]
+        ),
         valore: this.store.outwardInsurance,
       };
       if (this.store.hasInvoice) {
@@ -477,6 +480,12 @@ export class SelectCourierComponent {
 
     this.service.handleShipment(outwardPayloadShipment).subscribe(
       (res) => {
+        this.store.isHomePickup = {
+          ...this.store.isHomePickup,
+          num_spedizione: res.num_spedizione,
+          numero_ritiro: res.numero_ritiro,
+          date_req_ritiro: res.date_req_ritiro,
+        };
         this.store.outwardShipment = res;
         if (!this.store.hasReturnShipment) {
           this.router.navigate(
@@ -501,12 +510,13 @@ export class SelectCourierComponent {
             const returnInvoice = {
               nolo: this.store.chosenCourier["return"].data.nolo,
               totale_fattura: this.store.chosenCourier["return"].data.totale,
-              assicurazione:
-                this.separateVAT(this.store.chosenCourier["return"].data.varie_dettaglio[
+              assicurazione: this.separateVAT(
+                this.store.chosenCourier["return"].data.varie_dettaglio[
                   this.store.isDocumentShipment
                     ? "IB-EXTENDED LIABILITY"
                     : "II-SHIPMENT INSURANCE"
-                ]),
+                ]
+              ),
               valore: this.store.returnInsurance,
             };
             if (this.store.hasInvoice) {
@@ -546,7 +556,8 @@ export class SelectCourierComponent {
   }
 
   separateVAT(number: any) {
-    return number / ((this.iva + 100) / 100)
+    const assicurazione = number / ((this.iva + 100) / 100);
+    return parseFloat(assicurazione.toFixed(4));
   }
 
   toLowerKeys(obj: any) {

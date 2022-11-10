@@ -76,15 +76,36 @@
       </a>
     </div>
     <div
-      *ngIf="this.store.isHomePickup.enable"
+      *ngIf="
+        store.isHomePickup.enable || store.beforePaymentSession?.isHomePickup
+      "
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
       <h1>Ritiro a domicilio</h1>
       <div>
         <ul>
-          <li>num_spedizione: {{ store.outwardShipment.num_spedizione }}</li>
-          <li>numero_ritiro: {{ store.outwardShipment.numero_ritiro }}</li>
-          <li>date_req_ritiro: {{ store.outwardShipment.date_req_ritiro }}</li>
+          <li>
+            num_spedizione:
+            <!-- TRADUZIONE -->
+            {{ store.isHomePickup.num_spedizione || "non trovato" }}
+            <!-- TRADUZIONE -->
+          </li>
+          <li>
+            numero_ritiro:
+            <!-- TRADUZIONE -->
+            {{ store.isHomePickup.numero_ritiro || "non trovato" }}
+            <!-- TRADUZIONE -->
+          </li>
+          <li>
+            date_req_ritiro:
+            <!-- TRADUZIONE -->
+            {{
+              store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
+                ? store.isHomePickup.date_req_ritiro
+                : "non trovato"
+            }}
+            <!-- TRADUZIONE -->
+          </li>
         </ul>
       </div>
     </div>

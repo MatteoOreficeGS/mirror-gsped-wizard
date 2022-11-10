@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { StoreService } from "src/app/store.service";
 
 @Component({
@@ -12,4 +12,7 @@ export class SummaryComponent {
     }
   }
   showInvoice: boolean = false;
+  @Input() senderHidden: boolean = false;
+  @Input() recipientHidden: boolean = false;
+  @Input() invoiceHidden: boolean = false;
 }

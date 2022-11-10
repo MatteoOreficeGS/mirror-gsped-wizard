@@ -43,6 +43,13 @@
 
     <p class="p-4">
       {{ choiceText }}
+      <a
+        *ngIf="choiceLink"
+        target="_blank"
+        [href]="choiceLink"
+        class="mx-4 underline text-red-dhl"
+        >Trova Service Point DHL
+      </a>
     </p>
     <div class="mx-auto text-center text-lg">
       <h1>Si prega di selezionare uno o più prodotti da spedire</h1>

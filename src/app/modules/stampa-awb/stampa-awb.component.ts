@@ -32,6 +32,9 @@ export class StampaAwbComponent {
       this.retryPayment.session = this.store.beforePaymentSession;
     } else {
       if (this.store.beforePaymentSession) {
+        this.store.beforePaymentSession.isHomePickup.enable &&
+          (this.store.isHomePickup =
+            this.store.beforePaymentSession.isHomePickup);
         this.store.invoice = this.store.beforePaymentSession.summary.invoice;
         this.store.sender = this.store.beforePaymentSession.summary.sender;
         this.store.recipient =
@@ -62,7 +65,7 @@ export class StampaAwbComponent {
           ),
         };
       }
-      if (!this.store.isHomePickup) {
+      if (!this.store.isHomePickup.enable) {
         this.handleLocationFinder(
           this.store.beforePaymentSession
             ? this.store.beforePaymentSession.summary.sender

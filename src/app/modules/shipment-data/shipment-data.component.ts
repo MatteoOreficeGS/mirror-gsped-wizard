@@ -88,7 +88,7 @@ export class ShipmentDataComponent implements OnInit {
       }
     } else {
       this.daticolli = {
-        colli: 1,
+        colli: this.store.documentsNumber,
         peso: 0.5,
         volume: 0,
       };
@@ -170,11 +170,13 @@ export class ShipmentDataComponent implements OnInit {
     this.store.isDocumentShipment = true;
     this.formShipmentData.removeControl(this.translations.lbl_goods_type);
     this.daticolli = {
-      colli: 1,
+      colli: this.store.documentsNumber,
       peso: 0.5,
       volume: 0,
     };
     this.store.isAskDocument = true;
+    this.documentsFilesUploaded = [];
+    this.store.documentsFilesUploadedData = [];
   }
 
   setGoodsShipment() {
@@ -304,6 +306,7 @@ export class ShipmentDataComponent implements OnInit {
 
   setDocumentNumber(add: number) {
     this.store.documentsNumber = this.store.documentsNumber + add;
+    this.daticolli.colli = this.store.documentsNumber
   }
 
   setShipmentPayload() {

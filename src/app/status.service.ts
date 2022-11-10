@@ -168,6 +168,12 @@ export class StatusService {
     this.handleShipment(outwardPayloadShipment).subscribe(
       (res) => {
         this.store.outwardShipment = res;
+        this.store.isHomePickup = {
+          ...this.store.isHomePickup,
+          num_spedizione: res.num_spedizione,
+          numero_ritiro: res.numero_ritiro,
+          date_req_ritiro: res.date_req_ritiro,
+        };
         if (!this.store.hasReturnShipment) {
           this.router.navigate(
             [this.store.modules[this.store.currentStep++].module],

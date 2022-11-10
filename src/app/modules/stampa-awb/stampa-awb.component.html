@@ -1,6 +1,11 @@
 <app-navbar></app-navbar>
 <app-wizard>
-  <app-summary *ngIf="currentModule.summary"></app-summary>
+  <app-summary
+    *ngIf="currentModule.summary"
+    [senderHidden]="currentModule.senderHidden"
+    [recipientHidden]="currentModule.recipientHidden"
+    [invoiceHidden]="currentModule.invoiceHidden"
+  ></app-summary>
   <div class="grid lg:grid-cols-2 gap-4" *ngIf="isPaymentCompleted">
     <div
       *ngIf="currentModule.directDownload?.enable"
@@ -29,7 +34,9 @@
       </p>
     </div>
     <div
-      *ngIf="currentModule.servicePoint?.enable && !this.store.isHomePickup"
+      *ngIf="
+        currentModule.servicePoint?.enable && !this.store.isHomePickup.enable
+      "
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
       <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
@@ -67,6 +74,40 @@
       >
         {{ translations.lbl_locator }}
       </a>
+    </div>
+    <div
+      *ngIf="
+        store.isHomePickup.enable || store.beforePaymentSession?.isHomePickup
+      "
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1>Ritiro a domicilio</h1>
+      <div>
+        <ul>
+          <li>
+            num_spedizione:
+            <!-- TRADUZIONE -->
+            {{ store.isHomePickup.num_spedizione || "non trovato" }}
+            <!-- TRADUZIONE -->
+          </li>
+          <li>
+            numero_ritiro:
+            <!-- TRADUZIONE -->
+            {{ store.isHomePickup.numero_ritiro || "non trovato" }}
+            <!-- TRADUZIONE -->
+          </li>
+          <li>
+            date_req_ritiro:
+            <!-- TRADUZIONE -->
+            {{
+              store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
+                ? store.isHomePickup.date_req_ritiro
+                : "non trovato"
+            }}
+            <!-- TRADUZIONE -->
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 

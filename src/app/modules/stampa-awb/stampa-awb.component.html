@@ -81,30 +81,28 @@
       "
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
-      <h1>Ritiro a domicilio</h1>
+      <h1>{{store.translations.lbl_home_pickup}}</h1>
       <div>
         <ul>
           <li>
-            num_spedizione:
-            <!-- TRADUZIONE -->
-            {{ store.isHomePickup.num_spedizione || "non trovato" }}
-            <!-- TRADUZIONE -->
+            {{ store.translations.num_spedizione }}:
+            {{
+              store.isHomePickup.num_spedizione || store.translations.orm_error
+            }}
           </li>
           <li>
-            numero_ritiro:
-            <!-- TRADUZIONE -->
-            {{ store.isHomePickup.numero_ritiro || "non trovato" }}
-            <!-- TRADUZIONE -->
+            {{ store.translations.numero_ritiro }}:
+            {{
+              store.isHomePickup.numero_ritiro || store.translations.orm_error
+            }}
           </li>
           <li>
-            date_req_ritiro:
-            <!-- TRADUZIONE -->
+            {{ store.translations.date_req_ritiro }}:
             {{
               store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
                 ? store.isHomePickup.date_req_ritiro
-                : "non trovato"
+                : store.translations.orm_error
             }}
-            <!-- TRADUZIONE -->
           </li>
         </ul>
       </div>

@@ -46,7 +46,7 @@ export class StatusService {
     const headers = { "x-api-key": this.store.token };
     const body = {
       ...this.store.sender,
-      pickup_date: date.getHours() + ":" + (date.getMinutes() + 1),
+      pickup_date: "15:00",
       corriere: corriere,
       client_id: this.store.configuration.client_id,
     };

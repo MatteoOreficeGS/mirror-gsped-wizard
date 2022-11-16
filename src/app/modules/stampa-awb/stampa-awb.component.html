@@ -100,7 +100,7 @@
             {{ store.translations.date_req_ritiro }}:
             {{
               store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
-                ? store.isHomePickup.date_req_ritiro
+                ? (store.isHomePickup.date_req_ritiro | date : 'dd/MM/yyyy')
                 : store.translations.orm_error
             }}
           </li>

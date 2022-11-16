@@ -616,6 +616,7 @@ export class ShipmentDataComponent implements OnInit {
                 this.errors = {
                   error: "errore temporaneo, riprova più tardi",
                 };
+                this.isLoading = false;
               }
             );
           }
@@ -626,6 +627,7 @@ export class ShipmentDataComponent implements OnInit {
           this.errors = {
             error: "errore temporaneo, riprova più tardi",
           };
+          this.isLoading = false;
         }
       );
 

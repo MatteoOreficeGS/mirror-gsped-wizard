@@ -134,41 +134,12 @@ export class VodafoneComponent {
           }
           this.loadingPickup = false;
         },
-        (error: any) => {}
+        (error: any) => {
+          this.setPickupNextDay(now, festivities, courier);
+        }
       );
     } else {
-      let nextWorkingDay = now;
-
-      let isBusinessDay;
-      do {
-        isBusinessDay = true;
-        nextWorkingDay = new Date(
-          nextWorkingDay.setDate(nextWorkingDay.getDate() + 1)
-        );
-        if (nextWorkingDay.getDay() >= 5 || nextWorkingDay.getDay() === 0) {
-          isBusinessDay = false;
-        }
-
-        if (isBusinessDay) {
-          const nextDay = [nextWorkingDay.getMonth(), nextWorkingDay.getDate()];
-          if (
-            festivities.filter(
-              (day: any) => day[0] === nextDay[0] && day[1] === nextDay[1]
-            ).length > 0
-          ) {
-            isBusinessDay = false;
-          }
-        }
-      } while (!isBusinessDay);
-      this.pickupAvailability[courier] =
-        this.translations.lbl_pickup_next_working_day;
-      this.pickupMode = {
-        date_req_ritiro:
-          nextWorkingDay.toISOString().split("T")[0] + " " + "09:00:00",
-        opening_time: "09:00:00",
-        closing_time: "18:00:00",
-      };
-      this.loadingPickup = false;
+      this.setPickupNextDay(now, festivities, courier);
     }
   }
 
@@ -188,6 +159,40 @@ export class VodafoneComponent {
       month = 3 + f((L + 40) / 44),
       day = L + 28 - 31 * f(month / 4);
     return [month, day];
+  }
+
+  setPickupNextDay(now: any, festivities: any, courier: any) {
+    let nextWorkingDay = now;
+    let isBusinessDay;
+    do {
+      isBusinessDay = true;
+      nextWorkingDay = new Date(
+        nextWorkingDay.setDate(nextWorkingDay.getDate() + 1)
+      );
+      if (nextWorkingDay.getDay() >= 5 || nextWorkingDay.getDay() === 0) {
+        isBusinessDay = false;
+      }
+
+      if (isBusinessDay) {
+        const nextDay = [nextWorkingDay.getMonth(), nextWorkingDay.getDate()];
+        if (
+          festivities.filter(
+            (day: any) => day[0] === nextDay[0] && day[1] === nextDay[1]
+          ).length > 0
+        ) {
+          isBusinessDay = false;
+        }
+      }
+    } while (!isBusinessDay);
+    this.pickupAvailability[courier] =
+      this.translations.lbl_pickup_next_working_day;
+    this.pickupMode = {
+      date_req_ritiro:
+        nextWorkingDay.toISOString().split("T")[0] + " " + "09:00:00",
+      opening_time: "09:00:00",
+      closing_time: "18:00:00",
+    };
+    this.loadingPickup = false;
   }
 
   selectProduct(product: any, index: number) {

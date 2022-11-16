@@ -94,9 +94,9 @@
       </button>
 
       <button
-        [disabled]="loadingShipment"
+        [disabled]="loadingShipment || loadingPickup"
         [ngClass]="
-          selectProductNumber <= 0 || loadingShipment
+          selectProductNumber <= 0 || loadingShipment || loadingPickup
             ? 'bg-yellow-200 text-slate-200'
             : 'bg-yellow-400 text-white '
         "

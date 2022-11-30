@@ -14,14 +14,14 @@
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_private"].split(" ", 1) }}
+            {{ store.translations["lbl_invoice_private"].split(" ", 1) }}
           </div>
           <div
             *ngIf="currentModule.company.enable"
             (click)="handleSetInvoiceModules('piva')"
             [ngClass]="selected === 'piva' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_company"].split(" ", 1) }}
+            {{ store.translations["lbl_invoice_company"].split(" ", 1) }}
           </div>
 
           <div
@@ -29,7 +29,7 @@
             (click)="handleSetInvoiceModules('estero')"
             [ngClass]="selected === 'estero' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_foreign"].split(" ", 1) }}
+            {{ store.translations["lbl_invoice_foreign"].split(" ", 1) }}
           </div>
         </nav>
       </div>
@@ -42,7 +42,7 @@
             (click)="handleSetInvoiceModules('privato')"
             [ngClass]="selected === 'privato' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_private"] }}
+            {{ store.translations["lbl_invoice_private"] }}
           </div>
 
           <div
@@ -50,7 +50,7 @@
             (click)="handleSetInvoiceModules('piva')"
             [ngClass]="selected === 'piva' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_company"] }}
+            {{ store.translations["lbl_invoice_company"] }}
           </div>
 
           <div
@@ -58,15 +58,15 @@
             (click)="handleSetInvoiceModules('estero')"
             [ngClass]="selected === 'estero' ? currentType : otherType"
           >
-            {{ translations["lbl_invoice_foreign"] }}
+            {{ store.translations["lbl_invoice_foreign"] }}
           </div>
         </nav>
       </div>
     </div>
 
     <div class="space-y-4 mt-4">
-      <h1>{{ translations["lbl_invoice_title"] }}</h1>
-      <p>{{ translations["lbl_invoice_text"] }}</p>
+      <h1>{{ store.translations["lbl_invoice_title"] }}</h1>
+      <p>{{ store.translations["lbl_invoice_text"] }}</p>
       <div class="md:grid md:grid-cols-4 md:gap-x-4">
         <div
           *ngFor="let module of invoiceModules"
@@ -110,7 +110,7 @@
             [formControlName]="module.value"
           >
             <option value="none" selected>
-              {{ translations.lbl_choose_country }}
+              {{ store.translations.lbl_choose_country }}
             </option>
             <ng-container *ngFor="let country of store.countries | keyvalue">
               <option [value]="country.key">{{ country.value }}</option>
@@ -126,7 +126,7 @@
         (click)="service.handlePreviousStep()"
         class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
-        {{ translations["lbl_btn_back"] }}
+        {{ store.translations["lbl_btn_back"] }}
       </button>
       <button
         [ngClass]="
@@ -136,7 +136,7 @@
         "
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
-        {{ translations["lbl_btn_forward"] }}
+        {{ store.translations["lbl_btn_forward"] }}
       </button>
     </div>
   </form>

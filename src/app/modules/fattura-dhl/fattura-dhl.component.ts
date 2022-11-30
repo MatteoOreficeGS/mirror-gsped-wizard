@@ -299,7 +299,7 @@ export class FatturaDHLComponent implements OnInit {
           : this.store.sender.sender_email;
       }
       this.store.invoiceType = this.selected;
-      delete this.store.invoice.type;
+      // delete this.store.invoice.type;
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
         {

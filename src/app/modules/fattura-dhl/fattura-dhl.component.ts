@@ -60,7 +60,7 @@ export class FatturaDHLComponent implements OnInit {
     switch (type) {
       case "privato":
         this.formInvoice = this.fb.group({
-          lbl_italian_tax_code: [
+          codice_fiscale: [
             this.store.invoice.lbl_italian_tax_code,
             [Validators.required, ValidateCF],
           ],
@@ -72,19 +72,19 @@ export class FatturaDHLComponent implements OnInit {
           nome: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_name
             : this.store.sender.sender_name,
-          lbl_address: this.store.isSenderPrefilled
+          indirizzo: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_addr
             : this.store.sender.sender_addr,
-          lbl_zipcode: this.store.isSenderPrefilled
+          cap: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_cap
             : this.store.sender.sender_cap,
-          lbl_city: this.store.isSenderPrefilled
+          citta: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_city
             : this.store.sender.sender_city,
-          lbl_prov: this.store.isSenderPrefilled
+          provincia: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_prov
             : this.store.sender.sender_prov,
-          lbl_country: this.store.isSenderPrefilled
+          nazione: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_country_code
             : this.store.sender.sender_country_code,
           type: type,
@@ -92,7 +92,7 @@ export class FatturaDHLComponent implements OnInit {
 
         this.invoiceModules = [
           {
-            value: "lbl_italian_tax_code",
+            value: "codice_fiscale",
             label: this.store.translations.lbl_italian_tax_code,
             type: "text",
             required: true,
@@ -108,7 +108,7 @@ export class FatturaDHLComponent implements OnInit {
         break;
       case "piva":
         this.formInvoice = this.fb.group({
-          lbl_vat_number: [
+          codice_fiscale: [
             this.store.invoice.codice_fiscale,
             [Validators.required, ValidatePIva],
           ],
@@ -120,19 +120,19 @@ export class FatturaDHLComponent implements OnInit {
           nome: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_name
             : this.store.sender.sender_name,
-          lbl_address: this.store.isSenderPrefilled
+          indirizzo: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_addr
             : this.store.sender.sender_addr,
-          lbl_zipcode: this.store.isSenderPrefilled
+          cap: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_cap
             : this.store.sender.sender_cap,
-          lbl_city: this.store.isSenderPrefilled
+          citta: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_city
             : this.store.sender.sender_city,
-          lbl_prov: this.store.isSenderPrefilled
+          provincia: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_prov
             : this.store.sender.sender_prov,
-          lbl_country: this.store.isSenderPrefilled
+          nazione: this.store.isSenderPrefilled
             ? this.store.recipient.rcpt_country_code
             : this.store.sender.sender_country_code,
           type: type,
@@ -140,7 +140,7 @@ export class FatturaDHLComponent implements OnInit {
 
         this.invoiceModules = [
           {
-            value: "lbl_vat_number",
+            value: "codice_fiscale",
             label: this.store.translations.lbl_vat_number,
             type: "text",
             required: true,
@@ -169,14 +169,14 @@ export class FatturaDHLComponent implements OnInit {
               : this.store.senderExtras.sender_surname,
             Validators.required,
           ],
-          lbl_company: "",
-          lbl_address: ["", Validators.required],
-          lbl_country: ["none", [Validators.required, ValidateEsteroCountry]],
-          lbl_zipcode: ["", Validators.required],
-          lbl_city: ["", Validators.required],
-          lbl_prov: ["", Validators.required],
+          societa: "",
+          indirizzo: ["", Validators.required],
+          nazione: ["none", [Validators.required, ValidateEsteroCountry]],
+          cap: ["", Validators.required],
+          citta: ["", Validators.required],
+          provincia: ["", Validators.required],
           email: ["", [Validators.required, ValidateEmail]],
-          lbl_phone: ["", [Validators.required, ValidatePhone]],
+          telefono: ["", [Validators.required, ValidatePhone]],
         });
         this.invoiceModules = [
           {
@@ -194,42 +194,42 @@ export class FatturaDHLComponent implements OnInit {
             columnspan: 2,
           },
           {
-            value: "lbl_company",
+            value: "societa",
             label: this.store.translations.lbl_company,
             type: "text",
             required: false,
             columnspan: 4,
           },
           {
-            value: "lbl_address",
+            value: "indirizzo",
             label: this.store.translations.lbl_address,
             type: "text",
             required: true,
             columnspan: 4,
           },
           {
-            value: "lbl_zipcode",
+            value: "cap",
             label: this.store.translations.lbl_zipcode,
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
-            value: "lbl_city",
+            value: "citta",
             label: this.store.translations.lbl_city,
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
-            value: "lbl_prov",
+            value: "provincia",
             label: this.store.translations.lbl_prov,
             type: "text",
             required: true,
             columnspan: 1,
           },
           {
-            value: "lbl_country",
+            value: "nazione",
             label: this.store.translations.lbl_country,
             type: "text",
             required: true,
@@ -243,7 +243,7 @@ export class FatturaDHLComponent implements OnInit {
             columnspan: 2,
           },
           {
-            value: "lbl_phone",
+            value: "telefono",
             label: this.store.translations.lbl_phone,
             type: "text",
             required: true,

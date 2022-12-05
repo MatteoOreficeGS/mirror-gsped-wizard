@@ -79,14 +79,14 @@
               : 'col-span-2'
           "
         >
-          <ng-container *ngIf="module.value !== 'lbl_country'">
+          <ng-container *ngIf="module.value !== 'nazione'">
             <input
               [formControlName]="module.value"
               autocomplete="off"
               [type]="module.type"
               [required]="module.required"
               [ngClass]="{
-                uppercase: module.value === 'lbl_italian_tax_code',
+                uppercase: module.value === 'codice_fiscale',
                 'border-red-500':
                   formInvoice.get(module.value)?.invalid &&
                   formInvoice.get(module.value)?.errors &&
@@ -105,7 +105,7 @@
             </label>
           </ng-container>
           <select
-            *ngIf="module.value === 'lbl_country'"
+            *ngIf="module.value === 'nazione'"
             class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             [formControlName]="module.value"
           >

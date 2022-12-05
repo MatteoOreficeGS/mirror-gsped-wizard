@@ -46,16 +46,16 @@
         <label
           for="outwardInsurance"
           class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >{{ termsConditions.textBefore }}
-          <a [href]="termsConditions.link" target="_blank" class="underline">{{
-            termsConditions.text
+          >{{ termsConditions?.textBefore }}
+          <a [href]="termsConditions?.link" target="_blank" class="underline">{{
+            termsConditions?.text
           }}</a>
-          {{ termsConditions.textAfter }}
-          {{ termsPrivacy.textBefore }}
-          <a [href]="termsPrivacy.link" target="_blank" class="underline">{{
-            termsPrivacy.text
+          {{ termsConditions?.textAfter }}
+          {{ termsPrivacy?.textBefore }}
+          <a [href]="termsPrivacy?.link" target="_blank" class="underline">{{
+            termsPrivacy?.text
           }}</a>
-          {{ termsPrivacy.textAfter }}
+          {{ termsPrivacy?.textAfter }}
         </label>
       </div>
     </div>

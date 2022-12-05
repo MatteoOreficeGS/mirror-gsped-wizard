@@ -48,8 +48,8 @@ export class PaymentComponent implements OnInit {
         ? this.store.chosenCourier.return.data.totale
         : 0)
     ).toFixed(2);
-    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions);
-    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy);
+    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions || "{}" );
+    this.termsPrivacy = JSON.parse(this.translations.lbl_privacy || "{}");
     this.fields = [
       {
         value: "cc_cardholder_name",
@@ -117,7 +117,7 @@ export class PaymentComponent implements OnInit {
           origin: this.store.origin,
           outwardShipmentID: this.store.outwardShipment.id,
           returnShipmentID: this.store.returnShipment.id,
-          isHomePickup: {...this.store.isHomePickup},
+          isHomePickup: { ...this.store.isHomePickup },
           summary: {
             sender: this.store.sender,
             recipient: this.store.recipient,
@@ -148,13 +148,13 @@ export class PaymentComponent implements OnInit {
         });
       }
 
-      items = items.map(item => {
-        const itemAux:any = {...item};
+      items = items.map((item) => {
+        const itemAux: any = { ...item };
         if (itemAux.codiceSconto.length < 3) {
-          delete itemAux.codiceSconto
+          delete itemAux.codiceSconto;
         }
         return itemAux;
-      })
+      });
 
       this.bodyPayment.monetaweb.items = items;
       this.bodyPayment.session.totalAmount = this.store.totalAmount;

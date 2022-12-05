@@ -60,7 +60,7 @@ export class StampaAwbComponent {
       if (this.currentModule.hasOwnProperty("instructions")) {
         this.instructions = {
           label: this.translations[this.currentModule.instructions.label],
-          text: this.translations[this.currentModule.instructions.text].split(
+          text: this.translations[this.currentModule.instructions.text]?.split(
             "\r\n"
           ),
         };

@@ -453,8 +453,6 @@ export class SelectCourierComponent {
       servizio: this.store.chosenCourier.outward.serviceCode,
     };
     if (this.store.invoice) {
-      this.store.invoice = this.toLowerKeys(this.store.invoice);
-
       const outwardInvoice = {
         nolo: this.store.chosenCourier["outward"].data.nolo,
         totale_fattura: this.store.chosenCourier["outward"].data.totale,
@@ -558,19 +556,6 @@ export class SelectCourierComponent {
   separateVAT(number: any) {
     const assicurazione = number / ((this.iva + 100) / 100);
     return parseFloat(assicurazione.toFixed(4));
-  }
-
-  toLowerKeys(obj: any) {
-    return Object.keys(obj).reduce((accumulator: any, key) => {
-      accumulator[
-        key
-          .toLowerCase()
-          .replace("lbl_", "")
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-      ] = obj[key];
-      return accumulator;
-    }, {});
   }
 
   incrementStep() {

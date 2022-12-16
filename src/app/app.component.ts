@@ -35,7 +35,7 @@ export class AppComponent {
             store.decodedToken = jwt_decode(res.token);
             forkJoin(
               this.getConfiguration(),
-              this.status.getTranslations(params.lang ? params.lang : "it_IT"),
+              this.status.getTranslations(params.lang || "it_IT"),
               this.status.getCountries()
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
@@ -84,13 +84,13 @@ export class AppComponent {
               this.store.translations = res[1];
               this.store.countries = res[2];
               this.router.navigate(["/" + modules[0].module], {
-                queryParams: { lang: params.lang ? params.lang : "it_IT" },
+                queryParams: { lang: params.lang || "it_IT" },
               });
             });
           },
           (error: any) => {
             this.router.navigate(["/error-page"], {
-              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+              queryParams: { lang: params.lang || "it_IT" },
             });
           }
         );
@@ -113,6 +113,13 @@ export class AppComponent {
             this.store.outwardShipment.id =
               resDisplay.session.outwardShipmentID;
             this.store.returnShipment.id = resDisplay.session.returnShipmentID;
+            this.router.navigate(
+              ['.'],
+              {
+                queryParams: { lang: this.store.beforePaymentSession.language },
+                queryParamsHandling: "merge",
+              }
+            );
             this.getToken(resDisplay.session.origin).subscribe(
               (resToken: any) => {
                 store.origin = resDisplay.session.origin;
@@ -121,7 +128,7 @@ export class AppComponent {
                 forkJoin(
                   this.getConfiguration(),
                   this.status.getTranslations(
-                    params.lang ? params.lang : "it_IT"
+                    this.store.beforePaymentSession.language || (params.lang || "it_IT")
                   ),
                   this.status.getCountries()
                 ).subscribe((res: any) => {
@@ -158,7 +165,7 @@ export class AppComponent {
                     ["/" + modules[modules.length - 1].module],
                     {
                       queryParams: {
-                        lang: params.lang ? params.lang : "it_IT",
+                        lang: params.lang || "it_IT",
                         uuid: params.uuid,
                       },
                     }
@@ -167,7 +174,7 @@ export class AppComponent {
               },
               (error: any) => {
                 this.router.navigate(["/error-page"], {
-                  queryParams: { lang: params.lang ? params.lang : "it_IT" },
+                  queryParams: { lang: params.lang || "it_IT" },
                 });
               }
             );
@@ -187,15 +194,15 @@ export class AppComponent {
           forkJoin(
             this.getConfiguration(),
             this.status.getTranslations(
-              params.lang ? params.lang : "it_IT",
+              params.lang || "it_IT",
               this.store.action
             ),
-            this.status.getTranslations(params.lang ? params.lang : "it_IT")
+            this.status.getTranslations(params.lang || "it_IT")
           ).subscribe((res: any) => {
             this.store.configuration = res[0].configuration;
             this.store.translations = { ...res[1], ...res[2] };
             this.router.navigate(["/document-recovery"], {
-              queryParams: { lang: params.lang ? params.lang : "it_IT" },
+              queryParams: { lang: params.lang || "it_IT" },
             });
           });
         });

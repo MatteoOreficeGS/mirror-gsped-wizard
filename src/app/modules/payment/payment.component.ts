@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
@@ -20,9 +20,12 @@ export class PaymentComponent implements OnInit {
     public service: StatusService,
     public store: StoreService,
     public router: Router,
-    public fb: FormBuilder
+    public fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
-    if (this.service.checkConfiguration()) { return; };
+    if (this.service.checkConfiguration()) {
+      return;
+    }
     this.formPayment = fb.group({
       cc_cardholder_name: this.store.isSenderPrefilled
         ? this.store.recipient.rcpt_name
@@ -48,7 +51,9 @@ export class PaymentComponent implements OnInit {
         ? this.store.chosenCourier.return.data.totale
         : 0)
     ).toFixed(2);
-    this.termsConditions = JSON.parse(this.translations.lbl_termsconditions || "{}" );
+    this.termsConditions = JSON.parse(
+      this.translations.lbl_termsconditions || "{}"
+    );
     this.termsPrivacy = JSON.parse(this.translations.lbl_privacy || "{}");
     this.fields = [
       {
@@ -78,6 +83,9 @@ export class PaymentComponent implements OnInit {
       (el: { moduleName: string }) => el.moduleName === "payment"
     )[0].moduleConfig;
     this.providers = this.currentModule.provider;
+    this.route.queryParams.subscribe((params) => {
+      this.lang = params["lang"];
+    });
   }
 
   formPayment!: FormGroup;
@@ -91,6 +99,7 @@ export class PaymentComponent implements OnInit {
   fields: any = {};
   sender: any = {};
   recipient: any = {};
+  lang?: string;
   termsConditions: any;
   termsPrivacy: any;
   showModal = false;
@@ -106,7 +115,7 @@ export class PaymentComponent implements OnInit {
           utenti_id: decodedToken.user_id,
           displayUrl: environment.CURRENT_URL + "/",
           recoveryUrl: environment.CURRENT_URL + "/",
-          language: "it",
+          language: this.lang?.slice(0, 2),
           description: environment.PAYMENT_DESCRIPTION,
           cardHolderName: this.formPayment.value.cc_cardholder_name,
           cardHolderEmail: this.formPayment.value.cc_cardholder_email,
@@ -115,6 +124,7 @@ export class PaymentComponent implements OnInit {
         },
         session: {
           origin: this.store.origin,
+          language: this.lang,
           outwardShipmentID: this.store.outwardShipment.id,
           returnShipmentID: this.store.returnShipment.id,
           isHomePickup: { ...this.store.isHomePickup },

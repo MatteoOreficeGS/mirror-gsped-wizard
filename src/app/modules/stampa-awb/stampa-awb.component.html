@@ -81,7 +81,7 @@
       "
       class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
     >
-      <h1>{{store.translations.lbl_home_pickup}}</h1>
+      <h1>{{ store.translations.lbl_home_pickup }}</h1>
       <div>
         <ul>
           <li>
@@ -100,7 +100,7 @@
             {{ store.translations.date_req_ritiro }}:
             {{
               store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
-                ? (store.isHomePickup.date_req_ritiro | date : 'dd/MM/yyyy')
+                ? (store.isHomePickup.date_req_ritiro | date : "dd/MM/yyyy")
                 : store.translations.orm_error
             }}
           </li>
@@ -111,11 +111,7 @@
 
   <div class="grid justify-items-center" *ngIf="!isPaymentCompleted">
     <p class="font-semibold">
-      {{
-        translations.lbl_aborted_payment
-          ? translations.lbl_aborted_payment
-          : displayPayment.response.message
-      }}
+      {{ translations.lbl_aborted_payment || displayPayment.response.message }}
     </p>
     <button
       (click)="redirectPayment()"

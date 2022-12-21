@@ -25,8 +25,14 @@ const routes: Routes = [
     component: StampaAwbComponent,
     children: [{ path: "monetaweb", component: StampaAwbComponent }],
   },
+  { path: "display", component: StartComponent },
+  { path: "recovery", component: StartComponent },
   { path: "document-recovery", component: DocumentRecoveryComponent },
-  { path: "", component: StartComponent, children: [{ path: "monetaweb", component: StartComponent }], },
+  {
+    path: "",
+    component: StartComponent,
+    children: [{ path: "monetaweb", component: StartComponent }],
+  },
   { path: "**", component: ErrorPageComponent },
 ];
 

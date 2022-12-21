@@ -113,8 +113,8 @@ export class PaymentComponent implements OnInit {
         monetaweb: {
           origine: "resoFacile",
           utenti_id: decodedToken.user_id,
-          displayUrl: environment.CURRENT_URL + "/",
-          recoveryUrl: environment.CURRENT_URL + "/",
+          displayUrl: environment.CURRENT_URL + "/display",
+          recoveryUrl: environment.CURRENT_URL + "/recovery",
           language: this.lang?.slice(0, 2),
           description: environment.PAYMENT_DESCRIPTION,
           cardHolderName: this.formPayment.value.cc_cardholder_name,

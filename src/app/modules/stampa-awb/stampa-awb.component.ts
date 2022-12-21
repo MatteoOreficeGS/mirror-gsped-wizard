@@ -4,6 +4,7 @@ import { environment } from "src/app/enviroment";
 import { StoreService } from "src/app/store.service";
 import { Observable } from "rxjs";
 import { StatusService } from "src/app/status.service";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-stampa-awb",
@@ -13,16 +14,14 @@ export class StampaAwbComponent {
   constructor(
     private http: HttpClient,
     public store: StoreService,
-    private service: StatusService
+    private service: StatusService,
+    private route: ActivatedRoute
   ) {
     if (this.service.checkConfiguration()) {
       return;
     }
     this.translations = this.store.translations;
-    this.displayPayment = this.store.displayPayment
-      ? this.store.displayPayment
-      : {};
-
+    this.displayPayment = this.store.displayPayment || {}
     if (
       this.displayPayment.status === "canceled" ||
       this.displayPayment.status === "failed"
@@ -98,7 +97,7 @@ export class StampaAwbComponent {
     return this.http.get(
       "https://api.dhl.com/location-finder/v1/find-by-address",
       {
-        headers: { "DHL-API-Key": environment.DHL_API_Key },
+        headers: { "DHL-API-Key": environment.DHL_API_KEY },
         params: params,
       }
     );

@@ -98,6 +98,7 @@ export class AppComponent {
         params.uuid &&
         params.instance &&
         router.url.includes("monetaweb") &&
+        router.url.includes("display") &&
         !params.action
       ) {
         this.http
@@ -113,13 +114,6 @@ export class AppComponent {
             this.store.outwardShipment.id =
               resDisplay.session.outwardShipmentID;
             this.store.returnShipment.id = resDisplay.session.returnShipmentID;
-            this.router.navigate(
-              ['.'],
-              {
-                queryParams: { lang: this.store.beforePaymentSession.language },
-                queryParamsHandling: "merge",
-              }
-            );
             this.getToken(resDisplay.session.origin).subscribe(
               (resToken: any) => {
                 store.origin = resDisplay.session.origin;
@@ -128,7 +122,9 @@ export class AppComponent {
                 forkJoin(
                   this.getConfiguration(),
                   this.status.getTranslations(
-                    this.store.beforePaymentSession.language || (params.lang || "it_IT")
+                    this.store.beforePaymentSession.language ||
+                      params.lang ||
+                      "it_IT"
                   ),
                   this.status.getCountries()
                 ).subscribe((res: any) => {
@@ -165,7 +161,8 @@ export class AppComponent {
                     ["/" + modules[modules.length - 1].module],
                     {
                       queryParams: {
-                        lang: params.lang || "it_IT",
+                        lang:
+                          this.store.beforePaymentSession.language || "it_IT",
                         uuid: params.uuid,
                       },
                     }
@@ -178,6 +175,161 @@ export class AppComponent {
                 });
               }
             );
+          });
+      } else if (
+        params.uuid &&
+        params.instance &&
+        router.url.includes("monetaweb") &&
+        router.url.includes("recovery") &&
+        !params.action
+      ) {
+        this.http
+          .get(
+            environment.API_URL +
+              params.instance +
+              "/resoFacile/payment/recovery/monetaweb?uuid=" +
+              params.uuid
+          )
+          .subscribe({
+            next: (resRecovery: any) => {
+              this.store.displayPayment = resRecovery.monetaweb;
+              this.store.beforePaymentSession = resRecovery.session;
+              this.store.outwardShipment.id =
+                resRecovery.session.outwardShipmentID;
+              this.store.returnShipment.id =
+                resRecovery.session.returnShipmentID;
+              this.getToken(resRecovery.session.origin).subscribe(
+                (resToken: any) => {
+                  store.origin = resRecovery.session.origin;
+                  store.token = resToken.token;
+                  store.decodedToken = jwt_decode(resToken.token);
+                  forkJoin(
+                    this.getConfiguration(),
+                    this.status.getTranslations(
+                      this.store.beforePaymentSession.language ||
+                        params.lang ||
+                        "it_IT"
+                    ),
+                    this.status.getCountries()
+                  ).subscribe((res: any) => {
+                    this.store.configuration = res[0].configuration;
+                    let modules = res[0].configuration.modules.map(
+                      (module: any) => {
+                        if (module.moduleConfig.hidden) {
+                          if (module.moduleName === "sender") {
+                            this.store.sender = module.moduleConfig.data;
+                          }
+                          if (module.moduleName === "recipient") {
+                            this.store.recipient = module.moduleConfig.data;
+                          }
+                          return null;
+                        } else {
+                          return {
+                            module: module.moduleName,
+                            label: module.moduleConfig.label,
+                          };
+                        }
+                      }
+                    );
+                    modules = modules.filter((module: any) => module);
+                    this.store.hasPayment =
+                      modules.filter(
+                        (element: any) => element.module === "payment"
+                      ).length > 0;
+                    this.store.modules = modules;
+                    this.store.translations = res[1];
+                    this.store.countries = res[2];
+                    this.store.currentStep = modules.length;
+                    this.store.isLastModule = true;
+                    this.router.navigate(
+                      ["/" + modules[modules.length - 1].module],
+                      {
+                        queryParams: {
+                          lang:
+                            this.store.beforePaymentSession.language || "it_IT",
+                          uuid: params.uuid,
+                        },
+                      }
+                    );
+                  });
+                },
+                (error: any) => {
+                  this.router.navigate(["/error-page"], {
+                    queryParams: { lang: params.lang || "it_IT" },
+                  });
+                }
+              );
+            },
+            error: (resRecovery) => {
+              this.store.displayPayment = resRecovery.error.monetaweb.length ? resRecovery.error.monetaweb : {}; 
+              this.store.displayPayment.status = "failed";
+              this.store.beforePaymentSession = resRecovery.error.session;
+              this.store.outwardShipment.id =
+                resRecovery.error.session.outwardShipmentID;
+              this.store.returnShipment.id =
+                resRecovery.error.session.returnShipmentID;
+              this.getToken(resRecovery.error.session.origin).subscribe(
+                (resToken: any) => {
+                  store.origin = resRecovery.error.session.origin;
+                  store.token = resToken.token;
+                  store.decodedToken = jwt_decode(resToken.token);
+                  forkJoin(
+                    this.getConfiguration(),
+                    this.status.getTranslations(
+                      this.store.beforePaymentSession.language ||
+                        params.lang ||
+                        "it_IT"
+                    ),
+                    this.status.getCountries()
+                  ).subscribe((res: any) => {
+                    this.store.configuration = res[0].configuration;
+                    let modules = res[0].configuration.modules.map(
+                      (module: any) => {
+                        if (module.moduleConfig.hidden) {
+                          if (module.moduleName === "sender") {
+                            this.store.sender = module.moduleConfig.data;
+                          }
+                          if (module.moduleName === "recipient") {
+                            this.store.recipient = module.moduleConfig.data;
+                          }
+                          return null;
+                        } else {
+                          return {
+                            module: module.moduleName,
+                            label: module.moduleConfig.label,
+                          };
+                        }
+                      }
+                    );
+                    modules = modules.filter((module: any) => module);
+                    this.store.hasPayment =
+                      modules.filter(
+                        (element: any) => element.module === "payment"
+                      ).length > 0;
+                    this.store.modules = modules;
+                    this.store.translations = res[1];
+                    this.store.countries = res[2];
+                    this.store.currentStep = modules.length;
+                    this.store.isLastModule = true;
+                    this.router.navigate(
+                      ["/" + modules[modules.length - 1].module],
+                      {
+                        queryParams: {
+                          lang:
+                            this.store.beforePaymentSession.language || "it_IT",
+                          uuid: params.uuid,
+                        },
+                      }
+                    );
+                  });
+                },
+                (error: any) => {
+                  this.router.navigate(["/error-page"], {
+                    queryParams: { lang: params.lang || "it_IT" },
+                  });
+                }
+              );
+            },
           });
       } else if (
         params.origin &&

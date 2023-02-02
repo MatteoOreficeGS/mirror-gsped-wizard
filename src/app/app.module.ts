@@ -27,6 +27,7 @@ import { SummaryComponent } from './components/summary/summary.component';
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 import { CourierCardComponent } from './components/courier-card/courier-card.component';
 import { DocumentRecoveryComponent } from './document-recovery/document-recovery.component';
+import { ResiCustomComponent } from './modules/resi-custom/resi-custom.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { DocumentRecoveryComponent } from './document-recovery/document-recovery
     SummaryComponent,
     SelectCourierComponent,
     CourierCardComponent,
-    DocumentRecoveryComponent
+    DocumentRecoveryComponent,
+    ResiCustomComponent
   ],
   imports: [
     BrowserAnimationsModule,

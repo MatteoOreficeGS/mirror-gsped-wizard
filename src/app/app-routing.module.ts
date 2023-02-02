@@ -11,12 +11,14 @@ import { FatturaDHLComponent } from "./modules/fattura-dhl/fattura-dhl.component
 import { VodafoneComponent } from "./modules/vodafone/vodafone.component";
 import { SelectCourierComponent } from "./modules/select-courier/select-courier.component";
 import { DocumentRecoveryComponent } from "./document-recovery/document-recovery.component";
+import { ResiCustomComponent } from "./modules/resi-custom/resi-custom.component";
 
 const routes: Routes = [
   { path: "sender", component: SenderComponent },
   { path: "recipient", component: RecipientComponent },
   { path: "fatturaDHL", component: FatturaDHLComponent },
   { path: "vodafone", component: VodafoneComponent },
+  { path: "resi-custom", component: ResiCustomComponent},
   { path: "shipment-data", component: ShipmentDataComponent },
   { path: "select-courier", component: SelectCourierComponent },
   { path: "payment", component: PaymentComponent },

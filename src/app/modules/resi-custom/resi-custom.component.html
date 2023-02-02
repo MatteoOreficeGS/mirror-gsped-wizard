@@ -1,0 +1,116 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar></app-navbar>
+<app-wizard>
+  <form [formGroup]="formResiCustom" (submit)="nextStep()">
+    <div class="sm:hidden">
+      <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+      <select
+        [disabled]="loadingPickup"
+        id="tabs"
+        name="tabs"
+        class="block w-full focus:ring-red-dhl focus:border-red-dhl border-gray-300 rounded-md"
+      >
+        <option
+          *ngFor="let choice of choices; let i = index"
+          [value]="choice.choice"
+          (click)="handleSetProduct(choice.choice, i)"
+        >
+          {{ choice.choice }}
+        </option>
+      </select>
+    </div>
+    <div class="hidden sm:block">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <!-- Current: "border-red-dhl text-red-dhl-dark", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
+          <ng-container *ngFor="let choice of choices; let i = index">
+            <div
+              (click)="handleSetProduct(choice.choice, i)"
+              [ngClass]="
+                selected === choice.choice ? currentProduct : otherProducts
+              "
+            >
+              {{ choice.choice }}
+            </div>
+          </ng-container>
+        </nav>
+      </div>
+    </div>
+
+    <p class="p-4">
+      {{ choiceText }}
+      <a
+        *ngIf="choiceLink"
+        target="_blank"
+        [href]="choiceLink"
+        class="mx-4 underline text-red-dhl"
+        >Trova Service Point DHL
+      </a>
+    </p>
+    <div class="mx-auto text-center text-lg">
+      <h1>Si prega di selezionare la causale del reso</h1>
+      <h1 class="text-red-500">
+        Si raccomanda di rendere tutti gli articoli utilizzando un unico imballo
+      </h1>
+    </div>
+
+    <div class="flex flex-wrap">
+      <div
+        *ngFor="let product of products; let i = index"
+        class="p-4 rounded-md space-4 mx-auto justify-center items-center h-72 w-72 mt-8 cursor-pointer"
+        [ngClass]="
+          product.selected
+            ? 'border border-2 border-[#C7312A] shadow-lg shadow-red-500/50'
+            : 'border border-1 border-[#222222]'
+        "
+      >
+        <div *ngIf="product.selectable" (click)="selectProduct(product, i)">
+          <div class="flex">
+            <label
+              for="productName"
+              class="text-gray-700"
+              [ngClass]="product.selected ? 'font-semibold' : 'font-medium'"
+            >
+              {{ product.name }}
+            </label>
+          </div>
+          <img [src]="product.image" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_back"] }}
+      </button>
+
+      <button
+        [disabled]="loadingShipment || loadingPickup"
+        [ngClass]="
+          selectProductNumber <= 0 || loadingShipment || loadingPickup
+            ? 'bg-yellow-200 text-slate-200'
+            : 'bg-yellow-400 text-white '
+        "
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer flex"
+      >
+        {{ translations["lbl_btn_forward"] }}
+        <app-loader *ngIf="loadingShipment"></app-loader>
+      </button>
+    </div>
+  </form>
+  <div
+    *ngIf="loadingPickup"
+    class="grid place-content-center rounded-xl fixed bottom-0 right-0 h-14 w-14 mb-8 mr-8 bg-gray-300/40"
+  >
+    <app-loader></app-loader>
+  </div>
+</app-wizard>

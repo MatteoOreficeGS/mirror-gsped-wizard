@@ -21,11 +21,11 @@ export function ValidatePhone(
     return null;
   }
   const validRegex =
-    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{1,6}$/i;
+    /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{1,14}$/i;
   if (control.value.length < 7) {
     return { minlength: true };
   }
-  if (control.value.length > 15) {
+  if (control.value.length > 20) {
     return { lbl_too_long: true };
   }
   if (!control.value.match(validRegex)) {

@@ -1,0 +1,144 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar></app-navbar>
+<app-wizard>
+  <form [formGroup]="formSender" (submit)="nextStep()">
+    <div class="lg:grid lg:grid-cols-4 gap-x-4">
+      <ng-container *ngFor="let field of fields">
+        <div
+          class="relative w-full mb-6 group mx-auto"
+          *ngIf="
+            field.value !== 'sender_addr' &&
+            field.value !== 'sender_country_code'
+          "
+          [ngClass]="
+            field.columnspan === 2
+              ? 'col-span-2'
+              : field.columnspan === 4
+              ? 'col-span-4'
+              : ''
+          "
+        >
+          <input
+            [readonly]="readonly"
+            [readonly]="field.readonly"
+            [maxlength]="field.maxLenght"
+            [ngClass]="readonly ? 'cursor-not-allowed' : ''"
+            [ngClass]="
+              formSender.get(field.value)?.invalid &&
+              formSender.get(field.value)?.errors &&
+              (formSender.get(field.value)?.dirty ||
+                formSender.get(field.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+            autocomplete="off"
+            [formControlName]="field.value"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
+          />
+          <label
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ field.label }}
+            <span *ngIf="field.required" class="text-red-400"> * </span>
+          </label>
+        </div>
+
+        <div
+          *ngIf="field.value === 'sender_addr'"
+          class="relative w-full mb-6 group mx-auto"
+          [ngClass]="
+            field.columnspan === 2
+              ? 'col-span-2'
+              : field.columnspan === 4
+              ? 'col-span-4'
+              : ''
+          "
+        >
+          <input
+            [readonly]="readonly"
+            [ngClass]="readonly ? 'cursor-not-allowed' : ''"
+            [ngClass]="
+              formSender.get(field.value)?.invalid &&
+              formSender.get(field.value)?.errors &&
+              (formSender.get(field.value)?.dirty ||
+                formSender.get(field.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+            autocomplete="off"
+            [formControlName]="field.value"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            (input)="handleGooglePlace(address)"
+            (blur)="hidePredictions()"
+            #address
+            name="address"
+            placeholder=" "
+          />
+          <label
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ field.label }}
+            <span *ngIf="field.required" class="text-red-400"> * </span>
+          </label>
+          <div
+            id="predictions"
+            *ngIf="showPredictions"
+            class="bg-red-200 z-50 absolute w-full"
+          >
+            <ng-container *ngFor="let prediction of predictionsAddress">
+              <div
+                (click)="setAddress(prediction)"
+                class="hover:bg-red-300 cursor-pointer"
+              >
+                {{ prediction.toList }}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <select
+          *ngIf="field.value === 'sender_country_code'"
+          class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          [formControlName]="field.value"
+          [attr.disabled]="
+            field.readonly || forcedCountry !== 'none' ? 'disabled' : null
+          "
+        >
+          <option value="none" selected>
+            {{ translations.lbl_choose_country }}
+          </option>
+          <ng-container *ngFor="let country of store.countries | keyvalue">
+            <option [value]="country.key">{{ country.value }}</option>
+          </ng-container>
+        </select>
+      </ng-container>
+    </div>
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_back"] }}
+      </button>
+      <button
+        [ngClass]="
+          formSender.valid
+            ? 'bg-yellow-400 text-white '
+            : 'bg-yellow-200 text-slate-200'
+        "
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_forward"] }}
+      </button>
+    </div>
+  </form>
+</app-wizard>

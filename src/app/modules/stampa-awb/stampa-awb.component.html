@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+<app-wizard>
+  <app-summary
+    *ngIf="currentModule.summary"
+    [senderHidden]="currentModule.senderHidden"
+    [recipientHidden]="currentModule.recipientHidden"
+    [invoiceHidden]="currentModule.invoiceHidden"
+  ></app-summary>
+  <div class="grid lg:grid-cols-2 gap-4" *ngIf="isPaymentCompleted">
+    <div
+      *ngIf="currentModule.directDownload?.enable"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1>{{ directDownload.label }}</h1>
+      <p *ngFor="let text of directDownload.text; let i = index">
+        <a
+          *ngIf="i === 4; else elseBlock"
+          [href]="labelLink"
+          target="_blank"
+          class="underline text-red-dhl"
+        >
+          {{ text }}
+        </a>
+        <ng-template #elseBlock>{{ text }}</ng-template>
+      </p>
+    </div>
+    <div
+      *ngIf="instructions"
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1 class="font-semibold">{{ instructions.label }}</h1>
+      <p *ngFor="let text of instructions.text; let i = index">
+        {{ text }}
+      </p>
+    </div>
+    <div
+      *ngIf="
+        currentModule.servicePoint?.enable && !this.store.isHomePickup.enable
+      "
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1>{{ translations[currentModule.servicePoint.label] }}</h1>
+      <p>
+        {{ translations[currentModule.servicePoint.text] }}
+      </p>
+      <a
+        target="_blank"
+        class="underline text-red-dhl"
+        [href]="
+          'https://www.google.com/maps/search/?api=1&query=' +
+          locationFinder?.place.geo.latitude +
+          ',' +
+          locationFinder?.place.geo.longitude
+        "
+      >
+        {{ locationFinder?.location.keyword }}
+        {{ locationFinder?.name }}
+        {{ locationFinder?.place.address.streetAddress }}
+        {{ locationFinder?.place.address.postalCode }}
+        {{ locationFinder?.place.address.addressLocality }}
+      </a>
+      <div class="grid grid-cols-2 mt-2">
+        <ng-container *ngFor="let opening of locationFinder?.openingHours">
+          <span>
+            {{ opening.dayOfWeek.split("/")[3] }}
+          </span>
+          <span>{{ opening.opens }} - {{ opening.closes }}</span>
+        </ng-container>
+      </div>
+      <a
+        target="_blank"
+        class="underline text-red-dhl"
+        href="https://locator.dhl.com"
+      >
+        {{ translations.lbl_locator }}
+      </a>
+    </div>
+    <div
+      *ngIf="
+        store.isHomePickup.enable || store.beforePaymentSession?.isHomePickup
+      "
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <h1>{{ store.translations.lbl_home_pickup }}</h1>
+      <div>
+        <ul>
+          <li>
+            {{ store.translations.num_spedizione }}:
+            {{
+              store.isHomePickup.num_spedizione || store.translations.orm_error
+            }}
+          </li>
+          <li>
+            {{ store.translations.numero_ritiro }}:
+            {{
+              store.isHomePickup.numero_ritiro || store.translations.orm_error
+            }}
+          </li>
+          <li>
+            {{ store.translations.date_req_ritiro }}:
+            {{
+              store.isHomePickup.date_req_ritiro !== "0000-00-00 00:00:00"
+                ? (store.isHomePickup.date_req_ritiro | date : "dd/MM/yyyy")
+                : store.translations.orm_error
+            }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid justify-items-center" *ngIf="!isPaymentCompleted">
+    <p class="font-semibold">
+      {{ translations.lbl_aborted_payment || displayPayment.response.message }}
+    </p>
+    <button
+      (click)="redirectPayment()"
+      [disabled]="isHandledPayment"
+      [ngClass]="
+        isHandledPayment
+          ? 'bg-yellow-400 text-slate-200'
+          : 'bg-yellow-400 text-white '
+      "
+      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+    >
+      {{ translations.lbl_retry_payment }}
+      <app-loader *ngIf="isHandledPayment"></app-loader>
+    </button>
+  </div>
+</app-wizard>

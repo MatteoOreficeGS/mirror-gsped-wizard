@@ -1,0 +1,53 @@
+<div class="lg:mx-10 mb-8">
+  <div class="h-full overflow-y-auto">
+    <img
+      *ngIf="bannerExtra"
+      class="items-center justift-center text-center w-full mt-4"
+      alt="banner"
+      [src]="bannerExtra"
+    />
+    <ng-container *ngIf="showSteps">
+      <div
+        class="lg:my-12 relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-6 before:bg-slate-100 before:dark:bg-slate-400 flex flex-row lg:flex-row justify-center px-2 sm:px-20"
+      >
+        <div
+          *ngFor="let module of modules; let i = index"
+          class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
+        >
+          <button
+            [ngClass]="
+              currentStep === i + 1
+                ? 'bg-yellow-500 cursor-default'
+                : currentStep > i
+                ? 'bg-yellow-200 cursor-default'
+                : 'bg-slate-100 dark:bg-slate-500 cursor-default'
+            "
+            class="min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
+          >
+            {{ i + 1 }}
+          </button>
+          <div
+            [ngClass]="currentStep === i + 1 ? 'font-bold' : ''"
+            class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
+          >
+            {{
+              translations[module.label] ? translations[module.label] : "XXXX"
+            }}
+          </div>
+        </div>
+      </div>
+      <div
+        class="lg:hidden mx-auto font-semibold mt-4 text-lg text-center text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
+      >
+        {{ translations[modules[currentStep - 1].label] }}
+      </div>
+    </ng-container>
+
+    <div
+      class="min-h-[64%] p-2 pt-6 mt-4 md:p-8 mx-auto border border-1 rounded-lg"
+    >
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

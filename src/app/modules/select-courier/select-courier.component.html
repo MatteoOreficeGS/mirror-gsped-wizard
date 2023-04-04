@@ -1,0 +1,124 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar></app-navbar>
+<app-wizard>
+  <!-- Start Loading logo -->
+  <div class="text-center" *ngIf="isLoading">
+    <app-loader></app-loader>
+  </div>
+  <!-- End Loading logo -->
+  <ng-container>
+    <div [ngClass]="store.hasReturnShipment ? 'md:grid md:grid-cols-2' : ''">
+      <!-- andata -->
+      <section
+        class="bg-white dark:bg-gray-900"
+        *ngIf="store.outwardCostExposure.length"
+      >
+        <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
+          <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+            <h1 class="text-xl font-semibold text-gray-900">
+              {{ translations["lbl_choose_courier"] }}
+            </h1>
+          </div>
+          <div class="flex flex-col md:flex-row justify-around space-y-2 md:space-x-0 md:space-x-2">
+            <div
+              *ngFor="let service of store.outwardCostExposure; let i = index"
+              class="flex flex-col p-6 mx-auto md:mx-0 max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
+            >
+              <app-courier-card
+                [service]="service"
+                [i]="i"
+                [iva]="iva"
+                [type]="'outward'"
+                (selectCourierEvent)="selectCourierEvent($event)"
+              ></app-courier-card>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ritorno -->
+      <section
+        class="bg-white dark:bg-gray-900 mt-4 md:mt-0"
+        *ngIf="store.returnCostExposure.length"
+      >
+        <div class="px-4 mx-auto max-w-screen-xl lg:px-6">
+          <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+            <h1 class="text-xl font-semibold text-gray-900">
+              {{ translations["lbl_choose_return_courier"] }}
+            </h1>
+          </div>
+          <div class="flex flex-col md:flex-row justify-around space-y-2 md:space-x-0 md:space-x-2">
+            <div
+              *ngFor="let service of store.returnCostExposure; let i = index"
+              class="flex flex-col p-6 mx-auto md:mx-0 max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-5 dark:bg-gray-800 dark:text-white"
+            >
+              <app-courier-card
+                [service]="service"
+                [i]="i"
+                [iva]="iva"
+                [type]="'return'"
+                (selectCourierEvent)="selectCourierEvent($event)"
+              ></app-courier-card>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div
+      class="grid justify-items-center mt-4"
+      *ngIf="chosenCourier.outward.courierCode"
+    >
+      <div class="flex space-x-2" *ngIf="pointPickup">
+        <input
+          class="text-red-dhl focus:ring-red-500"
+          type="radio"
+          name="ritiro"
+          value="service"
+          [checked]="isPointChecked"
+          (click)="clearPickupAviability()"
+        />
+        <span>{{ translations.lbl_dropoff_service_point }}</span>
+      </div>
+      <div class="flex space-x-2" *ngIf="homePickup">
+        <input
+          class="text-red-dhl focus:ring-red-500"
+          (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
+          type="radio"
+          name="ritiro"
+          [checked]="!isPointChecked"
+          value="home"
+        />
+        <span>{{ translations.lbl_home_pickup }}</span>
+        <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">
+          {{ pickupAvailability[chosenCourier.outward.courierCode] }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_back"] }}
+      </button>
+      <button
+        (click)="incrementStep()"
+        [ngClass]="
+          canContinue
+            ? 'bg-yellow-400 text-white '
+            : 'bg-yellow-200 text-slate-200'
+        "
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_forward"] }}
+      </button>
+    </div>
+  </ng-container>
+</app-wizard>

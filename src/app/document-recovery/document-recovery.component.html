@@ -1,0 +1,47 @@
+<app-navbar></app-navbar>
+<app-wizard [showSteps]="false">
+  <form>
+    <h1 class="my-4 text-lg">{{ store.translations[labels.label] }}</h1>
+    <div class="grid grid-cols-4 gap-x-4 md:gap-y-8 space-y-2 lg:space-y-0">
+      <ng-container *ngFor="let field of fields">
+        <div class="col-span-full">
+          <p class="mb-2 font-medium">{{ store.translations[field.label] }}</p>
+        </div>
+        <div class="relative w-full group mx-auto col-span-full md:col-span-2">
+          <input
+            autocomplete="off"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            placeholder=" "
+            #input
+          />
+        </div>
+        <button
+          [ngClass]="
+            true ? 'bg-yellow-400 text-white ' : 'bg-yellow-200 text-slate-200'
+          "
+          type="button"
+          (click)="recoverDocument(field.type, input.value)"
+          class="focus:ring-1 focus:ring-red-dhl focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer h-10 w-auto mt-4 lg:mt-0 mx-auto bg-yellow-400 text-white col-span-full md:col-span-1"
+        >
+          {{ store.translations.retrieve_doc_main_text }}
+        </button>
+        <a
+          *ngIf="showLink[field.type].length > 0"
+          [href]="showLink[field.type]"
+          class="col-span-full md:col-span-1 underline text-red-dhl mx-auto"
+          target="_blank"
+        >
+          {{ store.translations.retrieve_doc_document_link }}
+          <mat-icon>open_in_new</mat-icon>
+        </a>
+        <p
+          *ngIf="showError[field.type].length > 0"
+          class="col-span-full md:col-span-1 mx-auto inline-block text-red-500 text-sm"
+        >
+          {{ this.store.translations[showError[field.type]] }}
+        </p>
+      </ng-container>
+    </div>
+  </form>
+</app-wizard>

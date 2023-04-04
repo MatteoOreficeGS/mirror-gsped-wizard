@@ -1,0 +1,143 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar> </app-navbar>
+<app-wizard>
+  <form [formGroup]="formInvoice" (submit)="nextStep()">
+    <div class="md:hidden">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <div
+            *ngIf="currentModule.private.enable"
+            (click)="handleSetInvoiceModules('privato')"
+            [ngClass]="selected === 'privato' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_private"].split(" ", 1) }}
+          </div>
+          <div
+            *ngIf="currentModule.company.enable"
+            (click)="handleSetInvoiceModules('piva')"
+            [ngClass]="selected === 'piva' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_company"].split(" ", 1) }}
+          </div>
+
+          <div
+            *ngIf="currentModule.foreign.enable"
+            (click)="handleSetInvoiceModules('estero')"
+            [ngClass]="selected === 'estero' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_foreign"].split(" ", 1) }}
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div class="hidden md:block">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex" aria-label="Tabs">
+          <div
+            *ngIf="currentModule.private.enable"
+            (click)="handleSetInvoiceModules('privato')"
+            [ngClass]="selected === 'privato' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_private"] }}
+          </div>
+
+          <div
+            *ngIf="currentModule.company.enable"
+            (click)="handleSetInvoiceModules('piva')"
+            [ngClass]="selected === 'piva' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_company"] }}
+          </div>
+
+          <div
+            *ngIf="currentModule.foreign.enable"
+            (click)="handleSetInvoiceModules('estero')"
+            [ngClass]="selected === 'estero' ? currentType : otherType"
+          >
+            {{ store.translations["lbl_invoice_foreign"] }}
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="space-y-4 mt-4">
+      <h1>{{ store.translations["lbl_invoice_title"] }}</h1>
+      <p>{{ store.translations["lbl_invoice_text"] }}</p>
+      <div class="md:grid md:grid-cols-4 md:gap-x-4">
+        <div
+          *ngFor="let module of invoiceModules"
+          class="relative w-full mt-6 group mx-auto"
+          [ngClass]="
+            module.columnspan === 1
+              ? 'col-span-1'
+              : module.columnspan === 4
+              ? 'col-span-4'
+              : 'col-span-2'
+          "
+        >
+          <ng-container *ngIf="module.value !== 'nazione'">
+            <input
+              [formControlName]="module.value"
+              autocomplete="off"
+              [type]="module.type"
+              [required]="module.required"
+              [ngClass]="{
+                uppercase: module.value === 'codice_fiscale',
+                'border-red-500':
+                  formInvoice.get(module.value)?.invalid &&
+                  formInvoice.get(module.value)?.errors &&
+                  (formInvoice.get(module.value)?.dirty ||
+                    formInvoice.get(module.value)?.touched)
+              }"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer border-gray-300"
+              placeholder=" "
+            />
+
+            <label
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              {{ module.label }}
+              <span *ngIf="module.required" class="text-red-500">*</span>
+            </label>
+          </ng-container>
+          <select
+            *ngIf="module.value === 'nazione'"
+            class="block py-2.5 px-0 mb-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            [formControlName]="module.value"
+          >
+            <option value="none" selected>
+              {{ store.translations.lbl_choose_country }}
+            </option>
+            <ng-container *ngFor="let country of store.countries | keyvalue">
+              <option [value]="country.key">{{ country.value }}</option>
+            </ng-container>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ store.translations["lbl_btn_back"] }}
+      </button>
+      <button
+        [ngClass]="
+          formInvoice.valid
+            ? 'bg-yellow-400 text-white '
+            : 'bg-yellow-200 text-slate-200'
+        "
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ store.translations["lbl_btn_forward"] }}
+      </button>
+    </div>
+  </form>
+</app-wizard>

@@ -1,0 +1,38 @@
+<footer class="bg-yellow-dhl text-center lg:text-left bottom-0">
+  <div class="w-full p-6">
+    <div class="grid md:grid-cols-2">
+      <div class="flex flex-col text-center">
+        <h5 class="text-2xl font-bold">
+          {{ store.translations[labels.title_label] }}
+        </h5>
+        <p class="text-sm mb-4">
+          {{ store.translations[labels.body_label] }}
+        </p>
+      </div>
+      <div class="mb-6 text-center">
+        <h5 class="uppercase font-bold text-gray-800">Links</h5>
+        <ul
+          class="flex flex-col space-y-1 text-sm text-black dark:text-gray-400 sm:mt-0"
+        >
+          <li *ngFor="let link of labels?.links">
+            <a
+              [href]="link.label !== 'retrieve_doc' ? link.url : linkToRetrive"
+              class="hover:underline"
+              [ngClass]="link.bold ? 'font-semibold' : ''"
+              >{{ store.translations[link.label] }}</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="text-gray-700 text-center p-4"
+    style="background-color: rgba(0, 0, 0, 0.2)"
+  >
+    <div class="text-gray-800">
+      {{ store.translations[labels.credits_label] }}
+    </div>
+  </div>
+</footer>

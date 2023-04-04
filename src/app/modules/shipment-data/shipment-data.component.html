@@ -1,0 +1,424 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar></app-navbar>
+<app-wizard>
+  <!-- Start Loading logo -->
+  <div class="text-center" *ngIf="isLoading">
+    <app-loader></app-loader>
+  </div>
+  <!-- End Loading logo -->
+  <form [formGroup]="formShipmentData" (submit)="confirmInsurance()">
+    <div
+      *ngIf="
+        isInternationalShipment &&
+        currentModule.tradeDocuments &&
+        !isDocumentShipment
+      "
+    >
+      <div>{{ store.translations.carico_documenti }}</div>
+      <div
+        class="flex w-full justify-between md:justify-end space-x-2 mb-2 md:mb-0"
+      >
+        <button
+          type="button"
+          *ngIf="store.documentsFilesUploadedData.length > 0"
+          class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+          (click)="addDocumentFilesNumber(-1)"
+        >
+          {{ store.translations.rimuovi_documento }}
+        </button>
+        <button
+          type="button"
+          [disabled]="
+            store.documentsFilesUploadedData.length >=
+            currentModule.tradeDocuments.maxDocuments
+          "
+          class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+          (click)="addDocumentFilesNumber(1)"
+        >
+          {{
+            store.documentsFilesUploadedData.length === 0
+              ? store.translations.carica_documenti
+              : store.translations.aggiungi_documento
+          }}
+        </button>
+      </div>
+      <div class="grid md:grid-cols-2 md:gap-x-4 gap-y-2 md:gap-y-0">
+        <ng-container
+          *ngFor="
+            let documentsFiles of store.documentsFilesUploadedData;
+            let i = index
+          "
+        >
+          <div>
+            <select
+              (change)="onFileTypeChanged($event, i)"
+              *ngIf="true"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            >
+              <option [value]="null" selected disabled>
+                {{ store.translations.seleziona_tipo_di_documento }}
+              </option>
+              <ng-container
+                *ngFor="
+                  let option of currentModule.tradeDocuments.documentTypes
+                "
+              >
+                <option
+                  [selected]="documentsFiles.selected === option"
+                  [value]="option"
+                >
+                  {{ store.translations[option] }}
+                </option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="my-4">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              for="file_input"
+            >
+              {{ store.translations.seleziona_un_documento }}:
+              {{ documentsFiles.name }}
+            </label>
+            <input
+              class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              aria-describedby="file_input_help"
+              id="file_input"
+              type="file"
+              (change)="onFileChanged($event, i)"
+            />
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div
+      *ngIf="currentModule.documentFlag === 'ask'"
+      class="flex flex-col md:flex-row space-x-0 md:space-x-4 md:space-y-0 space-y-2 py-2"
+    >
+      <div>{{ translations.lbl_ask_title }}</div>
+      <div>
+        <input
+          class="text-red-dhl focus:ring-red-dhl"
+          type="radio"
+          name="ask"
+          [value]="false"
+          (click)="setGoodsShipment()"
+          [defaultChecked]="!store.isAskDocument"
+        />
+        {{ translations.lbl_ask_goods }}
+      </div>
+      <div>
+        <input
+          class="text-red-dhl focus:ring-red-dhl"
+          type="radio"
+          name="ask"
+          [value]="true"
+          (click)="setDocumentShipment()"
+          [defaultChecked]="store.isAskDocument"
+        />
+        {{ translations.lbl_ask_document }}
+      </div>
+    </div>
+
+    <div
+      *ngIf="isDocumentShipment && currentModule.packagesDetails.enable"
+      class="flex flex-row space-x-4 py-2"
+    >
+      <div>
+        {{ store.translations.inserisci_num_documenti }}
+        {{ store.documentsNumber }}
+      </div>
+      <button
+        [disabled]="store.documentsNumber <= 1"
+        (click)="setDocumentNumber(-1)"
+        type="button"
+        class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+      >
+        -
+      </button>
+      <button
+        (click)="setDocumentNumber(1)"
+        [disabled]="
+          store.documentsNumber >=
+          currentModule.packagesDetails.fixedPackagesNumber
+        "
+        type="button"
+        class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+      >
+        +
+      </button>
+    </div>
+
+    <div *ngIf="currentModule?.packagesDetails.enable && !isDocumentShipment">
+      <div class="flex w-full items-center">
+        <p class="mb-6 font-medium w-full">
+          {{ translations["lbl_return_packages"] }}
+        </p>
+        <div class="flex w-full justify-end space-x-2">
+          <button
+            type="button"
+            *ngIf="packageNumber > 1"
+            class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+            (click)="removePackage()"
+          >
+            {{ translations["lbl_del_package"] }}
+          </button>
+          <button
+            type="button"
+            *ngIf="!store.isAskDocument"
+            [disabled]="
+              packageNumber > currentModule.packagesDetails.fixedpackagesNumber
+            "
+            class="py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl"
+            (click)="addPackage()"
+          >
+            {{ translations["lbl_add_package"] }}
+          </button>
+        </div>
+      </div>
+
+      <ul
+        formArrayName="dimensions"
+        class="mt-6 md:divide-y-0 divide-y divide-y-2 divide-red-dhl"
+      >
+        <li
+          *ngFor="let package of dimensions.controls; let i = index"
+          class="list-none md:list-decimal"
+        >
+          <div
+            class="sm:grid sm:grid-cols-2 md:grid-cols-4 w-full items-center w-full p-2 md:pt-6 gap-x-4"
+            [formGroupName]="i"
+          >
+            <div
+              *ngFor="let field of fieldsLabel"
+              class="justify-items-center w-full mb-1"
+            >
+              <div class="relative w-full mb-6 group mx-auto">
+                <input
+                  autocomplete="off"
+                  formControlName="{{ field.label }}"
+                  [ngClass]="dimensions.controls[i].get(field.label)?.errors?.['packagesDetails'] && dimensions.controls[i].get(field.label)?.touched ? 
+                    'border-red-500' : 'border-gray-300'"
+                  type="text"
+                  class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+                  placeholder=" "
+                />
+                <label
+                  class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >
+                  {{ translations[field.label] }}
+                  <span class="text-red-400"> * </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div
+      class="md:grid md:grid-cols-2 gap-x-4 relative"
+      *ngIf="
+        currentModule.insurance.enable ||
+        (currentModule.returnLabel.enable &&
+          currentModule?.returnLabel.insurance.enable)
+      "
+    >
+      <p class="col-span-full mb-6 font-medium">
+        {{ translations.lbl_insurance_choice }}
+      </p>
+      <!-- assicurazione andata text -->
+      <div
+        class="relative w-full mb-6 group mx-auto"
+        *ngIf="currentModule.insurance.enable && !isDocumentShipment"
+      >
+        <input
+          [formControlName]="'outwardInsurance'"
+          id="outwardInsurance"
+          name="outwardInsurance"
+          type="text"
+          [ngClass]="
+            formShipmentData.get('outwardInsurance')?.invalid &&
+            formShipmentData.get('outwardInsurance')?.errors &&
+            (formShipmentData.get('outwardInsurance')?.dirty ||
+              formShipmentData.get('outwardInsurance')?.touched)
+              ? 'border-red-500'
+              : 'border-gray-300'
+          "
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          placeholder=" "
+        />
+        <label
+          for="outwardInsurance"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          {{ translations[currentModule.insurance.label] }} €
+        </label>
+      </div>
+
+      <!-- assicurazione ritorno text -->
+      <div
+        class="relative w-full mb-6 group mx-auto"
+        *ngIf="
+          currentModule?.returnLabel.enable &&
+          currentModule?.returnLabel.insurance.enable &&
+          !isDocumentShipment
+        "
+      >
+        <input
+          [formControlName]="'returnInsurance'"
+          id="returnInsurance"
+          name="returnInsurance"
+          type="text"
+          [ngClass]="
+            formShipmentData.get('returnInsurance')?.invalid &&
+            formShipmentData.get('returnInsurance')?.errors &&
+            (formShipmentData.get('returnInsurance')?.dirty ||
+              formShipmentData.get('returnInsurance')?.touched)
+              ? 'border-red-500'
+              : 'border-gray-300'
+          "
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          placeholder=" "
+        />
+        <label
+          for="returnInsurance"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          {{ translations[currentModule.returnLabel.insurance.label] }} €
+        </label>
+      </div>
+
+      <!-- assicurazione andata checkbox -->
+      <div
+        class="flex items-start mb-6"
+        *ngIf="currentModule.insurance.enable && isDocumentShipment"
+      >
+        <div class="flex items-center h-5">
+          <input
+            [formControlName]="'outwardInsurance'"
+            id="outwardInsurance"
+            name="outwardInsurance"
+            type="checkbox"
+            class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+          />
+        </div>
+        <label
+          for="outwardInsurance"
+          class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >{{ translations[currentModule.insurance.label] }}</label
+        >
+      </div>
+
+      <!-- assicurazione ritorno checkbox -->
+      <div
+        class="flex items-start mb-6"
+        *ngIf="
+          currentModule?.returnLabel.enable &&
+          currentModule?.returnLabel.insurance.enable &&
+          isDocumentShipment
+        "
+      >
+        <div class="flex items-center h-5">
+          <input
+            [formControlName]="'returnInsurance'"
+            id="returnInsurance"
+            name="returnInsurance"
+            type="checkbox"
+            class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+          />
+        </div>
+        <label
+          for="returnInsurance"
+          class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >
+          {{ translations[currentModule.returnLabel.insurance.label] }}
+        </label>
+      </div>
+    </div>
+
+    <ng-container
+      *ngIf="
+        showGoods_type && formShipmentData.get(translations.lbl_goods_type)
+      "
+    >
+      <p class="mb-6 font-medium">{{ translations["lbl_goods_type"] }}</p>
+      <div class="relative w-full md:w-1/2 mb-6 group">
+        <input
+          [formControlName]="translations.lbl_goods_type"
+          autocomplete="off"
+          id="goodType"
+          name="goodType"
+          type="text"
+          [ngClass]="
+            formShipmentData.get(translations.lbl_goods_type)?.invalid &&
+            formShipmentData.get(translations.lbl_goods_type)?.errors &&
+            (formShipmentData.get(translations.lbl_goods_type)?.dirty ||
+              formShipmentData.get(translations.lbl_goods_type)?.touched)
+              ? 'border-red-500'
+              : 'border-gray-300'
+          "
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          placeholder=" "
+        />
+        <label
+          for="goodType"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          {{ translations["lbl_goods_type"] }}
+          <span class="text-red-400"> * </span>
+        </label>
+      </div>
+    </ng-container>
+
+    <p class="mb-6 font-medium">{{ translations["lbl_coupon"] }}</p>
+    <div class="relative w-full md:w-1/2 mb-6 group">
+      <input
+        [formControlName]="'codiceSconto'"
+        autocomplete="off"
+        id="codiceSconto"
+        name="codiceSconto"
+        type="text"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+        placeholder=" "
+      />
+      <label
+        for="codiceSconto"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
+        {{ translations["lbl_coupon"] }} €
+      </label>
+    </div>
+
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="
+          setDocumentsUploaded();
+          setDatiColli();
+          setInsurances();
+          service.handlePreviousStep()
+        "
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_back"] }}</button
+      ><button
+        class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4"
+        [ngClass]="
+          formShipmentData.valid
+            ? 'text-white bg-yellow-400 cursor-pointer'
+            : 'text-slate-300 bg-yellow-200 cursor-not-allowed'
+        "
+        type="submit"
+      >
+        {{ translations["lbl_btn_forward"] }}
+      </button>
+    </div>
+  </form>
+</app-wizard>

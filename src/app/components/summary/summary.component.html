@@ -1,0 +1,75 @@
+<div class="mb-4">
+  <div
+    class="md:flex justify-around space-y-4 md:space-y-0 space-x-0 md:space-x-4 mb-4"
+  >
+    <div
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+      *ngIf="!senderHidden"
+    >
+      <h1 class="uppercase text-xl mb-4">{{ store.translations.sender }}</h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gap-x-4">
+        <p>{{ store.sender.sender_name }}</p>
+        <p>{{ store.sender.sender_society }}</p>
+        <p>{{ store.sender.sender_addr }}</p>
+        <div class="flex space-x-3">
+          <p>{{ store.sender.sender_cap }}</p>
+          <p>{{ store.sender.sender_city }}</p>
+          <p>{{ store.sender.sender_prov }}</p>
+        </div>
+        <p>{{ this.store.countries[store.sender.sender_country_code] }}</p>
+        <p>{{ store.sender.sender_email }}</p>
+        <p>{{ store.sender.sender_phone }}</p>
+      </div>
+    </div>
+    <div
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+      *ngIf="!recipientHidden"
+    >
+      <h1 class="uppercase text-xl mb-4">
+        {{ store.translations.lbl_recipient }}
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gap-x-4">
+        <p>{{ store.recipient.rcpt_name }}</p>
+        <p>{{ store.recipient.rcpt_society }}</p>
+        <p>{{ store.recipient.rcpt_addr }}</p>
+        <div class="flex space-x-3">
+          <p>{{ store.recipient.rcpt_cap }}</p>
+          <p>{{ store.recipient.rcpt_city }}</p>
+          <p>{{ store.recipient.rcpt_prov }}</p>
+        </div>
+        <p>{{ this.store.countries[store.recipient.rcpt_country_code] }}</p>
+        <p>{{ store.recipient.rcpt_email }}</p>
+        <p>{{ store.recipient.rcpt_phone }}</p>
+      </div>
+    </div>
+    <div
+      class="block p-6 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+      *ngIf="this.showInvoice && !invoiceHidden"
+    >
+      <h1 class="uppercase text-xl mb-4">
+        {{ store.translations.lbl_invoice }}
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-1 gapx-4">
+        <p>{{ store.invoice.nome }}</p>
+        <p>{{ store.invoice.codice_fiscale }}</p>
+        <p>{{ store.invoice.pec }}</p>
+        <p>{{ store.invoice.sdi }}</p>
+        <p>{{ store.invoice.indirizzo }}</p>
+        <div class="flex space-x-3">
+          <p>{{ store.invoice.cap }}</p>
+          <p>{{ store.invoice.provincia }}</p>
+          <p>{{ store.invoice.citta }}</p>
+        </div>
+        <p>{{ this.store.countries[store.invoice.country] }}</p>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="this.store.totalAmount"
+    class="flex justify-center block py-4 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+  >
+    <p class="text-xl">
+      {{ store.translations.lbl_total_price }}: € {{ store.totalAmount }}
+    </p>
+  </div>
+</div>

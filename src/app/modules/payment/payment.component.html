@@ -1,0 +1,90 @@
+<app-modal
+  [show]="showModal"
+  [errors]="errors"
+  (closeModal)="setCloseModal($event)"
+></app-modal>
+<app-navbar></app-navbar>
+<app-wizard>
+  <app-summary></app-summary>
+
+  <form [formGroup]="formPayment" (submit)="redirectPayment()">
+    <div class="grid justify-items-center gap-y-6 mt-8 px-4 sm:px-6 lg:px-8">
+      <ng-container *ngFor="let field of fields">
+        <div class="relative z-0 w-full md:w-[32rem] mb-6 group mx-auto">
+          <input
+            autocomplete="off"
+            [formControlName]="field.value"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+            [ngClass]="
+              formPayment.get(field.value)?.invalid &&
+              formPayment.get(field.value)?.errors &&
+              (formPayment.get(field.value)?.dirty ||
+                formPayment.get(field.value)?.touched)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            "
+            placeholder=" "
+          />
+          <label
+            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            {{ field.label }}
+          </label>
+        </div>
+      </ng-container>
+      <div class="flex items-start mb-6">
+        <div class="flex items-center h-5">
+          <input
+            [formControlName]="'termsconditions'"
+            id="termsconditions"
+            name="termsconditions"
+            type="checkbox"
+            class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-red-dhl text-red-dhl"
+          />
+        </div>
+        <label
+          for="outwardInsurance"
+          class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >{{ termsConditions?.textBefore }}
+          <a [href]="termsConditions?.link" target="_blank" class="underline">{{
+            termsConditions?.text
+          }}</a>
+          {{ termsConditions?.textAfter }}
+          {{ termsPrivacy?.textBefore }}
+          <a [href]="termsPrivacy?.link" target="_blank" class="underline">{{
+            termsPrivacy?.text
+          }}</a>
+          {{ termsPrivacy?.textAfter }}
+        </label>
+      </div>
+    </div>
+
+    <div class="flex flex-row space-x-4 justify-center">
+      <button
+        *ngIf="store.currentStep > 1 && !store.isLastModule"
+        type="button"
+        (click)="service.handlePreviousStep()"
+        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        {{ translations["lbl_btn_back"] }}
+      </button>
+      <button
+        [disabled]="isHandledPayment"
+        type="submit"
+        [ngClass]="
+          formPayment.valid &&
+          !isHandledPayment &&
+          formPayment.value.termsconditions
+            ? 'text-white bg-yellow-400 cursor-pointer'
+            : 'text-slate-300 bg-yellow-200'
+        "
+        class="flex space-x-2 focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+      >
+        <span>{{ translations["lbl_btn_payment"] }}</span>
+        <mat-icon *ngIf="!isHandledPayment">open_in_new</mat-icon>
+        <app-loader *ngIf="isHandledPayment"></app-loader>
+      </button>
+    </div>
+  </form>
+</app-wizard>

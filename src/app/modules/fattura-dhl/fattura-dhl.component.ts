@@ -174,7 +174,7 @@ export class FatturaDHLComponent implements OnInit {
           nazione: ["none", [Validators.required, ValidateEsteroCountry]],
           cap: ["", Validators.required],
           citta: ["", Validators.required],
-          provincia: ["", Validators.required],
+          provincia: [""],
           email: ["", [Validators.required, ValidateEmail]],
           telefono: ["", [Validators.required, ValidatePhone]],
         });
@@ -225,7 +225,7 @@ export class FatturaDHLComponent implements OnInit {
             value: "provincia",
             label: this.store.translations.lbl_prov,
             type: "text",
-            required: true,
+            required: false,
             columnspan: 1,
           },
           {

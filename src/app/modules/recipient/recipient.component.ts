@@ -34,26 +34,55 @@ export class RecipientComponent {
     this.formRecipient = fb.group({
       rcpt_name: [
         autocomplete ? this.currentModule.data.rcpt_name.split(" ")[0] : "",
-        Validators.required,
+        [
+          this.isMandatory("rcpt_name")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
       ],
       rcpt_surname: [
         autocomplete
           ? this.currentModule.data.rcpt_name.split(" ").slice(1).join(" ")
           : "",
-        Validators.required,
+        [
+          this.isMandatory("rcpt_name")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
       ],
       rcpt_city: [
         autocomplete ? this.currentModule.data.rcpt_city : "",
-        Validators.required,
+        [
+          this.isMandatory("rcpt_city")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
       ],
-      rcpt_contact: [autocomplete ? this.currentModule.data.rcpt_contact : ""],
+      rcpt_contact: [
+        autocomplete ? this.currentModule.data.rcpt_contact : "",
+        [
+          this.isMandatory("rcpt_contact")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
+      ],
       rcpt_cap: [
         autocomplete ? this.currentModule.data.rcpt_cap : "",
-        Validators.required,
+        [
+          this.isMandatory("rcpt_cap")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
       ],
       rcpt_prov: [
         autocomplete ? this.currentModule.data.rcpt_prov : "",
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+        [
+          this.isMandatory("rcpt_prov")
+            ? Validators.required
+            : Validators.nullValidator,
+          Validators.maxLength(2),
+          Validators.minLength(2),
+        ],
       ],
       rcpt_country_code: [
         this.forcedCountry !== "none"
@@ -63,24 +92,56 @@ export class RecipientComponent {
             ? this.currentModule.data.rcpt_country_code
             : "none"
           : "none",
-        [Validators.required, Validators.maxLength(2), Validators.minLength(2)],
+        [
+          this.isMandatory("rcpt_country_code")
+            ? Validators.required
+            : Validators.nullValidator,
+          Validators.maxLength(2),
+          Validators.minLength(2),
+        ],
       ],
       rcpt_email: [
         autocomplete ? this.currentModule.data.rcpt_email : "",
-        [Validators.required, ValidateEmail],
+        [
+          this.isMandatory("rcpt_email")
+            ? Validators.required
+            : Validators.nullValidator,
+          ValidateEmail,
+        ],
       ],
       rcpt_phone: [
         autocomplete ? this.currentModule.data.rcpt_phone : "",
-        [Validators.required, ValidatePhone],
+        [
+          this.isMandatory("rcpt_phone")
+            ? Validators.required
+            : Validators.nullValidator,
+          ValidatePhone,
+        ],
       ],
       rcpt_addr: [
         autocomplete ? this.currentModule.data.rcpt_addr : "",
-        Validators.required,
+        [
+          this.isMandatory("rcpt_addr")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
       ],
-      rcpt_addr_secondary: "",
+      rcpt_addr_secondary: [
+        "",
+        [
+          this.isMandatory("rcpt_addr_secondary")
+            ? Validators.required
+            : Validators.nullValidator,
+        ],
+      ],
       note_sender: [
         this.store.recipientExtras.note_sender,
-        Validators.maxLength(50),
+        [
+          this.isMandatory("note_sender")
+            ? Validators.required
+            : Validators.nullValidator,
+          Validators.maxLength(50),
+        ],
       ],
     });
 
@@ -126,42 +187,42 @@ export class RecipientComponent {
         value: "rcpt_name",
         label: this.translations.nome,
         type: "text",
-        required: true,
+        required: this.isMandatory("rcpt_name"),
         columnspan: 2,
       },
       {
         value: "rcpt_surname",
         label: this.translations.cognome,
         type: "text",
-        required: true,
+        required: this.isMandatory("rcpt_surname"),
         columnspan: 2,
       },
       {
         value: "rcpt_contact",
         label: this.translations.rcpt_contact,
         type: "text",
-        required: false,
+        required: this.isMandatory("rcpt_contact"),
         columnspan: 4,
       },
       {
         value: "rcpt_addr",
-        label: this.translations.rcpt_addr || "rcpt_addr",
+        label: this.translations.rcpt_addr,
         type: "text",
-        required: true,
+        required: this.isMandatory("rcpt_addr"),
         columnspan: 2,
       },
       {
         value: "rcpt_addr_secondary",
         label: this.translations.rcpt_addr + " 2",
         type: "text",
-        required: false,
+        required: this.isMandatory("rcpt_addr_secondary"),
         columnspan: 2,
       },
       {
         value: "rcpt_city",
         label: this.translations.rcpt_city,
         type: "text",
-        required: true,
+        required: this.isMandatory("rcpt_city"),
         columnspan: 1,
         autocompleteLock: true,
       },
@@ -169,39 +230,39 @@ export class RecipientComponent {
         value: "rcpt_cap",
         label: this.translations.rcpt_cap,
         type: "number",
-        required: true,
+        required: this.isMandatory("rcpt_cap"),
         columnspan: 1,
       },
       {
         value: "rcpt_prov",
         label: this.translations.rcpt_prov,
         type: "text",
-        required: true,
-        maxlength: 2,
-        columnspan: 1,
+        required: this.isMandatory("rcpt_prov"),
+        maxLenght: 2,
         autocompleteLock: true,
+        columnspan: 1,
       },
       {
         value: "rcpt_country_code",
         label: this.translations.rcpt_country_code,
         type: "text",
-        required: true,
-        maxlength: 2,
-        columnspan: 1,
+        required: this.isMandatory("rcpt_country_code"),
+        maxLenght: 2,
         autocompleteLock: true,
+        columnspan: 1,
       },
       {
         value: "rcpt_email",
         label: this.translations.rcpt_email,
         type: "email",
-        required: true,
+        required: this.isMandatory("rcpt_email"),
         columnspan: 2,
       },
       {
         value: "rcpt_phone",
         label: this.translations.rcpt_phone,
         type: "number",
-        required: true,
+        required: this.isMandatory("rcpt_phone"),
         columnspan: 2,
       },
     ];
@@ -233,6 +294,16 @@ export class RecipientComponent {
       }
       this.predictionsAddress = filterd;
     });
+  }
+
+  isMandatory(field: string): boolean {
+    if (!this.currentModule.mandatory) {
+      return true;
+    }
+    if (this.currentModule.mandatory.includes(field)) {
+      return true;
+    }
+    return false;
   }
 
   langParam = "";

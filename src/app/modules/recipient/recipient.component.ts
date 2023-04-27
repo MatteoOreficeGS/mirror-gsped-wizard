@@ -298,7 +298,7 @@ export class RecipientComponent {
 
   isMandatory(field: string): boolean {
     if (!this.currentModule.mandatory) {
-      return true;
+      return false;
     }
     if (this.currentModule.mandatory.includes(field)) {
       return true;

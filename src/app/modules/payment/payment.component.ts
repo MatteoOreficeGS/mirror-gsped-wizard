@@ -182,7 +182,7 @@ export class PaymentComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            pagamento: "errore temporaneo, riprova più tardi",
+            pagamento: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
           };
         }
       );

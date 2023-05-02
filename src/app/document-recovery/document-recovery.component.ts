@@ -17,29 +17,37 @@ export class DocumentRecoveryComponent {
     if (this.service.checkConfiguration()) {
       return;
     }
-    this.labels = this.store.configuration.staticPages.filter(
+    this.currentModule = this.store.configuration.staticPages.filter(
       (staticPage: { pageName: string | undefined }) =>
         staticPage.pageName === this.store.action
     )[0];
     this.fields = [
       {
-        label: this.labels.retrieve_by_awb_number_label,
+        label: this.currentModule.retrieve_by_awb_number_label,
         type: "nspedizione",
       },
       {
-        label: this.labels.retrieve_by_payment_reference_label,
+        label: this.currentModule.retrieve_by_payment_reference_label,
         type: "transazione",
       },
       {
-        label: this.labels.retrieve_by_invoice_number_label,
+        label: this.currentModule.retrieve_by_invoice_number_label,
         type: "nfattura",
       },
     ];
+
+    this.fields = this.fields
+      .map((field: any) => {
+        if (field.label) {
+          return field;
+        }
+      })
+      .filter((item: any) => item);
   }
   fields: any;
   showLink: any = { nspedizione: "", transazione: "", nfattura: "" };
-  showError: any = { nspedizione: "", transazione: "" , nfattura: ""};
-  labels: any;
+  showError: any = { nspedizione: "", transazione: "", nfattura: "" };
+  currentModule: any = {};
 
   recoverDocument(type: string, value: any) {
     if (value.length === 0) {
@@ -56,13 +64,13 @@ export class DocumentRecoveryComponent {
           "/RecuperoEtichetteResoFacile",
         { headers: headers, params: params }
       )
-      .subscribe(
-        (res: any) => {
+      .subscribe({
+        next: (res: any) => {
           this.showLink[type] = res.link;
         },
-        (error: any) => {
+        error: (error: any) => {
           this.showError[type] = "retrieve_doc_not_found";
-        }
-      );
+        },
+      });
   }
 }

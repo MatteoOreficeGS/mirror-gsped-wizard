@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <app-wizard [showSteps]="false">
   <form>
-    <h1 class="my-4 text-lg">{{ store.translations[labels.label] }}</h1>
+    <h1 class="my-4 text-lg">{{ store.translations[currentModule.label] }}</h1>
     <div class="grid grid-cols-4 gap-x-4 md:gap-y-8 space-y-2 lg:space-y-0">
       <ng-container *ngFor="let field of fields">
         <div class="col-span-full">
@@ -26,15 +26,15 @@
         >
           {{ store.translations.retrieve_doc_main_text }}
         </button>
-        <a
+        <div
+          class="col-span-full md:col-span-1 text-red-dhl mx-auto"
           *ngIf="showLink[field.type].length > 0"
-          [href]="showLink[field.type]"
-          class="col-span-full md:col-span-1 underline text-red-dhl mx-auto"
-          target="_blank"
         >
-          {{ store.translations.retrieve_doc_document_link }}
+          <a [href]="showLink[field.type]" class="underline" target="_blank">
+            {{ store.translations.retrieve_doc_document_link }}
+          </a>
           <mat-icon>open_in_new</mat-icon>
-        </a>
+        </div>
         <p
           *ngIf="showError[field.type].length > 0"
           class="col-span-full md:col-span-1 mx-auto inline-block text-red-500 text-sm"

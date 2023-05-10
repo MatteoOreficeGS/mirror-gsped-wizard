@@ -26,5 +26,5 @@ export class WizardComponent {
   modules: any;
   translations: any = {};
   bannerExtra: any;
-  @Input() showSteps = true
+  @Input() showSteps = true;
 }

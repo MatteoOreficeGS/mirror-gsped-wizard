@@ -124,16 +124,24 @@
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
         (click)="service.handlePreviousStep()"
-        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        [ngStyle]="{
+          'background-color': '#' + this.store.configuration.mainColor
+        }"
+        class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ store.translations["lbl_btn_back"] }}
       </button>
       <button
-        [ngClass]="
+        [ngStyle]="
           formInvoice.valid
-            ? 'bg-yellow-400 text-white '
-            : 'bg-yellow-200 text-slate-200'
+            ? {
+                'background-color': '#' + this.store.configuration.mainColor
+              }
+            : {
+                'background-color': this.store.configuration.fadedColor
+              }
         "
+        [ngClass]="formInvoice.valid ? 'text-white ' : 'text-slate-200'"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ store.translations["lbl_btn_forward"] }}

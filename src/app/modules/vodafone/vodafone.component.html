@@ -88,18 +88,31 @@
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
         (click)="service.handlePreviousStep()"
-        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        [ngStyle]="{
+          'background-color': '#' + this.store.configuration.mainColor
+        }"
+        class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_back"] }}
       </button>
 
       <button
         [disabled]="loadingShipment || loadingPickup"
+        [ngStyle]="
+          selectProductNumber <= 0 || loadingShipment || loadingPickup
+            ? {
+                'background-color': '#f2f'
+              }
+              : {
+                'background-color': this.store.configuration.fadedColor
+              }
+        "
         [ngClass]="
           selectProductNumber <= 0 || loadingShipment || loadingPickup
-            ? 'bg-yellow-200 text-slate-200'
-            : 'bg-yellow-400 text-white '
+            ? 'text-slate-200'
+            : 'text-white '
         "
+        type="submit"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer flex"
       >
         {{ translations["lbl_btn_forward"] }}

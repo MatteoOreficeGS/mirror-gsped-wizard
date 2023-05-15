@@ -7,12 +7,15 @@
 <app-wizard>
   <form [formGroup]="formRecipient" (submit)="nextStep()">
     <button
+      [ngStyle]="{
+        'background-color': '#' + this.store.configuration.mainColor
+      }"
       type="button"
       *ngIf="this.currentModule.canSwitch"
       (click)="
         this.currentModule.useFixedData = !this.currentModule.useFixedData
       "
-      class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mb-6"
+      class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mb-6"
     >
       <!-- TODO: TRADUZIONE -->
       switch mode
@@ -207,15 +210,15 @@
       </button>
       <button
         [ngStyle]="
-          formRecipient.valid
+          canContinue()
             ? {
                 'background-color': '#' + this.store.configuration.mainColor
               }
-              : {
+            : {
                 'background-color': this.store.configuration.fadedColor
               }
         "
-        [ngClass]="formRecipient.valid ? 'text-white ' : 'text-slate-200'"
+        [ngClass]="canContinue() ? 'text-white ' : 'text-slate-200'"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_forward"] }}

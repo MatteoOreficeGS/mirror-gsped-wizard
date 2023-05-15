@@ -305,6 +305,15 @@ export class ResiCustomComponent {
             numero_ritiro: res.numero_ritiro,
             date_req_ritiro: res.date_req_ritiro,
           };
+          if (!!res.error) {
+            this.store.isLastModule = true;
+            this.loadingShipment = false;
+            this.showModal = true;
+            this.errors = {
+              errore: res.error || "errore temporaneo, riprova più tardi",
+            };
+            return;
+          }
           if (!this.store.hasReturnShipment) {
             this.router.navigate(
               [this.store.modules[this.store.currentStep++].module],
@@ -342,6 +351,15 @@ export class ResiCustomComponent {
             }
             this.service.handleShipment(returnPayloadShipment).subscribe(
               (res) => {
+                if (!!res.error) {
+                  this.store.isLastModule = true;
+                  this.loadingShipment = false;
+                  this.showModal = true;
+                  this.errors = {
+                    errore: res.error || "errore temporaneo, riprova più tardi",
+                  };
+                  return;
+                }
                 this.store.returnShipment = res;
                 this.router.navigate(
                   [this.store.modules[this.store.currentStep++].module],

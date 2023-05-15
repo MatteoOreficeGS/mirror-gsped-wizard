@@ -116,12 +116,11 @@
     <button
       (click)="redirectPayment()"
       [disabled]="isHandledPayment"
-      [ngClass]="
-        isHandledPayment
-          ? 'bg-yellow-400 text-slate-200'
-          : 'bg-yellow-400 text-white '
-      "
-      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
+      [ngStyle]="{
+        'background-color': '#' + this.store.configuration.mainColor
+      }"
+      [ngClass]="isHandledPayment ? 'text-slate-200' : 'text-white '"
+      class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 space-x-2"
     >
       {{ translations.lbl_retry_payment }}
       <app-loader *ngIf="isHandledPayment"></app-loader>

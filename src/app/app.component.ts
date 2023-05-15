@@ -39,6 +39,12 @@ export class AppComponent {
               this.status.getCountries()
             ).subscribe((res: any) => {
               this.store.configuration = res[0].configuration;
+              if (!this.store.configuration.mainColor) {
+                this.store.configuration.mainColor = "FFCC35";
+              }
+              this.store.configuration.fadedColor =
+                "#" +
+                this.fadeColor("#" + this.store.configuration.mainColor, 150);
               this.isSenderPrefilled();
               this.isRecipientVisible();
               let modules = this.store.configuration.modules.map(
@@ -129,6 +135,15 @@ export class AppComponent {
                   this.status.getCountries()
                 ).subscribe((res: any) => {
                   this.store.configuration = res[0].configuration;
+                  if (!this.store.configuration.mainColor) {
+                    this.store.configuration.mainColor = "FFCC35";
+                  }
+                  this.store.configuration.fadedColor =
+                    "#" +
+                    this.fadeColor(
+                      "#" + this.store.configuration.mainColor,
+                      150
+                    );
                   let modules = res[0].configuration.modules.map(
                     (module: any) => {
                       if (module.moduleConfig.hidden) {
@@ -213,6 +228,15 @@ export class AppComponent {
                     this.status.getCountries()
                   ).subscribe((res: any) => {
                     this.store.configuration = res[0].configuration;
+                    if (!this.store.configuration.mainColor) {
+                      this.store.configuration.mainColor = "FFCC35";
+                    }
+                    this.store.configuration.fadedColor =
+                      "#" +
+                      this.fadeColor(
+                        "#" + this.store.configuration.mainColor,
+                        150
+                      );
                     let modules = res[0].configuration.modules.map(
                       (module: any) => {
                         if (module.moduleConfig.hidden) {
@@ -261,7 +285,9 @@ export class AppComponent {
               );
             },
             error: (resRecovery) => {
-              this.store.displayPayment = resRecovery.error.monetaweb.length ? resRecovery.error.monetaweb : {}; 
+              this.store.displayPayment = resRecovery.error.monetaweb.length
+                ? resRecovery.error.monetaweb
+                : {};
               this.store.displayPayment.status = "failed";
               this.store.beforePaymentSession = resRecovery.error.session;
               this.store.outwardShipment.id =
@@ -283,6 +309,15 @@ export class AppComponent {
                     this.status.getCountries()
                   ).subscribe((res: any) => {
                     this.store.configuration = res[0].configuration;
+                    if (!this.store.configuration.mainColor) {
+                      this.store.configuration.mainColor = "FFCC35";
+                    }
+                    this.store.configuration.fadedColor =
+                      "#" +
+                      this.fadeColor(
+                        "#" + this.store.configuration.mainColor,
+                        150
+                      );
                     let modules = res[0].configuration.modules.map(
                       (module: any) => {
                         if (module.moduleConfig.hidden) {
@@ -352,6 +387,12 @@ export class AppComponent {
             this.status.getTranslations(params.lang || "it_IT")
           ).subscribe((res: any) => {
             this.store.configuration = res[0].configuration;
+            if (!this.store.configuration.mainColor) {
+              this.store.configuration.mainColor = "FFCC35";
+            }
+            this.store.configuration.fadedColor =
+              "#" +
+              this.fadeColor("#" + this.store.configuration.mainColor, 150);
             this.store.translations = { ...res[1], ...res[2] };
             this.router.navigate(["/document-recovery"], {
               queryParams: { lang: params.lang || "it_IT" },
@@ -414,5 +455,27 @@ export class AppComponent {
       }
     );
     this.store.isSenderPrefilled = result;
+  }
+
+  fadeColor(hexColor: string, delta: number) {
+    if (hexColor.length === 4) {
+      hexColor = this.lenghtenHexCode(hexColor);
+    }
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    const clampedR = Math.max(0, Math.min(255, r + delta));
+    const clampedG = Math.max(0, Math.min(255, g + delta));
+    const clampedB = Math.max(0, Math.min(255, b + delta));
+
+    return (clampedR * 0x10000 + clampedG * 0x100 + clampedB).toString(16);
+  }
+
+  lenghtenHexCode(hexCode: string) {
+    const r = hexCode[1] + hexCode[1];
+    const g = hexCode[2] + hexCode[2];
+    const b = hexCode[3] + hexCode[3];
+    return `#${r}${g}${b}`;
   }
 }

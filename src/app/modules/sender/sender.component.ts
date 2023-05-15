@@ -186,7 +186,7 @@ export class SenderComponent {
         value: "sender_surname",
         label: this.translations.cognome,
         type: "text",
-        required: this.isMandatory("sender_surname"),
+        required: this.isMandatory("sender_name"),
         columnspan: 2,
       },
       {

@@ -101,10 +101,10 @@
         [ngStyle]="
           selectProductNumber <= 0 || loadingShipment || loadingPickup
             ? {
-                'background-color': this.store.configuration.mainColor
-              }
-              : {
                 'background-color': this.store.configuration.fadedColor
+              }
+            : {
+                'background-color': '#' + this.store.configuration.mainColor
               }
         "
         [ngClass]="

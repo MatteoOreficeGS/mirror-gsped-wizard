@@ -404,8 +404,9 @@ export class RecipientComponent {
     } else {
       if (!this.isFixedDataSelected(this.currentModule.fixedData)) {
         this.showModal = true;
-        //TODO: TRADUZIONE
-        this.errors = { error: "seleziona una card" };
+        this.errors = {
+          error: this.store.translations.lbl_card_required_recipient,
+        };
         return;
       }
     }
@@ -417,7 +418,7 @@ export class RecipientComponent {
       }
     );
   }
-  
+
   setCloseModal(event: boolean) {
     this.showModal = event;
   }

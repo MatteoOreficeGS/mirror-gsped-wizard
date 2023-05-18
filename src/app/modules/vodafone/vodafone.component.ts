@@ -263,9 +263,112 @@ export class VodafoneComponent {
         courierCode: this.courier,
         serviceCode: this.serviceCourier,
       };
-
       this.setShipmentPayload();
-      this.service.createShipment();
+      this.store.chosenCourier["outward"] = this.store.outwardCostExposure[0];
+      this.store.chosenCourier["return"] = this.store.returnCostExposure[0];
+      const outwardPayloadShipment = {
+        ...this.store.payloadShipment,
+        ...this.store.sender,
+        ...this.store.recipient,
+        valore: this.store.outwardInsurance,
+        corriere: this.store.chosenCourier.outward.courierCode,
+        servizio: this.store.chosenCourier.outward.serviceCode,
+      };
+      if (this.store.hasInvoice) {
+        const outwardInvoice = {
+          nolo: this.store.chosenCourier["outward"].data.nolo,
+          totale_fattura: this.store.chosenCourier["outward"].data.totale,
+          assicurazione:
+            this.store.chosenCourier["outward"].data.varie_dettaglio[
+              this.store.isDocumentShipment
+                ? "IB-EXTENDED LIABILITY"
+                : "II-SHIPMENT INSURANCE"
+            ],
+          valore: this.store.outwardInsurance,
+        };
+        outwardPayloadShipment.fattura_dhl = [
+          { ...this.store.invoice, ...outwardInvoice },
+        ];
+      }
+      if (this.store.selectedProducts) {
+        outwardPayloadShipment[this.store.productDestination] =
+          this.store.selectedProducts;
+      }
+
+      this.service.handleShipment(outwardPayloadShipment).subscribe(
+        (res) => {
+          this.store.outwardShipment = res;
+          this.store.isHomePickup = {
+            ...this.store.isHomePickup,
+            num_spedizione: res.num_spedizione,
+            numero_ritiro: res.numero_ritiro,
+            date_req_ritiro: res.date_req_ritiro,
+          };
+          if (!!res.error) {
+            this.handleError(res.error);
+            return;
+          }
+          if (!this.store.hasReturnShipment) {
+            this.router.navigate(
+              [this.store.modules[this.store.currentStep++].module],
+              {
+                queryParamsHandling: "merge",
+              }
+            );
+          } else {
+            // inverto il mittente con il destinatario per la spedizione di ritorno
+            const returnPayloadShipment = {
+              ...this.store.payloadShipment,
+              valore: this.store.returnInsurance,
+              servizio: this.store.chosenCourier.return.serviceCode,
+              corriere: this.store.chosenCourier.return.courierCode,
+              ...this.service.invertAddressData({
+                ...this.store.sender,
+                ...this.store.recipient,
+              }),
+            };
+            if (this.store.hasInvoice) {
+              const returnInvoice = {
+                nolo: this.store.chosenCourier["return"].data.nolo,
+                totale_fattura: this.store.chosenCourier["return"].data.totale,
+                assicurazione:
+                  this.store.chosenCourier["return"].data.varie_dettaglio[
+                    this.store.isDocumentShipment
+                      ? "IB-EXTENDED LIABILITY"
+                      : "II-SHIPMENT INSURANCE"
+                  ],
+                valore: this.store.returnInsurance,
+              };
+              returnPayloadShipment.fattura_dhl = [
+                { ...this.store.invoice, ...returnInvoice },
+              ];
+            }
+            this.service.handleShipment(returnPayloadShipment).subscribe(
+              (res) => {
+                if (!!res.error) {
+                  this.handleError(res.error);
+                  return;
+                }
+                this.store.returnShipment = res;
+                this.router.navigate(
+                  [this.store.modules[this.store.currentStep++].module],
+                  {
+                    queryParamsHandling: "merge",
+                  }
+                );
+              },
+              (error) => {
+                this.handleError("errore temporaneo, riprova più tardi");
+                return;
+              }
+            );
+          }
+        },
+        (error) => {
+          this.handleError("errore temporaneo, riprova più tardi");
+          return;
+        }
+      );
     } else {
       this.router.navigate(
         [this.store.modules[this.store.currentStep++].module],
@@ -275,7 +378,26 @@ export class VodafoneComponent {
       );
     }
   }
+
   setCloseModal(event: boolean) {
     this.showModal = event;
+  }
+
+  handleError(error: string) {
+    this.showModal = true;
+    this.errors = {
+      errore:
+        error ||
+        "errore nella creazione della spedizione, verifica i dati inseriti",
+    };
+    this.loadingShipment = false;
+    this.store.isLastModule = false;
+    this.store.selectedProducts = null;
+    this.selectProductNumber = 0;
+    this.products = this.products.map((product: any) => {
+      {
+        return { ...product, selected: false };
+      }
+    });
   }
 }

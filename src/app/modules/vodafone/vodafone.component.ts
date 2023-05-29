@@ -77,6 +77,7 @@ export class VodafoneComponent {
       return;
     }
     this.selected = type;
+    // <!-- TODO: TRADUZIONE -->
     this.choiceText = this.choices[index].text;
     if (type === "RITIRO A DOMICILIO") {
       this.loadingPickup = true;
@@ -385,6 +386,7 @@ export class VodafoneComponent {
 
   handleError(error: string) {
     this.showModal = true;
+    // <!-- TODO: TRADUZIONE -->
     this.errors = {
       errore:
         error ||

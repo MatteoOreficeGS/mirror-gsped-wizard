@@ -34,6 +34,7 @@
                 selected === choice.choice ? currentProduct : otherProducts
               "
             >
+              <!-- TODO : TRADUZIONE -->
               {{ choice.choice }}
             </div>
           </ng-container>
@@ -49,11 +50,14 @@
         [href]="choiceLink"
         class="mx-4 underline text-red-dhl"
         >Trova Service Point DHL
+        <!-- TODO : TRADUZIONE -->
       </a>
     </p>
     <div class="mx-auto text-center text-lg">
+      <!-- TODO : TRADUZIONE -->
       <h1>Si prega di selezionare la causale del reso</h1>
       <h1 class="text-red-500">
+        <!-- TODO : TRADUZIONE -->
         Si raccomanda di rendere tutti gli articoli utilizzando un unico imballo
       </h1>
     </div>
@@ -75,6 +79,7 @@
               class="text-gray-700"
               [ngClass]="product.selected ? 'font-semibold' : 'font-medium'"
             >
+              <!-- TODO : TRADUZIONE -->
               {{ product.name }}
             </label>
           </div>
@@ -101,10 +106,10 @@
         [ngStyle]="
           selectProductNumber <= 0 || loadingShipment || loadingPickup
             ? {
-                'background-color': this.store.configuration.mainColor
-              }
-              : {
                 'background-color': this.store.configuration.fadedColor
+              }
+            : {
+                'background-color': '#' + this.store.configuration.mainColor
               }
         "
         [ngClass]="

@@ -194,7 +194,7 @@ export class RecipientComponent {
         value: "rcpt_surname",
         label: this.translations.cognome,
         type: "text",
-        required: this.isMandatory("rcpt_surname"),
+        required: this.isMandatory("rcpt_name"),
         columnspan: 2,
       },
       {

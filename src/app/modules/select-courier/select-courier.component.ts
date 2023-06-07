@@ -170,7 +170,7 @@ export class SelectCourierComponent {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  errore: "errore temporaneo, riprova più tardi",
+                  errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
                 };
               }
             );
@@ -181,7 +181,7 @@ export class SelectCourierComponent {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            errore: "errore temporaneo, riprova più tardi",
+            errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
           };
         }
       );
@@ -537,7 +537,7 @@ export class SelectCourierComponent {
               this.showModal = true;
               this.errors = {};
               this.errors = {
-                errore: "errore temporaneo, riprova più tardi",
+                errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
               };
             }
           );
@@ -547,7 +547,7 @@ export class SelectCourierComponent {
         this.showModal = true;
         this.errors = {};
         this.errors = {
-          errore: "errore temporaneo, riprova più tardi",
+          errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
         };
       }
     );

@@ -6,7 +6,24 @@
 <app-navbar></app-navbar>
 <app-wizard>
   <form [formGroup]="formSender" (submit)="nextStep()">
-    <div class="lg:grid lg:grid-cols-4 gap-x-4">
+    <button
+      [ngStyle]="{
+        'background-color': '#' + this.store.configuration.mainColor
+      }"
+      type="button"
+      *ngIf="this.currentModule.canSwitch"
+      (click)="
+        this.currentModule.useFixedData = !this.currentModule.useFixedData
+      "
+      class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mb-6"
+    >
+      <!-- TODO: TRADUZIONE -->
+      switch mode
+    </button>
+    <div
+      class="lg:grid lg:grid-cols-4 gap-x-4"
+      *ngIf="!currentModule.useFixedData"
+    >
       <ng-container *ngFor="let field of fields">
         <div
           class="relative w-full mb-6 group mx-auto"
@@ -120,21 +137,93 @@
         </select>
       </ng-container>
     </div>
+    <!-- With fixed data -->
+    <div *ngIf="currentModule.useFixedData">
+      <div>
+        <!-- TODO: TRADUZIONE -->
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae nam
+          nemo ipsam! Aperiam voluptate aut deserunt nisi magni similique
+          reiciendis quos! Quae exercitationem, perspiciatis dicta impedit sint
+          maiores illum nulla?
+        </p>
+      </div>
+      <div class="flex flex-wrap">
+        <div
+          *ngFor="let fixedDataItem of currentModule.fixedData; let i = index"
+          class="p-4 rounded-md space-4 mx-auto justify-center items-center h-72 w-72 mt-8 cursor-pointer"
+          (click)="setParty(fixedDataItem.data, i)"
+          [ngClass]="
+            fixedDataItem.selected
+              ? 'border border-2 border-[#C7312A] shadow-lg shadow-red-500/50'
+              : 'border border-1 border-[#222222]'
+          "
+        >
+          <div>
+            <div class="flex flex-col">
+              <div>
+                <h1 class="uppercase">
+                  <label
+                    class="text-gray-700"
+                    [ngClass]="
+                      fixedDataItem?.title?.isBold ? ' font-semibold' : ''
+                    "
+                  >
+                    <!-- TODO: TRADUZIONE -->
+                    {{ fixedDataItem?.title?.label }}
+                  </label>
+                </h1>
+              </div>
+              <div *ngIf="!fixedDataItem.useImage">
+                <div class="mt-4">
+                  <div class="flex flex-col">
+                    <span *ngFor="let textRow of fixedDataItem.textRows">
+                      <!-- TODO: TRADUZIONE -->
+                      {{ textRow }}
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <div class="flex flex-col">
+                    <span>email: {{ fixedDataItem.data.sender_email }}</span>
+                    <span
+                      >{{ store.translations.phone }}:
+                      {{ fixedDataItem.data.sender_phone }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="fixedDataItem.useImage">
+            <img [src]="fixedDataItem.src" />
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="flex flex-row space-x-4 justify-center">
       <button
         *ngIf="store.currentStep > 1 && !store.isLastModule"
         type="button"
         (click)="service.handlePreviousStep()"
-        class="bg-yellow-400 text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
+        [ngStyle]="{
+          'background-color': '#' + this.store.configuration.mainColor
+        }"
+        class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_back"] }}
       </button>
       <button
-        [ngClass]="
-          formSender.valid
-            ? 'bg-yellow-400 text-white '
-            : 'bg-yellow-200 text-slate-200'
+        [ngStyle]="
+          canContinue()
+            ? {
+                'background-color': '#' + this.store.configuration.mainColor
+              }
+            : {
+                'background-color': this.store.configuration.fadedColor
+              }
         "
+        [ngClass]="canContinue() ? 'text-white ' : 'text-slate-200'"
         class="focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-4 cursor-pointer"
       >
         {{ translations["lbl_btn_forward"] }}

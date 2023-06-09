@@ -19,7 +19,7 @@
           [value]="choice.choice"
           (click)="handleSetProduct(choice.choice, i)"
         >
-          {{ choice.choice }}
+          {{ this.store.translations[choice.choice] }}
         </option>
       </select>
     </div>
@@ -34,7 +34,7 @@
                 selected === choice.choice ? currentProduct : otherProducts
               "
             >
-              {{ choice.choice }}
+              {{ this.store.translations[choice.choice] }}
             </div>
           </ng-container>
         </nav>
@@ -42,7 +42,7 @@
     </div>
 
     <p class="p-4">
-      {{ choiceText }}
+      {{ this.store.translations[this.choiceText] }}
       <a
         *ngIf="choiceLink"
         target="_blank"
@@ -78,8 +78,7 @@
               class="text-gray-700"
               [ngClass]="product.selected ? 'font-semibold' : 'font-medium'"
             >
-            <!-- TODO: TRADUZIONE -->
-              {{ product.name }}
+              {{ this.store.translations[product.name] }}
             </label>
           </div>
           <img [src]="product.image" />

@@ -34,8 +34,7 @@
                 selected === choice.choice ? currentProduct : otherProducts
               "
             >
-              <!-- TODO : TRADUZIONE -->
-              {{ choice.choice }}
+              {{ this.store.translations[choice.choice] }}
             </div>
           </ng-container>
         </nav>
@@ -79,8 +78,7 @@
               class="text-gray-700"
               [ngClass]="product.selected ? 'font-semibold' : 'font-medium'"
             >
-              <!-- TODO : TRADUZIONE -->
-              {{ product.name }}
+              {{ this.store.translations[product.name] }}
             </label>
           </div>
           <img [src]="product.image" />

@@ -310,7 +310,9 @@ export class ResiCustomComponent {
             this.loadingShipment = false;
             this.showModal = true;
             this.errors = {
-              errore: res.error || "errore temporaneo, riprova più tardi",
+              errore:
+                this.store.translations[res.error] ||
+                "errore temporaneo, riprova più tardi",
             };
             return;
           }
@@ -356,7 +358,9 @@ export class ResiCustomComponent {
                   this.loadingShipment = false;
                   this.showModal = true;
                   this.errors = {
-                    errore: res.error || "errore temporaneo, riprova più tardi",
+                    errore:
+                      this.store.translations[res.error] ||
+                      "errore temporaneo, riprova più tardi",
                   };
                   return;
                 }

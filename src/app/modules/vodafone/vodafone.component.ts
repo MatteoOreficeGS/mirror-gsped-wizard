@@ -35,6 +35,7 @@ export class VodafoneComponent {
     this.choices = this.currentModule.choices;
     this.selected = this.choices[0].choice;
     this.choiceText = this.choices[0].text;
+    
     this.products = this.currentModule.productList;
     // dovrebbe essere nello stesso modulo
     this.currentModule.pickup = {
@@ -77,8 +78,6 @@ export class VodafoneComponent {
       return;
     }
     this.selected = type;
-    // <!-- TODO: TRADUZIONE -->
-    this.choiceText = this.choices[index].text;
     if (type === "RITIRO A DOMICILIO") {
       this.loadingPickup = true;
       this.store.isHomePickup.enable = true;
@@ -386,10 +385,9 @@ export class VodafoneComponent {
 
   handleError(error: string) {
     this.showModal = true;
-    // <!-- TODO: TRADUZIONE -->
     this.errors = {
       errore:
-        error ||
+        this.store.translations[error] ||
         "errore nella creazione della spedizione, verifica i dati inseriti",
     };
     this.loadingShipment = false;

@@ -35,7 +35,7 @@ export class VodafoneComponent {
     this.choices = this.currentModule.choices;
     this.selected = this.choices[0].choice;
     this.choiceText = this.choices[0].text;
-    
+
     this.products = this.currentModule.productList;
     // dovrebbe essere nello stesso modulo
     this.currentModule.pickup = {
@@ -57,7 +57,7 @@ export class VodafoneComponent {
   formVodafone!: FormGroup;
   choices: any;
   choiceText!: string;
-  choiceLink?: string;
+  choiceLink?: any;
   otherProducts: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentProduct: any =
@@ -73,20 +73,25 @@ export class VodafoneComponent {
   showModal: boolean = false;
   errors: any = {};
 
-  handleSetProduct(type: any, index: number) {
+  handleSetProduct(type: string, index: number) {
     if (this.loadingPickup) {
       return;
     }
     this.selected = type;
-    if (type === "RITIRO A DOMICILIO") {
+    if (type === "lbl_vodafone_pickup_choice") {
       this.loadingPickup = true;
       this.store.isHomePickup.enable = true;
-      this.choiceLink = "";
+      this.choiceText = this.choices[0].text;
+      this.choiceLink = {};
       this.checkPickupAviability(this.courier || 104);
-    } else if (type === "CONSEGNA AL SERVICE POINT") {
+    } else if (type === "lbl_vodafone_service_ptn_choice") {
       this.store.isHomePickup.enable = false;
       this.clearPickupAviability();
-      this.choiceLink = this.choices[index].link;
+      this.choiceText = this.choices[1].text;
+      this.choiceLink = {
+        link: this.choices[index].link,
+        text: this.choices[index].link_text,
+      };
     }
   }
 

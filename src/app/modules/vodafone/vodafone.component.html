@@ -46,10 +46,9 @@
       <a
         *ngIf="choiceLink"
         target="_blank"
-        [href]="choiceLink"
+        [href]="choiceLink.link"
         class="mx-4 underline text-red-dhl"
-        >Trova Service Point DHL
-        <!-- TODO: TRADUZIONE -->
+        >{{this.store.translations[choiceLink.text]}}
       </a>
     </p>
     <div class="mx-auto text-center text-lg">

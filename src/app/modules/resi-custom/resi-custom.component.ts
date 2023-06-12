@@ -56,7 +56,7 @@ export class ResiCustomComponent {
   formResiCustom!: FormGroup;
   choices: any;
   choiceText!: string;
-  choiceLink?: string;
+  choiceLink?: any;
   otherProducts: string =
     "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm uppercase cursor-pointer flex-nowrap";
   currentProduct: any =
@@ -81,12 +81,17 @@ export class ResiCustomComponent {
     if (type === "RITIRO A DOMICILIO") {
       this.loadingPickup = true;
       this.store.isHomePickup.enable = true;
-      this.choiceLink = "";
+      this.choiceText = this.choices[0].text;
+      this.choiceLink = {};
       this.checkPickupAviability(this.courier || 104);
     } else if (type === "CONSEGNA AL SERVICE POINT") {
       this.store.isHomePickup.enable = false;
       this.clearPickupAviability();
-      this.choiceLink = this.choices[index].link;
+      this.choiceText = this.choices[1].text;
+      this.choiceLink = {
+        link: this.choices[index].link,
+        text: this.choices[index].link_text,
+      };
     }
   }
 

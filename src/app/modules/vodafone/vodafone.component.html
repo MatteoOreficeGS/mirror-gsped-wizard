@@ -19,7 +19,7 @@
           [value]="choice.choice"
           (click)="handleSetProduct(choice.choice, i)"
         >
-          {{ choice.choice }}
+          {{ this.store.translations[choice.choice] }}
         </option>
       </select>
     </div>
@@ -34,7 +34,7 @@
                 selected === choice.choice ? currentProduct : otherProducts
               "
             >
-              {{ choice.choice }}
+              {{ this.store.translations[choice.choice] }}
             </div>
           </ng-container>
         </nav>
@@ -42,19 +42,19 @@
     </div>
 
     <p class="p-4">
-      {{ choiceText }}
+      {{ this.store.translations[this.choiceText] }}
       <a
         *ngIf="choiceLink"
         target="_blank"
-        [href]="choiceLink"
+        [href]="choiceLink.link"
         class="mx-4 underline text-red-dhl"
-        >Trova Service Point DHL
+        >{{this.store.translations[choiceLink.text]}}
       </a>
     </p>
     <div class="mx-auto text-center text-lg">
-      <h1>Si prega di selezionare uno o più prodotti da spedire</h1>
+      <h1>{{ this.store.translations[this.currentModule.text1] }}</h1>
       <h1 class="text-red-500">
-        Si raccomanda di rendere tutti gli articoli utilizzando un unico imballo
+        {{ this.store.translations[this.currentModule.text2] }}
       </h1>
     </div>
 
@@ -75,7 +75,7 @@
               class="text-gray-700"
               [ngClass]="product.selected ? 'font-semibold' : 'font-medium'"
             >
-              {{ product.name }}
+              {{ this.store.translations[product.name] }}
             </label>
           </div>
           <img [src]="product.image" />

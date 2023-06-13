@@ -78,13 +78,14 @@ export class ResiCustomComponent {
     }
     this.selected = type;
     this.choiceText = this.choices[index].text;
-    if (type === "RITIRO A DOMICILIO") {
+
+    if (type === "wiz_resi_custom_lbl_choice_pickup_title") {
       this.loadingPickup = true;
       this.store.isHomePickup.enable = true;
       this.choiceText = this.choices[0].text;
       this.choiceLink = {};
       this.checkPickupAviability(this.courier || 104);
-    } else if (type === "CONSEGNA AL SERVICE POINT") {
+    } else if (type === "wiz_resi_custom_lbl_choice_serviceptn_title") {
       this.store.isHomePickup.enable = false;
       this.clearPickupAviability();
       this.choiceText = this.choices[1].text;

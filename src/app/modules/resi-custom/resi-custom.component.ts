@@ -255,7 +255,9 @@ export class ResiCustomComponent {
     }
     const selectedProducts = this.products.map((product: any) => {
       {
-        return product.selected ? product.name : null;
+        return product.selected
+          ? this.store.translations[product.name] || product.name
+          : null;
       }
     });
     if (this.currentModule.output === "concat_string") {

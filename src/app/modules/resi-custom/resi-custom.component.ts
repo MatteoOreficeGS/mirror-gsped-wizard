@@ -79,13 +79,13 @@ export class ResiCustomComponent {
     this.selected = type;
     this.choiceText = this.choices[index].text;
 
-    if (type === "wiz_resi_custom_lbl_choice_pickup_title") {
+    if (type === "wiz_resi_custom_lbl_pickup_choice") {
       this.loadingPickup = true;
       this.store.isHomePickup.enable = true;
       this.choiceText = this.choices[0].text;
       this.choiceLink = {};
       this.checkPickupAviability(this.courier || 104);
-    } else if (type === "wiz_resi_custom_lbl_choice_serviceptn_title") {
+    } else if (type === "wiz_resi_custom_lbl_service_ptn_choice") {
       this.store.isHomePickup.enable = false;
       this.clearPickupAviability();
       this.choiceText = this.choices[1].text;

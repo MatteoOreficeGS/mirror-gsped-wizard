@@ -17,8 +17,7 @@
       "
       class="text-white focus:ring-1 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mb-6"
     >
-      <!-- TODO: TRADUZIONE -->
-      switch mode
+      {{ this.store.translations.lbl_btn_switch_mode_sender }}
     </button>
     <div
       class="lg:grid lg:grid-cols-4 gap-x-4"
@@ -140,12 +139,8 @@
     <!-- With fixed data -->
     <div *ngIf="currentModule.useFixedData">
       <div>
-        <!-- TODO: TRADUZIONE -->
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae nam
-          nemo ipsam! Aperiam voluptate aut deserunt nisi magni similique
-          reiciendis quos! Quae exercitationem, perspiciatis dicta impedit sint
-          maiores illum nulla?
+          {{ this.store.translations.lbl_card_sender_main_text }}
         </p>
       </div>
       <div class="flex flex-wrap">
@@ -169,7 +164,6 @@
                       fixedDataItem?.title?.isBold ? ' font-semibold' : ''
                     "
                   >
-                    <!-- TODO: TRADUZIONE -->
                     {{ fixedDataItem?.title?.label }}
                   </label>
                 </h1>
@@ -178,7 +172,6 @@
                 <div class="mt-4">
                   <div class="flex flex-col">
                     <span *ngFor="let textRow of fixedDataItem.textRows">
-                      <!-- TODO: TRADUZIONE -->
                       {{ textRow }}
                     </span>
                   </div>
@@ -187,7 +180,7 @@
                   <div class="flex flex-col">
                     <span>email: {{ fixedDataItem.data.sender_email }}</span>
                     <span
-                      >{{ store.translations.phone }}:
+                      >{{ store.translations.lbl_phone }}:
                       {{ fixedDataItem.data.sender_phone }}</span
                     >
                   </div>

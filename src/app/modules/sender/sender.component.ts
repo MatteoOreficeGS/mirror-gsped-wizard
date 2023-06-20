@@ -395,8 +395,9 @@ export class SenderComponent {
     } else {
       if (!this.isFixedDataSelected(this.currentModule.fixedData)) {
         this.showModal = true;
-        //TODO: TRADUZIONE
-        this.errors = { erorr: "seleziona una card" };
+        this.errors = {
+          erorr: this.store.translations.lbl_card_required_sender,
+        };
         return;
       }
     }

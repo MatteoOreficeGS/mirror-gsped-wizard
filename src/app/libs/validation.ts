@@ -101,7 +101,7 @@ export function ValidateCF(
   control: AbstractControl
 ): { [key: string]: any } | null {
   var validRegex =
-    /^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{2,3}[a-zA-Z]{1,2}$/;
+    /^[a-zA-Z]{6}[0-9]{2}[a-zA-Z]{1}[0-9]{2}[a-zA-Z0-9]{4}[a-zA-Z]{1}$/;
   if (control.value && control.value.length > 0) {
     if (control.value.length !== 16) {
       return { lbl_invalid_characters: true };

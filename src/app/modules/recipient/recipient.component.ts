@@ -194,7 +194,7 @@ export class RecipientComponent {
         value: "rcpt_surname",
         label: this.translations.cognome,
         type: "text",
-        required: this.isMandatory("rcpt_surname"),
+        required: this.isMandatory("rcpt_name"),
         columnspan: 2,
       },
       {
@@ -298,7 +298,7 @@ export class RecipientComponent {
 
   isMandatory(field: string): boolean {
     if (!this.currentModule.mandatory) {
-      return true;
+      return false;
     }
     if (this.currentModule.mandatory.includes(field)) {
       return true;
@@ -383,22 +383,57 @@ export class RecipientComponent {
 
     this.store.recipient = this.formRecipient.value;
   }
+  setParty(party: any, index: number) {
+    this.store.recipient = party;
+    this.currentModule.fixedData = this.currentModule.fixedData.map(
+      (fixedDataItem: any) => {
+        return { ...fixedDataItem, selected: false };
+      }
+    );
+    this.currentModule.fixedData[index].selected = true;
+  }
 
   nextStep() {
-    if (this.formRecipient.valid) {
+    if (!this.currentModule.useFixedData) {
+      if (!this.formRecipient.valid) {
+        this.showModal = true;
+        this.errors = this.service.showModal(this.formRecipient);
+        return;
+      }
       this.saveData();
-      this.router.navigate(
-        [this.store.modules[this.store.currentStep++].module],
-        {
-          queryParamsHandling: "merge",
-        }
-      );
     } else {
-      this.showModal = true;
-      this.errors = this.service.showModal(this.formRecipient);
+      if (!this.isFixedDataSelected(this.currentModule.fixedData)) {
+        this.showModal = true;
+        this.errors = {
+          error: this.store.translations.lbl_card_required_recipient,
+        };
+        return;
+      }
     }
+
+    this.router.navigate(
+      [this.store.modules[this.store.currentStep++].module],
+      {
+        queryParamsHandling: "merge",
+      }
+    );
   }
+
   setCloseModal(event: boolean) {
     this.showModal = event;
+  }
+
+  isFixedDataSelected(fixedData: any): boolean {
+    if (!this.currentModule.useFixedData) {
+      return true;
+    }
+    return fixedData.some((fixedDataItem: any) => fixedDataItem.selected);
+  }
+  canContinue(): boolean {
+    if (this.currentModule.useFixedData) {
+      return this.isFixedDataSelected(this.currentModule.fixedData);
+    } else {
+      return this.formRecipient.valid;
+    }
   }
 }

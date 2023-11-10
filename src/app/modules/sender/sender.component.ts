@@ -186,7 +186,7 @@ export class SenderComponent {
         value: "sender_surname",
         label: this.translations.cognome,
         type: "text",
-        required: this.isMandatory("sender_surname"),
+        required: this.isMandatory("sender_name"),
         columnspan: 2,
       },
       {
@@ -290,7 +290,7 @@ export class SenderComponent {
 
   isMandatory(field: string): boolean {
     if (!this.currentModule.mandatory) {
-      return true;
+      return false;
     }
     if (this.currentModule.mandatory.includes(field)) {
       return true;
@@ -348,8 +348,23 @@ export class SenderComponent {
     }, 400);
   }
 
+  setParty(party: any, index: number) {
+    this.store.sender = party;
+    this.currentModule.fixedData = this.currentModule.fixedData.map(
+      (fixedDataItem: any) => {
+        return { ...fixedDataItem, selected: false };
+      }
+    );
+    this.currentModule.fixedData[index].selected = true;
+  }
+
   nextStep() {
-    if (this.formSender.valid) {
+    if (!this.currentModule.useFixedData) {
+      if (!this.formSender.valid) {
+        this.showModal = true;
+        this.errors = this.service.showModal(this.formSender);
+        return;
+      }
       this.formSender.controls["sender_name"].setValue(
         (
           this.formSender.value.sender_name +
@@ -377,18 +392,39 @@ export class SenderComponent {
       this.formSender.removeControl("note_sender");
 
       this.store.sender = this.formSender.value;
-      this.router.navigate(
-        [this.store.modules[this.store.currentStep++].module],
-        {
-          queryParamsHandling: "merge",
-        }
-      );
     } else {
-      this.showModal = true;
-      this.errors = this.service.showModal(this.formSender);
+      if (!this.isFixedDataSelected(this.currentModule.fixedData)) {
+        this.showModal = true;
+        this.errors = {
+          erorr: this.store.translations.lbl_card_required_sender,
+        };
+        return;
+      }
     }
+
+    this.router.navigate(
+      [this.store.modules[this.store.currentStep++].module],
+      {
+        queryParamsHandling: "merge",
+      }
+    );
   }
+
   setCloseModal(event: boolean) {
     this.showModal = event;
+  }
+
+  isFixedDataSelected(fixedData: any): boolean {
+    if (!this.currentModule.useFixedData) {
+      return true;
+    }
+    return fixedData.some((fixedDataItem: any) => fixedDataItem.selected);
+  }
+  canContinue(): boolean {
+    if (this.currentModule.useFixedData) {
+      return this.isFixedDataSelected(this.currentModule.fixedData);
+    } else {
+      return this.formSender.valid;
+    }
   }
 }

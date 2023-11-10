@@ -614,7 +614,7 @@ export class ShipmentDataComponent implements OnInit {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  error: "errore temporaneo, riprova più tardi",
+                  error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
                 };
                 this.isLoading = false;
               }
@@ -625,7 +625,7 @@ export class ShipmentDataComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            error: "errore temporaneo, riprova più tardi",
+            error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
           };
           this.isLoading = false;
         }

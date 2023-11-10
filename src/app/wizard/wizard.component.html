@@ -15,14 +15,20 @@
           class="lg:text-center flex items-center lg:mt-0 lg:block flex-1 z-10"
         >
           <button
-            [ngClass]="
+            [ngStyle]="
               currentStep === i + 1
-                ? 'bg-yellow-500 cursor-default'
+                ? {
+                    'background-color': '#' + this.store.configuration.mainColor
+                  }
                 : currentStep > i
-                ? 'bg-yellow-200 cursor-default'
-                : 'bg-slate-100 dark:bg-slate-500 cursor-default'
+                ? {
+                    'background-color': this.store.configuration.fadedColor
+                  }
+                : {
+                    'background-color': '#f1f5f9'
+                  }
             "
-            class="min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
+            class="cursor-default min-w-12 w-12 h-12 rounded-full dark:border-darkmode-400 transition-all delay-50 ease-in-out mt-2 lg:mt-0"
           >
             {{ i + 1 }}
           </button>
@@ -30,9 +36,7 @@
             [ngClass]="currentStep === i + 1 ? 'font-bold' : ''"
             class="hidden lg:block text-base text-center -mt-3 md:mt-3 ml-3 lg:ml-0 text-slate-600 dark:text-slate-400 break-none lg:w-24 xl:w-full capitalize"
           >
-            {{
-              translations[module.label] ? translations[module.label] : "XXXX"
-            }}
+            {{ translations[module.label] || "step " + i + 1 }}
           </div>
         </div>
       </div>

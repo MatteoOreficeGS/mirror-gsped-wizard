@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -14,7 +14,7 @@ export class RecipientComponent {
   status: any = {};
 
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public http: HttpClient,
     public service: StatusService,
     public store: StoreService,
@@ -314,7 +314,7 @@ export class RecipientComponent {
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
   fields: Array<any> = [];
-  formRecipient!: FormGroup;
+  formRecipient!: UntypedFormGroup;
   forcedCountry: string = "none";
   showModal: boolean = false;
   errors: any = {};

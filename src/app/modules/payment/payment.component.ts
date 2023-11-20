@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
@@ -20,7 +20,7 @@ export class PaymentComponent implements OnInit {
     public service: StatusService,
     public store: StoreService,
     public router: Router,
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     private route: ActivatedRoute
   ) {
     if (this.service.checkConfiguration()) {
@@ -88,7 +88,7 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  formPayment!: FormGroup;
+  formPayment!: UntypedFormGroup;
   bodyPayment: any = {};
   response: any = {};
   currentModule: any;

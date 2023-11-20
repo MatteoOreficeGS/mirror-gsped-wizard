@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "../../status.service";
 import { StoreService } from "../../store.service";
@@ -10,7 +10,7 @@ import { StoreService } from "../../store.service";
 })
 export class VodafoneComponent {
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public service: StatusService,
     public store: StoreService,
     private router: Router
@@ -54,7 +54,7 @@ export class VodafoneComponent {
   currentModule: any = {};
   products: any = {};
   selected: any;
-  formVodafone!: FormGroup;
+  formVodafone!: UntypedFormGroup;
   choices: any;
   choiceText!: string;
   choiceLink?: any;

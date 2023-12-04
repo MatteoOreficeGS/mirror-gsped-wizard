@@ -1,8 +1,8 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { MatIconModule } from "@angular/material/icon";
-import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy-input";
-import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
+// import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy-input";
+// import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { WizardComponent } from "./wizard/wizard.component";
@@ -17,7 +17,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ErrorPageComponent } from "./error-page/error-page.component";
 import { StartComponent } from "./start/start.component";
-import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
+// import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FatturaDHLComponent } from './modules/fattura-dhl/fattura-dhl.component';
 import { VodafoneComponent } from './modules/vodafone/vodafone.component';
@@ -54,15 +54,15 @@ import { ResiCustomComponent } from './modules/resi-custom/resi-custom.component
   ],
   imports: [
     BrowserAnimationsModule,
-    MatInputModule,
-    MatFormFieldModule,
+    // MatInputModule,
+    // MatFormFieldModule,
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    MatSelectModule,
+    // MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

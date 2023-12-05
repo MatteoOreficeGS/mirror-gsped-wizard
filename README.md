@@ -7,15 +7,15 @@ Questo progetto ha l'obiettivo di creare una GUI che gestisca vari casi di spedi
 ## Dipendenze richieste
 
 - Angular CLI: 17.0.5
-- Node: 18.16.1
-- Package Manager: npm 9.5.1
+- Node: 20.10.0
+- Package Manager: npm 10.2.3
 
 ## Installazione Dipendenze
 
 Per ubuntu
 
 ```
-curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install nodejs
 sudo npm install -g @angular/cli
 ```

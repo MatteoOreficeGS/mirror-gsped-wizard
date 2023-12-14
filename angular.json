@@ -95,5 +95,7 @@
       }
     }
   },
-  "defaultProject": "gsped-wizard"
+  "cli": {
+    "analytics": false
+  }
 }

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -13,7 +13,7 @@ export class SenderComponent {
   status: any = {};
 
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public service: StatusService,
     public store: StoreService,
     private router: Router,
@@ -306,7 +306,7 @@ export class SenderComponent {
   predictionsAddress: any = [];
   fields: Array<any> = [];
   readonly?: boolean;
-  formSender!: FormGroup;
+  formSender!: UntypedFormGroup;
   langParam = "";
   forcedCountry: string = "none";
   showModal: boolean = false;

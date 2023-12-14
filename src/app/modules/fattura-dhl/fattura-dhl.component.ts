@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
@@ -17,7 +17,7 @@ import {
 })
 export class FatturaDHLComponent implements OnInit {
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     private router: Router,
     public store: StoreService,
     public service: StatusService
@@ -36,7 +36,7 @@ export class FatturaDHLComponent implements OnInit {
   ngOnInit(): void {}
 
   currentModule: any = {};
-  formInvoice: FormGroup = this.fb.group({});
+  formInvoice: UntypedFormGroup = this.fb.group({});
   selected!: string;
   invoiceModules: any;
   predictionsAddress: any;

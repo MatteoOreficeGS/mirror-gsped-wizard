@@ -1,11 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import {
-  FormBuilder,
-  FormGroup,
-  FormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  UntypedFormArray,
   Validators,
-  FormControl,
+  UntypedFormControl,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -24,7 +24,7 @@ import {
 })
 export class ShipmentDataComponent implements OnInit {
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public service: StatusService,
     public store: StoreService,
     public router: Router,
@@ -116,8 +116,8 @@ export class ShipmentDataComponent implements OnInit {
     }
   }
 
-  get dimensions(): FormArray {
-    return this.formShipmentData.get("dimensions") as FormArray;
+  get dimensions(): UntypedFormArray {
+    return this.formShipmentData.get("dimensions") as UntypedFormArray;
   }
 
   newPackage(
@@ -125,7 +125,7 @@ export class ShipmentDataComponent implements OnInit {
     larghezza = "",
     altezza = "",
     peso = ""
-  ): FormGroup {
+  ): UntypedFormGroup {
     return this.fb.group({
       lunghezza: ["" + lunghezza, ValidatePackageDimension],
       larghezza: ["" + larghezza, ValidatePackageDimension],
@@ -190,7 +190,7 @@ export class ShipmentDataComponent implements OnInit {
     this.store.isDocumentShipment = false;
     this.formShipmentData.addControl(
       this.translations.lbl_goods_type,
-      new FormControl(this.store.goodType, Validators.required)
+      new UntypedFormControl(this.store.goodType, Validators.required)
     );
     this.store.isAskDocument = false;
   }
@@ -203,7 +203,7 @@ export class ShipmentDataComponent implements OnInit {
   bodyRateComparativa: any;
   daticolli: any = {};
   translations: any;
-  formShipmentData!: FormGroup;
+  formShipmentData!: UntypedFormGroup;
   isDocumentShipment!: boolean;
   chosenCourier: any = {
     outward: { serviceName: "" },

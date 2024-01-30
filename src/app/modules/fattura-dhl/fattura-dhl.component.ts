@@ -1,15 +1,19 @@
 import { Component, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
-import { StatusService } from "src/app/status.service";
-import { StoreService } from "src/app/store.service";
 import {
   ValidateCF,
   ValidateEmail,
   ValidateEsteroCountry,
-  ValidatePhone,
   ValidatePIva,
+  ValidatePhone,
 } from "src/app/libs/validation";
+import { StatusService } from "src/app/status.service";
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -254,13 +258,6 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
-  handleGooglePlace(address: HTMLInputElement) {
-    this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    this.service.googlePlace(address.value, "it").subscribe((response: any) => {
-      this.predictionsAddress = response;
-    });
-  }
   setAddress(prediction: any) {
     this.formInvoice.controls["indirizzo"].setValue(
       prediction.street +

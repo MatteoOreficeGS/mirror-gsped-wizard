@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { Router } from "@angular/router";
-import { StoreService } from "./store.service";
-import { environment } from "./enviroment";
 import { ValidationErrors } from "@angular/forms";
+import { Router } from "@angular/router";
+import { Observable, of } from "rxjs";
+import { environment } from "./enviroment";
+import { StoreService } from "./store.service";
 
 @Injectable({
   providedIn: "root",
@@ -246,6 +246,15 @@ export class StatusService {
       }
     });
     return errors;
+  }
+
+  checkTinVat(value: string, type: string, country:string): Observable<any> {
+    const decoded = this.store.decodedToken;
+    return this.http.post(
+      environment.API_URL + decoded.instance + "/validation/" + type,
+      { country: country, value: value },
+      { headers: { "X-API-KEY": this.store.token } }
+    );
   }
 
   handlePreviousStep(samePage: boolean = false) {

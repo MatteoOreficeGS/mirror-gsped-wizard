@@ -1,9 +1,13 @@
 import { Component } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 
 @Component({
   selector: "app-sender",
@@ -211,6 +215,15 @@ export class SenderComponent {
         columnspan: 2,
       },
       {
+        value: "sender_country_code",
+        label: this.translations.sender_country_code,
+        type: "text",
+        required: this.isMandatory("sender_country_code"),
+        maxLenght: 2,
+        autocompleteLock: true,
+        columnspan: 1,
+      },
+      {
         value: "sender_city",
         label: this.translations.sender_city,
         type: "text",
@@ -230,15 +243,6 @@ export class SenderComponent {
         label: this.translations.sender_prov,
         type: "text",
         required: this.isMandatory("sender_prov"),
-        maxLenght: 2,
-        autocompleteLock: true,
-        columnspan: 1,
-      },
-      {
-        value: "sender_country_code",
-        label: this.translations.sender_country_code,
-        type: "text",
-        required: this.isMandatory("sender_country_code"),
         maxLenght: 2,
         autocompleteLock: true,
         columnspan: 1,
@@ -274,18 +278,18 @@ export class SenderComponent {
     });
   }
 
-  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
+  handleAddressAutocomplete(address: HTMLInputElement, value: string) {
+    if (!["sender_city", "sender_cap"].includes(value)) return;
+    const type = value === "sender_city" ? "city" : "zipcode";
+    this.showPredictions = value;
     this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    this.service.googlePlace(address.value, lang).subscribe((response: any) => {
-      let filterd = response;
-      if (this.forcedCountry !== "none") {
-        filterd = response.filter(
-          (address: any) => address.country === this.forcedCountry
-        );
-      }
-      this.predictionsAddress = filterd;
-    });
+    const _lang = this.formSender.value.sender_country_code;
+    this.service
+      .addressAutocomplete(address.value, type, _lang)
+      .subscribe((response: any) => {
+        let filterd = response;
+        this.predictionsAddress = filterd.slice(0, 4);
+      });
   }
 
   isMandatory(field: string): boolean {
@@ -300,10 +304,10 @@ export class SenderComponent {
 
   step: any;
   translations: any = {};
-  showPredictions: boolean = false;
+  showPredictions: boolean | string = false;
   autocomplete: string = "";
   currentModule: any = {};
-  predictionsAddress: any = [];
+  predictionsAddress: any = [{ toList: "a" }, { toList: "b" }, { toList: "c" }];
   fields: Array<any> = [];
   readonly?: boolean;
   formSender!: UntypedFormGroup;
@@ -316,19 +320,9 @@ export class SenderComponent {
   formattedaddress = " ";
 
   setAddress(prediction: any) {
-    this.formSender.controls["sender_addr"].setValue(
-      prediction.street +
-        (prediction.streetNumber != undefined
-          ? " " + prediction.streetNumber
-          : "")
-    );
     this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
     this.formSender.controls["sender_city"].setValue(prediction.city);
     this.formSender.controls["sender_prov"].setValue(prediction.district);
-    this.forcedCountry === "none" &&
-      this.formSender.controls["sender_country_code"].setValue(
-        prediction.country
-      );
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

@@ -259,13 +259,6 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
-  handleGooglePlace(address: HTMLInputElement) {
-    this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    this.service.googlePlace(address.value, "it").subscribe((response: any) => {
-      this.predictionsAddress = response;
-    });
-  }
   setAddress(prediction: any) {
     this.formInvoice.controls["indirizzo"].setValue(
       prediction.street +

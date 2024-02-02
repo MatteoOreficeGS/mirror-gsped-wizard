@@ -1,5 +1,4 @@
 import { AbstractControl } from "@angular/forms";
-import { StoreService } from "../store.service";
 
 export function ValidateEmail(
   control: AbstractControl
@@ -93,77 +92,6 @@ export function ValidateEsteroCountry(
   }
   if ((value + "").toLowerCase() === "it") {
     return { lbl_country_code_invalid: true };
-  }
-  return null;
-}
-
-export function ValidateCF(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex =
-    /^[a-zA-Z]{6}[0-9]{2}[a-zA-Z]{1}[0-9]{2}[a-zA-Z0-9]{4}[a-zA-Z]{1}$/;
-  if (control.value && control.value.length > 0) {
-    if (control.value.length !== 16) {
-      return { lbl_invalid_characters: true };
-    }
-    if (!control.value.match(validRegex)) {
-      return { lbl_invalid_characters: true };
-    } else {
-      var i, s, set1, set2, setpari, setdisp;
-      const cf = control.value.toUpperCase();
-      set1 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      set2 = "ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      setpari = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      setdisp = "BAKPLCQDREVOSFTGUHMINJWZYX";
-      s = 0;
-      for (i = 1; i <= 13; i += 2)
-        s += setpari.indexOf(set2.charAt(set1.indexOf(cf.charAt(i))));
-      for (i = 0; i <= 14; i += 2)
-        s += setdisp.indexOf(set2.charAt(set1.indexOf(cf.charAt(i))));
-      if (s % 26 != cf.charCodeAt(15) - "A".charCodeAt(0))
-        return { lbl_invalid_characters: true };
-    }
-  }
-  return null;
-}
-
-export function ValidatePIva(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  var validRegex = /^[0-9]{11}$/;
-  if (control.value && control.value.length > 0) {
-    if (!control.value.match(validRegex)) {
-      return { lbl_invalid_characters: true };
-    } else {
-      const controlDigit = control.value.slice(-1)[0];
-      const validationDigit = control.value.slice(0, -1);
-      let sumEven = 0;
-      let sumOdd = 0;
-
-      for (let i = 1; i < 11; i += 2) {
-        let tmpSum = validationDigit[i] * 2;
-        if (tmpSum > 9) {
-          tmpSum =
-            parseInt(("" + tmpSum).slice(0, 1)) +
-            parseInt(("" + tmpSum).slice(1));
-        }
-        sumEven += tmpSum;
-      }
-
-      for (let i = 0; i < 10; i += 2) {
-        sumOdd += parseInt(validationDigit[i]);
-      }
-      const res = parseInt(("" + (sumOdd + sumEven)).slice(-1));
-      let output: any;
-      if (res === 0) {
-        output = 0;
-      } else {
-        output = 10 - res;
-      }
-      if (parseInt(output) !== parseInt(controlDigit)) {
-        return { lbl_invalid_characters: true };
-      }
-    }
   }
   return null;
 }

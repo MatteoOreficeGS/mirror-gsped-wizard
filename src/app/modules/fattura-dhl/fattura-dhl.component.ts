@@ -7,10 +7,8 @@ import {
 import { Router } from "@angular/router";
 import { lastValueFrom } from "rxjs";
 import {
-  ValidateCF,
   ValidateEmail,
   ValidateEsteroCountry,
-  ValidatePIva,
   ValidatePhone,
 } from "src/app/libs/validation";
 import { StatusService } from "src/app/status.service";
@@ -67,7 +65,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: [
             this.store.invoice.lbl_italian_tax_code,
-            [Validators.required, ValidateCF],
+            [Validators.required],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
           sdi: [
@@ -115,7 +113,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: [
             this.store.invoice.codice_fiscale,
-            [Validators.required, ValidatePIva],
+            [Validators.required],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
           sdi: [

@@ -5,6 +5,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
+import { lastValueFrom } from "rxjs";
 import {
   ValidateCF,
   ValidateEmail,
@@ -271,8 +272,43 @@ export class FatturaDHLComponent implements OnInit {
     this.showPredictions = false;
   }
 
-  nextStep() {
+  async checkTinOrVat() {
+    let value = this.formInvoice.value.codice_fiscale;
+
+    const type =
+      this.selected === "privato"
+        ? "tin"
+        : this.selected === "piva"
+        ? "vat"
+        : "estero";
+
+    if (type === "estero") return true;
+
+    if (value === "") {
+      return false;
+    }
+
+    const country = this.store.sender.sender_country_code;
+
+    const checkPivaTinResponse = await lastValueFrom(
+      this.service.checkTinVat(value, type, country)
+    );
+
+    if (checkPivaTinResponse?.result?.isValid !== true) {
+      this.showModal = true;
+      const errorMessage =
+        type === "tin"
+          ? this.store.translations.lbl_error_tin
+          : this.store.translations.lbl_error_vat;
+      this.errors = { error: errorMessage };
+      return false;
+    }
+    return true;
+  }
+
+  async nextStep() {
     if (this.formInvoice.valid) {
+      if (!(await this.checkTinOrVat())) return;
       if (this.selected === "estero") {
         this.formInvoice.controls["nome"].setValue(
           this.formInvoice.value.nome + " " + this.formInvoice.value.cognome

@@ -250,6 +250,15 @@ export class StatusService {
     return errors;
   }
 
+  checkTinVat(value: string, type: string, country:string): Observable<any> {
+    const decoded = this.store.decodedToken;
+    return this.http.post(
+      environment.API_URL + decoded.instance + "/validation/" + type,
+      { country: country, value: value },
+      { headers: { "X-API-KEY": this.store.token } }
+    );
+  }
+
   handlePreviousStep(samePage: boolean = false) {
     if (this.store.currentStep > 1) {
       if (samePage) {

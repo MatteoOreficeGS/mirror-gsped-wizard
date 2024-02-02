@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { StoreService } from "src/app/store.service";
 
 @Component({
@@ -14,11 +14,14 @@ export class CourierCardComponent {
   @Input() type: any;
   @Output() selectCourierEvent = new EventEmitter();
 
+  hideInvoiceDiscount: boolean =
+    this.store.configuration.hideInvoiceDiscount || false;
+
   getFloat(number: any) {
     return Number.parseFloat(number).toFixed(2);
   }
 
   separateVAT(number: any) {
-    return number / ((this.iva + 100) / 100)
+    return number / ((this.iva + 100) / 100);
   }
 }

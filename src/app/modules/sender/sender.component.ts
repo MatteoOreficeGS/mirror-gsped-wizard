@@ -307,7 +307,7 @@ export class SenderComponent {
   showPredictions: boolean | string = false;
   autocomplete: string = "";
   currentModule: any = {};
-  predictionsAddress: any = [{ toList: "a" }, { toList: "b" }, { toList: "c" }];
+  predictionsAddress: any = [];
   fields: Array<any> = [];
   readonly?: boolean;
   formSender!: UntypedFormGroup;
@@ -323,6 +323,7 @@ export class SenderComponent {
     this.formSender.controls["sender_cap"].setValue(prediction.postalCode);
     this.formSender.controls["sender_city"].setValue(prediction.city);
     this.formSender.controls["sender_prov"].setValue(prediction.district);
+    this.formSender.controls["sender_country_code"].setValue(prediction.country);
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

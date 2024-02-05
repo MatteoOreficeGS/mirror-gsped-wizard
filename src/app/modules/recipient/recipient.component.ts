@@ -326,6 +326,7 @@ export class RecipientComponent {
     this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
     this.formRecipient.controls["rcpt_city"].setValue(prediction.city);
     this.formRecipient.controls["rcpt_prov"].setValue(prediction.district);
+    this.formRecipient.controls["rcpt_country_code"].setValue(prediction.country);
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

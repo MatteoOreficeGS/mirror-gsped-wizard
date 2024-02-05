@@ -376,24 +376,26 @@
       </div>
     </ng-container>
 
-    <p class="mb-6 font-medium">{{ translations["lbl_coupon"] }}</p>
-    <div class="relative w-full md:w-1/2 mb-6 group">
-      <input
-        [formControlName]="'codiceSconto'"
-        autocomplete="off"
-        id="codiceSconto"
-        name="codiceSconto"
-        type="text"
-        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-        placeholder=" "
-      />
-      <label
-        for="codiceSconto"
-        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-      >
-        {{ translations["lbl_coupon"] }} €
-      </label>
-    </div>
+    <ng-container *ngIf="!hideInvoiceDiscount">
+      <p class="mb-6 font-medium">{{ translations["lbl_coupon"] }}</p>
+      <div class="relative w-full md:w-1/2 mb-6 group">
+        <input
+          [formControlName]="'codiceSconto'"
+          autocomplete="off"
+          id="codiceSconto"
+          name="codiceSconto"
+          type="text"
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
+          placeholder=" "
+        />
+        <label
+          for="codiceSconto"
+          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          {{ translations["lbl_coupon"] }} €
+        </label>
+      </div>
+    </ng-container>
 
     <div class="flex flex-row space-x-4 justify-center">
       <button
@@ -418,7 +420,7 @@
             ? {
                 'background-color': '#' + this.store.configuration.mainColor
               }
-              : {
+            : {
                 'background-color': this.store.configuration.fadedColor
               }
         "

@@ -1,11 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
   UntypedFormArray,
-  Validators,
+  UntypedFormBuilder,
   UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -219,6 +219,8 @@ export class ShipmentDataComponent implements OnInit {
   );
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
+  hideInvoiceDiscount: boolean =
+    this.store.configuration.hideInvoiceDiscount || false;
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
@@ -306,7 +308,7 @@ export class ShipmentDataComponent implements OnInit {
 
   setDocumentNumber(add: number) {
     this.store.documentsNumber = this.store.documentsNumber + add;
-    this.daticolli.colli = this.store.documentsNumber
+    this.daticolli.colli = this.store.documentsNumber;
   }
 
   setShipmentPayload() {
@@ -614,7 +616,9 @@ export class ShipmentDataComponent implements OnInit {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                  error:
+                    this.store.translations.lbl_generic_error ||
+                    "errore temporaneo, riprova più tardi",
                 };
                 this.isLoading = false;
               }
@@ -625,7 +629,9 @@ export class ShipmentDataComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+            error:
+              this.store.translations.lbl_generic_error ||
+              "errore temporaneo, riprova più tardi",
           };
           this.isLoading = false;
         }

@@ -14,9 +14,6 @@ export class CourierCardComponent {
   @Input() type: any;
   @Output() selectCourierEvent = new EventEmitter();
 
-  hideInvoiceDiscount: boolean =
-    this.store.configuration.hideInvoiceDiscount || false;
-
   getFloat(number: any) {
     return Number.parseFloat(number).toFixed(2);
   }

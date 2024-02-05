@@ -3,6 +3,11 @@
   [errors]="errors"
   (closeModal)="setCloseModal($event)"
 ></app-modal>
+<app-modal-info
+  [show]="showModalInfo"
+  [message]="messageModalInfo"
+  (closeModal)="setCloseModalInfo($event)"
+></app-modal-info>
 <app-navbar></app-navbar>
 <app-wizard>
   <!-- Start Loading logo -->
@@ -229,9 +234,17 @@
           currentModule?.returnLabel.insurance.enable)
       "
     >
-      <p class="col-span-full mb-6 font-medium">
-        {{ translations.lbl_insurance_choice }}
-      </p>
+      <div class="col-span-full mb-6 font-medium flex space-x-2">
+        <p>{{ translations.lbl_insurance_choice }}</p>
+        <button
+          class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+          type="button"
+          (click)="openModalInvoiceInfo()"
+        >
+          {{ translations.lbl_insurance_info }}
+        </button>
+      </div>
+
       <!-- assicurazione andata text -->
       <div
         class="relative w-full mb-6 group mx-auto"

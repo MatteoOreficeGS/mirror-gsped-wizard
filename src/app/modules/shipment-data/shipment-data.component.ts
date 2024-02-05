@@ -41,6 +41,7 @@ export class ShipmentDataComponent implements OnInit {
       (module: any) => module.moduleName === "shipment-data"
     )[0].moduleConfig;
     this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
+    this.messageModalInfo = this.store.translations.lbl_invoiceModalInfo;
     this.translations = store.translations;
     if (this.currentModule.documentFlag === "ask") {
       this.isDocumentShipment = false;
@@ -212,6 +213,8 @@ export class ShipmentDataComponent implements OnInit {
   canContinue: boolean = false;
   errors: any = {};
   showModal: boolean = false;
+  showModalInfo: boolean = false;
+  messageModalInfo: string = "";
   showGoods_type: boolean = true;
   isInternationalShipment?: boolean;
   riferimentoOrdine: string = [this.store.origin, new Date().getTime()].join(
@@ -650,6 +653,10 @@ export class ShipmentDataComponent implements OnInit {
     this.showModal = event;
   }
 
+  setCloseModalInfo(event: boolean) {
+    this.showModalInfo = event;
+  }
+
   handleRateComparative(body: any): Observable<any> {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       body.daticolli = JSON.stringify(body.daticolli);
@@ -660,6 +667,10 @@ export class ShipmentDataComponent implements OnInit {
       environment.API_URL + decoded.instance + "/RateComparativa",
       { headers: headers, params: body }
     );
+  }
+
+  openModalInvoiceInfo() {
+    this.showModalInfo = true;
   }
 
   incrementStep() {

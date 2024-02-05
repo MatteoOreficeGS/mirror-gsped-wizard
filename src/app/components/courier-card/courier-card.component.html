@@ -56,7 +56,7 @@
         <span *ngIf="varie_d.key !== 'sconto_con_tax'">
           {{ varie_d.key }}: € {{ getFloat(separateVAT(varie_d.value)) }}
         </span>
-        <span *ngIf="varie_d.key === 'sconto_con_tax' && hideInvoiceDiscount === false">
+        <span *ngIf="varie_d.key === 'sconto_con_tax'">
           {{ store.translations.lbl_discount }}: €
           {{ getFloat(separateVAT(varie_d.value)) }}
         </span>

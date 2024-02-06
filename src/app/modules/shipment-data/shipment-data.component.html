@@ -237,11 +237,38 @@
       <div class="col-span-full mb-6 font-medium flex space-x-2">
         <p>{{ translations.lbl_insurance_choice }}</p>
         <button
-          class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
+          [title]="translations.lbl_insurance_info"
+          class="p-1 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-dhl font-bold"
           type="button"
           (click)="openModalInvoiceInfo()"
         >
-          {{ translations.lbl_insurance_info }}
+          <svg
+            fill="#0000ff"
+            width="24px"
+            height="24px"
+            viewBox="0 0 16.00 16.00"
+            xmlns="http://www.w3.org/2000/svg"
+            stroke="#0000ff"
+            stroke-width="0.00016"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke="#CCCCCC"
+              stroke-width="0.064"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M8 .5A7.77 7.77 0 0 0 0 8a7.77 7.77 0 0 0 8 7.5A7.77 7.77 0 0 0 16 8 7.77 7.77 0 0 0 8 .5zm0 13.75A6.52 6.52 0 0 1 1.25 8 6.52 6.52 0 0 1 8 1.75 6.52 6.52 0 0 1 14.75 8 6.52 6.52 0 0 1 8 14.25z"
+              ></path>
+              <circle cx="7.98" cy="10.95" r=".76"></circle>
+              <path
+                d="M9.73 4.75A2.72 2.72 0 0 0 8 4.19a2.28 2.28 0 0 0-2.41 2.17v.11h1.24v-.1A1.12 1.12 0 0 1 8 5.33a1 1 0 0 1 1.12 1c0 .35-.24.73-.78 1.11a2 2 0 0 0-1 1.46v.36h1.24V9a.76.76 0 0 1 .23-.51A3.92 3.92 0 0 1 9.33 8l.17-.14a2 2 0 0 0 .91-1.67 1.85 1.85 0 0 0-.68-1.44z"
+              ></path>
+            </g>
+          </svg>
         </button>
       </div>
 

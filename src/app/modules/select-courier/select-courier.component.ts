@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
@@ -40,6 +40,9 @@ export class SelectCourierComponent {
       this.currentModule.selectCourier.returnCouriers.selectionMode,
       this.store.returnCostExposure
     );
+    this.minPickupDate = this.minPickupDate.toISOString().split("T")[0];
+    this.maxPickupDate.setDate(this.maxPickupDate.getDate() + this.currentModule.maxPickupDay);
+    this.maxPickupDate = this.maxPickupDate.toISOString().split("T")[0];
     if (this.store.hasShipmentData) {
       this.selectCourier("outward", this.store.outwardCostExposure[0]);
       if (this.store.hasReturnShipment) {
@@ -170,7 +173,9 @@ export class SelectCourierComponent {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                  errore:
+                    this.store.translations.lbl_generic_error ||
+                    "errore temporaneo, riprova più tardi",
                 };
               }
             );
@@ -181,7 +186,9 @@ export class SelectCourierComponent {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+            errore:
+              this.store.translations.lbl_generic_error ||
+              "errore temporaneo, riprova più tardi",
           };
         }
       );
@@ -218,6 +225,10 @@ export class SelectCourierComponent {
   isGoodDocument: number = 1;
   showGoods_type: boolean = false;
   isPointChecked: boolean = true;
+  minPickupDate: any = new Date();
+  maxPickupDate: any = new Date();
+  dataritiro: any = "";
+  pickupAviabilittError: string = "";
 
   setCloseModal(event: boolean) {
     this.showModal = event;
@@ -313,86 +324,37 @@ export class SelectCourierComponent {
     this.selectCourier(event.type, event.service);
   }
 
-  checkPickupAviability(courier: string) {
-    this.store.isHomePickup.enable = true;
+  setIsPointChecked() {
     this.isPointChecked = false;
-    let now = new Date();
-    const currentHours = now.getHours();
-    const festivities: any = [
-      [0, 1],
-      [3, 25],
-      [4, 1],
-      [5, 2],
-      [7, 15],
-      [10, 1],
-      [11, 8],
-      [11, 25],
-      [11, 26],
-      [11, 31],
-    ];
+    this.store.isHomePickup.enable = true;
+    this.canContinue = false;
+    this.pickupAviabilittError = this.store.translations.lbl_select_date;
+  }
 
-    const easter = this.getEaster(now.getFullYear());
-    festivities.push(easter);
-    festivities.push([easter[0], easter[1] + 1]);
-    const currentDay = [now.getMonth(), now.getDate()];
-
-    if (
-      this.currentModule.pickup.pickupSameDayCheck &&
-      currentHours < 15 &&
-      now.getDay() <= 5 &&
-      now.getDay() !== 0 &&
-      festivities.filter(
-        (day: any) => day[0] === currentDay[0] && day[1] === currentDay[1]
-      ).length === 0
-    ) {
-      this.service.pickupAvailability(courier).subscribe(
-        (res: any) => {
-          if (res.result === "OK") {
-            this.pickupAvailability[courier] =
-              this.translations.lbl_pickup_same_day;
-            this.pickupMode = {
-              date_req_ritiro:
-                now.toISOString().split("T")[0] + " " + "15:00:00",
-              opening_time: "15:00:00",
-              closing_time: "18:00:00",
-            };
-          }
-        },
-        (error: any) => {}
-      );
-    } else {
-      let nextWorkingDay = now;
-
-      let isBusinessDay;
-      do {
-        isBusinessDay = true;
-        nextWorkingDay = new Date(
-          nextWorkingDay.setDate(nextWorkingDay.getDate() + 1)
-        );
-        if (nextWorkingDay.getDay() >= 5 || nextWorkingDay.getDay() === 0) {
-          isBusinessDay = false;
+  checkPickupAviability(courier: string, requestedDate: Date) {
+    this.store.isHomePickup.enable = true;
+    this.pickupAviabilittError = "";
+    this.isPointChecked = false;
+    this.canContinue = false;
+    this.service.pickupAvailability(courier, requestedDate).subscribe(
+      (res: any) => {
+        if (res.result === "OK") {
+          this.pickupAvailability[courier] =
+            res.date + " dalle " + res.from_time + " alle " + res.to_time;
+          this.pickupMode = {
+            date_req_ritiro: res.date,
+            from_time: res.from_time,
+            to_time: res.to_time,
+          };
+          this.canContinue = true;
+        } else {
+          this.pickupAviabilittError =
+            this.store.translations.lbl_invalid_date || "invalid date";
+          this.pickupAvailability = {};
         }
-
-        if (isBusinessDay) {
-          const nextDay = [nextWorkingDay.getMonth(), nextWorkingDay.getDate()];
-          if (
-            festivities.filter(
-              (day: any) => day[0] === nextDay[0] && day[1] === nextDay[1]
-            ).length > 0
-          ) {
-            isBusinessDay = false;
-          }
-        }
-      } while (!isBusinessDay);
-      this.pickupAvailability[courier] =
-        this.translations.lbl_pickup_next_working_day;
-      this.pickupMode = {
-        date_req_ritiro:
-          nextWorkingDay.toISOString().split("T")[0] + " " + "09:00:00",
-        opening_time: "09:00:00",
-        closing_time: "18:00:00",
-      };
-    }
+      },
+      (error: any) => {}
+    );
   }
 
   clearPickupAviability() {
@@ -400,19 +362,7 @@ export class SelectCourierComponent {
     this.pickupAvailability = {};
     this.pickupMode = {};
     this.isPointChecked = true;
-  }
-
-  getEaster(year: number) {
-    var f = Math.floor,
-      G = year % 19,
-      C = f(year / 100),
-      H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
-      I = H - f(H / 28) * (1 - f(29 / (H + 1)) * f((21 - G) / 11)),
-      J = (year + f(year / 4) + I + 2 - C + f(C / 4)) % 7,
-      L = I - J,
-      month = 3 + f((L + 40) / 44),
-      day = L + 28 - 31 * f(month / 4);
-    return [month, day];
+    this.dataritiro = "";
   }
 
   setShipmentPayload() {
@@ -537,7 +487,9 @@ export class SelectCourierComponent {
               this.showModal = true;
               this.errors = {};
               this.errors = {
-                errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                errore:
+                  this.store.translations.lbl_generic_error ||
+                  "errore temporaneo, riprova più tardi",
               };
             }
           );
@@ -547,7 +499,9 @@ export class SelectCourierComponent {
         this.showModal = true;
         this.errors = {};
         this.errors = {
-          errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+          errore:
+            this.store.translations.lbl_generic_error ||
+            "errore temporaneo, riprova più tardi",
         };
       }
     );
@@ -558,6 +512,15 @@ export class SelectCourierComponent {
     return parseFloat(assicurazione.toFixed(4));
   }
 
+  checkPickupDate(_inputDate: any) {
+    const inputDate = new Date(_inputDate.value);
+    this.dataritiro = new Date(inputDate).toISOString().split("T")[0];
+    this.checkPickupAviability(
+      this.chosenCourier.outward.courierCode,
+      inputDate
+    );
+  }
+
   incrementStep() {
     if (this.canContinue) {
       this.store.chosenCourier = this.chosenCourier;
@@ -565,9 +528,15 @@ export class SelectCourierComponent {
     } else {
       this.showModal = true;
       this.errors = {};
-      this.errors = {
-        selectCourier: "required",
-      };
+      if (this.pickupAviabilittError === "") {
+        this.errors = {
+          selectCourier: "required",
+        };
+      } else {
+        this.errors = {
+          pickup: this.pickupAviabilittError,
+        };
+      }
     }
   }
 }

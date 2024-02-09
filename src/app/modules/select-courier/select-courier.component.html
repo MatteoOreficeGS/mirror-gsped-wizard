@@ -87,19 +87,39 @@
         />
         <span>{{ translations.lbl_dropoff_service_point }}</span>
       </div>
-      <div class="flex space-x-2" *ngIf="homePickup">
-        <input
-          class="text-red-dhl focus:ring-red-500"
-          (click)="checkPickupAviability(chosenCourier.outward.courierCode)"
-          type="radio"
-          name="ritiro"
-          [checked]="!isPointChecked"
-          value="home"
-        />
-        <span>{{ translations.lbl_home_pickup }}</span>
-        <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">
-          {{ pickupAvailability[chosenCourier.outward.courierCode] }}
-        </span>
+      <div class="flex flex-col">
+        <div class="flex space-x-2" *ngIf="homePickup">
+          <input
+            class="text-red-dhl focus:ring-red-500"
+            (click)="setIsPointChecked()"
+            type="radio"
+            name="ritiro"
+            [checked]="!isPointChecked"
+            value="home"
+          />
+          <span>{{ translations.lbl_home_pickup }}</span>
+
+          <div class="max-w-sm">
+            <input
+              type="date"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-dhl focus:border-red-dhl block w-full"
+              placeholder="dd-mm-yyyy"
+              [value]="dataritiro"
+              #inputPickupDate
+              [min]="minPickupDate"
+              [max]="maxPickupDate"
+              (change)="checkPickupDate(inputPickupDate)"
+            />
+          </div>
+        </div>
+        <div>
+          <span *ngIf="pickupAvailability[chosenCourier.outward.courierCode]">
+            {{ pickupAvailability[chosenCourier.outward.courierCode] }}
+          </span>
+          <span>
+            {{ pickupAviabilittError }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -122,7 +142,7 @@
             ? {
                 'background-color': '#' + this.store.configuration.mainColor
               }
-              : {
+            : {
                 'background-color': this.store.configuration.fadedColor
               }
         "

@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { Router } from "@angular/router";
-import { StoreService } from "./store.service";
-import { environment } from "./enviroment";
 import { ValidationErrors } from "@angular/forms";
+import { Router } from "@angular/router";
+import { Observable, of } from "rxjs";
+import { environment } from "./enviroment";
+import { StoreService } from "./store.service";
 
 @Injectable({
   providedIn: "root",
@@ -40,13 +40,12 @@ export class StatusService {
     );
   }
 
-  pickupAvailability(corriere: any) {
+  pickupAvailability(corriere: any, requestedDate?: Date) {
     const decoded: any = this.store.decodedToken;
-    const date = new Date();
     const headers = { "x-api-key": this.store.token };
     const body = {
       ...this.store.sender,
-      pickup_date: "15:00",
+      pickup_date: requestedDate || "15:00",
       corriere: corriere,
       client_id: this.store.configuration.client_id,
     };

@@ -5,6 +5,18 @@
 ></app-modal>
 <app-navbar></app-navbar>
 <app-wizard>
+  <div
+    *ngIf="this.store.configuration['separate payment']"
+    class="mb-2 text-center uppercase text-lg font-medium"
+  >
+    <h1>
+      {{
+        store.isReturnPayment
+          ? store.translations.lbl_return_payment
+          : store.translations.lbl_outward_payment
+      }}
+    </h1>
+  </div>
   <app-summary></app-summary>
 
   <form [formGroup]="formPayment" (submit)="redirectPayment()">

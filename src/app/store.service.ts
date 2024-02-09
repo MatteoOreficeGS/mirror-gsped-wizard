@@ -72,4 +72,7 @@ export class StoreService {
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
   isHomePickup: any = { enable: false };
+  isReturnPayment: boolean = false;
+  outwardUuid: string = "";
+  providerPayment: any = "";
 }

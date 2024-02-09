@@ -222,8 +222,6 @@ export class ShipmentDataComponent implements OnInit {
   );
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
-  hideInvoiceDiscount: boolean =
-    this.store.configuration.hideInvoiceDiscount || false;
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
@@ -315,6 +313,11 @@ export class ShipmentDataComponent implements OnInit {
   }
 
   setShipmentPayload() {
+    let _creazionePostuma = this.store.hasPayment;
+    if (this.store.configuration["separate payment"]) {
+      _creazionePostuma = false;
+    }
+
     const noteSender = this.store.noteSenderOnSender
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
@@ -322,7 +325,7 @@ export class ShipmentDataComponent implements OnInit {
       ddt_alpha: this.riferimentoOrdine,
       trade_documents: this.documentsFilesUploaded,
       note_sender: noteSender,
-      creazione_postuma: this.store.hasPayment,
+      creazione_postuma: _creazionePostuma,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,
       documenti: this.store.isDocumentShipment ? 1 : 0,

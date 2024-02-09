@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
 import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
@@ -26,6 +26,7 @@ export class PaymentComponent implements OnInit {
     if (this.service.checkConfiguration()) {
       return;
     }
+
     this.formPayment = fb.group({
       cc_cardholder_name: this.store.isSenderPrefilled
         ? this.store.recipient.rcpt_name
@@ -45,12 +46,18 @@ export class PaymentComponent implements OnInit {
       termsconditions: "",
     });
     this.translations = store.translations;
-    this.store.totalAmount = (
-      this.store.chosenCourier.outward.data.totale +
-      (this.store.hasReturnShipment
-        ? this.store.chosenCourier.return.data.totale
-        : 0)
-    ).toFixed(2);
+    if (!this.store.configuration["separate payment"]) {
+      this.store.totalAmount = (
+        this.store.chosenCourier.outward.data.totale +
+        (this.store.hasReturnShipment
+          ? this.store.chosenCourier.return.data.totale
+          : 0)
+      ).toFixed(2);
+    } /* else {
+      this.store.totalAmount =
+        this.store.beforePaymentSession.outwardAmount +
+        this.store.beforePaymentSession.returnAmount;
+    } */
     this.termsConditions = JSON.parse(
       this.translations.lbl_termsconditions || "{}"
     );
@@ -82,7 +89,7 @@ export class PaymentComponent implements OnInit {
     this.currentModule = this.response.modules.filter(
       (el: { moduleName: string }) => el.moduleName === "payment"
     )[0].moduleConfig;
-    this.providers = this.currentModule.provider;
+    this.provider = this.currentModule.provider[0];
     this.route.queryParams.subscribe((params) => {
       this.lang = params["lang"];
     });
@@ -92,7 +99,7 @@ export class PaymentComponent implements OnInit {
   bodyPayment: any = {};
   response: any = {};
   currentModule: any;
-  providers: Array<string> = [];
+  provider: string = "";
   isHandledPayment: boolean = false;
   isPaymentHanldeCompleted: any = false;
   translations: any = {};
@@ -110,7 +117,7 @@ export class PaymentComponent implements OnInit {
       this.isHandledPayment = true;
       const decodedToken: any = this.store.decodedToken;
       this.bodyPayment = {
-        monetaweb: {
+        [this.provider]: {
           origine: "resoFacile",
           utenti_id: decodedToken.user_id,
           displayUrl: environment.CURRENT_URL + "/display",
@@ -136,53 +143,48 @@ export class PaymentComponent implements OnInit {
         },
       };
 
-      let items = [
-        {
-          item: "Trasporto",
-          item_id: this.store.outwardShipment.id,
-          amount: this.store.chosenCourier.outward.data.totale,
-          codiceSconto: this.store.codiceSconto,
-          currency: "EUR",
-          clienti_id: this.store.outwardShipment.client_id,
-        },
-      ];
-
-      if (this.store.hasReturnShipment) {
-        items.push({
-          item: "Trasporto",
-          item_id: this.store.returnShipment.id,
-          amount: this.store.chosenCourier.return.data.totale,
-          codiceSconto: this.store.codiceSconto,
-          currency: "EUR",
-          clienti_id: this.store.returnShipment.client_id,
-        });
-      }
-
-      items = items.map((item) => {
-        const itemAux: any = { ...item };
-        if (itemAux.codiceSconto.length < 3) {
-          delete itemAux.codiceSconto;
-        }
-        return itemAux;
-      });
-
-      this.bodyPayment.monetaweb.items = items;
+      this.bodyPayment[this.provider].items = this.getPaymentItems();
       this.bodyPayment.session.totalAmount = this.store.totalAmount;
-      this.bodyPayment.session.bodyPayment = this.bodyPayment.monetaweb;
+      this.bodyPayment.session.bodyPayment = this.bodyPayment[this.provider];
+
+      //#region save data for separate payment
+
+      this.bodyPayment.session.isOutwardPaymentPerformed = true;
+      if (
+        this.store.configuration["separate payment"] &&
+        !this.store.isReturnPayment
+      ) {
+        // andata
+        this.bodyPayment.session.outwardAmount =
+          this.store.chosenCourier.outward.data.totale;
+        this.bodyPayment.session.returnAmount =
+          this.store.chosenCourier.return.data.totale;
+      } else {
+        // ritorno
+        this.bodyPayment.session.isReturnPaymentPerformed = true;
+        this.bodyPayment.session.outwardAmount =
+          this.store.beforePaymentSession.outwardAmount;
+        this.bodyPayment.session.returnAmount =
+          this.store.beforePaymentSession.returnAmount;
+      }
+      //#endregion
 
       this.handlePayment(this.bodyPayment).subscribe(
         (res) => {
-          this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
+          this.isPaymentHanldeCompleted = res[this.provider].merchantOrderId;
           window.document.location.href =
-            res.monetaweb.hostedpageurl +
+            res[this.provider].hostedpageurl +
             "?PaymentID=" +
-            res.monetaweb.paymentid;
+            res[this.provider].paymentid;
         },
         (error) => {
           this.showModal = true;
           this.errors = {};
+          this.isHandledPayment = false;
           this.errors = {
-            pagamento: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+            pagamento:
+              this.store.translations.lbl_generic_error ||
+              "errore temporaneo, riprova più tardi",
           };
         }
       );
@@ -200,7 +202,8 @@ export class PaymentComponent implements OnInit {
     return this.http.post(
       environment.API_URL +
         this.store.decodedToken.instance +
-        "/resoFacile/payment/process/monetaweb",
+        "/resoFacile/payment/process/" +
+        this.provider,
       bodyPayment,
       { headers: { "X-API-KEY": this.store.token } }
     );
@@ -208,5 +211,55 @@ export class PaymentComponent implements OnInit {
 
   setCloseModal(event: boolean) {
     this.showModal = event;
+  }
+
+  getPaymentItems() {
+    const items = [];
+    let _item = {
+      item: "Trasporto",
+      item_id: this.store.outwardShipment.id,
+      amount: 0,
+      codiceSconto: this.store.codiceSconto,
+      currency: "EUR",
+      clienti_id: this.store.outwardShipment.client_id,
+    };
+
+    if (!this.store.configuration["separate payment"]) {
+      _item.amount = this.store.chosenCourier.outward.data.totale;
+    } else if (!this.store?.beforePaymentSession?.isOutwardPaymentPerformed) {
+      _item.amount = this.store.chosenCourier.outward.data.totale;
+    }
+
+    // for configuration with separate payment
+    if (this.store.isReturnPayment) {
+      _item.amount = this.store.beforePaymentSession.returnAmount;
+      _item.item_id = this.store.returnShipment.id;
+      _item.clienti_id = this.store.returnShipment.client_id;
+    }
+
+    items.push(_item);
+
+    // for two way shipment
+    if (
+      this.store.hasReturnShipment &&
+      !this.store.configuration["separate payment"]
+    ) {
+      items.push({
+        item: "Trasporto",
+        item_id: this.store.returnShipment.id,
+        amount: this.store.chosenCourier.return.data.totale,
+        codiceSconto: this.store.codiceSconto,
+        currency: "EUR",
+        clienti_id: this.store.returnShipment.client_id,
+      });
+    }
+
+    return items.map((item) => {
+      const itemAux: any = { ...item };
+      if (itemAux.codiceSconto.length < 3) {
+        delete itemAux.codiceSconto;
+      }
+      return itemAux;
+    });
   }
 }

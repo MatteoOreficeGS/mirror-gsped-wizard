@@ -1,5 +1,9 @@
 import { Component } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { Router } from "@angular/router";
 import { StatusService } from "../../status.service";
 import { StoreService } from "../../store.service";
@@ -222,9 +226,14 @@ export class ResiCustomComponent {
     const volume =
       (packageDimension * packageDimension * packageDimension) / 1000000;
 
+    let _creazionePostuma = this.store.hasPayment;
+    if (this.store.configuration["separate payment"]) {
+      _creazionePostuma = false;
+    }
+
     this.store.payloadShipment = {
       note_sender: noteSender,
-      creazione_postuma: this.store.hasPayment,
+      creazione_postuma: _creazionePostuma,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,
       documenti: this.store.isDocumentShipment ? 1 : 0,

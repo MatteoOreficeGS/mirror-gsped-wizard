@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { environment } from "src/app/enviroment";
@@ -170,7 +170,9 @@ export class SelectCourierComponent {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                  errore:
+                    this.store.translations.lbl_generic_error ||
+                    "errore temporaneo, riprova più tardi",
                 };
               }
             );
@@ -181,7 +183,9 @@ export class SelectCourierComponent {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+            errore:
+              this.store.translations.lbl_generic_error ||
+              "errore temporaneo, riprova più tardi",
           };
         }
       );
@@ -416,13 +420,18 @@ export class SelectCourierComponent {
   }
 
   setShipmentPayload() {
+    let _creazionePostuma = this.store.hasPayment;
+    if (this.store.configuration["separate payment"]) {
+      _creazionePostuma = false;
+    }
+
     const noteSender = this.store.noteSenderOnSender
       ? this.store.senderExtras.note_sender
       : this.store.recipientExtras.note_sender;
     this.store.payloadShipment = {
       ...this.store.payloadShipment,
       note_sender: noteSender,
-      creazione_postuma: this.store.hasPayment,
+      creazione_postuma: _creazionePostuma,
       client_id: this.store.configuration.client_id,
       origine: this.store.sender.sender_country_code,
       documenti: this.store.isDocumentShipment ? 1 : 0,
@@ -537,7 +546,9 @@ export class SelectCourierComponent {
               this.showModal = true;
               this.errors = {};
               this.errors = {
-                errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                errore:
+                  this.store.translations.lbl_generic_error ||
+                  "errore temporaneo, riprova più tardi",
               };
             }
           );
@@ -547,7 +558,9 @@ export class SelectCourierComponent {
         this.showModal = true;
         this.errors = {};
         this.errors = {
-          errore: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+          errore:
+            this.store.translations.lbl_generic_error ||
+            "errore temporaneo, riprova più tardi",
         };
       }
     );

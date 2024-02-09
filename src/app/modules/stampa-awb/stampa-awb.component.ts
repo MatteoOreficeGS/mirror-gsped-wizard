@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
-import { environment } from "src/app/enviroment";
-import { StoreService } from "src/app/store.service";
-import { Observable } from "rxjs";
-import { StatusService } from "src/app/status.service";
 import { ActivatedRoute } from "@angular/router";
+import { Observable } from "rxjs";
+import { environment } from "src/app/enviroment";
+import { StatusService } from "src/app/status.service";
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-stampa-awb",
@@ -21,13 +21,10 @@ export class StampaAwbComponent {
       return;
     }
     this.translations = this.store.translations;
-    this.displayPayment = this.store.displayPayment || {}
-    if (
-      this.displayPayment.status === "canceled" ||
-      this.displayPayment.status === "failed"
-    ) {
+    this.displayPayment = this.store.displayPayment || {};
+    if (this.displayPayment.status !== "completed") {
       this.isPaymentCompleted = false;
-      this.retryPayment.monetaweb = this.store.beforePaymentSession.bodyPayment;
+      this.retryPayment[this.store.providerPayment] = this.store.beforePaymentSession.bodyPayment;
       this.retryPayment.session = this.store.beforePaymentSession;
     } else {
       if (this.store.beforePaymentSession) {
@@ -122,9 +119,9 @@ export class StampaAwbComponent {
     this.isHandledPayment = true;
     this.handlePayment(this.retryPayment).subscribe((res: any) => {
       // link "problemi col pagamento" tramite merchantOrderId
-      // this.isPaymentHanldeCompleted = res.monetaweb.merchantOrderId;
+      // this.isPaymentHanldeCompleted = res[this.store.providerPayment].merchantOrderId;
       window.document.location.href =
-        res.monetaweb.hostedpageurl + "?PaymentID=" + res.monetaweb.paymentid;
+        res[this.store.providerPayment].hostedpageurl + "?PaymentID=" + res[this.store.providerPayment].paymentid;
     });
   }
 
@@ -132,7 +129,7 @@ export class StampaAwbComponent {
     return this.http.post(
       environment.API_URL +
         this.store.decodedToken.instance +
-        "/resoFacile/payment/process/monetaweb",
+        "/resoFacile/payment/process/" + this.store.providerPayment,
       bodyPayment,
       { headers: { "X-API-KEY": this.store.token } }
     );

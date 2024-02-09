@@ -1,11 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { forkJoin, Observable } from "rxjs";
-import { StatusService } from "./status.service";
 import jwt_decode from "jwt-decode";
-import { StoreService } from "./store.service";
+import { Observable, forkJoin } from "rxjs";
 import { environment } from "./enviroment";
+import { StatusService } from "./status.service";
+import { StoreService } from "./store.service";
 
 @Component({
   selector: "app-root",
@@ -107,15 +107,18 @@ export class AppComponent {
         router.url.includes("display") &&
         !params.action
       ) {
+        this.store.providerPayment = "monetaweb";
         this.http
           .get(
             environment.API_URL +
               params.instance +
-              "/resoFacile/payment/display/monetaweb?uuid=" +
+              "/resoFacile/payment/display/" +
+              this.store.providerPayment +
+              "?uuid=" +
               params.uuid
           )
           .subscribe((resDisplay: any) => {
-            this.store.displayPayment = resDisplay.monetaweb;
+            this.store.displayPayment = resDisplay[this.store.providerPayment];
             this.store.beforePaymentSession = resDisplay.session;
             this.store.outwardShipment.id =
               resDisplay.session.outwardShipmentID;
@@ -365,6 +368,149 @@ export class AppComponent {
                 }
               );
             },
+          });
+      } else if (
+        params.uuid &&
+        params.instance &&
+        router.url.includes("ingenicoconnect") &&
+        router.url.includes("display") &&
+        !params.action
+      ) {
+        const regex: any = /\/.+\/(.+)\?/gm;
+        this.store.providerPayment = regex.exec(router.url)[1];
+        this.store.providerPayment = "monetaweb"; //TODO: rimuovere
+
+        this.http
+          .get(
+            `${environment.API_URL}${params.instance}/resoFacile/payment/display/${this.store.providerPayment}?uuid=${params.uuid}`
+          )
+          .subscribe((resDisplay: any) => {
+            this.store.providerPayment = "ingenicoconnect"; //TODO: rimuovere
+
+            this.store.displayPayment = resDisplay[this.store.providerPayment];
+
+            if (Object.keys(resDisplay.session).length === 0) {
+              return;
+            }
+            this.store.beforePaymentSession = resDisplay.session;
+            this.store.outwardShipment.id =
+              resDisplay.session.outwardShipmentID;
+            this.store.returnShipment.id = resDisplay.session.returnShipmentID;
+            this.getToken(resDisplay.session.origin).subscribe(
+              (resToken: any) => {
+                store.origin = resDisplay.session.origin;
+                store.token = resToken.token;
+                store.decodedToken = jwt_decode(resToken.token);
+                forkJoin(
+                  this.getConfiguration(),
+                  this.status.getTranslations(
+                    this.store.beforePaymentSession.language ||
+                      params.lang ||
+                      "it_IT"
+                  ),
+                  this.status.getCountries()
+                ).subscribe((res: any) => {
+                  this.store.configuration = res[0].configuration;
+                  if (!this.store.configuration.mainColor) {
+                    this.store.configuration.mainColor = "FFCC35";
+                  }
+                  this.store.configuration.fadedColor =
+                    "#" +
+                    this.fadeColor(
+                      "#" + this.store.configuration.mainColor,
+                      150
+                    );
+                  let modules = res[0].configuration.modules.map(
+                    (module: any) => {
+                      if (module.moduleConfig.hidden) {
+                        if (module.moduleName === "sender") {
+                          this.store.sender = module.moduleConfig.data;
+                        }
+                        if (module.moduleName === "recipient") {
+                          this.store.recipient = module.moduleConfig.data;
+                        }
+                        return null;
+                      } else {
+                        return {
+                          module: module.moduleName,
+                          label: module.moduleConfig.label,
+                        };
+                      }
+                    }
+                  );
+                  modules = modules.filter((module: any) => module);
+                  this.store.hasPayment =
+                    modules.filter(
+                      (element: any) => element.module === "payment"
+                    ).length > 0;
+                  this.store.modules = modules;
+                  this.store.translations = res[1];
+                  this.store.countries = res[2];
+                  this.store.currentStep = modules.length;
+                  this.store.isLastModule = true;
+
+                  //#region separate payment
+                  if (
+                    this.store.configuration["separate payment"] &&
+                    resDisplay.status === "completed"
+                  ) {
+                    if (
+                      this.store.beforePaymentSession
+                        .isOutwardPaymentPerformed &&
+                      !this.store.beforePaymentSession.isReturnPaymentPerformed
+                    ) {
+                      this.store.outwardUuid = params.uuid;
+                      this.store.isReturnPayment = true;
+                      this.store.currentStep = modules.length - 1;
+                      this.router.navigate(
+                        ["/" + modules[modules.length - 2].module],
+                        {
+                          queryParams: {
+                            lang:
+                              this.store.beforePaymentSession.language ||
+                              "it_IT",
+                          },
+                        }
+                      );
+                    } else if (
+                      this.store.beforePaymentSession.isReturnPaymentPerformed
+                    ) {
+                      this.router.navigate(
+                        ["/" + modules[modules.length - 1].module],
+                        {
+                          queryParams: {
+                            lang:
+                              this.store.beforePaymentSession.language ||
+                              "it_IT",
+                            "outward-uuid":
+                              this.store.beforePaymentSession.outwardUuid,
+                            "return-uuid": params.uuid,
+                          },
+                        }
+                      );
+                    }
+                  }
+                  //#endregion
+                  else {
+                    this.router.navigate(
+                      ["/" + modules[modules.length - 1].module],
+                      {
+                        queryParams: {
+                          lang:
+                            this.store.beforePaymentSession.language || "it_IT",
+                          uuid: params.uuid,
+                        },
+                      }
+                    );
+                  }
+                });
+              },
+              (error: any) => {
+                this.router.navigate(["/error-page"], {
+                  queryParams: { lang: params.lang || "it_IT" },
+                });
+              }
+            );
           });
       } else if (
         params.origin &&

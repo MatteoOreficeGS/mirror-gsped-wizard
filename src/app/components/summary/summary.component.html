@@ -64,12 +64,45 @@
       </div>
     </div>
   </div>
+
   <div
-    *ngIf="this.store.totalAmount"
-    class="flex justify-center block py-4 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    *ngIf="this.store.configuration['separate payment']; else totalPayment"
+    class="flex justify-center block py-4 bg-white rounded-lg border border-gray-200 shadow-md w-full space-x-2"
   >
-    <p class="text-xl">
-      {{ store.translations.lbl_total_price }}: € {{ store.totalAmount }}
+    <p
+      class="text-xl"
+      *ngIf="
+        !this.store?.isReturnPayment ||
+        this.store?.beforePaymentSession?.isReturnPaymentPerformed
+      "
+    >
+      {{ store.translations.lbl_total_outward_price || "totale andata" }}: €
+      {{
+        store.configuration["separate payment"]
+          ? this.store.chosenCourier?.outward?.data?.totale.toFixed(2) ||
+            this.store.beforePaymentSession.outwardAmount.toFixed(2)
+          : this.store.beforePaymentSession.outwardAmount.toFixed(2)
+      }}
+    </p>
+
+    <p
+      class="text-xl"
+      *ngIf="
+        this.store?.isReturnPayment ||
+        this.store?.beforePaymentSession?.isReturnPaymentPerformed
+      "
+    >
+      {{ store.translations.lbl_total_return_price || "totale ritorno" }}: €
+      {{ this.store.beforePaymentSession.returnAmount.toFixed(2) }}
     </p>
   </div>
+  <ng-template #totalPayment>
+    <div
+      class="flex justify-center block py-4 bg-white rounded-lg border border-gray-200 shadow-md w-full"
+    >
+      <p class="text-xl">
+        {{ store.translations.lbl_total_price }}: € {{ store.totalAmount }}
+      </p>
+    </div>
+  </ng-template>
 </div>

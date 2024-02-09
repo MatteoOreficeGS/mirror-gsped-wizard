@@ -378,14 +378,12 @@ export class AppComponent {
       ) {
         const regex: any = /\/.+\/(.+)\?/gm;
         this.store.providerPayment = regex.exec(router.url)[1];
-        this.store.providerPayment = "monetaweb"; //TODO: rimuovere
 
         this.http
           .get(
             `${environment.API_URL}${params.instance}/resoFacile/payment/display/${this.store.providerPayment}?uuid=${params.uuid}`
           )
           .subscribe((resDisplay: any) => {
-            this.store.providerPayment = "ingenicoconnect"; //TODO: rimuovere
 
             this.store.displayPayment = resDisplay[this.store.providerPayment];
 

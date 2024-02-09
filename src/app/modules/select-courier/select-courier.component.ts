@@ -41,7 +41,7 @@ export class SelectCourierComponent {
       this.store.returnCostExposure
     );
     this.minPickupDate = this.minPickupDate.toISOString().split("T")[0];
-    this.maxPickupDate.setDate(this.maxPickupDate.getDate() + this.currentModule.maxPickupDay);
+    this.maxPickupDate.setDate(this.maxPickupDate.getDate() + this.currentModule.maxPickupDay || 10);
     this.maxPickupDate = this.maxPickupDate.toISOString().split("T")[0];
     if (this.store.hasShipmentData) {
       this.selectCourier("outward", this.store.outwardCostExposure[0]);

@@ -1,15 +1,18 @@
 import { Component, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { StatusService } from "src/app/status.service";
-import { StoreService } from "src/app/store.service";
 import {
-  ValidateCF,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
+import { Router } from "@angular/router";
+import { lastValueFrom } from "rxjs";
+import {
   ValidateEmail,
   ValidateEsteroCountry,
   ValidatePhone,
-  ValidatePIva,
 } from "src/app/libs/validation";
+import { StatusService } from "src/app/status.service";
+import { StoreService } from "src/app/store.service";
 
 @Component({
   selector: "app-fattura-dhl",
@@ -62,7 +65,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: [
             this.store.invoice.lbl_italian_tax_code,
-            [Validators.required, ValidateCF],
+            [Validators.required],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
           sdi: [
@@ -110,7 +113,7 @@ export class FatturaDHLComponent implements OnInit {
         this.formInvoice = this.fb.group({
           codice_fiscale: [
             this.store.invoice.codice_fiscale,
-            [Validators.required, ValidatePIva],
+            [Validators.required],
           ],
           pec: [this.store.invoice.pec, [ValidateEmail]],
           sdi: [
@@ -254,13 +257,6 @@ export class FatturaDHLComponent implements OnInit {
     }
   }
 
-  handleGooglePlace(address: HTMLInputElement) {
-    this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    this.service.googlePlace(address.value, "it").subscribe((response: any) => {
-      this.predictionsAddress = response;
-    });
-  }
   setAddress(prediction: any) {
     this.formInvoice.controls["indirizzo"].setValue(
       prediction.street +
@@ -274,8 +270,43 @@ export class FatturaDHLComponent implements OnInit {
     this.showPredictions = false;
   }
 
-  nextStep() {
+  async checkTinOrVat() {
+    let value = this.formInvoice.value.codice_fiscale;
+
+    const type =
+      this.selected === "privato"
+        ? "tin"
+        : this.selected === "piva"
+        ? "vat"
+        : "estero";
+
+    if (type === "estero") return true;
+
+    if (value === "") {
+      return false;
+    }
+
+    const country = this.store.sender.sender_country_code;
+
+    const checkPivaTinResponse = await lastValueFrom(
+      this.service.checkTinVat(value, type, country)
+    );
+
+    if (checkPivaTinResponse?.result?.isValid !== true) {
+      this.showModal = true;
+      const errorMessage =
+        type === "tin"
+          ? this.store.translations.lbl_error_tin
+          : this.store.translations.lbl_error_vat;
+      this.errors = { error: errorMessage };
+      return false;
+    }
+    return true;
+  }
+
+  async nextStep() {
     if (this.formInvoice.valid) {
+      if (!(await this.checkTinOrVat())) return;
       if (this.selected === "estero") {
         this.formInvoice.controls["nome"].setValue(
           this.formInvoice.value.nome + " " + this.formInvoice.value.cognome

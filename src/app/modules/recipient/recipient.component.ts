@@ -2,9 +2,9 @@ import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 import { StatusService } from "src/app/status.service";
 import { StoreService } from "src/app/store.service";
-import { ValidateEmail, ValidatePhone } from "src/app/libs/validation";
 
 @Component({
   selector: "app-recipient",
@@ -219,6 +219,15 @@ export class RecipientComponent {
         columnspan: 2,
       },
       {
+        value: "rcpt_country_code",
+        label: this.translations.rcpt_city,
+        type: "text",
+        required: this.isMandatory("rcpt_country_code"),
+        maxLenght: 2,
+        autocompleteLock: true,
+        columnspan: 1,
+      },
+      {
         value: "rcpt_city",
         label: this.translations.rcpt_city,
         type: "text",
@@ -238,15 +247,6 @@ export class RecipientComponent {
         label: this.translations.rcpt_prov,
         type: "text",
         required: this.isMandatory("rcpt_prov"),
-        maxLenght: 2,
-        autocompleteLock: true,
-        columnspan: 1,
-      },
-      {
-        value: "rcpt_country_code",
-        label: this.translations.rcpt_country_code,
-        type: "text",
-        required: this.isMandatory("rcpt_country_code"),
         maxLenght: 2,
         autocompleteLock: true,
         columnspan: 1,
@@ -282,18 +282,21 @@ export class RecipientComponent {
     });
   }
 
-  handleGooglePlace(address: HTMLInputElement, lang: string = this.langParam) {
+  handleAddressAutocomplete(
+    address: HTMLInputElement,
+    value: string,
+  ) {
+    if (!["rcpt_city", "rcpt_cap"].includes(value)) return;
+    const type = value === "rcpt_city" ? "city" : "zipcode";
+    this.showPredictions = value;
     this.predictionsAddress = [];
-    this.showPredictions === false && (this.showPredictions = true);
-    this.service.googlePlace(address.value, lang).subscribe((response: any) => {
-      let filterd = response;
-      if (this.forcedCountry !== "none") {
-        filterd = response.filter(
-          (address: any) => address.country === this.forcedCountry
-        );
-      }
-      this.predictionsAddress = filterd;
-    });
+    const _lang = this.formRecipient.value.rcpt_country_code;
+    this.service
+      .addressAutocomplete(address.value, type, _lang)
+      .subscribe((response: any) => {
+        let filterd = response;
+        this.predictionsAddress = filterd.slice(0, 4);
+      });
   }
 
   isMandatory(field: string): boolean {
@@ -308,8 +311,8 @@ export class RecipientComponent {
 
   langParam = "";
   translations: any = {};
-  showPredictions: boolean = false;
-  autocomplete: boolean = false;
+  showPredictions: boolean | string = false;
+  autocomplete: string = "";
   readonly?: boolean;
   currentModule: any = {};
   predictionsAddress: Array<any> = [];
@@ -320,19 +323,10 @@ export class RecipientComponent {
   errors: any = {};
 
   setAddress(prediction: any) {
-    this.formRecipient.controls["rcpt_addr"].setValue(
-      prediction.street +
-        (prediction.streetNumber != undefined
-          ? " " + prediction.streetNumber
-          : "")
-    );
     this.formRecipient.controls["rcpt_cap"].setValue(prediction.postalCode);
     this.formRecipient.controls["rcpt_city"].setValue(prediction.city);
     this.formRecipient.controls["rcpt_prov"].setValue(prediction.district);
-    this.forcedCountry === "none" &&
-      this.formRecipient.controls["rcpt_country_code"].setValue(
-        prediction.country
-      );
+    this.formRecipient.controls["rcpt_country_code"].setValue(prediction.country);
     this.fields = this.fields.map((field: any) => {
       if (field.autocompleteLock) {
         field.readonly = true;

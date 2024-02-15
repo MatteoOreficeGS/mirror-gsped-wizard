@@ -26,9 +26,7 @@
       <ng-container *ngFor="let field of fields">
         <div
           class="relative w-full mb-6 group mx-auto"
-          *ngIf="
-            field.value !== 'rcpt_addr' && field.value !== 'rcpt_country_code'
-          "
+          *ngIf="field.value !== 'rcpt_country_code'"
           [ngClass]="
             field.columnspan === 2
               ? 'col-span-2'
@@ -50,50 +48,13 @@
                 ? 'border-red-500'
                 : 'border-gray-300'
             "
-            autocomplete="off"
-            [formControlName]="field.value"
-            type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-            placeholder=" "
-          />
-          <label
-            class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-red-dhl peer-focus:dark:text-red-dhl peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            {{ field.label }}
-            <span *ngIf="field.required" class="text-red-400"> * </span>
-          </label>
-        </div>
-
-        <div
-          *ngIf="field.value === 'rcpt_addr'"
-          class="relative w-full mb-6 group mx-auto"
-          [ngClass]="
-            field.columnspan === 2
-              ? 'col-span-2'
-              : field.columnspan === 4
-              ? 'col-span-4'
-              : ''
-          "
-        >
-          <input
-            [readonly]="readonly"
-            [ngClass]="readonly ? 'cursor-not-allowed' : ''"
-            [ngClass]="
-              formRecipient.get(field.value)?.invalid &&
-              formRecipient.get(field.value)?.errors &&
-              (formRecipient.get(field.value)?.dirty ||
-                formRecipient.get(field.value)?.touched)
-                ? 'border-red-500'
-                : 'border-gray-300'
-            "
-            autocomplete="off"
-            [formControlName]="field.value"
-            type="text"
-            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
-            (input)="handleGooglePlace(address)"
-            (blur)="hidePredictions()"
             #address
-            name="address"
+            autocomplete="off"
+            [formControlName]="field.value"
+            (input)="handleAddressAutocomplete(address, field.value)"
+            (blur)="hidePredictions()"
+            type="text"
+            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-dhl focus:outline-none focus:ring-0 focus:border-red-dhl peer"
             placeholder=" "
           />
           <label
@@ -104,13 +65,13 @@
           </label>
           <div
             id="predictions"
-            *ngIf="showPredictions"
-            class="bg-red-200 z-50 absolute w-full"
+            *ngIf="showPredictions === field.value"
+            class="bg-red-200 z-50 absolute w-full border-x border-1 border-red-600"
           >
             <ng-container *ngFor="let prediction of predictionsAddress">
               <div
                 (click)="setAddress(prediction)"
-                class="hover:bg-red-300 cursor-pointer"
+                class="hover:bg-red-300 cursor-pointer px-1 border-b border-1 border-gray-600"
               >
                 {{ prediction.toList }}
               </div>

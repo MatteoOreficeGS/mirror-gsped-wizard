@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ValidationErrors } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 import { environment } from "./enviroment";
 import { StoreService } from "./store.service";
 
@@ -66,21 +66,23 @@ export class StatusService {
     );
   }
 
-  googlePlace(address: string, lang: string = "it"): Observable<any> {
-    if (address.length >= 10) {
-      const decoded: any = this.store.decodedToken;
-      return this.http.get(
-        environment.API_URL +
-          decoded.instance +
-          "/AddressAutocomplete?input=" +
-          address +
-          "&lang=" +
-          lang,
-        { headers: { "X-API-KEY": this.store.token } }
-      );
-    } else {
-      return of();
-    }
+  addressAutocomplete(
+    data: string,
+    type: string,
+    country: string
+  ): Observable<any> {
+    const decoded: any = this.store.decodedToken;
+    return this.http.get(
+      environment.API_URL +
+        decoded.instance +
+        "/AddressAutocomplete?data=" +
+        data +
+        "&country=" +
+        country +
+        "&type=" +
+        type,
+      { headers: { "X-API-KEY": this.store.token } }
+    );
   }
 
   invertAddressData(obj: any): any {
@@ -245,6 +247,15 @@ export class StatusService {
       }
     });
     return errors;
+  }
+
+  checkTinVat(value: string, type: string, country:string): Observable<any> {
+    const decoded = this.store.decodedToken;
+    return this.http.post(
+      environment.API_URL + decoded.instance + "/validation/" + type,
+      { country: country, value: value },
+      { headers: { "X-API-KEY": this.store.token } }
+    );
   }
 
   handlePreviousStep(samePage: boolean = false) {

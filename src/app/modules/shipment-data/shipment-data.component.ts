@@ -1,11 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
   UntypedFormArray,
-  Validators,
+  UntypedFormBuilder,
   UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -41,6 +41,7 @@ export class ShipmentDataComponent implements OnInit {
       (module: any) => module.moduleName === "shipment-data"
     )[0].moduleConfig;
     this.store.hasReturnShipment = this.currentModule.returnLabel.enable;
+    this.messageModalInfo = this.store.translations.lbl_invoiceModalInfo;
     this.translations = store.translations;
     if (this.currentModule.documentFlag === "ask") {
       this.isDocumentShipment = false;
@@ -212,6 +213,8 @@ export class ShipmentDataComponent implements OnInit {
   canContinue: boolean = false;
   errors: any = {};
   showModal: boolean = false;
+  showModalInfo: boolean = false;
+  messageModalInfo: string = "";
   showGoods_type: boolean = true;
   isInternationalShipment?: boolean;
   riferimentoOrdine: string = [this.store.origin, new Date().getTime()].join(
@@ -219,6 +222,8 @@ export class ShipmentDataComponent implements OnInit {
   );
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
+  hideInvoiceDiscount: boolean =
+    this.store.configuration.hideInvoiceDiscount || false;
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
@@ -306,7 +311,7 @@ export class ShipmentDataComponent implements OnInit {
 
   setDocumentNumber(add: number) {
     this.store.documentsNumber = this.store.documentsNumber + add;
-    this.daticolli.colli = this.store.documentsNumber
+    this.daticolli.colli = this.store.documentsNumber;
   }
 
   setShipmentPayload() {
@@ -614,7 +619,9 @@ export class ShipmentDataComponent implements OnInit {
                 this.showModal = true;
                 this.errors = {};
                 this.errors = {
-                  error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+                  error:
+                    this.store.translations.lbl_generic_error ||
+                    "errore temporaneo, riprova più tardi",
                 };
                 this.isLoading = false;
               }
@@ -625,7 +632,9 @@ export class ShipmentDataComponent implements OnInit {
           this.showModal = true;
           this.errors = {};
           this.errors = {
-            error: this.store.translations.lbl_generic_error || "errore temporaneo, riprova più tardi",
+            error:
+              this.store.translations.lbl_generic_error ||
+              "errore temporaneo, riprova più tardi",
           };
           this.isLoading = false;
         }
@@ -644,6 +653,10 @@ export class ShipmentDataComponent implements OnInit {
     this.showModal = event;
   }
 
+  setCloseModalInfo(event: boolean) {
+    this.showModalInfo = event;
+  }
+
   handleRateComparative(body: any): Observable<any> {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
       body.daticolli = JSON.stringify(body.daticolli);
@@ -654,6 +667,10 @@ export class ShipmentDataComponent implements OnInit {
       environment.API_URL + decoded.instance + "/RateComparativa",
       { headers: headers, params: body }
     );
+  }
+
+  openModalInvoiceInfo() {
+    this.showModalInfo = true;
   }
 
   incrementStep() {

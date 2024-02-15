@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { StoreService } from "src/app/store.service";
 
 @Component({
@@ -19,6 +19,6 @@ export class CourierCardComponent {
   }
 
   separateVAT(number: any) {
-    return number / ((this.iva + 100) / 100)
+    return number / ((this.iva + 100) / 100);
   }
 }

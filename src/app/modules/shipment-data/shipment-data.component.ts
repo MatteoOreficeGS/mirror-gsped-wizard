@@ -222,6 +222,8 @@ export class ShipmentDataComponent implements OnInit {
   );
   documentsFilesUploaded: any = [];
   documentsFilesUploadedData: any = [];
+  hideInvoiceDiscount: boolean =
+    this.store.configuration.hideInvoiceDiscount || false;
 
   setDatiColli() {
     if (this.currentModule.packagesDetails.enable && !this.isDocumentShipment) {
